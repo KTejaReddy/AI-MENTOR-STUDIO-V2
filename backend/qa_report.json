@@ -1,0 +1,199 @@
+{
+  "metadata": {
+    "subject": "Engineering Mathematics I",
+    "topic": "matrices",
+    "difficulty": "intermediate",
+    "learning_mode": "default",
+    "start_time": 1784298845.6639833,
+    "generation_mode": "prefetch",
+    "total_elapsed": 21.09,
+    "completed_count": 18,
+    "expected_count": 18,
+    "time_to_first_section": 2.48,
+    "avg_time_per_section": 7.16
+  },
+  "sections": {
+    "explanation": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 8.89
+    },
+    "overview": {
+      "status": "completed",
+      "model": "llama-3.1-8b-instant",
+      "elapsed": 2.48
+    },
+    "keyConcepts": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 6.82
+    },
+    "importantDefinitions": {
+      "status": "completed",
+      "model": "qwen/qwen3.6-27b",
+      "elapsed": 7.52
+    },
+    "analogy": {
+      "status": "completed",
+      "model": "qwen/qwen3-32b",
+      "elapsed": 8.21
+    },
+    "examples": {
+      "status": "completed",
+      "model": "qwen/qwen3.6-27b",
+      "elapsed": 10.33
+    },
+    "caseStudy": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 6.49
+    },
+    "codeExamples": {
+      "status": "completed",
+      "model": "qwen/qwen3-32b",
+      "elapsed": 8.79
+    },
+    "formulaExplanation": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 6.57
+    },
+    "diagrams": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 5.97
+    },
+    "commonMistakes": {
+      "status": "completed",
+      "model": "qwen/qwen3.6-27b",
+      "elapsed": 7.5
+    },
+    "interviewQuestions": {
+      "status": "completed",
+      "model": "openai/gpt-oss-120b",
+      "elapsed": 13.64
+    },
+    "quiz": {
+      "status": "completed",
+      "model": "qwen/qwen3.6-27b",
+      "elapsed": 8.69
+    },
+    "assignment": {
+      "status": "completed",
+      "model": "openai/gpt-oss-20b",
+      "elapsed": 8.16
+    },
+    "miniProject": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 7.26
+    },
+    "cheatSheet": {
+      "status": "completed",
+      "model": "llama-3.1-8b-instant",
+      "elapsed": 4.26
+    },
+    "revisionNotes": {
+      "status": "completed",
+      "model": "llama-3.1-8b-instant",
+      "elapsed": 3.77
+    },
+    "summary": {
+      "status": "completed",
+      "model": "llama-3.3-70b-versatile",
+      "elapsed": 3.51
+    }
+  },
+  "frontend_events": [
+    {
+      "type": "section_done",
+      "section_type": "overview",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "explanation",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "keyConcepts",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "importantDefinitions",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "analogy",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "examples",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "caseStudy",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "codeExamples",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "formulaExplanation",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "diagrams",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "commonMistakes",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "interviewQuestions",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "quiz",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "assignment",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "miniProject",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "cheatSheet",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "revisionNotes",
+      "status": "completed"
+    },
+    {
+      "type": "section_done",
+      "section_type": "summary",
+      "status": "completed"
+    }
+  ]
+}

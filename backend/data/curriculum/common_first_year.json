@@ -1,0 +1,723 @@
+{
+  "branch_id": "common-first-year",
+  "name": "Common First Year Engineering",
+  "description": "Foundation courses common to all B.Tech branches across all AICTE-approved engineering programs.",
+  "category": "engineering",
+  "duration": 1,
+  "semesters": 2,
+  "subjects": [
+    {
+      "id": "engg-mathematics-1",
+      "name": "Engineering Mathematics I",
+      "code": "MA-101",
+      "category": "basic-science",
+      "semester": 1,
+      "description": "Single variable calculus, differential equations, matrix algebra, and vector calculus forming the mathematical foundation for all engineering disciplines.",
+      "difficulty": "intermediate",
+      "tags": [
+        "mathematics",
+        "calculus",
+        "linear-algebra",
+        "differential-equations"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "engg-mathematics-2",
+        "engg-physics",
+        "probability-statistics"
+      ],
+      "learning_outcomes": [
+        "Solve first and second order differential equations",
+        "Apply matrix operations and compute eigenvalues",
+        "Evaluate limits, derivatives, and integrals",
+        "Analyze sequences, series, and convergence"
+      ],
+      "industry_relevance": "Foundational for all engineering analysis, simulation, and optimization work",
+      "career_paths": [
+        "Data Analyst",
+        "Research Engineer",
+        "Simulation Engineer"
+      ],
+      "has_lab": false,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "engg-mathematics-2",
+      "name": "Engineering Mathematics II",
+      "code": "MA-102",
+      "category": "basic-science",
+      "semester": 2,
+      "description": "Multivariable calculus, Fourier series, Laplace transforms, complex analysis, and numerical methods for engineering applications.",
+      "difficulty": "intermediate",
+      "tags": [
+        "mathematics",
+        "calculus",
+        "fourier",
+        "laplace",
+        "numerical-methods"
+      ],
+      "prerequisites": [
+        "engg-mathematics-1"
+      ],
+      "related_subjects": [
+        "engg-physics",
+        "signals-systems",
+        "control-systems"
+      ],
+      "learning_outcomes": [
+        "Compute partial derivatives and multiple integrals",
+        "Apply Laplace and Fourier transforms to solve ODEs",
+        "Use numerical methods for root-finding and integration",
+        "Analyze functions using complex analysis techniques"
+      ],
+      "industry_relevance": "Essential for signal processing, control systems, and simulation engineering",
+      "career_paths": [
+        "Signal Processing Engineer",
+        "Control Engineer",
+        "Data Scientist"
+      ],
+      "has_lab": false,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "engg-physics",
+      "name": "Engineering Physics",
+      "code": "PH-101",
+      "category": "basic-science",
+      "semester": 1,
+      "description": "Wave optics, quantum mechanics, semiconductor physics, electromagnetism, and modern physics with engineering applications.",
+      "difficulty": "intermediate",
+      "tags": [
+        "physics",
+        "optics",
+        "quantum",
+        "electromagnetism",
+        "semiconductors"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "engg-chemistry",
+        "electronic-devices",
+        "digital-electronics"
+      ],
+      "learning_outcomes": [
+        "Apply wave optics principles to interference and diffraction",
+        "Explain quantum mechanics concepts and their engineering relevance",
+        "Analyze semiconductor behavior and device characteristics",
+        "Solve electromagnetic field problems using Maxwell's equations"
+      ],
+      "industry_relevance": "Foundation for electronics, photonics, materials science, and nanotechnology",
+      "career_paths": [
+        "Electronics Engineer",
+        "Materials Scientist",
+        "Photonics Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "engg-chemistry",
+      "name": "Engineering Chemistry",
+      "code": "CY-101",
+      "category": "basic-science",
+      "semester": 1,
+      "description": "Chemical thermodynamics, electrochemistry, corrosion science, water treatment, polymer chemistry, and spectroscopic techniques for engineering.",
+      "difficulty": "intermediate",
+      "tags": [
+        "chemistry",
+        "thermodynamics",
+        "electrochemistry",
+        "polymers",
+        "spectroscopy"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "engg-physics",
+        "environmental-science",
+        "materials-science"
+      ],
+      "learning_outcomes": [
+        "Apply thermodynamic principles to chemical processes",
+        "Analyze electrochemical cells and corrosion mechanisms",
+        "Evaluate water quality and treatment methods",
+        "Identify polymer types and their engineering applications"
+      ],
+      "industry_relevance": "Critical for chemical, materials, environmental, and process engineering",
+      "career_paths": [
+        "Process Engineer",
+        "Materials Engineer",
+        "Environmental Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "programming-problem-solving",
+      "name": "Programming for Problem Solving",
+      "code": "CS-101",
+      "category": "engineering-science",
+      "semester": 1,
+      "description": "Introduction to computational thinking, algorithm design, and programming in C. Covers variables, control flow, functions, arrays, pointers, and file I/O.",
+      "difficulty": "beginner",
+      "tags": [
+        "programming",
+        "c",
+        "algorithms",
+        "problem-solving"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "programming-in-c",
+        "data-structures",
+        "python-programming"
+      ],
+      "learning_outcomes": [
+        "Design algorithms for computational problems",
+        "Write, compile, and debug C programs",
+        "Use pointers, arrays, and structures effectively",
+        "Implement file I/O operations in C"
+      ],
+      "industry_relevance": "Foundation for all software development roles across engineering domains",
+      "career_paths": [
+        "Software Developer",
+        "Embedded Engineer",
+        "Systems Programmer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "basic-electrical-engineering",
+      "name": "Basic Electrical Engineering",
+      "code": "EE-101",
+      "category": "engineering-science",
+      "semester": 1,
+      "description": "Fundamentals of DC and AC circuits, electrical machines, transformers, and power systems. Covers network theorems, phasor analysis, and electrical safety.",
+      "difficulty": "beginner",
+      "tags": [
+        "circuits",
+        "electrical",
+        "machines",
+        "network-theorems",
+        "ohms-law",
+        "power",
+        "thevenin"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "electrical-circuits",
+        "network-analysis",
+        "power-systems"
+      ],
+      "learning_outcomes": [
+        "Analyze DC and AC circuits using network theorems",
+        "Determine performance characteristics of transformers",
+        "Explain working principles of DC and AC machines",
+        "Apply electrical safety practices and grounding techniques"
+      ],
+      "industry_relevance": "Essential for power, manufacturing, automotive, and infrastructure sectors",
+      "career_paths": [
+        "Electrical Engineer",
+        "Power Systems Engineer",
+        "Maintenance Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "engineering-graphics",
+      "name": "Engineering Graphics",
+      "code": "ME-101",
+      "category": "engineering-science",
+      "semester": 1,
+      "description": "Orthographic projections, isometric drawings, sectioning, development of surfaces, and computer-aided drafting using CAD software.",
+      "difficulty": "beginner",
+      "tags": [
+        "graphics",
+        "cad",
+        "drafting",
+        "design",
+        "visualization"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "cad",
+        "cam",
+        "machine-design"
+      ],
+      "learning_outcomes": [
+        "Create orthographic and isometric projections of engineering objects",
+        "Prepare sectional views and development of surfaces",
+        "Use CAD software for 2D and 3D modeling",
+        "Interpret engineering drawings and blueprints"
+      ],
+      "industry_relevance": "Universal engineering skill for design, manufacturing, and construction industries",
+      "career_paths": [
+        "Design Engineer",
+        "CAD Engineer",
+        "Architectural Drafter"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": false
+    },
+    {
+      "id": "workshop-practice",
+      "name": "Workshop Practice",
+      "code": "ME-102",
+      "category": "engineering-science",
+      "semester": 1,
+      "description": "Hands-on training in fitting, carpentry, welding, sheet metal, smithy, foundry, and basic electrical wiring. Emphasizes workshop safety and measurement tools.",
+      "difficulty": "beginner",
+      "tags": [
+        "workshop",
+        "manufacturing",
+        "welding",
+        "fabrication",
+        "safety"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "manufacturing-technology",
+        "cad",
+        "cam"
+      ],
+      "learning_outcomes": [
+        "Perform basic fitting, carpentry, and welding operations",
+        "Fabricate sheet metal components using hand tools",
+        "Demonstrate safe workshop practices and tool handling",
+        "Measure and inspect components using precision instruments"
+      ],
+      "industry_relevance": "Hands-on foundation for manufacturing, production, and maintenance roles",
+      "career_paths": [
+        "Production Engineer",
+        "Manufacturing Engineer",
+        "Maintenance Technician"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": false
+    },
+    {
+      "id": "english-communication",
+      "name": "English Communication",
+      "code": "HS-101",
+      "category": "humanities",
+      "semester": 1,
+      "description": "Development of professional communication skills including technical writing, presentation skills, group discussions, interviews, and inter-personal communication.",
+      "difficulty": "beginner",
+      "tags": [
+        "communication",
+        "english",
+        "writing",
+        "presentation",
+        "soft-skills"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "universal-human-values"
+      ],
+      "learning_outcomes": [
+        "Write clear technical documents, reports, and emails",
+        "Deliver effective presentations with visual aids",
+        "Participate in group discussions and interviews confidently",
+        "Demonstrate professional etiquettes in workplace communication"
+      ],
+      "industry_relevance": "Essential professional skill for every engineering graduate across all sectors",
+      "career_paths": [
+        "Technical Writer",
+        "Project Manager",
+        "Business Analyst"
+      ],
+      "has_lab": false,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "environmental-science",
+      "name": "Environmental Science",
+      "code": "ES-101",
+      "category": "humanities",
+      "semester": 2,
+      "description": "Ecosystems, biodiversity, natural resources, environmental pollution, climate change, sustainable development, and environmental legislation.",
+      "difficulty": "beginner",
+      "tags": [
+        "environment",
+        "ecology",
+        "pollution",
+        "sustainability",
+        "climate"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "engg-chemistry",
+        "renewable-energy"
+      ],
+      "learning_outcomes": [
+        "Analyze ecosystem structure, function, and biodiversity",
+        "Evaluate environmental impact of engineering projects",
+        "Identify pollution sources and control methods",
+        "Apply principles of sustainable development"
+      ],
+      "industry_relevance": "Mandatory for environmental compliance in all engineering industries",
+      "career_paths": [
+        "Environmental Engineer",
+        "Sustainability Consultant",
+        "EHS Manager"
+      ],
+      "has_lab": false,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": false
+    },
+    {
+      "id": "constitution-of-india",
+      "name": "Constitution of India",
+      "code": "MC-101",
+      "category": "humanities",
+      "semester": 2,
+      "description": "Historical background, preamble, fundamental rights and duties, directive principles, federal structure, parliamentary system, judiciary, and constitutional amendments.",
+      "difficulty": "beginner",
+      "tags": [
+        "constitution",
+        "law",
+        "civics",
+        "governance",
+        "rights"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "universal-human-values"
+      ],
+      "learning_outcomes": [
+        "Explain the historical evolution of the Indian Constitution",
+        "Identify fundamental rights, duties, and directive principles",
+        "Describe the structure of union and state governments",
+        "Analyze the role of judiciary and constitutional amendments"
+      ],
+      "industry_relevance": "Mandatory for engineering graduates under AICTE and UGC guidelines",
+      "career_paths": [
+        "Public Policy Analyst",
+        "Civil Services",
+        "Corporate Legal Advisor"
+      ],
+      "has_lab": false,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": false
+    },
+    {
+      "id": "universal-human-values",
+      "name": "Universal Human Values",
+      "code": "HS-102",
+      "category": "humanities",
+      "semester": 2,
+      "description": "Self-exploration, harmony in human relationships, family, society, and nature. Understanding value education, ethical decision-making, and professional ethics.",
+      "difficulty": "beginner",
+      "tags": [
+        "ethics",
+        "values",
+        "philosophy",
+        "self-development",
+        "professional-ethics"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "english-communication",
+        "constitution-of-india"
+      ],
+      "learning_outcomes": [
+        "Articulate personal and professional values for engineering practice",
+        "Analyze ethical dilemmas using value-based frameworks",
+        "Demonstrate harmony in relationships and society",
+        "Integrate human values into engineering decision-making"
+      ],
+      "industry_relevance": "Foundation for ethical engineering practice and responsible innovation",
+      "career_paths": [
+        "Engineering Manager",
+        "Ethics Officer",
+        "Social Entrepreneur"
+      ],
+      "has_lab": false,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": false
+    },
+    {
+      "id": "physics-lab",
+      "name": "Physics Lab",
+      "code": "PH-151",
+      "category": "lab",
+      "semester": 1,
+      "description": "Experimental verification of physics principles including optics, electricity, magnetism, and modern physics using laboratory instruments and data analysis.",
+      "difficulty": "beginner",
+      "tags": [
+        "physics",
+        "lab",
+        "experiments",
+        "measurement"
+      ],
+      "prerequisites": [
+        "engg-physics"
+      ],
+      "related_subjects": [
+        "chemistry-lab",
+        "engg-physics"
+      ],
+      "learning_outcomes": [
+        "Use laboratory instruments such as spectrometers and oscilloscopes",
+        "Verify physical laws through systematic experimentation",
+        "Analyze experimental data and estimate measurement errors",
+        "Prepare scientific lab reports following standard formats"
+      ],
+      "industry_relevance": "Hands-on skills for R&D, quality testing, and instrumentation roles",
+      "career_paths": [
+        "Lab Technician",
+        "Quality Engineer",
+        "R&D Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": false,
+      "supports_projects": true,
+      "supports_interview": false
+    },
+    {
+      "id": "chemistry-lab",
+      "name": "Chemistry Lab",
+      "code": "CY-151",
+      "category": "lab",
+      "semester": 1,
+      "description": "Hands-on experiments in volumetric analysis, pH measurement, conductivity, chromatography, and synthesis of compounds with emphasis on lab safety.",
+      "difficulty": "beginner",
+      "tags": [
+        "chemistry",
+        "lab",
+        "experiments",
+        "analysis"
+      ],
+      "prerequisites": [
+        "engg-chemistry"
+      ],
+      "related_subjects": [
+        "physics-lab",
+        "engg-chemistry"
+      ],
+      "learning_outcomes": [
+        "Perform volumetric and gravimetric chemical analyses",
+        "Operate pH meters, conductometers, and spectrophotometers",
+        "Synthesize and characterize chemical compounds",
+        "Maintain lab safety protocols and chemical waste disposal"
+      ],
+      "industry_relevance": "Essential for chemical, pharmaceutical, materials, and environmental testing labs",
+      "career_paths": [
+        "Lab Analyst",
+        "Quality Control Chemist",
+        "Process Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": false,
+      "supports_projects": true,
+      "supports_interview": false
+    },
+    {
+      "id": "programming-lab",
+      "name": "Programming Lab",
+      "code": "CS-151",
+      "category": "lab",
+      "semester": 1,
+      "description": "Hands-on programming exercises in C covering algorithms, data structures, debugging, and problem-solving with weekly lab assignments and mini-projects.",
+      "difficulty": "beginner",
+      "tags": [
+        "programming",
+        "c",
+        "lab",
+        "algorithms",
+        "debugging"
+      ],
+      "prerequisites": [
+        "programming-problem-solving"
+      ],
+      "related_subjects": [
+        "programming-in-c",
+        "data-structures"
+      ],
+      "learning_outcomes": [
+        "Write and debug C programs for algorithmic problems",
+        "Implement data structures including arrays, linked lists, and trees",
+        "Use debugging tools and version control for code management",
+        "Complete mini-projects demonstrating programming proficiency"
+      ],
+      "industry_relevance": "Direct preparation for software development internships and entry-level roles",
+      "career_paths": [
+        "Software Developer",
+        "Systems Programmer",
+        "Embedded Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": false,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "workshop-lab",
+      "name": "Workshop Lab",
+      "code": "ME-151",
+      "category": "lab",
+      "semester": 1,
+      "description": "Practical workshop sessions in fitting, carpentry, welding, sheet metal, and foundry with focus on precision measurement and safety procedures.",
+      "difficulty": "beginner",
+      "tags": [
+        "workshop",
+        "manufacturing",
+        "welding",
+        "lab",
+        "fabrication"
+      ],
+      "prerequisites": [
+        "workshop-practice"
+      ],
+      "related_subjects": [
+        "manufacturing-technology",
+        "engineering-graphics"
+      ],
+      "learning_outcomes": [
+        "Fabricate components using fitting, carpentry, and welding",
+        "Operate drilling, grinding, and sheet metal machines safely",
+        "Measure finished components for dimensional accuracy",
+        "Demonstrate workshop organization and safety compliance"
+      ],
+      "industry_relevance": "Foundation for production and manufacturing industry roles",
+      "career_paths": [
+        "Production Engineer",
+        "Manufacturing Technician",
+        "Quality Inspector"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": false,
+      "supports_quiz": false,
+      "supports_projects": true,
+      "supports_interview": false
+    },
+    {
+      "id": "engineering-graphics-lab",
+      "name": "Engineering Graphics Lab",
+      "code": "ME-152",
+      "category": "lab",
+      "semester": 1,
+      "description": "Computer-aided drafting using AutoCAD or equivalent software for creating 2D drawings, 3D models, assemblies, and rendered visualizations.",
+      "difficulty": "beginner",
+      "tags": [
+        "cad",
+        "drafting",
+        "lab",
+        "3d-modeling"
+      ],
+      "prerequisites": [
+        "engineering-graphics"
+      ],
+      "related_subjects": [
+        "cad",
+        "cam",
+        "machine-design"
+      ],
+      "learning_outcomes": [
+        "Create 2D engineering drawings using CAD software",
+        "Build 3D solid models and parametric assemblies",
+        "Generate orthographic and isometric views from 3D models",
+        "Apply dimensions, tolerances, and annotations to drawings"
+      ],
+      "industry_relevance": "Essential CAD skills for mechanical, civil, aerospace, and automotive design",
+      "career_paths": [
+        "CAD Designer",
+        "Design Engineer",
+        "Architectural Designer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": false,
+      "supports_projects": true,
+      "supports_interview": false
+    }
+  ]
+}

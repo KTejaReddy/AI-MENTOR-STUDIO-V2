@@ -1,0 +1,55 @@
+.cmdk-dialog-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  backdrop-filter: blur(4px);
+}
+
+.cmdk-dialog-content {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 100%;
+  max-width: 600px;
+  background: var(--surface-100, #131620);
+  border: 1px solid var(--border, #1e2233);
+  border-radius: 12px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.4);
+  z-index: 51;
+  overflow: hidden;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cmdk-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  margin: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-secondary, #b0b4c5);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.cmdk-item[data-selected="true"] {
+  background-color: var(--accent-alpha, rgba(20, 184, 166, 0.1));
+  color: var(--accent-light, #5eead4);
+}
+
+.cmdk-item:active {
+  background-color: var(--accent-alpha-hover, rgba(20, 184, 166, 0.2));
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}

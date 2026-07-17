@@ -1,0 +1,1093 @@
+{
+  "timestamp": "2026-07-14T21:31:28.504773",
+  "verdict": "[FAIL] NOT PRODUCTION READY",
+  "all_pass": false,
+  "lessons": [
+    {
+      "lesson": {
+        "branch": "Computer Science Engineering",
+        "subject": "Python Programming",
+        "topic": "Functions"
+      },
+      "sections": {
+        "explanation": {
+          "status": "OK",
+          "content_length": 9658,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 11.23,
+          "preview": "**Functions: The Building Blocks of Python Programming**\n\n**2.0.1 Composing Reusable Code**\n\n### INT"
+        },
+        "caseStudy": {
+          "status": "OK",
+          "content_length": 11159,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 17.3,
+          "preview": "## Case Study 1: Netflix\nNetflix, the leading online streaming service, has a revenue of over $25 bi"
+        },
+        "analogy": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "examples": {
+          "status": "OK",
+          "content_length": 16667,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 40.22,
+          "preview": "## Beginner Examples (5)\n### 1. Simple Function\n#### Title: Introduction to Functions\n```python\n# De"
+        },
+        "quiz": {
+          "status": "OK",
+          "content_length": 11744,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 51.01,
+          "preview": "**Functions in Python Programming Comprehensive Exam**\n============================================="
+        },
+        "assignment": {
+          "status": "OK",
+          "content_length": 13279,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 57.7,
+          "preview": "**Functions in Python Programming Problem Set**\n\n**Theoretical Problems**\n\n### Problem 1: Function D"
+        },
+        "projects": {
+          "status": "OK",
+          "content_length": 9399,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 64.18,
+          "preview": "### Tier 1: Mini Project (1-2 hours)\n#### Project: To-Do List App with Functions in Python\n##### Tit"
+        },
+        "commonMistakes": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "interviewQuestions": {
+          "status": "OK",
+          "content_length": 11096,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 85.4,
+          "preview": "### Category 1: Conceptual\n#### 1. Function Definition\n* Difficulty: Easy\n* Question: What is a func"
+        },
+        "cheatSheet": {
+          "status": "OK",
+          "content_length": 6647,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 89.1,
+          "preview": "# Functions in Python Programming\n=====================================\n\n## Core Definition\n--------"
+        }
+      },
+      "model_routing": [
+        {
+          "section": "explanation",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 11.23,
+          "status": "completed"
+        },
+        {
+          "section": "caseStudy",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 17.3,
+          "status": "completed"
+        },
+        {
+          "section": "analogy",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 31.37,
+          "status": "failed"
+        },
+        {
+          "section": "examples",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 40.22,
+          "status": "completed"
+        },
+        {
+          "section": "quiz",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 51.01,
+          "status": "completed"
+        },
+        {
+          "section": "assignment",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 57.7,
+          "status": "completed"
+        },
+        {
+          "section": "projects",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 64.18,
+          "status": "completed"
+        },
+        {
+          "section": "commonMistakes",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 78.37,
+          "status": "failed"
+        },
+        {
+          "section": "interviewQuestions",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 85.4,
+          "status": "completed"
+        },
+        {
+          "section": "cheatSheet",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 89.1,
+          "status": "completed"
+        }
+      ],
+      "ttfb": 0.816,
+      "total_time": 89.67,
+      "errors": [],
+      "ok_count": 8,
+      "passed": false
+    },
+    {
+      "lesson": {
+        "branch": "Computer Science Engineering",
+        "subject": "Data Structures",
+        "topic": "Binary Search Tree"
+      },
+      "sections": {
+        "explanation": {
+          "status": "OK",
+          "content_length": 15497,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 9.62,
+          "preview": "# BEAUTIFUL TITLE\n## Efficient Data Retrieval: Mastering the Binary Search Tree\n\nAs we embark on thi"
+        },
+        "caseStudy": {
+          "status": "OK",
+          "content_length": 8125,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 16.04,
+          "preview": "## Case Study 1: Netflix\nNetflix, the pioneering streaming service, has revolutionized the way we co"
+        },
+        "analogy": {
+          "status": "OK",
+          "content_length": 6434,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 19.24,
+          "preview": "### Analogy 1: **Recipe Finder in a Restaurant Kitchen**\n\nImagine you're a busy chef in a restaurant"
+        },
+        "examples": {
+          "status": "OK",
+          "content_length": 17526,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 31.21,
+          "preview": "**Beginner Examples**\n======================\n\n### Example 1: Basic Binary Search Tree Implementation"
+        },
+        "quiz": {
+          "status": "OK",
+          "content_length": 12735,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 42.23,
+          "preview": "**Comprehensive Exam on Binary Search Tree in Data Structures**\n===================================="
+        },
+        "assignment": {
+          "status": "OK",
+          "content_length": 10376,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 48.36,
+          "preview": "**Binary Search Tree Problem Set**\n\n**Theoretical Problems**\n\n### Problem 1: Binary Search Tree Defi"
+        },
+        "projects": {
+          "status": "OK",
+          "content_length": 12320,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 55.2,
+          "preview": "### Binary Search Tree Projects\n#### Tier 1: Mini Project (1-2 hours)\n##### Title: Implementing a Ba"
+        },
+        "commonMistakes": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "interviewQuestions": {
+          "status": "OK",
+          "content_length": 13020,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 77.39,
+          "preview": "### Category 1: Conceptual\n#### 1. Introduction to Binary Search Tree\n* Difficulty: Easy\n* Question:"
+        },
+        "cheatSheet": {
+          "status": "OK",
+          "content_length": 5220,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 80.38,
+          "preview": "# Binary Search Tree Revision Cheat Sheet\n\n## Core Definition\n- **Definition:** A Binary Search Tree"
+        }
+      },
+      "model_routing": [
+        {
+          "section": "explanation",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 9.62,
+          "status": "completed"
+        },
+        {
+          "section": "caseStudy",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 16.04,
+          "status": "completed"
+        },
+        {
+          "section": "analogy",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 19.24,
+          "status": "completed"
+        },
+        {
+          "section": "examples",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 31.21,
+          "status": "completed"
+        },
+        {
+          "section": "quiz",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 42.23,
+          "status": "completed"
+        },
+        {
+          "section": "assignment",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 48.36,
+          "status": "completed"
+        },
+        {
+          "section": "projects",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 55.2,
+          "status": "completed"
+        },
+        {
+          "section": "commonMistakes",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 69.3,
+          "status": "failed"
+        },
+        {
+          "section": "interviewQuestions",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 77.39,
+          "status": "completed"
+        },
+        {
+          "section": "cheatSheet",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 80.38,
+          "status": "completed"
+        }
+      ],
+      "ttfb": 0.812,
+      "total_time": 80.94,
+      "errors": [],
+      "ok_count": 9,
+      "passed": false
+    },
+    {
+      "lesson": {
+        "branch": "Computer Science Engineering",
+        "subject": "Operating Systems",
+        "topic": "Deadlock"
+      },
+      "sections": {
+        "explanation": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "caseStudy": {
+          "status": "OK",
+          "content_length": 9611,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 18.92,
+          "preview": "## Case Study 1: Netflix\nNetflix is a household name in the entertainment industry, with a revenue o"
+        },
+        "analogy": {
+          "status": "OK",
+          "content_length": 6900,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 21.96,
+          "preview": "### Analogy 1: Kitchen Chaos - Restaurant Kitchen\nThe everyday scenario:\nImagine a busy restaurant k"
+        },
+        "examples": {
+          "status": "OK",
+          "content_length": 16471,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 34.03,
+          "preview": "## Beginner Examples (5)\n### 1. Basic Deadlock Example\n```python\n# Import the threading module for c"
+        },
+        "quiz": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "assignment": {
+          "status": "OK",
+          "content_length": 13441,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 64.06,
+          "preview": "**Problem Set: Deadlock in Operating Systems**\n\n**Theoretical Problems**\n\n### 1. **Deadlock Detectio"
+        },
+        "projects": {
+          "status": "OK",
+          "content_length": 11355,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 71.43,
+          "preview": "### Tier 1: Mini Project (1-2 hours)\n#### Title: Deadlock Detection using Banker's Algorithm\n#### Ob"
+        },
+        "commonMistakes": {
+          "status": "OK",
+          "content_length": 12276,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 75.15,
+          "preview": "**Deadlock Prevention: 20 Common Mistakes and How to Avoid Them**\n=================================="
+        },
+        "interviewQuestions": {
+          "status": "OK",
+          "content_length": 12579,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 82.16,
+          "preview": "### Category 1: Conceptual\n#### 1. Introduction to Deadlock\n* Difficulty: Easy\n* Question: What is a"
+        },
+        "cheatSheet": {
+          "status": "OK",
+          "content_length": 7742,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 85.44,
+          "preview": "# Deadlock in Operating Systems Revision Cheat Sheet\n==============================================\n"
+        }
+      },
+      "model_routing": [
+        {
+          "section": "explanation",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 13.19,
+          "status": "failed"
+        },
+        {
+          "section": "caseStudy",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 18.92,
+          "status": "completed"
+        },
+        {
+          "section": "analogy",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 21.96,
+          "status": "completed"
+        },
+        {
+          "section": "examples",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 34.03,
+          "status": "completed"
+        },
+        {
+          "section": "quiz",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 46.96,
+          "status": "failed"
+        },
+        {
+          "section": "assignment",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 64.06,
+          "status": "completed"
+        },
+        {
+          "section": "projects",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 71.43,
+          "status": "completed"
+        },
+        {
+          "section": "commonMistakes",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 75.15,
+          "status": "completed"
+        },
+        {
+          "section": "interviewQuestions",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 82.16,
+          "status": "completed"
+        },
+        {
+          "section": "cheatSheet",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 85.44,
+          "status": "completed"
+        }
+      ],
+      "ttfb": 0.848,
+      "total_time": 86.02,
+      "errors": [],
+      "ok_count": 8,
+      "passed": false
+    },
+    {
+      "lesson": {
+        "branch": "ECE",
+        "subject": "Digital Electronics",
+        "topic": "Flip Flops"
+      },
+      "sections": {
+        "explanation": {
+          "status": "OK",
+          "content_length": 15019,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 10.15,
+          "preview": "# Digital Electronics: The Flip Flop Revolution\n## Mastering the Fundamentals of Sequential Logic\n\nA"
+        },
+        "caseStudy": {
+          "status": "OK",
+          "content_length": 8529,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 15.51,
+          "preview": "## Case Study 1: Netflix\nNetflix, the world's leading online entertainment service, has a revenue of"
+        },
+        "analogy": {
+          "status": "OK",
+          "content_length": 5441,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 18.58,
+          "preview": "### Analogy 1: **Recipe for Data Retention**\n#### Everyday Scenario\nImagine you're baking a cake and"
+        },
+        "examples": {
+          "status": "OK",
+          "content_length": 15427,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 26.77,
+          "preview": "## Beginner Examples (5)\n### 1. Basic Flip Flop\n```python\n# Import necessary libraries\nimport numpy "
+        },
+        "quiz": {
+          "status": "OK",
+          "content_length": 11586,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 38.0,
+          "preview": "**Comprehensive Final Exam: Flip Flops in Digital Electronics**\n\n**Section A: Multiple Choice (25 qu"
+        },
+        "assignment": {
+          "status": "OK",
+          "content_length": 9654,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 44.64,
+          "preview": "**Flip Flops in Digital Electronics Problem Set**\n=================================================="
+        },
+        "projects": {
+          "status": "OK",
+          "content_length": 7079,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 53.33,
+          "preview": "### Mini Project: Flip Flop Counter\n#### Title\nDesign a Simple Counter using Flip Flops\n#### Objecti"
+        },
+        "commonMistakes": {
+          "status": "OK",
+          "content_length": 10945,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 57.16,
+          "preview": "**Common Mistakes in Flip Flop Design**\n=====================================\n\n### Category 1: Funda"
+        },
+        "interviewQuestions": {
+          "status": "OK",
+          "content_length": 10804,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 65.11,
+          "preview": "### Category 1: Conceptual\n#### 1. Basic Flip Flop Understanding\n* Difficulty: Easy\n* Question: What"
+        },
+        "cheatSheet": {
+          "status": "EMPTY",
+          "content_length": 0
+        }
+      },
+      "model_routing": [
+        {
+          "section": "explanation",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 10.15,
+          "status": "completed"
+        },
+        {
+          "section": "caseStudy",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 15.51,
+          "status": "completed"
+        },
+        {
+          "section": "analogy",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 18.58,
+          "status": "completed"
+        },
+        {
+          "section": "examples",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 26.77,
+          "status": "completed"
+        },
+        {
+          "section": "quiz",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 38.0,
+          "status": "completed"
+        },
+        {
+          "section": "assignment",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 44.64,
+          "status": "completed"
+        },
+        {
+          "section": "projects",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 53.33,
+          "status": "completed"
+        },
+        {
+          "section": "commonMistakes",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 57.16,
+          "status": "completed"
+        },
+        {
+          "section": "interviewQuestions",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 65.11,
+          "status": "completed"
+        },
+        {
+          "section": "cheatSheet",
+          "model": "llama3-8b-8192",
+          "elapsed": 79.28,
+          "status": "failed"
+        }
+      ],
+      "ttfb": 0.809,
+      "total_time": 79.85,
+      "errors": [],
+      "ok_count": 9,
+      "passed": false
+    },
+    {
+      "lesson": {
+        "branch": "Mechanical Engineering",
+        "subject": "Thermodynamics",
+        "topic": "Carnot Cycle"
+      },
+      "sections": {
+        "explanation": {
+          "status": "OK",
+          "content_length": 15994,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 10.28,
+          "preview": "# Beautiful Title\n## The Carnot Cycle: A Fundamental Concept in Thermodynamics for Maximizing Effici"
+        },
+        "caseStudy": {
+          "status": "OK",
+          "content_length": 6984,
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 14.76,
+          "preview": "## Case Study 1: Google\nGoogle, the multinational technology giant, has a revenue of over $250 billi"
+        },
+        "analogy": {
+          "status": "OK",
+          "content_length": 6614,
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 17.65,
+          "preview": "### Analogy 1: Sailing a Yacht\nThe everyday scenario\nImagine you're sailing a yacht in calm waters. "
+        },
+        "examples": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "quiz": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "assignment": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "projects": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "commonMistakes": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "interviewQuestions": {
+          "status": "EMPTY",
+          "content_length": 0
+        },
+        "cheatSheet": {
+          "status": "EMPTY",
+          "content_length": 0
+        }
+      },
+      "model_routing": [
+        {
+          "section": "explanation",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 10.28,
+          "status": "completed"
+        },
+        {
+          "section": "caseStudy",
+          "model": "llama-3.3-70b-versatile",
+          "elapsed": 14.76,
+          "status": "completed"
+        },
+        {
+          "section": "analogy",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 17.65,
+          "status": "completed"
+        },
+        {
+          "section": "examples",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 30.63,
+          "status": "failed"
+        },
+        {
+          "section": "quiz",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 43.2,
+          "status": "failed"
+        },
+        {
+          "section": "assignment",
+          "model": "llama-3.1-8b-instant",
+          "elapsed": 56.08,
+          "status": "failed"
+        },
+        {
+          "section": "projects",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 68.63,
+          "status": "failed"
+        },
+        {
+          "section": "commonMistakes",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 81.57,
+          "status": "failed"
+        },
+        {
+          "section": "interviewQuestions",
+          "model": "mixtral-8x7b-32768",
+          "elapsed": 94.11,
+          "status": "failed"
+        },
+        {
+          "section": "cheatSheet",
+          "model": "llama3-8b-8192",
+          "elapsed": 106.64,
+          "status": "failed"
+        }
+      ],
+      "ttfb": 0.802,
+      "total_time": 107.19,
+      "errors": [],
+      "ok_count": 3,
+      "passed": false
+    }
+  ],
+  "stress": {
+    "results": [
+      {
+        "subject": "Python Programming",
+        "topic": "Variables",
+        "sections_ok": 0,
+        "total_time": 30.58,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Data Structures",
+        "topic": "Arrays",
+        "sections_ok": 0,
+        "total_time": 30.6,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Operating Systems",
+        "topic": "Process",
+        "sections_ok": 7,
+        "total_time": 118.87,
+        "errors": []
+      },
+      {
+        "subject": "Digital Electronics",
+        "topic": "Logic Gates",
+        "sections_ok": 0,
+        "total_time": 30.58,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Thermodynamics",
+        "topic": "Heat Transfer",
+        "sections_ok": 0,
+        "total_time": 30.58,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Python Programming",
+        "topic": "Loops",
+        "sections_ok": 0,
+        "total_time": 30.62,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Data Structures",
+        "topic": "Linked Lists",
+        "sections_ok": 0,
+        "total_time": 30.64,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Operating Systems",
+        "topic": "Memory Management",
+        "sections_ok": 0,
+        "total_time": 30.59,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      },
+      {
+        "subject": "Digital Electronics",
+        "topic": "Boolean Algebra",
+        "sections_ok": 4,
+        "total_time": 130.13,
+        "errors": []
+      },
+      {
+        "subject": "Thermodynamics",
+        "topic": "First Law",
+        "sections_ok": 0,
+        "total_time": 30.64,
+        "errors": [
+          "All API keys are currently exhausted. Please wait a moment and try again."
+        ]
+      }
+    ],
+    "model_usage": {
+      "llama-3.3-70b-versatile": 5,
+      "llama-3.1-8b-instant": 7,
+      "mixtral-8x7b-32768": 6,
+      "llama3-8b-8192": 2
+    },
+    "all_passed": false
+  },
+  "log": [
+    "[21:15:39] ============================================================",
+    "[21:15:39] AI MENTOR STUDIO v2 — PRODUCTION QA SUITE",
+    "[21:15:39] Start time: 2026-07-14T21:15:39.924207",
+    "[21:15:39] ============================================================",
+    "[21:15:40] \n[HEALTH] Backend: {'status': 'ok', 'version': '2.0.0', 'app_name': 'Mentor AI Studio'}",
+    "[21:15:41] [KEYS] {'total': 10, 'healthy': 10, 'failed': 0, 'cooldown': 0, 'total_requests': 0, 'total_errors': 0}",
+    "[21:15:41] \n============================================================",
+    "[21:15:41] LESSON 1: Computer Science Engineering / Python Programming / Functions",
+    "[21:15:41] ============================================================",
+    "[21:15:41]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:15:41]   [GEN ] explanation → generating...",
+    "[21:15:52]   [[OK]] explanation done | model=llama-3.1-8b-instant | 9658 chars | 11.23s",
+    "[21:15:53]   [GEN ] caseStudy → generating...",
+    "[21:15:58]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 11159 chars | 17.3s",
+    "[21:15:59]   [GEN ] analogy → generating...",
+    "[21:16:12]   [[FAIL]] analogy done | model=mixtral-8x7b-32768 | 0 chars | 31.37s",
+    "[21:16:13]   [GEN ] examples → generating...",
+    "[21:16:21]   [[OK]] examples done | model=llama-3.3-70b-versatile | 16667 chars | 40.22s",
+    "[21:16:22]   [GEN ] quiz → generating...",
+    "[21:16:32]   [[OK]] quiz done | model=llama-3.1-8b-instant | 11744 chars | 51.01s",
+    "[21:16:33]   [GEN ] assignment → generating...",
+    "[21:16:39]   [[OK]] assignment done | model=llama-3.1-8b-instant | 13279 chars | 57.7s",
+    "[21:16:39]   [GEN ] projects → generating...",
+    "[21:16:45]   [[OK]] projects done | model=llama-3.3-70b-versatile | 9399 chars | 64.18s",
+    "[21:16:46]   [GEN ] commonMistakes → generating...",
+    "[21:16:59]   [[FAIL]] commonMistakes done | model=mixtral-8x7b-32768 | 0 chars | 78.37s",
+    "[21:17:00]   [GEN ] interviewQuestions → generating...",
+    "[21:17:06]   [[OK]] interviewQuestions done | model=llama-3.3-70b-versatile | 11096 chars | 85.4s",
+    "[21:17:07]   [GEN ] cheatSheet → generating...",
+    "[21:17:10]   [[OK]] cheatSheet done | model=llama-3.1-8b-instant | 6647 chars | 89.1s",
+    "[21:17:10]   [DONE] Final lesson received | total=89.67s",
+    "[21:17:10] \n  RESULT: 8/10 sections generated",
+    "[21:17:10]   EMPTY: ['analogy', 'commonMistakes']",
+    "[21:17:10]   TTFB: 0.816s | TOTAL: 89.67s",
+    "[21:17:12] \n============================================================",
+    "[21:17:12] LESSON 2: Computer Science Engineering / Data Structures / Binary Search Tree",
+    "[21:17:12] ============================================================",
+    "[21:17:13]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:17:13]   [GEN ] explanation → generating...",
+    "[21:17:22]   [[OK]] explanation done | model=llama-3.3-70b-versatile | 15497 chars | 9.62s",
+    "[21:17:23]   [GEN ] caseStudy → generating...",
+    "[21:17:29]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 8125 chars | 16.04s",
+    "[21:17:29]   [GEN ] analogy → generating...",
+    "[21:17:32]   [[OK]] analogy done | model=llama-3.1-8b-instant | 6434 chars | 19.24s",
+    "[21:17:32]   [GEN ] examples → generating...",
+    "[21:17:44]   [[OK]] examples done | model=llama-3.1-8b-instant | 17526 chars | 31.21s",
+    "[21:17:44]   [GEN ] quiz → generating...",
+    "[21:17:55]   [[OK]] quiz done | model=llama-3.1-8b-instant | 12735 chars | 42.23s",
+    "[21:17:55]   [GEN ] assignment → generating...",
+    "[21:18:01]   [[OK]] assignment done | model=llama-3.1-8b-instant | 10376 chars | 48.36s",
+    "[21:18:02]   [GEN ] projects → generating...",
+    "[21:18:08]   [[OK]] projects done | model=llama-3.3-70b-versatile | 12320 chars | 55.2s",
+    "[21:18:08]   [GEN ] commonMistakes → generating...",
+    "[21:18:22]   [[FAIL]] commonMistakes done | model=mixtral-8x7b-32768 | 0 chars | 69.3s",
+    "[21:18:23]   [GEN ] interviewQuestions → generating...",
+    "[21:18:30]   [[OK]] interviewQuestions done | model=llama-3.3-70b-versatile | 13020 chars | 77.39s",
+    "[21:18:31]   [GEN ] cheatSheet → generating...",
+    "[21:18:33]   [[OK]] cheatSheet done | model=llama-3.1-8b-instant | 5220 chars | 80.38s",
+    "[21:18:33]   [DONE] Final lesson received | total=80.94s",
+    "[21:18:33] \n  RESULT: 9/10 sections generated",
+    "[21:18:33]   EMPTY: ['commonMistakes']",
+    "[21:18:33]   TTFB: 0.812s | TOTAL: 80.94s",
+    "[21:18:35] \n============================================================",
+    "[21:18:35] LESSON 3: Computer Science Engineering / Operating Systems / Deadlock",
+    "[21:18:35] ============================================================",
+    "[21:18:36]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:18:36]   [GEN ] explanation → generating...",
+    "[21:18:49]   [[FAIL]] explanation done | model=mixtral-8x7b-32768 | 0 chars | 13.19s",
+    "[21:18:49]   [GEN ] caseStudy → generating...",
+    "[21:18:55]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 9611 chars | 18.92s",
+    "[21:18:55]   [GEN ] analogy → generating...",
+    "[21:18:58]   [[OK]] analogy done | model=llama-3.1-8b-instant | 6900 chars | 21.96s",
+    "[21:18:58]   [GEN ] examples → generating...",
+    "[21:19:10]   [[OK]] examples done | model=llama-3.3-70b-versatile | 16471 chars | 34.03s",
+    "[21:19:10]   [GEN ] quiz → generating...",
+    "[21:19:23]   [[FAIL]] quiz done | model=mixtral-8x7b-32768 | 0 chars | 46.96s",
+    "[21:19:23]   [GEN ] assignment → generating...",
+    "[21:19:40]   [[OK]] assignment done | model=llama-3.1-8b-instant | 13441 chars | 64.06s",
+    "[21:19:40]   [GEN ] projects → generating...",
+    "[21:19:47]   [[OK]] projects done | model=llama-3.3-70b-versatile | 11355 chars | 71.43s",
+    "[21:19:48]   [GEN ] commonMistakes → generating...",
+    "[21:19:51]   [[OK]] commonMistakes done | model=llama-3.1-8b-instant | 12276 chars | 75.15s",
+    "[21:19:51]   [GEN ] interviewQuestions → generating...",
+    "[21:19:58]   [[OK]] interviewQuestions done | model=llama-3.3-70b-versatile | 12579 chars | 82.16s",
+    "[21:19:58]   [GEN ] cheatSheet → generating...",
+    "[21:20:01]   [[OK]] cheatSheet done | model=llama-3.1-8b-instant | 7742 chars | 85.44s",
+    "[21:20:01]   [DONE] Final lesson received | total=86.02s",
+    "[21:20:01] \n  RESULT: 8/10 sections generated",
+    "[21:20:01]   EMPTY: ['explanation', 'quiz']",
+    "[21:20:01]   TTFB: 0.848s | TOTAL: 86.02s",
+    "[21:20:03] \n============================================================",
+    "[21:20:03] LESSON 4: ECE / Digital Electronics / Flip Flops",
+    "[21:20:03] ============================================================",
+    "[21:20:04]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:20:04]   [GEN ] explanation → generating...",
+    "[21:20:14]   [[OK]] explanation done | model=llama-3.3-70b-versatile | 15019 chars | 10.15s",
+    "[21:20:14]   [GEN ] caseStudy → generating...",
+    "[21:20:19]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 8529 chars | 15.51s",
+    "[21:20:20]   [GEN ] analogy → generating...",
+    "[21:20:22]   [[OK]] analogy done | model=llama-3.1-8b-instant | 5441 chars | 18.58s",
+    "[21:20:23]   [GEN ] examples → generating...",
+    "[21:20:30]   [[OK]] examples done | model=llama-3.3-70b-versatile | 15427 chars | 26.77s",
+    "[21:20:31]   [GEN ] quiz → generating...",
+    "[21:20:42]   [[OK]] quiz done | model=llama-3.1-8b-instant | 11586 chars | 38.0s",
+    "[21:20:42]   [GEN ] assignment → generating...",
+    "[21:20:48]   [[OK]] assignment done | model=llama-3.1-8b-instant | 9654 chars | 44.64s",
+    "[21:20:49]   [GEN ] projects → generating...",
+    "[21:20:57]   [[OK]] projects done | model=llama-3.3-70b-versatile | 7079 chars | 53.33s",
+    "[21:20:58]   [GEN ] commonMistakes → generating...",
+    "[21:21:01]   [[OK]] commonMistakes done | model=llama-3.1-8b-instant | 10945 chars | 57.16s",
+    "[21:21:01]   [GEN ] interviewQuestions → generating...",
+    "[21:21:09]   [[OK]] interviewQuestions done | model=llama-3.3-70b-versatile | 10804 chars | 65.11s",
+    "[21:21:09]   [GEN ] cheatSheet → generating...",
+    "[21:21:23]   [[FAIL]] cheatSheet done | model=llama3-8b-8192 | 0 chars | 79.28s",
+    "[21:21:23]   [DONE] Final lesson received | total=79.85s",
+    "[21:21:23] \n  RESULT: 9/10 sections generated",
+    "[21:21:23]   EMPTY: ['cheatSheet']",
+    "[21:21:23]   TTFB: 0.809s | TOTAL: 79.85s",
+    "[21:21:25] \n============================================================",
+    "[21:21:25] LESSON 5: Mechanical Engineering / Thermodynamics / Carnot Cycle",
+    "[21:21:25] ============================================================",
+    "[21:21:26]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:21:26]   [GEN ] explanation → generating...",
+    "[21:21:36]   [[OK]] explanation done | model=llama-3.3-70b-versatile | 15994 chars | 10.28s",
+    "[21:21:36]   [GEN ] caseStudy → generating...",
+    "[21:21:40]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 6984 chars | 14.76s",
+    "[21:21:41]   [GEN ] analogy → generating...",
+    "[21:21:43]   [[OK]] analogy done | model=llama-3.1-8b-instant | 6614 chars | 17.65s",
+    "[21:21:44]   [GEN ] examples → generating...",
+    "[21:21:56]   [[FAIL]] examples done | model=mixtral-8x7b-32768 | 0 chars | 30.63s",
+    "[21:21:57]   [GEN ] quiz → generating...",
+    "[21:22:09]   [[FAIL]] quiz done | model=mixtral-8x7b-32768 | 0 chars | 43.2s",
+    "[21:22:09]   [GEN ] assignment → generating...",
+    "[21:22:22]   [[FAIL]] assignment done | model=llama-3.1-8b-instant | 0 chars | 56.08s",
+    "[21:22:22]   [GEN ] projects → generating...",
+    "[21:22:34]   [[FAIL]] projects done | model=mixtral-8x7b-32768 | 0 chars | 68.63s",
+    "[21:22:35]   [GEN ] commonMistakes → generating...",
+    "[21:22:47]   [[FAIL]] commonMistakes done | model=mixtral-8x7b-32768 | 0 chars | 81.57s",
+    "[21:22:48]   [GEN ] interviewQuestions → generating...",
+    "[21:23:00]   [[FAIL]] interviewQuestions done | model=mixtral-8x7b-32768 | 0 chars | 94.11s",
+    "[21:23:00]   [GEN ] cheatSheet → generating...",
+    "[21:23:12]   [[FAIL]] cheatSheet done | model=llama3-8b-8192 | 0 chars | 106.64s",
+    "[21:23:12]   [DONE] Final lesson received | total=107.19s",
+    "[21:23:12] \n  RESULT: 3/10 sections generated",
+    "[21:23:12]   EMPTY: ['examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:23:12]   TTFB: 0.802s | TOTAL: 107.19s",
+    "[21:23:14] \n============================================================",
+    "[21:23:14] STRESS TEST: API Key Rotation (10 rapid requests)",
+    "[21:23:14] ============================================================",
+    "[21:23:14] \n  Stress #1: Python Programming / Variables",
+    "[21:23:45]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:23:45]   → 0 sections OK | 30.58s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:23:45] \n  Stress #2: Data Structures / Arrays",
+    "[21:24:15]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:24:15]   → 0 sections OK | 30.6s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:24:15] \n  Stress #3: Operating Systems / Process",
+    "[21:24:36]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:24:36]   [GEN ] explanation → generating...",
+    "[21:24:48]   [[OK]] explanation done | model=llama-3.3-70b-versatile | 14655 chars | 12.28s",
+    "[21:24:49]   [GEN ] caseStudy → generating...",
+    "[21:24:53]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 8199 chars | 17.52s",
+    "[21:24:54]   [GEN ] analogy → generating...",
+    "[21:24:57]   [[OK]] analogy done | model=llama-3.1-8b-instant | 7213 chars | 20.63s",
+    "[21:24:57]   [GEN ] examples → generating...",
+    "[21:25:09]   [[OK]] examples done | model=llama-3.1-8b-instant | 16559 chars | 32.83s",
+    "[21:25:09]   [GEN ] quiz → generating...",
+    "[21:25:20]   [[OK]] quiz done | model=llama-3.1-8b-instant | 14767 chars | 43.67s",
+    "[21:25:20]   [GEN ] assignment → generating...",
+    "[21:25:27]   [[OK]] assignment done | model=llama-3.1-8b-instant | 13980 chars | 50.94s",
+    "[21:25:27]   [GEN ] projects → generating...",
+    "[21:25:36]   [[OK]] projects done | model=llama-3.3-70b-versatile | 12803 chars | 59.8s",
+    "[21:25:36]   [GEN ] commonMistakes → generating...",
+    "[21:25:49]   [[FAIL]] commonMistakes done | model=mixtral-8x7b-32768 | 0 chars | 73.15s",
+    "[21:25:50]   [GEN ] interviewQuestions → generating...",
+    "[21:26:02]   [[FAIL]] interviewQuestions done | model=mixtral-8x7b-32768 | 0 chars | 85.7s",
+    "[21:26:02]   [GEN ] cheatSheet → generating...",
+    "[21:26:14]   [[FAIL]] cheatSheet done | model=llama3-8b-8192 | 0 chars | 98.27s",
+    "[21:26:14]   [DONE] Final lesson received | total=118.86s",
+    "[21:26:14]   → 7 sections OK | 118.87s | errors: []",
+    "[21:26:14] \n  Stress #4: Digital Electronics / Logic Gates",
+    "[21:26:45]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:26:45]   → 0 sections OK | 30.58s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:26:45] \n  Stress #5: Thermodynamics / Heat Transfer",
+    "[21:27:15]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:27:15]   → 0 sections OK | 30.58s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:27:15] \n  Stress #6: Python Programming / Loops",
+    "[21:27:46]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:27:46]   → 0 sections OK | 30.62s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:27:46] \n  Stress #7: Data Structures / Linked Lists",
+    "[21:28:17]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:28:17]   → 0 sections OK | 30.64s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:28:17] \n  Stress #8: Operating Systems / Memory Management",
+    "[21:28:47]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:28:47]   → 0 sections OK | 30.59s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:28:47] \n  Stress #9: Digital Electronics / Boolean Algebra",
+    "[21:29:13]   [PLAN] sections planned: ['explanation', 'caseStudy', 'analogy', 'examples', 'quiz', 'assignment', 'projects', 'commonMistakes', 'interviewQuestions', 'cheatSheet']",
+    "[21:29:13]   [GEN ] explanation → generating...",
+    "[21:29:22]   [[OK]] explanation done | model=llama-3.3-70b-versatile | 12713 chars | 9.01s",
+    "[21:29:22]   [GEN ] caseStudy → generating...",
+    "[21:29:27]   [[OK]] caseStudy done | model=llama-3.3-70b-versatile | 9307 chars | 14.3s",
+    "[21:29:28]   [GEN ] analogy → generating...",
+    "[21:29:30]   [[OK]] analogy done | model=llama-3.1-8b-instant | 5977 chars | 17.07s",
+    "[21:29:30]   [GEN ] examples → generating...",
+    "[21:29:43]   [[FAIL]] examples done | model=mixtral-8x7b-32768 | 0 chars | 30.04s",
+    "[21:29:43]   [GEN ] quiz → generating...",
+    "[21:29:56]   [[FAIL]] quiz done | model=mixtral-8x7b-32768 | 0 chars | 42.99s",
+    "[21:29:56]   [GEN ] assignment → generating...",
+    "[21:30:08]   [[FAIL]] assignment done | model=llama-3.1-8b-instant | 0 chars | 55.53s",
+    "[21:30:09]   [GEN ] projects → generating...",
+    "[21:30:21]   [[FAIL]] projects done | model=mixtral-8x7b-32768 | 0 chars | 68.56s",
+    "[21:30:22]   [GEN ] commonMistakes → generating...",
+    "[21:30:34]   [[FAIL]] commonMistakes done | model=mixtral-8x7b-32768 | 0 chars | 81.13s",
+    "[21:30:34]   [GEN ] interviewQuestions → generating...",
+    "[21:30:44]   [[OK]] interviewQuestions done | model=llama-3.1-8b-instant | 11474 chars | 91.53s",
+    "[21:30:45]   [GEN ] cheatSheet → generating...",
+    "[21:30:57]   [[FAIL]] cheatSheet done | model=llama3-8b-8192 | 0 chars | 104.51s",
+    "[21:30:57]   [DONE] Final lesson received | total=130.13s",
+    "[21:30:57]   → 4 sections OK | 130.13s | errors: []",
+    "[21:30:57] \n  Stress #10: Thermodynamics / First Law",
+    "[21:31:28]   [ERR] All API keys are currently exhausted. Please wait a moment and try again.",
+    "[21:31:28]   → 0 sections OK | 30.64s | errors: ['All API keys are currently exhausted. Please wait a moment and try again.']",
+    "[21:31:28] \n  STRESS SUMMARY:",
+    "[21:31:28]   Total requests: 10",
+    "[21:31:28]   All passed: False",
+    "[21:31:28]   Models used: {'llama-3.3-70b-versatile': 5, 'llama-3.1-8b-instant': 7, 'mixtral-8x7b-32768': 6, 'llama3-8b-8192': 2}",
+    "[21:31:28] \n============================================================",
+    "[21:31:28] FINAL QA REPORT",
+    "[21:31:28] ============================================================",
+    "[21:31:28] \n  Lesson 1 [FAIL]: Python Programming / Functions",
+    "[21:31:28]     Sections: 8/10 OK",
+    "[21:31:28]     TTFB: 0.816s | Total: 89.67s",
+    "[21:31:28]     [OK] explanation: OK (9658 chars)",
+    "[21:31:28]     [OK] caseStudy: OK (11159 chars)",
+    "[21:31:28]     [--] analogy: EMPTY (0 chars)",
+    "[21:31:28]     [OK] examples: OK (16667 chars)",
+    "[21:31:28]     [OK] quiz: OK (11744 chars)",
+    "[21:31:28]     [OK] assignment: OK (13279 chars)",
+    "[21:31:28]     [OK] projects: OK (9399 chars)",
+    "[21:31:28]     [--] commonMistakes: EMPTY (0 chars)",
+    "[21:31:28]     [OK] interviewQuestions: OK (11096 chars)",
+    "[21:31:28]     [OK] cheatSheet: OK (6647 chars)",
+    "[21:31:28] \n  Lesson 2 [FAIL]: Data Structures / Binary Search Tree",
+    "[21:31:28]     Sections: 9/10 OK",
+    "[21:31:28]     TTFB: 0.812s | Total: 80.94s",
+    "[21:31:28]     [OK] explanation: OK (15497 chars)",
+    "[21:31:28]     [OK] caseStudy: OK (8125 chars)",
+    "[21:31:28]     [OK] analogy: OK (6434 chars)",
+    "[21:31:28]     [OK] examples: OK (17526 chars)",
+    "[21:31:28]     [OK] quiz: OK (12735 chars)",
+    "[21:31:28]     [OK] assignment: OK (10376 chars)",
+    "[21:31:28]     [OK] projects: OK (12320 chars)",
+    "[21:31:28]     [--] commonMistakes: EMPTY (0 chars)",
+    "[21:31:28]     [OK] interviewQuestions: OK (13020 chars)",
+    "[21:31:28]     [OK] cheatSheet: OK (5220 chars)",
+    "[21:31:28] \n  Lesson 3 [FAIL]: Operating Systems / Deadlock",
+    "[21:31:28]     Sections: 8/10 OK",
+    "[21:31:28]     TTFB: 0.848s | Total: 86.02s",
+    "[21:31:28]     [--] explanation: EMPTY (0 chars)",
+    "[21:31:28]     [OK] caseStudy: OK (9611 chars)",
+    "[21:31:28]     [OK] analogy: OK (6900 chars)",
+    "[21:31:28]     [OK] examples: OK (16471 chars)",
+    "[21:31:28]     [--] quiz: EMPTY (0 chars)",
+    "[21:31:28]     [OK] assignment: OK (13441 chars)",
+    "[21:31:28]     [OK] projects: OK (11355 chars)",
+    "[21:31:28]     [OK] commonMistakes: OK (12276 chars)",
+    "[21:31:28]     [OK] interviewQuestions: OK (12579 chars)",
+    "[21:31:28]     [OK] cheatSheet: OK (7742 chars)",
+    "[21:31:28] \n  Lesson 4 [FAIL]: Digital Electronics / Flip Flops",
+    "[21:31:28]     Sections: 9/10 OK",
+    "[21:31:28]     TTFB: 0.809s | Total: 79.85s",
+    "[21:31:28]     [OK] explanation: OK (15019 chars)",
+    "[21:31:28]     [OK] caseStudy: OK (8529 chars)",
+    "[21:31:28]     [OK] analogy: OK (5441 chars)",
+    "[21:31:28]     [OK] examples: OK (15427 chars)",
+    "[21:31:28]     [OK] quiz: OK (11586 chars)",
+    "[21:31:28]     [OK] assignment: OK (9654 chars)",
+    "[21:31:28]     [OK] projects: OK (7079 chars)",
+    "[21:31:28]     [OK] commonMistakes: OK (10945 chars)",
+    "[21:31:28]     [OK] interviewQuestions: OK (10804 chars)",
+    "[21:31:28]     [--] cheatSheet: EMPTY (0 chars)",
+    "[21:31:28] \n  Lesson 5 [FAIL]: Thermodynamics / Carnot Cycle",
+    "[21:31:28]     Sections: 3/10 OK",
+    "[21:31:28]     TTFB: 0.802s | Total: 107.19s",
+    "[21:31:28]     [OK] explanation: OK (15994 chars)",
+    "[21:31:28]     [OK] caseStudy: OK (6984 chars)",
+    "[21:31:28]     [OK] analogy: OK (6614 chars)",
+    "[21:31:28]     [--] examples: EMPTY (0 chars)",
+    "[21:31:28]     [--] quiz: EMPTY (0 chars)",
+    "[21:31:28]     [--] assignment: EMPTY (0 chars)",
+    "[21:31:28]     [--] projects: EMPTY (0 chars)",
+    "[21:31:28]     [--] commonMistakes: EMPTY (0 chars)",
+    "[21:31:28]     [--] interviewQuestions: EMPTY (0 chars)",
+    "[21:31:28]     [--] cheatSheet: EMPTY (0 chars)",
+    "[21:31:28] \n============================================================",
+    "[21:31:28] VERDICT: [FAIL] NOT PRODUCTION READY",
+    "[21:31:28] ============================================================"
+  ]
+}

@@ -1,0 +1,1151 @@
+{
+  "branch_id": "computer-science-engineering",
+  "name": "Computer Science Engineering",
+  "description": "A comprehensive program covering the theoretical foundations of computation, algorithmic problem-solving, software development, and modern computing systems.",
+  "category": "engineering",
+  "duration": 4,
+  "semesters": 8,
+  "subjects": [
+    {
+      "id": "cse-programming-in-c",
+      "name": "Programming in C",
+      "code": "CS-101",
+      "category": "core",
+      "semester": 1,
+      "description": "Introduction to procedural programming using C language. Covers fundamentals of programming including variables, control structures, functions, arrays, pointers, and file handling.",
+      "difficulty": "beginner",
+      "tags": [
+        "programming",
+        "c",
+        "procedural"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "cse-python-programming",
+        "cse-data-structures"
+      ],
+      "learning_outcomes": [
+        "Write structured C programs using appropriate control flow",
+        "Implement algorithms using arrays, pointers, and dynamic memory allocation",
+        "Develop file I/O applications",
+        "Debug and optimize C programs effectively"
+      ],
+      "industry_relevance": "C remains fundamental for embedded systems, operating systems, and performance-critical applications across industries.",
+      "career_paths": [
+        "Embedded Systems Engineer",
+        "Systems Programmer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-python-programming",
+      "name": "Python Programming",
+      "code": "CS-102",
+      "category": "core",
+      "semester": 1,
+      "description": "Introduction to Python programming language with emphasis on readability, simplicity, and rapid prototyping. Covers data types, collections, functions, modules, and object-oriented features.",
+      "difficulty": "beginner",
+      "tags": [
+        "python",
+        "programming",
+        "scripting"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "cse-programming-in-c",
+        "cse-object-oriented-programming"
+      ],
+      "learning_outcomes": [
+        "Write efficient Python code using built-in data structures",
+        "Apply object-oriented principles in Python",
+        "Use Python libraries for data manipulation and visualization",
+        "Build command-line applications and scripts"
+      ],
+      "industry_relevance": "Python is widely used in data science, web development, automation, and AI/ML across all tech sectors.",
+      "career_paths": [
+        "Software Developer",
+        "Data Analyst",
+        "Automation Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-java-programming",
+      "name": "Java Programming",
+      "code": "CS-103",
+      "category": "core",
+      "semester": 2,
+      "description": "Comprehensive introduction to Java, a platform-independent object-oriented language. Covers syntax, OOP concepts, exception handling, multithreading, collections framework, and basic GUI programming.",
+      "difficulty": "intermediate",
+      "tags": [
+        "java",
+        "programming",
+        "oop",
+        "jvm"
+      ],
+      "prerequisites": [
+        "cse-programming-in-c"
+      ],
+      "related_subjects": [
+        "cse-object-oriented-programming",
+        "cse-web-technologies"
+      ],
+      "learning_outcomes": [
+        "Develop platform-independent Java applications",
+        "Implement multithreaded programs and handle concurrency",
+        "Utilize Java Collections Framework for data management",
+        "Build GUI applications using Swing or JavaFX"
+      ],
+      "industry_relevance": "Java powers enterprise applications, Android development, and large-scale backend systems in banking, e-commerce, and telecom.",
+      "career_paths": [
+        "Java Developer",
+        "Android Developer",
+        "Enterprise Application Developer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-object-oriented-programming",
+      "name": "Object Oriented Programming",
+      "code": "CS-104",
+      "category": "core",
+      "semester": 2,
+      "description": "Study of object-oriented programming paradigms including encapsulation, inheritance, polymorphism, and abstraction. Implemented using C++ and Java with focus on design principles.",
+      "difficulty": "intermediate",
+      "tags": [
+        "oop",
+        "cpp",
+        "java",
+        "design-patterns"
+      ],
+      "prerequisites": [
+        "cse-programming-in-c"
+      ],
+      "related_subjects": [
+        "cse-java-programming",
+        "cse-software-engineering"
+      ],
+      "learning_outcomes": [
+        "Apply OOP principles to design modular and reusable code",
+        "Implement inheritance hierarchies and polymorphic behavior",
+        "Use design patterns to solve common software design problems",
+        "Differentiate between procedural and object-oriented paradigms"
+      ],
+      "industry_relevance": "OOP is the backbone of modern software engineering used in virtually every large-scale application development project.",
+      "career_paths": [
+        "Software Engineer",
+        "Solution Architect"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-data-structures",
+      "name": "Data Structures",
+      "code": "CS-201",
+      "category": "core",
+      "semester": 3,
+      "description": "Systematic study of fundamental data structures including arrays, linked lists, stacks, queues, trees, graphs, hash tables, and heaps. Emphasizes analysis of operations and memory trade-offs.",
+      "difficulty": "intermediate",
+      "tags": [
+        "data-structures",
+        "algorithms",
+        "complexity"
+      ],
+      "prerequisites": [
+        "cse-programming-in-c"
+      ],
+      "related_subjects": [
+        "cse-algorithms",
+        "cse-design-and-analysis-of-algorithms"
+      ],
+      "learning_outcomes": [
+        "Implement linear and non-linear data structures from scratch",
+        "Analyze time and space complexity of data structure operations",
+        "Select appropriate data structures for given problem constraints",
+        "Apply data structures in solving real-world computational problems"
+      ],
+      "industry_relevance": "Data structures are the foundation of technical interviews and essential for building efficient software systems at companies like Google, Microsoft, and Amazon.",
+      "career_paths": [
+        "Software Engineer",
+        "Data Engineer",
+        "Algorithm Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-algorithms",
+      "name": "Algorithms",
+      "code": "CS-202",
+      "category": "core",
+      "semester": 3,
+      "description": "Introduction to algorithm design and analysis covering sorting, searching, graph algorithms, and dynamic programming. Focuses on correctness proofs and asymptotic analysis.",
+      "difficulty": "intermediate",
+      "tags": [
+        "algorithms",
+        "sorting",
+        "graph-theory",
+        "complexity"
+      ],
+      "prerequisites": [
+        "cse-data-structures"
+      ],
+      "related_subjects": [
+        "cse-design-and-analysis-of-algorithms",
+        "cse-theory-of-computation"
+      ],
+      "learning_outcomes": [
+        "Analyze algorithm efficiency using Big-O, Big-Theta, and Big-Omega notation",
+        "Design divide-and-conquer, greedy, and dynamic programming algorithms",
+        "Implement graph traversal and shortest path algorithms",
+        "Prove correctness of algorithms using loop invariants and induction"
+      ],
+      "industry_relevance": "Algorithmic thinking is critical for competitive programming and technical roles in product-based companies.",
+      "career_paths": [
+        "Software Engineer",
+        "Research Engineer",
+        "Competitive Programmer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-design-and-analysis-of-algorithms",
+      "name": "Design and Analysis of Algorithms",
+      "code": "CS-301",
+      "category": "core",
+      "semester": 4,
+      "description": "Advanced study of algorithm design techniques including amortized analysis, network flow, approximation algorithms, and NP-completeness. Covers advanced data structures and randomized algorithms.",
+      "difficulty": "advanced",
+      "tags": [
+        "algorithms",
+        "complexity",
+        "np-complete",
+        "optimization"
+      ],
+      "prerequisites": [
+        "cse-algorithms"
+      ],
+      "related_subjects": [
+        "cse-algorithms",
+        "cse-theory-of-computation"
+      ],
+      "learning_outcomes": [
+        "Apply amortized analysis to evaluate algorithm performance",
+        "Design approximation and randomized algorithms for hard problems",
+        "Classify problems into complexity classes P, NP, NP-Complete",
+        "Implement network flow algorithms for optimization problems"
+      ],
+      "industry_relevance": "Advanced algorithm design is crucial for roles in quantitative finance, search engines, and large-scale data processing.",
+      "career_paths": [
+        "Algorithm Engineer",
+        "Quantitative Developer",
+        "Research Scientist"
+      ],
+      "has_lab": false,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-database-management-systems",
+      "name": "Database Management Systems",
+      "code": "CS-203",
+      "category": "core",
+      "semester": 3,
+      "description": "Comprehensive study of database systems covering relational model, SQL, normalization, transaction processing, concurrency control, and recovery mechanisms. Includes NoSQL database fundamentals.",
+      "difficulty": "intermediate",
+      "tags": [
+        "database",
+        "joins",
+        "normalization",
+        "nosql",
+        "sql",
+        "transactions"
+      ],
+      "prerequisites": [
+        "cse-data-structures"
+      ],
+      "related_subjects": [
+        "cse-big-data",
+        "cse-data-mining"
+      ],
+      "learning_outcomes": [
+        "Design normalized relational database schemas",
+        "Write complex SQL queries involving joins, subqueries, and aggregations",
+        "Implement transaction management and concurrency control protocols",
+        "Compare relational and NoSQL database systems for different use cases"
+      ],
+      "industry_relevance": "Database expertise is required for backend development, data engineering, and virtually all data-driven applications.",
+      "career_paths": [
+        "Database Administrator",
+        "Backend Developer",
+        "Data Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-operating-systems",
+      "name": "Operating Systems",
+      "code": "CS-302",
+      "category": "core",
+      "semester": 4,
+      "description": "Study of operating system principles including process management, memory management, file systems, I/O systems, and security. Includes hands-on experience with Linux kernel concepts.",
+      "difficulty": "advanced",
+      "tags": [
+        "deadlock",
+        "linux",
+        "memory",
+        "os",
+        "processes",
+        "scheduling",
+        "synchronization"
+      ],
+      "prerequisites": [
+        "cse-computer-organization"
+      ],
+      "related_subjects": [
+        "cse-computer-networks",
+        "cse-distributed-systems"
+      ],
+      "learning_outcomes": [
+        "Implement CPU scheduling and page replacement algorithms",
+        "Design and implement a simple file system",
+        "Analyze process synchronization problems and solutions",
+        "Understand memory management techniques including paging and segmentation"
+      ],
+      "industry_relevance": "OS knowledge is essential for systems programming, cloud infrastructure, and performance engineering roles.",
+      "career_paths": [
+        "Systems Engineer",
+        "DevOps Engineer",
+        "Platform Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-computer-networks",
+      "name": "Computer Networks",
+      "code": "CS-303",
+      "category": "core",
+      "semester": 4,
+      "description": "Study of computer network architectures, protocols, and applications following the OSI and TCP/IP models. Covers physical layer through application layer with focus on internet protocols.",
+      "difficulty": "intermediate",
+      "tags": [
+        "networking",
+        "tcp-ip",
+        "protocols",
+        "security"
+      ],
+      "prerequisites": [
+        "cse-computer-organization"
+      ],
+      "related_subjects": [
+        "cse-cloud-computing",
+        "cse-distributed-systems",
+        "cse-cyber-security"
+      ],
+      "learning_outcomes": [
+        "Explain the OSI and TCP/IP protocol stacks and their layers",
+        "Design and configure IP addressing and subnetting schemes",
+        "Analyze network performance using throughput and latency metrics",
+        "Implement client-server applications using socket programming"
+      ],
+      "industry_relevance": "Networking is foundational for cloud computing, IoT, cybersecurity, and telecommunications industries.",
+      "career_paths": [
+        "Network Engineer",
+        "Cloud Architect",
+        "Security Analyst"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-software-engineering",
+      "name": "Software Engineering",
+      "code": "CS-304",
+      "category": "core",
+      "semester": 5,
+      "description": "Systematic approach to software development covering requirements engineering, design methodologies, testing, maintenance, and project management. Includes Agile and DevOps practices.",
+      "difficulty": "intermediate",
+      "tags": [
+        "software-engineering",
+        "agile",
+        "testing",
+        "devops"
+      ],
+      "prerequisites": [
+        "cse-object-oriented-programming"
+      ],
+      "related_subjects": [
+        "cse-devops",
+        "cse-web-technologies"
+      ],
+      "learning_outcomes": [
+        "Apply Agile and Scrum methodologies in software projects",
+        "Design software architectures using UML and design patterns",
+        "Implement comprehensive testing strategies including unit, integration, and system tests",
+        "Manage software projects using version control and CI/CD pipelines"
+      ],
+      "industry_relevance": "Software engineering principles are universally applied across all tech companies building reliable and scalable products.",
+      "career_paths": [
+        "Software Engineer",
+        "Engineering Manager",
+        "QA Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-compiler-design",
+      "name": "Compiler Design",
+      "code": "CS-401",
+      "category": "core",
+      "semester": 6,
+      "description": "Principles and techniques for designing and implementing compilers. Covers lexical analysis, parsing, syntax-directed translation, intermediate code generation, optimization, and code generation.",
+      "difficulty": "advanced",
+      "tags": [
+        "compilers",
+        "parsing",
+        "optimization",
+        "automata"
+      ],
+      "prerequisites": [
+        "cse-theory-of-computation",
+        "cse-algorithms"
+      ],
+      "related_subjects": [
+        "cse-theory-of-computation",
+        "cse-computer-organization"
+      ],
+      "learning_outcomes": [
+        "Design lexical analyzers using regular expressions and finite automata",
+        "Implement top-down and bottom-up parsing techniques",
+        "Generate intermediate code and apply optimization techniques",
+        "Build a working compiler for a subset of a programming language"
+      ],
+      "industry_relevance": "Compiler expertise is valuable in programming language design, high-performance computing, and tooling at companies like Intel, LLVM, and JetBrains.",
+      "career_paths": [
+        "Compiler Engineer",
+        "Language Designer",
+        "Tooling Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-computer-organization",
+      "name": "Computer Organization",
+      "code": "CS-204",
+      "category": "core",
+      "semester": 3,
+      "description": "Study of the structure and behavior of computer systems. Covers digital logic, instruction set architecture, CPU design, memory hierarchy, pipelining, and I/O organization.",
+      "difficulty": "intermediate",
+      "tags": [
+        "computer-architecture",
+        "cpu",
+        "memory",
+        "pipelines"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "cse-digital-logic",
+        "cse-operating-systems"
+      ],
+      "learning_outcomes": [
+        "Design combinational and sequential digital circuits",
+        "Explain instruction execution pipeline and hazards",
+        "Analyze memory hierarchy performance including cache and virtual memory",
+        "Evaluate different CPU architectures including RISC and CISC"
+      ],
+      "industry_relevance": "Computer organization knowledge is critical for hardware design, embedded systems, and performance optimization roles.",
+      "career_paths": [
+        "Hardware Engineer",
+        "Embedded Systems Engineer",
+        "Performance Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-digital-logic",
+      "name": "Digital Logic",
+      "code": "CS-105",
+      "category": "core",
+      "semester": 2,
+      "description": "Fundamentals of digital systems including number systems, Boolean algebra, combinational and sequential logic circuits, and basic digital components like multiplexers, decoders, and flip-flops.",
+      "difficulty": "beginner",
+      "tags": [
+        "digital-logic",
+        "boolean-algebra",
+        "circuits"
+      ],
+      "prerequisites": [],
+      "related_subjects": [
+        "cse-computer-organization"
+      ],
+      "learning_outcomes": [
+        "Simplify Boolean expressions using Karnaugh maps and algebraic manipulation",
+        "Design combinational circuits for arithmetic and logic operations",
+        "Build sequential circuits including registers and counters",
+        "Analyze and design synchronous sequential circuits"
+      ],
+      "industry_relevance": "Digital logic is foundational for VLSI design, FPGA programming, and embedded systems engineering.",
+      "career_paths": [
+        "VLSI Engineer",
+        "FPGA Engineer",
+        "Digital Design Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-theory-of-computation",
+      "name": "Theory of Computation",
+      "code": "CS-305",
+      "category": "core",
+      "semester": 5,
+      "description": "Mathematical study of computation covering automata theory, formal languages, Turing machines, decidability, and computational complexity. Explores the limits of what computers can solve.",
+      "difficulty": "advanced",
+      "tags": [
+        "automata",
+        "turing-machines",
+        "formal-languages",
+        "complexity"
+      ],
+      "prerequisites": [
+        "cse-design-and-analysis-of-algorithms"
+      ],
+      "related_subjects": [
+        "cse-compiler-design",
+        "cse-algorithms"
+      ],
+      "learning_outcomes": [
+        "Design finite automata, pushdown automata, and Turing machines",
+        "Prove undecidability using reduction techniques",
+        "Classify languages within Chomsky hierarchy",
+        "Analyze problems in terms of computability and complexity"
+      ],
+      "industry_relevance": "Theoretical foundations are essential for advanced roles in cryptography, programming languages, and formal verification.",
+      "career_paths": [
+        "Research Scientist",
+        "Formal Verification Engineer",
+        "Cryptographer"
+      ],
+      "has_lab": false,
+      "supports_code": false,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": false,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-artificial-intelligence",
+      "name": "Artificial Intelligence",
+      "code": "CS-402",
+      "category": "core",
+      "semester": 6,
+      "description": "Introduction to AI principles including search algorithms, knowledge representation, reasoning under uncertainty, and intelligent agents. Includes foundational concepts in machine learning.",
+      "difficulty": "advanced",
+      "tags": [
+        "ai",
+        "search",
+        "knowledge-representation",
+        "intelligent-agents"
+      ],
+      "prerequisites": [
+        "cse-algorithms"
+      ],
+      "related_subjects": [
+        "cse-machine-learning",
+        "cse-data-mining"
+      ],
+      "learning_outcomes": [
+        "Implement informed and uninformed search algorithms",
+        "Represent knowledge using logic and probabilistic models",
+        "Design intelligent agents for game playing and problem solving",
+        "Apply Bayesian networks for reasoning under uncertainty"
+      ],
+      "industry_relevance": "AI is transforming industries from healthcare to finance with autonomous systems, recommendation engines, and intelligent automation.",
+      "career_paths": [
+        "AI Engineer",
+        "Research Scientist",
+        "Intelligent Systems Developer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-machine-learning",
+      "name": "Machine Learning",
+      "code": "CS-403",
+      "category": "core",
+      "semester": 6,
+      "description": "Study of algorithms that enable computers to learn from data. Covers supervised learning, unsupervised learning, ensemble methods, and model evaluation techniques with practical implementations.",
+      "difficulty": "advanced",
+      "tags": [
+        "machine-learning",
+        "supervised-learning",
+        "unsupervised-learning",
+        "scikit-learn"
+      ],
+      "prerequisites": [
+        "cse-algorithms",
+        "cse-artificial-intelligence"
+      ],
+      "related_subjects": [
+        "cse-deep-learning",
+        "cse-data-mining",
+        "cse-artificial-intelligence"
+      ],
+      "learning_outcomes": [
+        "Implement linear and logistic regression for prediction tasks",
+        "Build decision trees, random forests, and SVM classifiers",
+        "Apply clustering algorithms including k-means and DBSCAN",
+        "Evaluate model performance using cross-validation and appropriate metrics"
+      ],
+      "industry_relevance": "Machine learning skills are highly sought after in tech, finance, healthcare, and e-commerce for building predictive systems.",
+      "career_paths": [
+        "Machine Learning Engineer",
+        "Data Scientist",
+        "AI Researcher"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-cloud-computing",
+      "name": "Cloud Computing",
+      "code": "CS-404",
+      "category": "core",
+      "semester": 6,
+      "description": "Study of cloud computing models including IaaS, PaaS, and SaaS. Covers virtualization, distributed storage, cloud security, and major cloud platforms like AWS, Azure, and GCP.",
+      "difficulty": "intermediate",
+      "tags": [
+        "cloud",
+        "aws",
+        "azure",
+        "virtualization",
+        "docker"
+      ],
+      "prerequisites": [
+        "cse-computer-networks",
+        "cse-operating-systems"
+      ],
+      "related_subjects": [
+        "cse-devops",
+        "cse-distributed-systems"
+      ],
+      "learning_outcomes": [
+        "Deploy applications on AWS EC2, S3, and Lambda services",
+        "Design cloud-native architectures using microservices",
+        "Implement auto-scaling and load balancing strategies",
+        "Apply cloud security best practices and IAM policies"
+      ],
+      "industry_relevance": "Cloud computing is a cornerstone of modern IT infrastructure with organizations migrating to cloud platforms globally.",
+      "career_paths": [
+        "Cloud Architect",
+        "DevOps Engineer",
+        "Cloud Developer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-cyber-security",
+      "name": "Cyber Security",
+      "code": "CS-405",
+      "category": "core",
+      "semester": 7,
+      "description": "Study of security principles, threats, and countermeasures in computing systems. Covers cryptography, network security, web security, ethical hacking, and security policies.",
+      "difficulty": "advanced",
+      "tags": [
+        "security",
+        "cryptography",
+        "ethical-hacking",
+        "network-security"
+      ],
+      "prerequisites": [
+        "cse-computer-networks"
+      ],
+      "related_subjects": [
+        "cse-cryptography",
+        "cse-web-technologies"
+      ],
+      "learning_outcomes": [
+        "Identify common vulnerabilities including SQL injection and XSS",
+        "Implement cryptographic protocols for secure communication",
+        "Conduct penetration testing using industry-standard tools",
+        "Design security policies and incident response strategies"
+      ],
+      "industry_relevance": "Cybersecurity is critical across all industries with rising threats and regulatory compliance requirements.",
+      "career_paths": [
+        "Security Analyst",
+        "Penetration Tester",
+        "Security Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-web-technologies",
+      "name": "Web Technologies",
+      "code": "CS-306",
+      "category": "core",
+      "semester": 5,
+      "description": "Comprehensive study of web development covering HTML, CSS, JavaScript, frontend frameworks, server-side programming, REST APIs, and modern web application architecture.",
+      "difficulty": "intermediate",
+      "tags": [
+        "web",
+        "html",
+        "css",
+        "javascript",
+        "react",
+        "nodejs"
+      ],
+      "prerequisites": [
+        "cse-java-programming"
+      ],
+      "related_subjects": [
+        "cse-mobile-app-development",
+        "cse-software-engineering"
+      ],
+      "learning_outcomes": [
+        "Build responsive web interfaces using HTML5, CSS3, and JavaScript",
+        "Develop single-page applications using React or Angular",
+        "Create RESTful APIs with Node.js and Express",
+        "Implement authentication and session management in web apps"
+      ],
+      "industry_relevance": "Web development is the most in-demand skill across startups and enterprises building digital products and services.",
+      "career_paths": [
+        "Full Stack Developer",
+        "Frontend Developer",
+        "Backend Developer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-mobile-app-development",
+      "name": "Mobile App Development",
+      "code": "CS-406",
+      "category": "elective",
+      "semester": 7,
+      "description": "Study of mobile application development for Android and iOS platforms. Covers native development with Kotlin/Swift and cross-platform frameworks like Flutter and React Native.",
+      "difficulty": "intermediate",
+      "tags": [
+        "android",
+        "ios",
+        "flutter",
+        "react-native",
+        "mobile"
+      ],
+      "prerequisites": [
+        "cse-object-oriented-programming"
+      ],
+      "related_subjects": [
+        "cse-web-technologies",
+        "cse-software-engineering"
+      ],
+      "learning_outcomes": [
+        "Build native Android applications using Kotlin and Jetpack Compose",
+        "Develop iOS applications using Swift and SwiftUI",
+        "Create cross-platform apps using Flutter or React Native",
+        "Integrate mobile apps with backend APIs and cloud services"
+      ],
+      "industry_relevance": "Mobile app development is a multi-billion dollar industry essential for consumer engagement and enterprise mobility.",
+      "career_paths": [
+        "Mobile Developer",
+        "Flutter Developer",
+        "iOS/Android Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-distributed-systems",
+      "name": "Distributed Systems",
+      "code": "CS-407",
+      "category": "elective",
+      "semester": 7,
+      "description": "Study of distributed computing principles including remote procedure calls, distributed file systems, consensus algorithms, replication, and fault tolerance in large-scale systems.",
+      "difficulty": "advanced",
+      "tags": [
+        "distributed-systems",
+        "consensus",
+        "replication",
+        "rpc"
+      ],
+      "prerequisites": [
+        "cse-operating-systems",
+        "cse-computer-networks"
+      ],
+      "related_subjects": [
+        "cse-cloud-computing",
+        "cse-big-data"
+      ],
+      "learning_outcomes": [
+        "Implement distributed consensus using Paxos or Raft algorithms",
+        "Design distributed hash tables and peer-to-peer systems",
+        "Apply CAP theorem to design trade-offs in distributed databases",
+        "Build fault-tolerant distributed applications using message passing"
+      ],
+      "industry_relevance": "Distributed systems expertise is crucial for building scalable services at companies like Google, Amazon, and Netflix.",
+      "career_paths": [
+        "Distributed Systems Engineer",
+        "Backend Infrastructure Engineer",
+        "SRE"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-big-data",
+      "name": "Big Data",
+      "code": "CS-408",
+      "category": "elective",
+      "semester": 7,
+      "description": "Technologies and techniques for processing and analyzing massive datasets. Covers Hadoop ecosystem, MapReduce, Spark, distributed file systems, and real-time stream processing.",
+      "difficulty": "advanced",
+      "tags": [
+        "big-data",
+        "hadoop",
+        "spark",
+        "mapreduce",
+        "data-processing"
+      ],
+      "prerequisites": [
+        "cse-database-management-systems"
+      ],
+      "related_subjects": [
+        "cse-data-mining",
+        "cse-cloud-computing"
+      ],
+      "learning_outcomes": [
+        "Process large datasets using Hadoop MapReduce and Apache Spark",
+        "Design data pipelines for batch and stream processing",
+        "Implement distributed data storage with HDFS and NoSQL databases",
+        "Analyze streaming data using Apache Kafka and Flink"
+      ],
+      "industry_relevance": "Big data technologies power data-driven decision making in e-commerce, finance, healthcare, and social media platforms.",
+      "career_paths": [
+        "Big Data Engineer",
+        "Data Engineer",
+        "Data Architect"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-data-mining",
+      "name": "Data Mining",
+      "code": "CS-409",
+      "category": "elective",
+      "semester": 7,
+      "description": "Study of techniques for discovering patterns in large datasets. Covers association rules, classification, clustering, anomaly detection, and web mining with practical applications.",
+      "difficulty": "advanced",
+      "tags": [
+        "data-mining",
+        "pattern-recognition",
+        "clustering",
+        "classification"
+      ],
+      "prerequisites": [
+        "cse-database-management-systems",
+        "cse-algorithms"
+      ],
+      "related_subjects": [
+        "cse-big-data",
+        "cse-machine-learning"
+      ],
+      "learning_outcomes": [
+        "Discover frequent patterns and association rules using Apriori and FP-Growth",
+        "Apply classification techniques including decision trees and neural networks",
+        "Detect anomalies in large datasets using statistical and distance-based methods",
+        "Mine text and web data for information extraction"
+      ],
+      "industry_relevance": "Data mining drives business intelligence, recommendation systems, and customer analytics across industries.",
+      "career_paths": [
+        "Data Scientist",
+        "Data Mining Engineer",
+        "Analytics Manager"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": false,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-devops",
+      "name": "DevOps",
+      "code": "CS-410",
+      "category": "elective",
+      "semester": 8,
+      "description": "Study of DevOps culture, practices, and tools for continuous integration, continuous delivery, infrastructure as code, monitoring, and automation in software development lifecycle.",
+      "difficulty": "intermediate",
+      "tags": [
+        "devops",
+        "ci-cd",
+        "docker",
+        "kubernetes",
+        "terraform"
+      ],
+      "prerequisites": [
+        "cse-software-engineering",
+        "cse-operating-systems"
+      ],
+      "related_subjects": [
+        "cse-cloud-computing",
+        "cse-software-engineering"
+      ],
+      "learning_outcomes": [
+        "Set up CI/CD pipelines using Jenkins, GitHub Actions, or GitLab CI",
+        "Containerize applications using Docker and orchestrate with Kubernetes",
+        "Manage infrastructure using Terraform and configuration management tools",
+        "Implement monitoring and logging using Prometheus and ELK stack"
+      ],
+      "industry_relevance": "DevOps practices are adopted by virtually all tech companies to accelerate software delivery and improve reliability.",
+      "career_paths": [
+        "DevOps Engineer",
+        "Platform Engineer",
+        "Site Reliability Engineer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": true,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-blockchain",
+      "name": "Blockchain",
+      "code": "CS-411",
+      "category": "elective",
+      "semester": 8,
+      "description": "Study of blockchain technology including distributed ledger, consensus mechanisms, smart contracts, and decentralized applications. Covers Ethereum, Hyperledger, and cryptocurrency fundamentals.",
+      "difficulty": "advanced",
+      "tags": [
+        "blockchain",
+        "ethereum",
+        "smart-contracts",
+        "cryptocurrency"
+      ],
+      "prerequisites": [
+        "cse-computer-networks",
+        "cse-cyber-security"
+      ],
+      "related_subjects": [
+        "cse-cyber-security",
+        "cse-distributed-systems"
+      ],
+      "learning_outcomes": [
+        "Explain blockchain architecture and consensus algorithms",
+        "Develop and deploy smart contracts using Solidity",
+        "Build decentralized applications on Ethereum platform",
+        "Analyze security considerations and scalability challenges in blockchain"
+      ],
+      "industry_relevance": "Blockchain technology is transforming finance, supply chain, healthcare, and digital identity management.",
+      "career_paths": [
+        "Blockchain Developer",
+        "Smart Contract Engineer",
+        "Web3 Developer"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": true,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    },
+    {
+      "id": "cse-internet-of-things",
+      "name": "Internet of Things",
+      "code": "CS-412",
+      "category": "elective",
+      "semester": 8,
+      "description": "Study of interconnected smart devices, sensors, and actuators. Covers IoT architectures, communication protocols, embedded systems, cloud integration, and IoT security challenges.",
+      "difficulty": "intermediate",
+      "tags": [
+        "iot",
+        "embedded",
+        "sensors",
+        "m2m",
+        "arduino"
+      ],
+      "prerequisites": [
+        "cse-computer-networks",
+        "cse-computer-organization"
+      ],
+      "related_subjects": [
+        "cse-cloud-computing",
+        "cse-cyber-security"
+      ],
+      "learning_outcomes": [
+        "Design IoT system architectures with sensors and actuators",
+        "Implement communication using MQTT, CoAP, and BLE protocols",
+        "Develop firmware for microcontrollers like Arduino and ESP32",
+        "Integrate IoT devices with cloud platforms for data analytics"
+      ],
+      "industry_relevance": "IoT is driving innovation in smart homes, industrial automation, healthcare monitoring, and smart cities.",
+      "career_paths": [
+        "IoT Engineer",
+        "Embedded Systems Developer",
+        "Smart Solutions Architect"
+      ],
+      "has_lab": true,
+      "supports_code": true,
+      "supports_formula": false,
+      "supports_diagram": true,
+      "supports_visualizer": false,
+      "supports_quiz": true,
+      "supports_projects": true,
+      "supports_interview": true
+    }
+  ]
+}

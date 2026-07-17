@@ -1,0 +1,17 @@
+﻿uvicorn : INFO:     Started server process [7372]
+At line:1 char:76
++ ... s\Activate; uvicorn app.main:app --host 0.0.0.0 --port 8006 2>&1 | Ou ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (INFO:     Started server process [7372]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+INFO:     Waiting for application startup.
+2026-07-17 19:11:24 | INFO     | app.ai.groq_provider:get_shared_client:91 | Created shared Groq HTTP client (pool: 50 keepalive, 100 max, HTTP/2 enabled)
+2026-07-17 19:11:24 | INFO     | app.main:lifespan:67 | Shared HTTP client pool warmed up
+2026-07-17 19:11:24 | INFO     | app.services.api_key:load_keys_to_manager:172 | Loaded 0 API keys from database into KeyManager
+2026-07-17 19:11:24 | INFO     | app.main:load_keys_from_db:42 | DB key loading: 0 new, 10 total, 10 healthy, 0 failed, 0 cooldown
+2026-07-17 19:11:24 | INFO     | app.main:lifespan:73 | AI Gateway initialized: 10 from env, 10 from DB, 10 total, 10 healthy
+2026-07-17 19:11:24 | INFO     | app.ai.key_manager:start_recovery_task:274 | KeyManager: started cooldown recovery background task
+2026-07-17 19:11:24 | INFO     | app.main:lifespan:82 | Key recovery background task started
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8006 (Press CTRL+C to quit)

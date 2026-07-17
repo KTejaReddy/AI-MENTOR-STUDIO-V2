@@ -1,0 +1,138 @@
+{
+  "metadata": {
+    "title": "Introduction to Loops in Python",
+    "subject": "Python Programming",
+    "topic": "Loops",
+    "difficulty": "beginner",
+    "learningMode": "QUICK",
+    "estimatedReadingTime": "20-30 minutes",
+    "prerequisites_list": ["Basic understanding of Python syntax and data types"],
+    "learningObjectives": ["Understand the concept of loops in Python", "Apply loops to solve problems"],
+    "tags": ["Python", "Loops", "Beginner"]
+  },
+  "sections": {
+    "introduction": {
+      "type": "introduction",
+      "title": "1. Introduction",
+      "content": "Loops are a fundamental concept in programming that allow you to execute a block of code repeatedly. In Python, there are two types of loops: for loops and while loops. In this section, we will introduce the concept of loops and discuss their importance in programming."
+    },
+    "learningObjectives": {
+      "type": "learningObjectives",
+      "title": "2. Learning Objectives",
+      "objectives": [
+        {
+          "objective": "Understand the concept of loops in Python",
+          "bloomsLevel": "Understand"
+        },
+        {
+          "objective": "Apply loops to solve problems",
+          "bloomsLevel": "Apply"
+        }
+      ]
+    },
+    "definition": {
+      "type": "definition",
+      "title": "3. Definition and Formal Description",
+      "content": "A loop is a control structure that allows you to execute a block of code repeatedly. There are two types of loops in Python: for loops and while loops. A for loop iterates over a sequence (such as a list or tuple), while a while loop continues to execute as long as a certain condition is true."
+    },
+    "coreConcepts": {
+      "type": "coreConcepts",
+      "title": "4. Core Concepts",
+      "concepts": [
+        {
+          "name": "For Loops",
+          "explanation": "A for loop iterates over a sequence (such as a list or tuple) and executes a block of code for each item in the sequence.",
+          "importance": "For loops are useful when you need to iterate over a sequence and perform an action for each item."
+        },
+        {
+          "name": "While Loops",
+          "explanation": "A while loop continues to execute as long as a certain condition is true.",
+          "importance": "While loops are useful when you need to execute a block of code repeatedly until a certain condition is met."
+        }
+      ],
+      "content": "For loops and while loops are the two main types of loops in Python. For loops are useful when you need to iterate over a sequence and perform an action for each item, while while loops are useful when you need to execute a block of code repeatedly until a certain condition is met."
+    },
+    "explanation": {
+      "type": "explanation",
+      "title": "5. Explanation",
+      "content": "In this section, we will explain how loops work in Python. We will cover the syntax of for loops and while loops, as well as provide examples of how to use them."
+    },
+    "codeExamples": {
+      "type": "codeExamples",
+      "title": "6. Code Examples",
+      "examples": [
+        {
+          "language": "Python",
+          "scenario": "Printing a list of numbers",
+          "code": "numbers = [1, 2, 3, 4, 5]\nfor num in numbers:\n    print(num)",
+          "lineByLine": "1. Import the necessary modules\n2. Define a list of numbers\n3. Use a for loop to iterate over the list and print each number\n",
+          "output": "1\n2\n3\n4\n5\n",
+          "complexity": "Low"
+        },
+        {
+          "language": "Python",
+          "scenario": "Asking the user for their name and age",
+          "code": "name = input(\"What is your name? \")\nage = int(input(\"How old are you? \"))\nprint(f\"Hello, {name}! You are {age} years old.\")",
+          "lineByLine": "1. Import the necessary modules\n2. Ask the user for their name and age\n3. Use a while loop to check if the user\"s age is valid\n4. Print a greeting to the user\n",
+          "output": "What is your name? John\nHow old are you? 30\nHello, John! You are 30 years old.\n",
+          "complexity": "Medium"
+        }
+      ]
+    },
+    "cheatSheet": {
+      "type": "cheatSheet",
+      "title": "7. Cheat Sheet",
+      "items": [
+        {
+          "term": "For Loop",
+          "definition": "A loop that iterates over a sequence (such as a list or tuple).",
+          "formula": "",
+          "remember": "Use a for loop when you need to iterate over a sequence and perform an action for each item."
+        },
+        {
+          "term": "While Loop",
+          "definition": "A loop that continues to execute as long as a certain condition is true.",
+          "formula": "",
+          "remember": "Use a while loop when you need to execute a block of code repeatedly until a certain condition is met."
+        }
+      ]
+    },
+    "summary": {
+      "type": "summary",
+      "title": "8. Summary",
+      "keyPoints": [
+        {
+          "point": "Loops are a fundamental concept in programming that allow you to execute a block of code repeatedly.",
+          "elaboration": "Loops are useful for solving problems that require repetition, such as iterating over a list or tuple."
+        },
+        {
+          "point": "There are two types of loops in Python: for loops and while loops.",
+          "elaboration": "For loops are useful for iterating over a sequence, while while loops are useful for executing a block of code repeatedly until a certain condition is met."
+        }
+      ],
+      "content": "In this section, we introduced the concept of loops in Python and discussed their importance in programming. We covered the syntax of for loops and while loops, as well as provided examples of how to use them. We also discussed the importance of loops in solving problems that require repetition."
+    },
+    "assignments": {
+      "type": "assignments",
+      "title": "9. Assignments",
+      "assignments": [
+        {
+          "title": "Assignment 1: Print a list of numbers",
+          "objective": "Use a for loop to print a list of numbers",
+          "instructions": "Create a list of numbers and use a for loop to print each number.",
+          "starterCode": "numbers = [1, 2, 3, 4, 5]\nfor num in numbers:\n    print(num)",
+          "expectedOutput": "1\n2\n3\n4\n5\n",
+          "hints": ["Use the range function to create a list of numbers", "Use a for loop to iterate over the list"]
+        },
+        {
+          "title": "Assignment 2: Ask the user for their name and age",
+          "objective": "Use a while loop to ask the user for their name and age",
+          "instructions": "Use a while loop to ask the user for their name and age, and then print a greeting to the user.",
+          "starterCode": "name = input(\"What is your name? \")\nage = int(input(\"How old are you? \"))\nprint(f\"Hello, {name}! You are {age} years old.\")",
+          "expectedOutput": "What is your name? John\nHow old are you? 30\nHello, John! You are 30 years old.\n",
+          "hints": ["Use the input function to ask the user for their name and age", "Use a while loop to check if the user\"s age is valid"]
+        }
+      ]
+    }
+  }
+}
