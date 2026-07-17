@@ -19,10 +19,15 @@ def _compile_string_no_length(element, compiler, **kw):
         return "TEXT"
     return compiler.visit_VARCHAR(element, **kw)
 
+from sqlalchemy.pool import NullPool
+
+engine_kwargs = {"echo": False}
+if "6543" in settings.database_url:
+    engine_kwargs["poolclass"] = NullPool
 
 engine = create_engine(
     settings.database_url,
-    echo=False,
+    **engine_kwargs
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
