@@ -28,17 +28,20 @@ class HealthCache:
 
     def mark_key_cooldown(self, key_prefix: str, duration_sec: int = 60):
         with self._lock:
-            self._key_cooldowns[key_prefix] = time.time() + duration_sec
+            new_time = time.time() + duration_sec
+            self._key_cooldowns[key_prefix] = max(self._key_cooldowns.get(key_prefix, 0), new_time)
             logger.info(f"[HealthCache] Key {key_prefix} on cooldown for {duration_sec}s")
 
     def mark_model_cooldown(self, model_id: str, duration_sec: int = 60):
         with self._lock:
-            self._model_cooldowns[model_id] = time.time() + duration_sec
+            new_time = time.time() + duration_sec
+            self._model_cooldowns[model_id] = max(self._model_cooldowns.get(model_id, 0), new_time)
             logger.warning(f"[HealthCache] Model {model_id} on cooldown for {duration_sec}s")
 
     def mark_pair_cooldown(self, key_prefix: str, model_id: str, duration_sec: int = 60):
         with self._lock:
-            self._pair_cooldowns[(key_prefix, model_id)] = time.time() + duration_sec
+            new_time = time.time() + duration_sec
+            self._pair_cooldowns[(key_prefix, model_id)] = max(self._pair_cooldowns.get((key_prefix, model_id), 0), new_time)
             logger.info(f"[HealthCache] Pair ({key_prefix}, {model_id}) on cooldown for {duration_sec}s")
 
     def is_key_healthy(self, key_prefix: str) -> bool:

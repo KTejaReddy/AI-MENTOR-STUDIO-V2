@@ -38,9 +38,9 @@ class ModelRouter:
         else:
             routing = SECTION_ROUTING.get(section_type)
             if not routing:
-                logger.warning(f"No routing config found for {section_type}, defaulting to Llama 70B")
+                logger.warning(f"No routing config found for {section_type}, defaulting to full downgrade chain")
                 preferred = ["llama-3.3-70b-versatile"]
-                fallback = ["openai/gpt-oss-120b"]
+                fallback = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.6-27b", "llama-3.1-8b-instant", "groq/compound-mini"]
             else:
                 preferred = routing.preferred_models
                 fallback = routing.fallback_models
@@ -75,7 +75,7 @@ class ModelRouter:
             routing = SECTION_ROUTING.get(section_type)
             if not routing:
                 preferred = ["llama-3.3-70b-versatile"]
-                fallback = ["openai/gpt-oss-120b"]
+                fallback = ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.6-27b", "llama-3.1-8b-instant", "groq/compound-mini"]
             else:
                 preferred = routing.preferred_models
                 fallback = routing.fallback_models

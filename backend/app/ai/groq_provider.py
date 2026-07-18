@@ -5,10 +5,10 @@ Uses a module-level client shared across all agents to eliminate per-request TLS
 import json
 import logging
 import time
-from typing import List, AsyncGenerator, Optional, Dict, Any
-
+import re
 import asyncio
 import httpx
+from typing import List, AsyncGenerator, Optional, Dict, Any
 
 from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk
 from app.ai.key_manager import KeyManager, key_manager as default_key_manager
@@ -16,6 +16,27 @@ from app.ai.key_manager import KeyManager, key_manager as default_key_manager
 logger = logging.getLogger(__name__)
 
 import threading
+
+class QuotaExhaustedError(RuntimeError):
+    """Raised when a specific model has exhausted its daily token quota."""
+    pass
+
+def _parse_groq_quota_error(text: str) -> Optional[int]:
+    """Parses Groq 429 error text to extract the cooldown duration in seconds if it is a token quota exhaustion."""
+    text_lower = text.lower()
+    match = re.search(r"try again in (\d+(?:\.\d+)?)s?(?:\s*(m?s|minutes?|seconds?|hours?|m|h))?", text_lower)
+    if match:
+        val = float(match.group(1))
+        unit = match.group(2) or "s"
+        if unit.startswith("minute") or unit == "m":
+            return int(val * 60)
+        elif unit.startswith("hour") or unit == "h":
+            return int(val * 3600)
+        else:
+            return int(val)
+    if "type=tokens" in text_lower:
+        return 3600  # default 1 hour if not parsed but is tokens
+    return None
 
 class ModelTracker:
     def __init__(self):
@@ -187,15 +208,25 @@ class GroqProvider(AIProvider):
             )
         except httpx.HTTPStatusError as e:
             status = e.response.status_code
-            if status in (429, 503):
-                api_key.mark_cooldown(60, model_id=request.model)
-            elif status in (401, 403):
-                api_key.mark_failed(300, model_id=request.model)
-            error_detail = f"Groq API error {status}"
+            response_text = ""
             try:
-                error_detail = f"Groq API error {status}: {e.response.text[:500]}"
+                response_text = e.response.text
             except Exception:
                 pass
+                
+            if status in (429, 503):
+                quota_cooldown = _parse_groq_quota_error(response_text)
+                if quota_cooldown:
+                    from app.ai.health_cache import health_cache
+                    health_cache.mark_model_cooldown(request.model, quota_cooldown)
+                    api_key.mark_cooldown(quota_cooldown, model_id=request.model)
+                    raise QuotaExhaustedError(f"Groq API error {status}: {response_text[:500]}")
+                else:
+                    api_key.mark_cooldown(60, model_id=request.model)
+            elif status in (401, 403):
+                api_key.mark_failed(300, model_id=request.model)
+            
+            error_detail = f"Groq API error {status}: {response_text[:500]}"
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
             raise RuntimeError(error_detail)
@@ -219,7 +250,7 @@ class GroqProvider(AIProvider):
         completion_tokens = 0
         try:
             excluded_keys: set = set()
-            max_attempts = 15
+            max_attempts = 3
             backoff = 2.0
             
             # If using a specific pinned key, we only have one attempt
@@ -288,14 +319,29 @@ class GroqProvider(AIProvider):
 
                 except httpx.HTTPStatusError as e:
                     status = e.response.status_code
+                    response_text = ""
+                    try:
+                        await e.response.aread()
+                        response_text = e.response.text
+                    except Exception:
+                        pass
+                        
                     if status in (429, 503):
-                        api_key.mark_cooldown(60, model_id=request.model)
+                        quota_cooldown = _parse_groq_quota_error(response_text)
+                        if quota_cooldown:
+                            from app.ai.health_cache import health_cache
+                            health_cache.mark_model_cooldown(request.model, quota_cooldown)
+                            api_key.mark_cooldown(quota_cooldown, model_id=request.model)
+                            yield StreamChunk(content="", error=f"QuotaExhaustedError: {response_text[:200]}")
+                            return
+                        else:
+                            api_key.mark_cooldown(60, model_id=request.model)
                     else:
                         api_key.mark_failed(300, model_id=request.model)
                         excluded_keys.add(api_key.key)
                         
                     if self._api_key:
-                        yield StreamChunk(content="", error=f"HTTP {status}")
+                        yield StreamChunk(content="", error=f"HTTP {status}: {response_text[:200]}")
                         return
                     continue
 
