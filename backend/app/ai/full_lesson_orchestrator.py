@@ -318,6 +318,7 @@ async def generate_lesson_full(
 
     current_buffer = ""
     active_st = None
+    in_code_block = False
     
     async def validate_mermaid(content: str) -> str:
         """Strip hopelessly invalid mermaid diagrams and regenerate them."""
@@ -516,7 +517,11 @@ async def generate_lesson_full(
                     current_buffer = lines.pop()
                     
                     for line in lines:
-                        match = header_pattern.match(line.strip())
+                        if line.strip().startswith("```"):
+                            in_code_block = not in_code_block
+                            
+                        match = header_pattern.match(line.strip()) if not in_code_block else None
+                        
                         if match:
                             raw_title = match.group(1).strip("*_: ")
                             st_match = re.search(r"[\(\[\{]?Section ID:\s*([a-zA-Z0-9_]+)[\)\]\}]?", raw_title, re.IGNORECASE)

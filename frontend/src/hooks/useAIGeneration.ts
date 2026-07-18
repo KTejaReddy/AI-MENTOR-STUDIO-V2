@@ -351,7 +351,7 @@ export function useAIGeneration(activeTab?: any) {
               rawSectionsBuffer.current[st].isDone = true
               rawSectionsBuffer.current[st].isError = event.status === 'error'
               rawSectionsBuffer.current[st].sectionData = incomingData
-              if (incomingData.content && typeof incomingData.content === 'string' && typeof rawSectionsBuffer.current[st].content === 'string' && incomingData.content.length > (rawSectionsBuffer.current[st].content?.length || 0)) {
+              if (incomingData.content && typeof incomingData.content === 'string') {
                 rawSectionsBuffer.current[st].content = incomingData.content
               }
 
@@ -414,11 +414,15 @@ export function useAIGeneration(activeTab?: any) {
         isGenerationActiveRef.current = false
       }
     } catch (err: any) {
+      if (abortRef.current !== controller) {
+        // Superseded by a new request.
+        return
+      }
       isGenerationActiveRef.current = false
       if (playTimerRef.current) clearInterval(playTimerRef.current)
-      if (err.name === 'AbortError') {
+      if (err.name === 'AbortError' || err.message === 'Request was cancelled') {
         console.warn('[SSE_DISCONNECT] Generation aborted by user or tab switch.')
-        setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled. Note: Switching tabs will abort active generation.' }))
+        setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled.' }))
       } else {
         console.error('[SSE_DISCONNECT] Generation stream failed abruptly:', err)
         setResult((prev) => ({
