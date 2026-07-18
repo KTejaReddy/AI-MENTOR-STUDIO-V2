@@ -59,8 +59,8 @@ class ReviewerAgent:
             "Review this content based on the criteria. Output only valid JSON."
         )
 
-        model_id = "llama-3.3-70b-versatile"
-        key = await key_manager.acquire_key(model_id)
+        model_id = get_model_for_section("explanation", "default")
+        key = await key_manager.acquire_key_async(model_id)
         if not key:
             # Skip review if no keys
             return ReviewResult(True, 1.0, [], [], {})

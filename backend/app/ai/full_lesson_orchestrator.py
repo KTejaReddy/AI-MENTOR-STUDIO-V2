@@ -64,7 +64,7 @@ async def generate_lesson_full(
 
     model_id = get_model_for_section("explanation", learning_mode)
 
-    key = await key_manager.acquire_key(model_id)
+    key = await key_manager.acquire_key_async(model_id)
     if not key:
         yield {
             "type": "error", 
@@ -316,7 +316,7 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
     )
     
     model_id = get_model_for_section(st, "default")
-    key = await key_manager.acquire_key(model_id)
+    key = await key_manager.acquire_key_async(model_id)
     if not key:
         return
         
