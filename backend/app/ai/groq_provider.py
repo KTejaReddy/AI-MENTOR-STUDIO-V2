@@ -115,6 +115,9 @@ class GroqProvider(AIProvider):
         self._base_url = base_url.rstrip("/")
         self._timeout = timeout
         self._api_key: Optional[str] = None
+        
+        # Sticky routing: model_id -> key
+        self._last_successful_key: Dict[str, str] = {}
 
     def set_api_key(self, api_key: str) -> None:
         """Set a pinned API key to override key manager."""
@@ -139,7 +142,14 @@ class GroqProvider(AIProvider):
                 from app.ai.key_manager import ApiKey
                 api_key = ApiKey(key=self._api_key)
         else:
-            api_key = self._key_manager.get_available_key(request.model)
+            from app.ai.health_cache import health_cache
+            last_key = self._last_successful_key.get(request.model)
+            api_key = None
+            if last_key and health_cache.is_fully_healthy(last_key[:12], request.model):
+                api_key = next((k for k in self._key_manager.keys if k.key == last_key), None)
+            
+            if not api_key:
+                api_key = self._key_manager.get_available_key(request.model)
 
         if not api_key:
             raise RuntimeError("No available API keys for Groq")
@@ -165,6 +175,10 @@ class GroqProvider(AIProvider):
             if data.get("usage"):
                 tokens = data["usage"].get("completion_tokens", 0)
             model_tracker.end_request(request.model, elapsed, tokens)
+            
+            # Sticky routing: save successful key
+            self._last_successful_key[request.model] = api_key.key
+            
             return CompletionResponse(
                 content=data["choices"][0]["message"]["content"],
                 model=data["model"],
@@ -174,9 +188,9 @@ class GroqProvider(AIProvider):
         except httpx.HTTPStatusError as e:
             status = e.response.status_code
             if status in (429, 503):
-                api_key.mark_cooldown(60)
+                api_key.mark_cooldown(60, model_id=request.model)
             elif status in (401, 403):
-                api_key.mark_failed(300)
+                api_key.mark_failed(300, model_id=request.model)
             error_detail = f"Groq API error {status}"
             try:
                 error_detail = f"Groq API error {status}: {e.response.text[:500]}"
@@ -186,12 +200,12 @@ class GroqProvider(AIProvider):
             model_tracker.end_request(request.model, elapsed, 0)
             raise RuntimeError(error_detail)
         except httpx.TimeoutException:
-            api_key.mark_cooldown(60)
+            api_key.mark_cooldown(60, model_id=request.model)
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
             raise RuntimeError("Groq API request timed out")
         except Exception as e:
-            api_key.mark_failed(60)
+            api_key.mark_failed(60, model_id=request.model)
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
             raise RuntimeError(f"Groq API request failed: {str(e)}")
@@ -204,72 +218,42 @@ class GroqProvider(AIProvider):
         start_time = time.time()
         completion_tokens = 0
         try:
-            if self._api_key:
-                api_key = next((k for k in self._key_manager.keys if k.key == self._api_key), None)
-                if not api_key:
-                    from app.ai.key_manager import ApiKey
-                    api_key = ApiKey(key=self._api_key)
-
-                payload = self._build_payload(request, stream=True)
-                headers = self._build_headers(api_key.key)
-                try:
-                    async with client.stream(
-                        "POST",
-                        f"{self._base_url}/chat/completions",
-                        json=payload,
-                        headers=headers,
-                    ) as response:
-                        response.raise_for_status()
-                        async for line in response.aiter_lines():
-                            chunk = self._parse_sse_line(line)
-                            if chunk is not None:
-                                if chunk.content:
-                                    completion_tokens += len(chunk.content.split())
-                                if chunk.usage and "completion_tokens" in chunk.usage:
-                                    completion_tokens = chunk.usage["completion_tokens"]
-                                yield chunk
-                                if chunk.finish_reason == "stop":
-                                    return
-                        api_key.record_use()
-                        return
-                except httpx.HTTPStatusError as e:
-                    status = e.response.status_code
-                    if status in (429, 503):
-                        api_key.mark_cooldown(60)
-                    elif status in (401, 403):
-                        api_key.mark_failed(300)
-                    error_detail = f"HTTP {status}"
-                    try:
-                        await e.response.aread()
-                        error_detail = f"HTTP {status}: {e.response.text[:200]}"
-                    except Exception:
-                        pass
-                    yield StreamChunk(content="", error=error_detail)
-                    return
-                except Exception as e:
-                    api_key.mark_failed(60)
-                    yield StreamChunk(content="", error=str(e))
-                    return
-
-            # Key-manager-based path: try all available keys with automatic failover
             excluded_keys: set = set()
-            max_attempts = 50
+            max_attempts = 15
             backoff = 2.0
+            
+            # If using a specific pinned key, we only have one attempt
+            if self._api_key:
+                max_attempts = 1
 
             for attempt in range(max_attempts):
-                api_key = self._key_manager.get_available_key(request.model, excluded_keys)
+                api_key = None
+                
+                if self._api_key:
+                    api_key = next((k for k in self._key_manager.keys if k.key == self._api_key), None)
+                    if not api_key:
+                        from app.ai.key_manager import ApiKey
+                        api_key = ApiKey(key=self._api_key)
+                else:
+                    # Sticky routing check
+                    from app.ai.health_cache import health_cache
+                    last_key = self._last_successful_key.get(request.model)
+                    if last_key and last_key not in excluded_keys and health_cache.is_fully_healthy(last_key[:12], request.model):
+                        api_key = next((k for k in self._key_manager.keys if k.key == last_key), None)
+                        
+                    if not api_key:
+                        api_key = self._key_manager.get_available_key(request.model, excluded_keys)
+                        
                 if not api_key:
-                    # Check if all keys are permanently excluded (failed)
                     if len(excluded_keys) >= len(self._key_manager.keys):
                         yield StreamChunk(content="", error="All API keys exhausted")
                         return
-                    
-                    # Keys are in cooldown (429s). Exponential backoff and retry.
+                        
                     logger.warning("All keys in cooldown for model=%s. Backing off %.1fs", request.model, backoff)
                     await asyncio.sleep(backoff)
                     backoff = min(backoff * 2, 60.0)
                     continue
-
+                    
                 payload = self._build_payload(request, stream=True)
                 headers = self._build_headers(api_key.key)
                 success = False
@@ -292,45 +276,44 @@ class GroqProvider(AIProvider):
                                 yield chunk
                                 if chunk.finish_reason == "stop":
                                     success = True
+                                    self._last_successful_key[request.model] = api_key.key
                                     break
-
+                                    
                     if not success:
-                        success = True  # Stream ended cleanly
+                        success = True
+                        
                     api_key.record_use()
+                    self._last_successful_key[request.model] = api_key.key
                     return
 
                 except httpx.HTTPStatusError as e:
                     status = e.response.status_code
                     if status in (429, 503):
-                        api_key.mark_cooldown(30)
+                        api_key.mark_cooldown(60, model_id=request.model)
                     else:
-                        api_key.mark_failed(300)
+                        api_key.mark_failed(300, model_id=request.model)
                         excluded_keys.add(api_key.key)
                         
-                    error_detail = f"HTTP {status}"
-                    try:
-                        await e.response.aread()
-                        error_detail = f"HTTP {status}: {e.response.text[:200]}"
-                    except Exception:
-                        pass
-                        
-                    logger.warning(
-                        "Groq key error %s model=%s attempt=%d/%d — trying next key or backing off",
-                        error_detail, request.model, attempt + 1, max_attempts,
-                    )
+                    if self._api_key:
+                        yield StreamChunk(content="", error=f"HTTP {status}")
+                        return
                     continue
 
                 except httpx.TimeoutException:
-                    api_key.mark_cooldown(30)
-                    # Don't permanently exclude for a timeout
-                    logger.warning("Groq timeout model=%s attempt=%d/%d", request.model, attempt + 1, max_attempts)
+                    api_key.mark_cooldown(30, model_id=request.model)
+                    if self._api_key:
+                        yield StreamChunk(content="", error="Request timed out")
+                        return
                     continue
 
                 except Exception as e:
-                    api_key.mark_failed(60)
+                    api_key.mark_failed(60, model_id=request.model)
                     excluded_keys.add(api_key.key)
-                    logger.error("Groq error: %s attempt=%d/%d", str(e), attempt + 1, max_attempts)
+                    if self._api_key:
+                        yield StreamChunk(content="", error=f"Request failed: {str(e)}")
+                        return
                     continue
+                    
         finally:
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, completion_tokens)

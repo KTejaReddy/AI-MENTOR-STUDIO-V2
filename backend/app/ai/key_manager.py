@@ -11,6 +11,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional, Set, Dict
 
+from app.ai.health_cache import health_cache
+
 logger = logging.getLogger(__name__)
 
 
@@ -36,45 +38,31 @@ class ApiKey:
 
     @property
     def is_available(self) -> bool:
-        now = time.time()
-        if self.status == KeyStatus.DISABLED:
-            return False
-        if self.status == KeyStatus.HEALTHY:
-            return True
-        if self.status == KeyStatus.COOLDOWN:
-            if self.cooldown_until and now >= self.cooldown_until:
-                self.status = KeyStatus.HEALTHY
-                self.cooldown_until = None
-                return True
-            return False
-        if self.status == KeyStatus.FAILED:
-            # Auto-recovery after 10 minutes
-            if self.failed_at and (now - self.failed_at > 600):
-                self.status = KeyStatus.HEALTHY
-                self.failed_at = None
-                self.errors = 0
-                logger.info("Key auto-recovered from FAILED: %s...", self.key[:12])
-                return True
-            return False
-        return False
+        return self.status == KeyStatus.HEALTHY and health_cache.is_key_healthy(self.key[:12])
 
     def record_use(self) -> None:
         self.last_used = time.time()
         self.requests += 1
         # in_flight is managed separately by acquire/release
 
-    def mark_failed(self, cooldown_seconds: int = 300) -> None:
+    def mark_failed(self, cooldown_seconds: int = 300, model_id: Optional[str] = None) -> None:
         self.status = KeyStatus.FAILED
         self.failed_at = time.time()
         self.errors += 1
         self.last_failure = time.time()
+        health_cache.mark_key_cooldown(self.key[:12], cooldown_seconds)
+        if model_id:
+            health_cache.mark_pair_cooldown(self.key[:12], model_id, cooldown_seconds)
 
-    def mark_cooldown(self, cooldown_seconds: int = 60) -> None:
+    def mark_cooldown(self, cooldown_seconds: int = 60, model_id: Optional[str] = None) -> None:
         self.status = KeyStatus.COOLDOWN
         self.cooldown_until = time.time() + cooldown_seconds
         self.errors += 1
         self.last_failure = time.time()
-        logger.info("Key COOLDOWN %ds: %s...", cooldown_seconds, self.key[:12])
+        health_cache.mark_key_cooldown(self.key[:12], cooldown_seconds)
+        if model_id:
+            health_cache.mark_pair_cooldown(self.key[:12], model_id, cooldown_seconds)
+        logger.info("Key COOLDOWN %ds: %s... (model: %s)", cooldown_seconds, self.key[:12], model_id)
 
     def reset(self) -> None:
         self.status = KeyStatus.HEALTHY
@@ -141,6 +129,10 @@ class KeyManager:
                     not preferred_model
                     or not k.model_whitelist
                     or preferred_model in k.model_whitelist
+                )
+                and (
+                    not preferred_model
+                    or health_cache.is_fully_healthy(k.key[:12], preferred_model)
                 )
             ]
             if not candidates:
@@ -274,22 +266,23 @@ class KeyManager:
         logger.info("KeyManager: started cooldown recovery background task")
 
     async def _cooldown_recovery_loop(self) -> None:
-        """Every 10s, recover any keys whose cooldown has expired."""
+        """Every 30s, recover any keys whose cooldown has expired."""
         while True:
             try:
-                await asyncio.sleep(10)
-                recovered = 0
+                await asyncio.sleep(30)
+                recovered = health_cache.recover_expired()
+                now = time.time()
                 with self._lock:
                     for k in self._keys:
-                        if k.status == KeyStatus.COOLDOWN:
-                            # is_available does auto-recovery
-                            if k.is_available:
-                                recovered += 1
-                        elif k.status == KeyStatus.FAILED:
-                            if k.is_available:
-                                recovered += 1
+                        if k.status == KeyStatus.COOLDOWN and k.cooldown_until and now >= k.cooldown_until:
+                            k.reset()
+                            recovered += 1
+                        elif k.status == KeyStatus.FAILED and k.failed_at and (now - k.failed_at > 600):
+                            k.reset()
+                            recovered += 1
+                            
                 if recovered:
-                    logger.info("KeyManager: recovered %d keys from cooldown/failed", recovered)
+                    logger.info("KeyManager: recovered %d keys/models from cooldown/failed", recovered)
                     self._notify_available()
             except asyncio.CancelledError:
                 break

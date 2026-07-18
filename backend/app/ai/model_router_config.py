@@ -202,8 +202,8 @@ SECTION_ROUTING: Dict[str, SectionRoutingConfig] = {
     
     "overview": SectionRoutingConfig(
         section_type="overview",
-        preferred_models=[_LLAMA70B],
-        fallback_models=[_GPT120B, _QWEN27B, _COMPOUND],
+        preferred_models=[_LLAMA8B],
+        fallback_models=[_QWEN27B, _ALLAM],
     ),
 
     "explanation": SectionRoutingConfig(

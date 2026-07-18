@@ -5,11 +5,12 @@ from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
+from app.ai.health_cache import health_cache
+
 class ModelHealth(BaseModel):
     model_id: str
     quality_score: float = 1.0
     speed_score: float = 1.0
-    current_cooldown: float = 0.0
     last_failure: float = 0.0
     consecutive_failures: int = 0
     requests_served: int = 0
@@ -19,9 +20,7 @@ class ModelHealth(BaseModel):
     
     @property
     def healthy(self) -> bool:
-        if self.current_cooldown > 0 and time.time() < self.current_cooldown:
-            return False
-        return True
+        return health_cache.is_model_healthy(self.model_id)
 
 
 class ModelPool:
@@ -36,7 +35,6 @@ class ModelPool:
     def report_success(self, model_id: str, latency_ms: float, rate_limit_remaining: Optional[int] = None, token_limit_remaining: Optional[int] = None):
         model = self._ensure_model(model_id)
         model.consecutive_failures = 0
-        model.current_cooldown = 0
         model.requests_served += 1
         
         # update moving average
@@ -50,7 +48,7 @@ class ModelPool:
         if token_limit_remaining is not None:
             model.tokens_remaining = token_limit_remaining
 
-    def report_failure(self, model_id: str, error_type: str):
+    def report_failure(self, model_id: str, error_type: str, key_prefix: Optional[str] = None):
         model = self._ensure_model(model_id)
         model.consecutive_failures += 1
         model.last_failure = time.time()
@@ -58,7 +56,10 @@ class ModelPool:
         # Exponential backoff: 30s, 60s, 120s... max 300s
         backoff = min(30 * (2 ** (model.consecutive_failures - 1)), 300)
         
-        model.current_cooldown = time.time() + backoff
+        health_cache.mark_model_cooldown(model_id, int(backoff))
+        if key_prefix:
+            health_cache.mark_pair_cooldown(key_prefix, model_id, int(backoff))
+        
         logger.warning(f"Model {model_id} marked as unhealthy for {backoff}s. Error: {error_type}")
 
     def select_best_model(self, preferred: List[str], fallback: List[str]) -> Optional[str]:
@@ -95,8 +96,6 @@ class ModelPool:
                 
         healthy = [m for m in all_models if self._ensure_model(m).healthy]
         unhealthy = [m for m in all_models if not self._ensure_model(m).healthy]
-        
-        unhealthy.sort(key=lambda m: self._ensure_model(m).current_cooldown)
         
         return healthy + unhealthy
 

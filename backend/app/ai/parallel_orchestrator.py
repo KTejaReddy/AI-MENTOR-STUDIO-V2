@@ -179,7 +179,7 @@ async def generate_lesson_parallel(
     tasks: List[Optional[asyncio.Task]] = [None] * n
 
     async def _run_section(idx: int) -> None:
-        """Background task: generate section idx and stream events into its queue."""
+        """Background worker task: generate section idx and stream events."""
         sec_type, stitle, agent_class, model_id, agent_config = section_configs[idx]
         queue = queues[idx]
 
@@ -267,9 +267,16 @@ async def generate_lesson_parallel(
         finally:
             await queue.put(None)  # sentinel — no more items
 
-    # ── Step 4: Start ALL sections immediately (Fully Parallel) ───────────────
+    # ── Step 4: Start sections using Worker Pool ───────────────
+    CONCURRENCY_LIMIT = 4
+    worker_semaphore = asyncio.Semaphore(CONCURRENCY_LIMIT)
+
+    async def _worker_run(idx: int):
+        async with worker_semaphore:
+            await _run_section(idx)
+
     for idx in range(n):
-        tasks[idx] = asyncio.create_task(_run_section(idx))
+        tasks[idx] = asyncio.create_task(_worker_run(idx))
 
     # ── Step 5: Process sections sequentially via Ordered Release Buffer ──────
     timeout_seconds = 120.0
@@ -393,10 +400,14 @@ async def generate_lesson_parallel(
     lesson_cache.set(subject, topic, difficulty, learning_mode, lesson)
 
     completed_count = sum(1 for st in section_status.values() if st == "completed")
+    
+    from app.ai.health_cache import health_cache
+    skips = health_cache.get_skips()
+    
     logger.info(
-        "PrefetchOrchestrator: DONE %s / %s in %.1fs (%d/%d sections completed, first: %.1fs, avg: %.1fs)",
+        "PrefetchOrchestrator: DONE %s / %s in %.1fs (%d/%d sections completed, first: %.1fs, avg: %.1fs, cache skips: %d)",
         subject, topic, total_elapsed, completed_count, len(active_sections),
-        first_section_time or 0, avg_time_per_section,
+        first_section_time or 0, avg_time_per_section, skips
     )
 
     yield {
@@ -410,6 +421,7 @@ async def generate_lesson_parallel(
     qa_report_data["metadata"]["expected_count"] = len(active_sections)
     qa_report_data["metadata"]["time_to_first_section"] = first_section_time
     qa_report_data["metadata"]["avg_time_per_section"] = round(avg_time_per_section, 2)
+    qa_report_data["metadata"]["cooldown_skips"] = skips
 
     try:
         import json
