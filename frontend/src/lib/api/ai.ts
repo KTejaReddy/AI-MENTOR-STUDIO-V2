@@ -23,9 +23,10 @@ export async function generateLesson(
     }
   }
 
+  const reqId = Math.random().toString(36).substring(2) + Date.now().toString(36)
   const response = await fetchWithAuth(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 'X-Request-ID': reqId },
     body: JSON.stringify(body),
     signal,
   })

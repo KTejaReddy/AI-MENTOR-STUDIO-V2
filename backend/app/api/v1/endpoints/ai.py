@@ -1,6 +1,6 @@
-"""FastAPI endpoints for the AI Gateway — production-ready SSE streaming."""
 import json
 import logging
+import asyncio
 
 from fastapi import APIRouter, HTTPException, Depends, Request
 from sse_starlette.sse import EventSourceResponse
@@ -26,16 +26,27 @@ router = APIRouter(tags=["ai"])
 @router.post("/generate")
 @limiter.limit("10/minute")
 async def generate_lesson(request: Request, body: GenerateLessonRequest, current_user: User = Depends(get_current_user)):
+    req_id = request.headers.get("X-Request-ID", "unknown")
+    logger.info(f"[SSE_START] generate_lesson start. req_id: {req_id}")
     async def event_generator():
-        async for event in gateway.generate(
-            subject=body.subject,
-            topic=body.topic,
-            difficulty=body.difficulty,
-            learning_mode=body.learning_mode,
-            output_language=body.output_language,
-            context=body.context,
-        ):
-            yield {"event": "message", "data": json.dumps(event)}
+        try:
+            async for event in gateway.generate(
+                subject=body.subject,
+                topic=body.topic,
+                difficulty=body.difficulty,
+                learning_mode=body.learning_mode,
+                output_language=body.output_language,
+                context=body.context,
+            ):
+                yield {"event": "message", "data": json.dumps(event)}
+        except asyncio.CancelledError:
+            logger.warning(f"[SSE_DISCONNECT] Client aborted request. req_id: {req_id}")
+            raise
+        except Exception as e:
+            logger.error(f"[SSE_ERROR] Stream error. req_id: {req_id} - {e}")
+            raise
+        finally:
+            logger.info(f"[SSE_END] Stream finished. req_id: {req_id}")
 
     return EventSourceResponse(event_generator())
 

@@ -29,7 +29,11 @@ async def generate_lesson_full(
 
     # Step 1: Planner Agent decides sections
     plan = planner_agent.plan(subject, topic, difficulty, learning_mode)
-    active_sections = [(st, plan.section_titles.get(st, st)) for st in plan.sections]
+    
+    if planned_sections:
+        active_sections = [(st, plan.section_titles.get(st, st.capitalize())) for st in planned_sections]
+    else:
+        active_sections = [(st, plan.section_titles.get(st, st)) for st in plan.sections]
     
     yield {
         "type": "plan",
@@ -61,6 +65,7 @@ async def generate_lesson_full(
     if has_quiz:
         quiz_instructions = (
             "\nQUIZ RULES: You must generate EXACTLY 10 university-style Multiple Choice Questions.\n"
+            "DO NOT use <think> tags or output any reasoning. Output ONLY the final structured quiz.\n"
             "Format EACH question exactly as follows:\n"
             "Question: [Text]\n"
             "Option A: [Text]\n"
@@ -302,10 +307,10 @@ async def generate_lesson_full(
                             if not new_st:
                                 matched = False
                                 for pst, ptitle in active_sections:
-                                    norm_ptitle = ptitle.lower().replace(" ", "")
-                                    norm_title = title_group.lower().replace(" ", "")
-                                    clean_title = re.sub(r"[\[\]\{\}\(\)]", "", norm_title)
-                                    if clean_title == norm_ptitle or norm_ptitle in clean_title:
+                                    clean_ptitle = re.sub(r"^(?:Section\s*\d+|Step\s*\d+|\d+)\s*[:\.\-\)]?\s*", "", ptitle, flags=re.IGNORECASE).lower().replace(" ", "")
+                                    clean_title = title_group.lower().replace(" ", "")
+                                    clean_title = re.sub(r"[\[\]\{\}\(\)]", "", clean_title)
+                                    if clean_title == clean_ptitle or clean_ptitle in clean_title or clean_title in clean_ptitle:
                                         new_st = pst
                                         matched = True
                                         break
@@ -479,6 +484,20 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
         "Use valid Mermaid syntax (```mermaid) for any visual diagrams. Use $ for inline math and $$ for block math.\n"
         "Output ONLY the markdown content for this specific section, without the header."
     )
+    
+    if st == "quiz":
+        prompt += (
+            "\nQUIZ RULES: You must generate EXACTLY 10 university-style Multiple Choice Questions.\n"
+            "DO NOT use <think> tags or output any reasoning. Output ONLY the final structured quiz.\n"
+            "Format EACH question exactly as follows:\n"
+            "Question: [Text]\n"
+            "Option A: [Text]\n"
+            "Option B: [Text]\n"
+            "Option C: [Text]\n"
+            "Option D: [Text]\n"
+            "Correct Answer: [Option Letter]\n"
+            "Explanation: [Detailed explanation]\n"
+        )
     
     model_id = get_model_for_section(st, "default")
     key = await key_manager.acquire_key_async(model_id)

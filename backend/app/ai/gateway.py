@@ -191,7 +191,7 @@ class Gateway:
         start_time = time.time()
 
         # Use multi-agent teaching orchestrator for all modes
-        logger.info("Teaching Orchestrator: generating 10 sections for mode=%s", learning_mode)
+        logger.info("Teaching Orchestrator: generating %d sections for mode=%s", len(sections_planned), learning_mode)
         try:
             async for event in generate_lesson_v2(
                 provider, subject, topic, difficulty, learning_mode, active_stream.id, sections_planned, source_material=context, is_document=is_document

@@ -69,9 +69,10 @@ export function useChat() {
 
     try {
       const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+      const reqId = Math.random().toString(36).substring(2) + Date.now().toString(36)
       await fetchEventSource(`${baseUrl}/api/v1/ai/chat`, {
         method: 'POST',
-        headers: mergeHeaders({ 'Content-Type': 'application/json' }, getAuthHeaders()),
+        headers: mergeHeaders({ 'Content-Type': 'application/json', 'X-Request-ID': reqId }, getAuthHeaders()),
         body: JSON.stringify({
           message: content.trim(),
           history,
