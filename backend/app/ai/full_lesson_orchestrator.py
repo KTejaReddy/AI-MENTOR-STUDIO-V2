@@ -12,6 +12,70 @@ from app.ai.model_router_config import get_model_for_section
 
 logger = logging.getLogger(__name__)
 
+def convert_json_to_quiz_markdown(json_obj: Dict) -> str:
+    lines = []
+    questions = json_obj.get("questions", [])
+    for i, q in enumerate(questions, 1):
+        lines.append(f"**Question {i}:** {q.get('question', '')}")
+        opts = q.get("options", {})
+        for k in ['A', 'B', 'C', 'D']:
+            lines.append(f"Option {k}: {opts.get(k, '')}")
+        lines.append(f"Correct Answer: {q.get('correctAnswer', 'A')}")
+        lines.append(f"Explanation: {q.get('explanation', '')}")
+        lines.append("")
+    return "\n".join(lines)
+
+async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, difficulty: str) -> str:
+    prompt = (
+        f"You are a university professor creating a quiz for the topic '{topic}' in '{subject}'.\n"
+        "You MUST output ONLY valid JSON. Do not use markdown blocks. Do not add <think> tags.\n"
+        "Format EXACTLY like this:\n"
+        '{\n'
+        '  "questions": [\n'
+        '    {\n'
+        '      "question": "...",\n'
+        '      "options": {\n'
+        '        "A": "...",\n'
+        '        "B": "...",\n'
+        '        "C": "...",\n'
+        '        "D": "..."\n'
+        '      },\n'
+        '      "correctAnswer": "B",\n'
+        '      "explanation": "..."\n'
+        '    }\n'
+        '  ]\n'
+        '}\n'
+        "Generate EXACTLY 10 questions."
+    )
+    model_id = get_model_for_section("quiz", "default")
+    key = await key_manager.acquire_key_async(model_id)
+    if not key:
+        return ""
+    
+    try:
+        provider.set_api_key(key.key)
+        request = CompletionRequest(
+            messages=[Message(role="user", content=prompt)],
+            model=model_id,
+            temperature=0.3,
+            max_tokens=3000,
+            stream=False
+        )
+        response = await provider.complete(request)
+        content = response.content
+        content = re.sub(r"^```json\s*", "", content)
+        content = re.sub(r"```\s*$", "", content)
+        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
+        import json
+        json_obj = json.loads(content)
+        return convert_json_to_quiz_markdown(json_obj)
+    except Exception as e:
+        logger.error(f"JSON quiz generation failed: {e}")
+        return ""
+    finally:
+        key_manager.release_key(key, success=True)
+
+
 def validate_quiz(content: str) -> List[str]:
     issues = []
     # Count questions
@@ -460,18 +524,55 @@ async def generate_lesson_full(
                     continue
                     
                 if st == "quiz":
+                    logger.info(f"COMPLETE QUIZ TEXT BEFORE VALIDATION:\n{content}")
                     quiz_issues = validate_quiz(content)
-                    if quiz_issues:
-                        logger.warning(f"QUIZ_VALIDATION_FAIL: {quiz_issues}")
+                    
+                    attempts = 1
+                    while quiz_issues and attempts < 2:
+                        logger.warning(f"QUIZ_VALIDATION_FAIL (Attempt {attempts}): {quiz_issues}")
                         async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, quiz_issues):
                             yield event
                             if event.get("type") == "section_done":
-                                accumulated_content[st] = event["section_data"]["content"]
-                        logger.info("QUIZ_REGENERATED")
-                    else:
+                                content = event["section_data"]["content"]
+                        
+                        logger.info(f"COMPLETE REGENERATED QUIZ (Attempt {attempts + 1}):\n{content}")
+                        quiz_issues = validate_quiz(content)
+                        attempts += 1
+                        
+                    if quiz_issues:
+                        logger.warning(f"QUIZ_VALIDATION_FAIL (Attempt {attempts}): {quiz_issues}. Falling back to deterministic JSON.")
+                        json_markdown = await _generate_quiz_json(provider, subject, topic, difficulty)
+                        if json_markdown:
+                            content = json_markdown
+                            accumulated_content[st] = content
+                            yield {
+                                "type": "section_clear",
+                                "section_type": st,
+                                "engine_id": engine_id
+                            }
+                            yield {
+                                "type": "section_chunk",
+                                "section_type": st,
+                                "content": content,
+                                "engine_id": engine_id
+                            }
+                            yield {
+                                "type": "section_done",
+                                "section_type": st,
+                                "section_data": {
+                                    "type": st,
+                                    "content": content,
+                                },
+                                "status": "completed",
+                                "engine_id": engine_id,
+                                "elapsed": 0,
+                                "model": "json-fallback",
+                            }
+                    
+                    if not quiz_issues or json_markdown:
                         logger.info("QUIZ_VALIDATION_PASS")
                     
-                    logger.info("QUIZ_SENT_TO_FRONTEND")
+                    logger.info(f"QUIZ_SENT_TO_FRONTEND:\n{content}")
                     continue
                 
                 review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
