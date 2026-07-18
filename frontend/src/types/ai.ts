@@ -291,6 +291,8 @@ export interface SseLesson {
 export interface SseError {
   type: 'error'
   content: string
+  code?: string
+  stage?: string
 }
 
 export interface SseRetry {

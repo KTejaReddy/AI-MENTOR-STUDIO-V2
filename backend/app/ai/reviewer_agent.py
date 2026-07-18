@@ -86,11 +86,18 @@ class ReviewerAgent:
             issues = data.get("issues", [])
             suggestions = data.get("suggestions", [])
         except Exception as e:
-            logger.error(f"Semantic review failed, defaulting to pass: {e}")
+            logger.error(f"Semantic review failed: {e}. Degrading gracefully.")
             passed = True
             score = 1.0
             issues = []
             suggestions = []
+            return ReviewResult(
+                passed=passed,
+                score=score,
+                issues=issues,
+                suggestions=suggestions,
+                metrics={"reviewed_by": "llm_semantic", "fallback": "reviewer_failed", "error": str(e)}
+            )
         finally:
             key_manager.release_key(key, success=True)
 

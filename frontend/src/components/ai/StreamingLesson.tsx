@@ -11,7 +11,7 @@ import {
   Network, Edit3, Type, FileArchive,
 } from 'lucide-react'
 
-class MarkdownErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error?: Error}> {
+class MarkdownErrorBoundary extends React.Component<{children: React.ReactNode, sectionId?: string}, {hasError: boolean, error?: Error}> {
   constructor(props: any) {
     super(props)
     this.state = { hasError: false }
@@ -20,13 +20,13 @@ class MarkdownErrorBoundary extends React.Component<{children: React.ReactNode},
     return { hasError: true, error }
   }
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Markdown Render Crash:", error, errorInfo)
+    console.error(`[REACT_CRASH] Markdown Render Crash in section ${this.props.sectionId || 'unknown'}:`, error, errorInfo)
   }
   render() {
     if (this.state.hasError) {
       return (
         <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-md text-red-400">
-          <p className="font-bold">Error rendering this section.</p>
+          <p className="font-bold flex items-center gap-2"><AlertTriangle className="w-4 h-4"/> Error rendering section {this.props.sectionId}</p>
           <p className="text-xs font-mono mt-1 opacity-80">{this.state.error?.message}</p>
         </div>
       )
@@ -42,6 +42,8 @@ interface StreamingLessonProps {
   accumulatedContent: string
   analysis: any | null
   errorMessage?: string | null
+  errorCode?: string
+  errorStage?: string
   sectionStatuses?: Record<string, 'waiting' | 'queued' | 'generating' | 'retrying' | 'completed' | 'error'>
   metrics?: {
     plannerTime?: number
@@ -107,7 +109,7 @@ const difficultyColors: Record<string, string> = {
 }
 
 export const StreamingLesson = memo(function StreamingLesson({
-  status, lesson, accumulatedContent, analysis, errorMessage, sectionStatuses = {}, metrics,
+  status, lesson, accumulatedContent, analysis, errorMessage, errorCode, errorStage, sectionStatuses = {}, metrics,
   activeSectionId = null, onSelectSection, tabInfo,
 }: StreamingLessonProps) {
   const isGenerating = status === 'generating'
@@ -142,7 +144,13 @@ export const StreamingLesson = memo(function StreamingLesson({
       >
         <XCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
         <p className="text-sm font-semibold text-red-300">Generation Failed</p>
-        {errorMessage && <p className="text-[11px] text-red-400/80 mt-1 break-all max-w-lg mx-auto">{errorMessage}</p>}
+        {errorCode && (
+          <div className="mt-4 inline-block bg-red-500/10 border border-red-500/20 rounded-md px-3 py-1.5">
+            <p className="text-xs font-mono text-red-300 font-bold">{errorCode}</p>
+            {errorStage && <p className="text-[10px] text-red-400/80 mt-0.5">Stage: {errorStage}</p>}
+          </div>
+        )}
+        {errorMessage && <p className="text-[11px] text-red-400/80 mt-3 break-all max-w-lg mx-auto bg-black/20 p-2 rounded-md font-mono">{errorMessage}</p>}
       </motion.div>
     )
   }
@@ -345,7 +353,7 @@ export const StreamingLesson = memo(function StreamingLesson({
                             {activeSectionId === 'quiz' ? (
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} isGenerating />
                             ) : (
-                              <MarkdownErrorBoundary>
+                              <MarkdownErrorBoundary sectionId={activeSectionId}>
                                 <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
                               </MarkdownErrorBoundary>
                             )}
@@ -356,7 +364,7 @@ export const StreamingLesson = memo(function StreamingLesson({
                             {activeSectionId === 'quiz' ? (
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} />
                             ) : (
-                              <MarkdownErrorBoundary>
+                              <MarkdownErrorBoundary sectionId={activeSectionId}>
                                 <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
                               </MarkdownErrorBoundary>
                             )}

@@ -9,6 +9,8 @@ interface GenerationResult {
   lesson: Lesson | null
   mapped: MappedLesson | null
   error: string | null
+  errorCode?: string
+  errorStage?: string
   progress: number
   analysis: any | null
   sectionStatuses: Record<string, 'waiting' | 'queued' | 'generating' | 'retrying' | 'completed' | 'error'>
@@ -387,6 +389,7 @@ export function useAIGeneration(activeTab?: any) {
             if (playTimerRef.current) clearInterval(playTimerRef.current)
             setResult((prev) => ({
               ...prev, status: 'error', error: event.content,
+              errorCode: event.code, errorStage: event.stage
             }))
             break
 
@@ -405,12 +408,16 @@ export function useAIGeneration(activeTab?: any) {
       isGenerationActiveRef.current = false
       if (playTimerRef.current) clearInterval(playTimerRef.current)
       if (err.name === 'AbortError') {
+        console.warn('[SSE_DISCONNECT] Generation aborted by user or tab switch.')
         setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled. Note: Switching tabs will abort active generation.' }))
       } else {
+        console.error('[SSE_DISCONNECT] Generation stream failed abruptly:', err)
         setResult((prev) => ({
           ...prev,
           status: 'error',
           error: err.message || 'Generation failed',
+          errorCode: 'STREAM_ABRUPT_DISCONNECT',
+          errorStage: 'sse_client'
         }))
       }
     }

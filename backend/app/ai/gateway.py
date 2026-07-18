@@ -261,11 +261,19 @@ class Gateway:
                 elif event["type"] == "error":
                     yield event
         except Exception as e:
-            logger.error("Teaching Orchestrator failed: %s", str(e), exc_info=True)
-            yield {"type": "error", "content": "Lesson generation failed. Please try again."}
+            total_time = time.time() - start_time
+            logger.error("Teaching Orchestrator failed at %.2fs: %s", total_time, str(e), exc_info=True)
+            yield {
+                "type": "error", 
+                "content": f"Generation failed: {str(e)}", 
+                "code": "ORCHESTRATOR_EXCEPTION", 
+                "stage": "orchestrator",
+                "details": str(e)
+            }
 
-        await stream_manager.remove(active_stream.id)
-        return
+        finally:
+            await stream_manager.remove(active_stream.id)
+            return
 
     async def chat(
         self,

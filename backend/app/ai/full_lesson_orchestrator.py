@@ -66,7 +66,12 @@ async def generate_lesson_full(
 
     key = await key_manager.acquire_key(model_id)
     if not key:
-        yield {"type": "error", "content": "No API keys available."}
+        yield {
+            "type": "error", 
+            "content": "No API keys available.",
+            "code": "API_KEYS_EXHAUSTED",
+            "stage": "provider_init"
+        }
         return
         
     provider.set_api_key(key.key)
@@ -83,7 +88,8 @@ async def generate_lesson_full(
     )
 
     accumulated_content = {st: "" for st, _ in active_sections}
-    header_pattern = re.compile(r"^##\s+\d+\.\s+(.*?)\s*\(Section ID:\s*([a-zA-Z0-9]+)\)", re.IGNORECASE)
+    # Relaxed header pattern. Matches '## 1. Title (Section ID: st)' OR '## Title'
+    header_pattern = re.compile(r"^##\s+(?:\d+\.\s+)?(.*?)(?:\s*\(Section ID:\s*([a-zA-Z0-9]+)\))?$", re.IGNORECASE)
 
     current_buffer = ""
     active_st = None
@@ -113,11 +119,13 @@ async def generate_lesson_full(
             async for event in provider.complete_stream(request):
                 if event.error:
                     logger.error(f"Provider stream error: {event.error}")
+                    yield {"_internal_error": True, "code": "STREAM_DISCONNECT", "stage": "llm_streaming", "details": str(event.error)}
                     break
                 if event.content:
                     yield event.content
         except Exception as e:
             logger.error(f"Stream exception: {e}")
+            yield {"_internal_error": True, "code": "STREAM_EXCEPTION", "stage": "llm_streaming", "details": str(e)}
 
     keep_alive_task = asyncio.create_task(_keep_alive().__anext__())
     stream_gen = _stream_generator().__aiter__()
@@ -137,6 +145,14 @@ async def generate_lesson_full(
             if fetch_task in done:
                 try:
                     chunk = fetch_task.result()
+                    if isinstance(chunk, dict) and chunk.get("_internal_error"):
+                        yield {
+                            "type": "error",
+                            "content": f"Generation interrupted: {chunk.get('details', 'Unknown error')}",
+                            "code": chunk.get("code"),
+                            "stage": chunk.get("stage")
+                        }
+                        break
                 except StopAsyncIteration:
                     break
                     
@@ -151,9 +167,25 @@ async def generate_lesson_full(
                     for line in lines:
                         match = header_pattern.match(line.strip())
                         if match:
-                            new_st = match.group(2)
+                            title_group = match.group(1).strip()
+                            st_group = match.group(2)
+                            
+                            # Fallback mapping if Section ID is missing from LLM output
+                            new_st = st_group
+                            if not new_st:
+                                # Fuzzy match title
+                                matched = False
+                                for pst, ptitle in active_sections:
+                                    if ptitle.lower() in title_group.lower():
+                                        new_st = pst
+                                        matched = True
+                                        break
+                                if not matched:
+                                    # Fallback to current section or next section
+                                    new_st = active_st if active_st else active_sections[0][0]
+                                    
                             # Close previous section
-                            if active_st:
+                            if active_st and new_st != active_st:
                                 yield {
                                     "type": "section_done",
                                     "section_type": active_st,
@@ -166,14 +198,15 @@ async def generate_lesson_full(
                                     "elapsed": 0,
                                     "model": model_id,
                                 }
-                            active_st = new_st
-                            yield {
-                                "type": "section_status",
-                                "section_type": active_st,
-                                "status": "generating",
-                                "title": match.group(1),
-                                "engine_id": engine_id,
-                            }
+                            if new_st != active_st:
+                                active_st = new_st
+                                yield {
+                                    "type": "section_status",
+                                    "section_type": active_st,
+                                    "status": "generating",
+                                    "title": title_group,
+                                    "engine_id": engine_id,
+                                }
                         else:
                             if active_st:
                                 accumulated_content[active_st] += line + "\n"
@@ -217,17 +250,36 @@ async def generate_lesson_full(
     
     for st, title in active_sections:
         content = accumulated_content[st]
-        if not content.strip():
-            logger.warning(f"Section {st} is empty, scheduling regeneration")
-            async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
-                yield event
-            continue
-            
-        review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
-        if not review_result.passed:
-            logger.warning(f"Section {st} failed semantic review, regenerating. Issues: {review_result.issues}")
-            async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, review_result.issues):
-                yield event
+        
+        # Graceful reviewer degradation: if anything fails, just keep the section.
+        try:
+            if not content.strip():
+                logger.warning(f"Section {st} is empty, scheduling regeneration")
+                async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
+                    yield event
+                continue
+                
+            review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
+            if not review_result.passed:
+                logger.warning(f"Section {st} failed semantic review, regenerating. Issues: {review_result.issues}")
+                async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, review_result.issues):
+                    yield event
+        except Exception as e:
+            logger.error(f"Semantic reviewer/regen crashed for section {st}: {e}. Degrading gracefully.")
+            # Yield section done for original content so frontend doesn't hang
+            yield {
+                "type": "section_done",
+                "section_type": st,
+                "section_data": {
+                    "type": st,
+                    "content": content,
+                },
+                "status": "completed",
+                "engine_id": engine_id,
+                "elapsed": 0,
+                "model": model_id,
+                "quality_score": getattr(review_result, 'score', 1.0) if 'review_result' in locals() else 1.0,
+            }
 
     yield {
         "type": "done",
