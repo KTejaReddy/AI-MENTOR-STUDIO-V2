@@ -251,15 +251,22 @@ class GroqProvider(AIProvider):
 
             # Key-manager-based path: try all available keys with automatic failover
             excluded_keys: set = set()
-            available = self._key_manager.available_keys
-            max_key_retries = max(len(available), 1)
+            max_attempts = 15
+            backoff = 2.0
 
-            for attempt in range(max_key_retries):
+            for attempt in range(max_attempts):
                 api_key = self._key_manager.get_available_key(request.model, excluded_keys)
                 if not api_key:
-                    error_msg = "No available API keys" if attempt == 0 else "All API keys exhausted"
-                    yield StreamChunk(content="", error=error_msg)
-                    return
+                    # Check if all keys are permanently excluded (failed)
+                    if len(excluded_keys) >= len(self._key_manager.keys):
+                        yield StreamChunk(content="", error="All API keys exhausted")
+                        return
+                    
+                    # Keys are in cooldown (429s). Exponential backoff and retry.
+                    logger.warning("All keys in cooldown for model=%s. Backing off %.1fs", request.model, backoff)
+                    await asyncio.sleep(backoff)
+                    backoff = min(backoff * 2, 60.0)
+                    continue
 
                 payload = self._build_payload(request, stream=True)
                 headers = self._build_headers(api_key.key)
@@ -293,41 +300,34 @@ class GroqProvider(AIProvider):
                 except httpx.HTTPStatusError as e:
                     status = e.response.status_code
                     if status in (429, 503):
-                        api_key.mark_cooldown(60)
-                    elif status in (401, 403):
+                        api_key.mark_cooldown(30)
+                    else:
                         api_key.mark_failed(300)
+                        excluded_keys.add(api_key.key)
+                        
                     error_detail = f"HTTP {status}"
                     try:
                         await e.response.aread()
                         error_detail = f"HTTP {status}: {e.response.text[:200]}"
                     except Exception:
                         pass
-                    excluded_keys.add(api_key.key)
+                        
                     logger.warning(
-                        "Groq key error %s model=%s attempt=%d/%d — trying next key",
-                        error_detail, request.model, attempt + 1, max_key_retries,
+                        "Groq key error %s model=%s attempt=%d/%d — trying next key or backing off",
+                        error_detail, request.model, attempt + 1, max_attempts,
                     )
-                    if attempt >= max_key_retries - 1:
-                        yield StreamChunk(content="", error=error_detail)
-                        return
                     continue
 
                 except httpx.TimeoutException:
-                    api_key.mark_cooldown(60)
-                    excluded_keys.add(api_key.key)
-                    logger.warning("Groq timeout model=%s attempt=%d/%d", request.model, attempt + 1, max_key_retries)
-                    if attempt >= max_key_retries - 1:
-                        yield StreamChunk(content="", error="Request timed out")
-                        return
+                    api_key.mark_cooldown(30)
+                    # Don't permanently exclude for a timeout
+                    logger.warning("Groq timeout model=%s attempt=%d/%d", request.model, attempt + 1, max_attempts)
                     continue
 
                 except Exception as e:
                     api_key.mark_failed(60)
                     excluded_keys.add(api_key.key)
-                    logger.error("Groq error: %s attempt=%d/%d", str(e), attempt + 1, max_key_retries)
-                    if attempt >= max_key_retries - 1:
-                        yield StreamChunk(content="", error=str(e))
-                        return
+                    logger.error("Groq error: %s attempt=%d/%d", str(e), attempt + 1, max_attempts)
                     continue
         finally:
             elapsed = time.time() - start_time

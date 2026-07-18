@@ -185,7 +185,7 @@ class KeyManager:
                 pass
         self._available_event.clear()
 
-    def release_key(self, key: "ApiKey", success: bool = True) -> None:
+    def release_key(self, key: "ApiKey", success: bool = True, latency: float = 0.0, error_type: str = "") -> None:
         """Release a key — decrement in-flight counter."""
         with self._lock:
             if key.in_flight > 0:
