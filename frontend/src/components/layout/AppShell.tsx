@@ -75,7 +75,7 @@ export function AppShell() {
             <div className="text-xs font-semibold text-text-tertiary mb-3 uppercase tracking-wider">Navigation</div>
             <div className="flex-1 flex flex-col items-center justify-center text-center text-xs text-text-tertiary/75 p-2">
               <span className="mb-2">Sidebar active</span>
-              <span className="text-[10px]">Navigate tabs from the premium header above.</span>
+              <span className="text-xs">Navigate tabs from the premium header above.</span>
             </div>
           </motion.div>
         )}

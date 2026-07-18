@@ -84,9 +84,9 @@ export const SearchOverlay = memo(function SearchOverlay({
                     )}
                   >
                     <p className="text-xs font-medium text-accent-light mb-1">{result.sectionTitle}</p>
-                    <p className="text-[10px] text-text-tertiary">{result.matches.length} match{result.matches.length > 1 ? 'es' : ''}</p>
+                    <p className="text-xs text-text-tertiary">{result.matches.length} match{result.matches.length > 1 ? 'es' : ''}</p>
                     {result.matches.slice(0, 2).map((match, mi) => (
-                      <p key={mi} className="text-[10px] text-text-secondary mt-1 font-mono leading-relaxed">
+                      <p key={mi} className="text-xs text-text-secondary mt-1 font-mono leading-relaxed">
                         {match.text}
                       </p>
                     ))}
@@ -98,7 +98,7 @@ export const SearchOverlay = memo(function SearchOverlay({
         )}
 
         {query && results.length > 0 && (
-          <div className="flex items-center gap-3 px-4 py-2 border-t border-border text-[10px] text-text-tertiary">
+          <div className="flex items-center gap-3 px-4 py-2 border-t border-border text-xs text-text-tertiary">
             <span className="flex items-center gap-1"><ArrowUp className="w-3 h-3" /> <ArrowDown className="w-3 h-3" /> Navigate</span>
             <span className="flex items-center gap-1">↵ Select</span>
             <span className="flex items-center gap-1">Esc Close</span>

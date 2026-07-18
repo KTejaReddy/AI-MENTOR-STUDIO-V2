@@ -116,7 +116,7 @@ export function SubjectCard({
               <Badge
                 variant={difficulty === 'beginner' ? 'success' : difficulty === 'intermediate' ? 'warning' : 'error'}
                 size="sm"
-                className="capitalize text-[9px] px-1.5"
+                className="capitalize text-xs px-1.5"
               >
                 {difficulty}
               </Badge>
@@ -124,7 +124,7 @@ export function SubjectCard({
           </div>
           <p className="text-xs text-text-tertiary line-clamp-2 mb-3 leading-relaxed">{description}</p>
           <div className="flex items-center justify-between">
-            <span className="text-[10px] text-text-tertiary font-mono">{topicCount} TOPICS</span>
+            <span className="text-xs text-text-tertiary font-mono">{topicCount} TOPICS</span>
             <div className="w-5 h-5 rounded-full bg-white/3 flex items-center justify-center group-hover:bg-[#00f2fe]/15 transition-all">
               <ArrowRight className="w-3 h-3 text-text-tertiary group-hover:text-[#00f2fe] group-hover:translate-x-0.5 transition-all" />
             </div>

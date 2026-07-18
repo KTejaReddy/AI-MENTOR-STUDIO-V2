@@ -49,7 +49,7 @@ export const Monaco = memo(function Monaco({
   return (
     <div className={cn('relative group rounded-xl overflow-hidden border border-border', className)}>
       <div className="flex items-center justify-between px-3 py-1.5 bg-surface-150 border-b border-border">
-        <span className="text-[10px] font-medium text-text-tertiary uppercase tracking-wider">
+        <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">
           {language}
         </span>
         <div className="flex items-center gap-0.5">

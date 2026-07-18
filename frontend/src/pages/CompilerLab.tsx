@@ -156,17 +156,17 @@ export function CompilerLab() {
             <RotateCcw className="w-3.5 h-3.5" /> Reset
           </Button>
           {isRunning && (
-            <div className="flex items-center gap-1.5 text-[10px] text-amber-400 border border-amber-400/30 bg-amber-500/10 px-2 py-1 rounded animate-pulse">
+            <div className="flex items-center gap-1.5 text-xs text-amber-400 border border-amber-400/30 bg-amber-500/10 px-2 py-1 rounded animate-pulse">
               <Loader2 className="w-3 h-3 animate-spin" /> Running...
             </div>
           )}
           {timedOut && (
-            <div className="flex items-center gap-1.5 text-[10px] text-red-400 border border-red-400/30 bg-red-500/10 px-2 py-1 rounded">
+            <div className="flex items-center gap-1.5 text-xs text-red-400 border border-red-400/30 bg-red-500/10 px-2 py-1 rounded">
               <AlertCircle className="w-3 h-3" /> Timed out
             </div>
           )}
           {execTime > 0 && (
-            <div className="flex items-center gap-1.5 text-[10px] text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
+            <div className="flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
               <Clock className="w-3 h-3" /> {execTime}ms
             </div>
           )}
@@ -214,7 +214,7 @@ export function CompilerLab() {
             className="shrink-0 h-6 md:w-6 md:h-full flex items-center justify-center border-t md:border-t-0 md:border-l border-border bg-surface-100 hover:bg-surface-150 transition-colors text-text-tertiary hover:text-text-primary z-20"
             aria-label="Open output panel"
           >
-            <span className="md:hidden text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 text-[#00f2fe]">Open Panel <PanelRightOpen className="w-3 h-3 rotate-90" /></span>
+            <span className="md:hidden text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-[#00f2fe]">Open Panel <PanelRightOpen className="w-3 h-3 rotate-90" /></span>
             <PanelRightOpen className="hidden md:block w-3 h-3 text-[#00f2fe]" />
           </button>
         )}
@@ -231,15 +231,15 @@ export function CompilerLab() {
             <div className="flex-1 flex flex-col w-full h-full min-w-0 overflow-hidden">
               <div className="flex border-b border-border h-9 shrink-0 w-full bg-surface-200/50">
                 {language.id === 'html' ? (
-                  <button onClick={() => setActiveTab('preview')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors', activeTab === 'preview' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
+                  <button onClick={() => setActiveTab('preview')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'preview' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
                     <Cpu className="w-3.5 h-3.5" /> Live Preview
                   </button>
                 ) : (
-                  <button onClick={() => setActiveTab('console')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors', activeTab === 'console' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
+                  <button onClick={() => setActiveTab('console')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'console' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
                     <TerminalSquare className="w-3.5 h-3.5" /> Console
                   </button>
                 )}
-                <button onClick={() => setActiveTab('ai')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors', activeTab === 'ai' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
+                <button onClick={() => setActiveTab('ai')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'ai' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
                   <Sparkles className="w-3.5 h-3.5" /> AI Assistant
                 </button>
                 <button onClick={() => setOutputPanelOpen(false)} className="px-3 text-text-tertiary hover:text-text-primary transition-colors border-l border-border" aria-label="Close output panel">
@@ -251,7 +251,7 @@ export function CompilerLab() {
                 {activeTab === 'console' && (
                   <div className="flex-1 overflow-y-auto scrollbar-thin p-4 font-mono bg-[#030307]/75">
                     {/* Prompt Header */}
-                    <div className="text-[10px] text-text-tertiary mb-3 flex items-center gap-1.5 opacity-60">
+                    <div className="text-xs text-text-tertiary mb-3 flex items-center gap-1.5 opacity-60">
                       <span className="text-[#10b981]">➜</span>
                       <span>compiler-lab</span>
                       <span className="text-[#8b5cf6]">~</span>
@@ -263,7 +263,7 @@ export function CompilerLab() {
                     </pre>
                     {errorMsg && (
                       <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                        <div className="flex items-center gap-1.5 text-[10px] font-semibold text-red-400 mb-1.5">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-red-400 mb-1.5">
                           <AlertCircle className="w-3.5 h-3.5" /> Error details:
                         </div>
                         <pre className="font-mono text-xs text-red-300/80 whitespace-pre-wrap leading-relaxed">{errorMsg}</pre>
@@ -285,7 +285,7 @@ export function CompilerLab() {
                     {isAiProcessing ? (
                       <div className="flex flex-col items-center gap-2.5 text-text-tertiary text-xs justify-center py-12">
                         <Loader2 className="w-4 h-4 animate-spin text-[#00f2fe]" />
-                        <span className="font-bold uppercase tracking-wider text-[10px] text-[#00f2fe]/80 animate-pulse">Processing with AI...</span>
+                        <span className="font-bold uppercase tracking-wider text-xs text-[#00f2fe]/80 animate-pulse">Processing with AI...</span>
                       </div>
                     ) : (
                       <MarkdownRenderer content={aiOutput || '*Run an AI action from the header toolbar to see output explanations here.*'} />

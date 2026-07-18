@@ -144,12 +144,12 @@ export function CustomSelect({
         className={cn(
           'w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-[48px] rounded-xl border transition-all text-sm font-semibold select-none',
           isOpen 
-            ? 'border-[#00f2fe]/40 shadow-[0_0_15px_rgba(0,242,254,0.15)] ring-1 ring-[#00f2fe]/20 bg-[#111827]' 
-            : 'border-white/5 bg-white/3 hover:border-white/10 hover:bg-white/5 text-text-primary',
-          disabled && 'opacity-40 cursor-not-allowed bg-white/1'
+            ? 'border-accent/40 shadow-[0_0_15px_rgba(0,242,254,0.15)] ring-1 ring-accent/20 bg-surface-200' 
+            : 'border-border bg-surface-150 hover:border-border-light hover:bg-surface-200 text-text-primary',
+          disabled && 'opacity-40 cursor-not-allowed bg-surface-100'
         )}
       >
-        <span className={cn('truncate', !selectedOption && 'text-white/55 font-normal')}>
+        <span className={cn('truncate', !selectedOption && 'text-text-tertiary font-normal')}>
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown
@@ -170,20 +170,20 @@ export function CustomSelect({
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
               'absolute z-50 top-full left-0 right-0 mt-1.5 p-1.5 rounded-2xl border backdrop-blur-xl flex flex-col',
-              'bg-[#111827] border-white/8 shadow-[0_20px_50px_rgba(0,0,0,0.5)]'
+              'bg-surface-200/95 border-border shadow-elevated'
             )}
           >
             {/* Search Input Box */}
             {searchable && (
-              <div className="relative p-1 border-b border-white/5 mb-1.5 shrink-0 flex items-center">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/45 pointer-events-none" />
+              <div className="relative p-1 border-b border-border mb-1.5 shrink-0 flex items-center">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-text-tertiary pointer-events-none" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search options..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-black/30 border border-white/5 text-xs text-white placeholder:text-white/45 caret-white outline-none focus:border-[#00f2fe]/45 transition-colors"
+                  className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-surface-150 border border-border text-xs text-text-primary placeholder:text-text-tertiary caret-accent outline-none focus:border-accent/40 transition-colors"
                 />
               </div>
             )}
@@ -209,8 +209,8 @@ export function CustomSelect({
                         isSelected
                           ? 'font-bold text-white bg-gradient-to-r from-[#00E5FF] to-[#7C3AED] shadow-md'
                           : isFocused 
-                            ? 'bg-[#1E293B] text-white scale-[1.02] translate-y-[-1px] shadow-[0_0_10px_rgba(0,242,254,0.1)] border-white/10'
-                            : 'text-white/85 hover:bg-[#1E293B] hover:scale-[1.02] hover:translate-y-[-1px] hover:shadow-[0_0_10px_rgba(0,242,254,0.08)]'
+                            ? 'bg-surface-300/50 text-text-primary scale-[1.02] translate-y-[-1px] shadow-[0_0_10px_rgba(0,242,254,0.1)] border-border/20'
+                            : 'text-text-secondary hover:bg-surface-150 hover:scale-[1.02] hover:translate-y-[-1px] hover:shadow-[0_0_10px_rgba(0,242,254,0.08)]'
                       )}
                     >
                       <span className="truncate">{opt.label}</span>

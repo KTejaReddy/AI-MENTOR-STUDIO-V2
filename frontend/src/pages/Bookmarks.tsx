@@ -104,7 +104,7 @@ export function Bookmarks() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-xs font-bold text-text-primary truncate mb-1 group-hover:text-[#00f2fe] transition-colors">{bookmark.title}</p>
-                              <p className="text-[9px] font-mono text-text-tertiary mb-2 uppercase tracking-wide">{bookmark.subject} · {bookmark.added}</p>
+                              <p className="text-xs font-mono text-text-tertiary mb-2 uppercase tracking-wide">{bookmark.subject} · {bookmark.added}</p>
                               <div className="flex flex-wrap gap-1 mt-1.5">
                                 {bookmark.tags.map((tag) => <Badge key={tag} variant="surface" size="sm" className="text-[8px] bg-surface-200 border-border">{tag}</Badge>)}
                               </div>
@@ -127,7 +127,7 @@ export function Bookmarks() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-text-primary truncate">{bookmark.title}</p>
-                          <p className="text-[10px] text-text-tertiary">{bookmark.subject} · {bookmark.added}</p>
+                          <p className="text-xs text-text-tertiary">{bookmark.subject} · {bookmark.added}</p>
                         </div>
                         <div className="hidden sm:flex gap-1">
                           {bookmark.tags.map((tag) => <Badge key={tag} variant="surface" size="sm">{tag}</Badge>)}

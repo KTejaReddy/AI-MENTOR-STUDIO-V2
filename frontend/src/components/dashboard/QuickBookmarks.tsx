@@ -19,7 +19,7 @@ export const QuickBookmarks = memo(function QuickBookmarks() {
       <div className="space-y-1">
         {allBookmarks.map((b) => (
           <div key={b.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg">
-            <span className="px-1 py-0.5 text-[9px] font-medium bg-surface-200 rounded text-text-tertiary">{typeLabels[b.type] ?? b.type}</span>
+            <span className="px-1 py-0.5 text-xs font-medium bg-surface-200 rounded text-text-tertiary">{typeLabels[b.type] ?? b.type}</span>
             <span className="text-xs text-text-primary truncate">{b.label}</span>
           </div>
         ))}

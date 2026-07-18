@@ -57,7 +57,7 @@ export const CommandPalette = memo(function CommandPalette({
             className="flex-1 bg-transparent border-none outline-none text-sm text-text-primary placeholder:text-text-tertiary"
             aria-label="Search commands"
           />
-          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] text-text-tertiary bg-surface-200 rounded border border-border">ESC</kbd>
+          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-xs text-text-tertiary bg-surface-200 rounded border border-border">ESC</kbd>
         </div>
         <div className="max-h-80 overflow-y-auto" role="listbox">
           {commands.length === 0 ? (
@@ -80,17 +80,17 @@ export const CommandPalette = memo(function CommandPalette({
                 </span>
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{cmd.label}</div>
-                  <div className="text-[11px] text-text-tertiary truncate">{cmd.description}</div>
+                  <div className="text-xs text-text-tertiary truncate">{cmd.description}</div>
                 </div>
                 {cmd.shortcut && (
-                  <kbd className="shrink-0 px-1.5 py-0.5 text-[10px] text-text-tertiary bg-surface-200 rounded border border-border">{cmd.shortcut}</kbd>
+                  <kbd className="shrink-0 px-1.5 py-0.5 text-xs text-text-tertiary bg-surface-200 rounded border border-border">{cmd.shortcut}</kbd>
                 )}
-                <span className="text-[10px] text-text-tertiary uppercase tracking-wider shrink-0">{cmd.category}</span>
+                <span className="text-xs text-text-tertiary uppercase tracking-wider shrink-0">{cmd.category}</span>
               </button>
             ))
           )}
         </div>
-        <div className="px-4 py-2 border-t border-border flex items-center gap-3 text-[10px] text-text-tertiary">
+        <div className="px-4 py-2 border-t border-border flex items-center gap-3 text-xs text-text-tertiary">
           <span><kbd className="px-1 py-0.5 bg-surface-200 rounded border border-border">↑↓</kbd> Navigate</span>
           <span><kbd className="px-1 py-0.5 bg-surface-200 rounded border border-border">Enter</kbd> Select</span>
           <span><kbd className="px-1 py-0.5 bg-surface-200 rounded border border-border">Esc</kbd> Close</span>

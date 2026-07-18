@@ -68,7 +68,7 @@ export const InterviewCard = memo(function InterviewCard({
           >
             <div className="p-4">
               <div className="flex items-start gap-3 mb-3">
-                <span className="w-7 h-7 rounded-lg bg-sky-500/10 flex items-center justify-center shrink-0 text-[10px] font-bold text-sky-400">
+                <span className="w-7 h-7 rounded-lg bg-sky-500/10 flex items-center justify-center shrink-0 text-xs font-bold text-sky-400">
                   Q{i + 1}
                 </span>
                 <div className="flex-1 min-w-0">
@@ -77,7 +77,7 @@ export const InterviewCard = memo(function InterviewCard({
                     <Badge variant={difficultyColors[q.difficulty]} size="sm">
                       {q.difficulty}
                     </Badge>
-                    <span className="text-[10px] text-text-tertiary">{q.topic}</span>
+                    <span className="text-xs text-text-tertiary">{q.topic}</span>
                   </div>
                 </div>
                 <div className="flex gap-1 shrink-0">

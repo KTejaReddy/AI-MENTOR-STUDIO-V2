@@ -23,7 +23,6 @@ export function Learn() {
   const location = useLocation()
   const navigate = useNavigate()
   const [sidebarVisible, setSidebarVisible] = useState(true)
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   // Read openGenerate from location state and open dialog
   useEffect(() => {
     if (location.state && (location.state as any).openGenerate) {
@@ -127,7 +126,6 @@ export function Learn() {
     if (tab) {
       updateMemory(tab.id, { currentSectionId: sectionId })
     }
-    setMobileDrawerOpen(false) // Close drawer on mobile selection
     const el = document.querySelector(`[data-section-id="${sectionId}"]`)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -160,7 +158,7 @@ export function Learn() {
 
   return (
     <div className="h-full flex overflow-hidden bg-surface-50 relative">
-      <div className="hidden md:block h-full">
+      <div className="h-full flex-shrink-0 w-[68px] min-[430px]:w-48 md:w-56 lg:w-64 transition-all duration-300">
         {sidebarVisible && activeTab && (
           <LeftSidebar
             sectionStatuses={aiGen.sectionStatuses}
@@ -172,47 +170,6 @@ export function Learn() {
           />
         )}
       </div>
-
-      {/* Mobile Drawer Overlay */}
-      <AnimatePresence>
-        {mobileDrawerOpen && activeTab && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm"
-              onClick={() => setMobileDrawerOpen(false)}
-            />
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-4/5 max-w-[300px] z-50 md:hidden bg-surface flex flex-col shadow-2xl border-r border-border"
-            >
-              <div className="flex justify-between items-center p-4 border-b border-border">
-                <span className="font-bold text-text-primary">Lesson Sections</span>
-                <button onClick={() => setMobileDrawerOpen(false)} className="p-2 -mr-2 text-text-secondary hover:text-text-primary bg-surface-100 rounded-full">
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <LeftSidebar
-                  sectionStatuses={aiGen.sectionStatuses}
-                  isGenerating={aiGen.status === 'generating'}
-                  completedCount={Object.values(aiGen.sectionStatuses || {}).filter((s) => s === 'completed' || s === 'error').length}
-                  totalCount={Object.keys(aiGen.sectionStatuses || {}).length}
-                  activeSectionId={activeSectionId}
-                  onSelectSection={handleSelectSection}
-                />
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {hasAnyTabs ? (
           <>
@@ -267,45 +224,10 @@ export function Learn() {
               )}
             </div>
 
-            {/* Mobile Bottom Navigation & FAB */}
-            {showAiContent && activeTab && (
-              <div className="md:hidden fixed bottom-safe-4 left-4 right-4 z-40 pointer-events-none flex flex-col gap-4 mb-4">
-                <div className="flex justify-end pointer-events-auto">
-                  <button
-                    onClick={() => setMobileDrawerOpen(true)}
-                    className="flex items-center justify-center w-[52px] h-[52px] rounded-full bg-accent text-white shadow-elevated hover:bg-accent-dark transition-colors"
-                  >
-                    <List className="w-6 h-6" />
-                  </button>
-                </div>
-                
-                <div className="flex items-center justify-between glass rounded-2xl border border-border p-2 shadow-card pointer-events-auto bg-surface-100/90 backdrop-blur-xl">
-                  <button
-                    onClick={handlePrevSection}
-                    disabled={currentIndex <= 0}
-                    className="flex items-center gap-1 min-h-[48px] px-4 py-2 text-[15px] font-medium text-text-primary disabled:opacity-50 disabled:cursor-not-allowed rounded-xl active:bg-surface-200"
-                  >
-                    <ChevronLeft className="w-5 h-5" /> Prev
-                  </button>
-                  <span className="text-sm font-semibold text-text-tertiary">
-                    {currentIndex >= 0 ? `${currentIndex + 1} / ${activeSectionKeys.length}` : ''}
-                  </span>
-                  <button
-                    onClick={handleNextSection}
-                    disabled={currentIndex < 0 || currentIndex >= activeSectionKeys.length - 1}
-                    className="flex items-center gap-1 min-h-[48px] px-4 py-2 text-[15px] font-medium text-accent disabled:opacity-50 disabled:cursor-not-allowed rounded-xl active:bg-accent/10"
-                  >
-                    Next <ChevronRight className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-            )}
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center py-20 px-6">
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center text-center max-w-md"
             >
@@ -327,7 +249,7 @@ export function Learn() {
                 <Sparkles className="w-5 h-5" />
                 Generate Lesson
               </motion.button>
-              <p className="text-[10px] text-text-tertiary mt-3">or press Ctrl+N</p>
+              <p className="text-xs text-text-tertiary mt-3">or press Ctrl+N</p>
             </motion.div>
           </div>
         )}

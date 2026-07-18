@@ -38,7 +38,7 @@ function SectionCard({ icon, title, children, className }: { icon?: React.ReactN
 }
 
 function ContentMarkdown({ content }: { content?: string }) {
-  if (!content) return <p className="text-[10px] text-text-tertiary italic">Content not available</p>
+  if (!content) return <p className="text-xs text-text-tertiary italic">Content not available</p>
   return <MarkdownRenderer content={content} />
 }
 
@@ -59,10 +59,10 @@ export const LessonRenderer = memo(function LessonRenderer({ lesson, mapped }: L
     <div className="space-y-3">
       {metadata.learningObjectives && metadata.learningObjectives.length > 0 && (
         <div className="p-3 rounded-lg bg-accent/5 border border-accent/10">
-          <p className="text-[9px] font-semibold text-accent-light uppercase tracking-wider mb-1.5">Learning Objectives</p>
+          <p className="text-xs font-semibold text-accent-light uppercase tracking-wider mb-1.5">Learning Objectives</p>
           <ul className="space-y-0.5">
             {metadata.learningObjectives.map((obj: string, i: number) => (
-              <li key={i} className="flex items-start gap-2 text-[10px] text-text-secondary">
+              <li key={i} className="flex items-start gap-2 text-xs text-text-secondary">
                 <span className="w-1 h-1 rounded-full bg-accent/60 mt-[5px] shrink-0" />
                 {obj}
               </li>
@@ -91,8 +91,8 @@ export const LessonRenderer = memo(function LessonRenderer({ lesson, mapped }: L
             {lesson.resources.keyTerms.map((kt: any, i: number) => (
               <div key={i} className="p-3 rounded-lg bg-surface-150 border border-border">
                 <p className="text-xs font-semibold text-accent-light mb-0.5">{kt.term}</p>
-                <p className="text-[10px] text-text-secondary">{kt.definition}</p>
-                {kt.context && <p className="text-[9px] text-text-tertiary mt-0.5">Context: {kt.context}</p>}
+                <p className="text-xs text-text-secondary">{kt.definition}</p>
+                {kt.context && <p className="text-xs text-text-tertiary mt-0.5">Context: {kt.context}</p>}
               </div>
             ))}
           </div>
@@ -104,7 +104,7 @@ export const LessonRenderer = memo(function LessonRenderer({ lesson, mapped }: L
           <div className="space-y-2">
             {lesson.resources.furtherReading.map((fr: any, i: number) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-surface-150 border border-border">
-                <span className={`text-[9px] px-1.5 py-0.5 rounded font-semibold shrink-0 mt-0.5 ${
+                <span className={`text-xs px-1.5 py-0.5 rounded font-semibold shrink-0 mt-0.5 ${
                   fr.type === 'article' ? 'bg-accent/15 text-accent-light' :
                   fr.type === 'book' ? 'bg-blue-500/15 text-blue-300' :
                   fr.type === 'paper' ? 'bg-violet-500/15 text-violet-300' :
@@ -114,7 +114,7 @@ export const LessonRenderer = memo(function LessonRenderer({ lesson, mapped }: L
                 </span>
                 <div>
                   <p className="text-xs font-medium text-text-primary">{fr.title}</p>
-                  {fr.description && <p className="text-[9px] text-text-tertiary">{fr.description}</p>}
+                  {fr.description && <p className="text-xs text-text-tertiary">{fr.description}</p>}
                 </div>
               </div>
             ))}

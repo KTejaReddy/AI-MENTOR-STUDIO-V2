@@ -77,7 +77,7 @@ export const TabBar = memo(function TabBar({ onNewLesson }: TabBarProps) {
                 <span className="truncate">{truncated}</span>
               )}
               {tab.subject && (
-                <span className="text-[9px] text-text-tertiary hidden sm:inline truncate max-w-[4rem] opacity-60">
+                <span className="text-xs text-text-tertiary hidden sm:inline truncate max-w-[4rem] opacity-60">
                   {tab.subject}
                 </span>
               )}

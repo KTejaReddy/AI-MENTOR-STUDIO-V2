@@ -17,7 +17,7 @@ export function StatCard({ icon, label, value, className }: StatCardProps) {
       </div>
       <div className="min-w-0 relative z-10">
         <p className="text-lg font-bold text-text-primary leading-tight tracking-tight group-hover:text-[#00f2fe] transition-colors">{value}</p>
-        <p className="text-[10px] text-text-tertiary uppercase font-mono tracking-wider truncate mt-0.5">{label}</p>
+        <p className="text-xs text-text-tertiary uppercase font-mono tracking-wider truncate mt-0.5">{label}</p>
       </div>
     </div>
   )

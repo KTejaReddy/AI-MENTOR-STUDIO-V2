@@ -23,7 +23,7 @@ export const PinnedLessons = memo(function PinnedLessons() {
             <BookOpen className="w-3 h-3 text-text-tertiary shrink-0" />
             <div className="min-w-0">
               <div className="text-xs font-medium text-text-primary truncate">{p.topic}</div>
-              <div className="text-[10px] text-text-tertiary">{p.subject}</div>
+              <div className="text-xs text-text-tertiary">{p.subject}</div>
             </div>
           </button>
         ))}

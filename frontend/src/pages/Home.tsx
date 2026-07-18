@@ -103,7 +103,7 @@ function QuickActionCard({ icon, title, description, onClick, colorClass }: Quic
       </div>
       <div className="mt-2">
         <h3 className="text-xs font-bold text-text-primary tracking-tight truncate group-hover:text-accent transition-colors">{title}</h3>
-        <p className="text-[10px] text-text-tertiary mt-0.5 line-clamp-2 leading-relaxed">{description}</p>
+        <p className="text-xs text-text-tertiary mt-0.5 line-clamp-2 leading-relaxed">{description}</p>
       </div>
     </motion.button>
   )
@@ -303,19 +303,19 @@ export function Home() {
                       className="glass interactive-item p-5 rounded-xl border border-white/5 hover:border-accent/20 hover:shadow-[0_0_20px_rgba(0,194,255,0.06)] bg-white/3 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group"
                     >
                       <div>
-                        <span className="text-[9px] uppercase tracking-wider font-mono text-accent font-bold mb-1 block">
+                        <span className="text-xs uppercase tracking-wider font-mono text-accent font-bold mb-1 block">
                           {branch}
                         </span>
                         <h3 className="text-xs font-bold text-text-primary group-hover:text-accent transition-colors truncate mb-1">
                           {topic.topic}
                         </h3>
-                        <p className="text-[10px] text-text-tertiary truncate mb-3">
+                        <p className="text-xs text-text-tertiary truncate mb-3">
                           {topic.subject}
                         </p>
                       </div>
 
                       <div>
-                        <div className="flex items-center justify-between text-[9px] text-text-tertiary mb-1.5 font-medium">
+                        <div className="flex items-center justify-between text-xs text-text-tertiary mb-1.5 font-medium">
                           <span>Progress</span>
                           <span>{progressPercent}% ({topic.completed}/{topic.total})</span>
                         </div>
@@ -325,7 +325,7 @@ export function Home() {
                             style={{ width: `${progressPercent}%` }}
                           />
                         </div>
-                        <span className="text-[9px] text-text-tertiary/75 flex items-center gap-1">
+                        <span className="text-xs text-text-tertiary/75 flex items-center gap-1">
                           <Clock className="w-2.5 h-2.5" /> Opened {formatRelativeTime(topic.timestamp)}
                         </span>
                       </div>

@@ -12,7 +12,7 @@ export const PrerequisitesSection = memo(function PrerequisitesSection({ section
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium text-text-primary">{typeof p === 'string' ? p : p.topic ?? p.name}</p>
             {typeof p !== 'string' && (p.why ?? p.description) && (
-              <p className="text-[10px] text-text-tertiary">{p.why ?? p.description}</p>
+              <p className="text-xs text-text-tertiary">{p.why ?? p.description}</p>
             )}
           </div>
         </div>

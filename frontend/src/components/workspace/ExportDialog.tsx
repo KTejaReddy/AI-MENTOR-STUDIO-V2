@@ -52,7 +52,7 @@ export const ExportDialog = memo(function ExportDialog({
               <Icon className="w-4 h-4 shrink-0" />
               <div className="min-w-0">
                 <div className="text-xs font-medium">{label}</div>
-                <div className="text-[10px] text-text-tertiary">{description}</div>
+                <div className="text-xs text-text-tertiary">{description}</div>
               </div>
             </button>
           ))}

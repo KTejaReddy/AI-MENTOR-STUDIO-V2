@@ -58,14 +58,14 @@ export const WeeklyStats = memo(function WeeklyStats() {
             const height = Math.round((count / maxActivity) * 100)
             return (
               <div key={day} className="flex-1 flex flex-col items-center gap-1">
-                <span className="text-[9px] text-text-tertiary">{count || ''}</span>
+                <span className="text-xs text-text-tertiary">{count || ''}</span>
                 <div className="w-full rounded-sm bg-surface-200 relative" style={{ height: '48px' }}>
                   <div
                     className="absolute bottom-0 w-full rounded-sm bg-accent/60 transition-all duration-500"
                     style={{ height: `${Math.max(height, count > 0 ? 8 : 0)}%` }}
                   />
                 </div>
-                <span className="text-[9px] text-text-tertiary">{day}</span>
+                <span className="text-xs text-text-tertiary">{day}</span>
               </div>
             )
           })}
@@ -76,28 +76,28 @@ export const WeeklyStats = memo(function WeeklyStats() {
           <div className="bg-surface-100 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-text-tertiary mb-0.5">
               <Clock className="w-3 h-3" />
-              <span className="text-[10px]">Study Time</span>
+              <span className="text-xs">Study Time</span>
             </div>
             <span className="text-sm font-semibold text-text-primary">{formatStudyTime(stats.totalStudyTime)}</span>
           </div>
           <div className="bg-surface-100 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-text-tertiary mb-0.5">
               <TrendingUp className="w-3 h-3" />
-              <span className="text-[10px]">Topics</span>
+              <span className="text-xs">Topics</span>
             </div>
             <span className="text-sm font-semibold text-text-primary">{stats.topicCount}</span>
           </div>
           <div className="bg-surface-100 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-text-tertiary mb-0.5">
               <BookOpen className="w-3 h-3" />
-              <span className="text-[10px]">Subject</span>
+              <span className="text-xs">Subject</span>
             </div>
             <span className="text-sm font-semibold text-text-primary truncate">{stats.mostStudiedSubject}</span>
           </div>
           <div className="bg-surface-100 rounded-lg p-2.5">
             <div className="flex items-center gap-1.5 text-text-tertiary mb-0.5">
               <Bookmark className="w-3 h-3" />
-              <span className="text-[10px]">Completed</span>
+              <span className="text-xs">Completed</span>
             </div>
             <span className="text-sm font-semibold text-text-primary">{stats.completedSections}</span>
           </div>

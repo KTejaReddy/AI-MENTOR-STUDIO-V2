@@ -47,7 +47,7 @@ const learningModes = [
 
 function StepBadge({ number }: { number: number }) {
   return (
-    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-accent/20 text-accent-light text-[10px] font-bold shrink-0">
+    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-accent/20 text-accent-light text-xs font-bold shrink-0">
       {number}
     </span>
   )
@@ -183,18 +183,18 @@ export const GenerationPanel = memo(function GenerationPanel({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="rounded-xl border border-border overflow-hidden card-glass"
+      className="rounded-xl border border-border overflow-hidden bg-surface shadow-card"
     >
-      <div className="px-4 py-2.5 border-b border-border flex items-center gap-2 bg-surface-50/60">
+      <div className="px-4 md:px-6 py-3 border-b border-border flex items-center gap-2 bg-surface-50/60">
         <GraduationCap className="w-4 h-4 text-accent-light" />
         <span className="text-xs font-semibold text-text-primary">Generate Lesson</span>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-4 space-y-4">
+      <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 md:space-y-5">
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <StepBadge number={1} />
-            <label className="text-[11px] font-semibold text-text-primary tracking-wide">Branch</label>
+            <label className="text-xs font-semibold text-text-primary tracking-wide">Branch</label>
           </div>
           <CustomSelect
             value={branchId}
@@ -209,7 +209,7 @@ export const GenerationPanel = memo(function GenerationPanel({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <StepBadge number={2} />
-            <label className="text-[11px] font-semibold text-text-primary tracking-wide">Subject</label>
+            <label className="text-xs font-semibold text-text-primary tracking-wide">Subject</label>
           </div>
           <CustomSelect
             value={subjectId}
@@ -224,7 +224,7 @@ export const GenerationPanel = memo(function GenerationPanel({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <StepBadge number={3} />
-            <label className="text-[11px] font-semibold text-text-primary tracking-wide">Topic</label>
+            <label className="text-xs font-semibold text-text-primary tracking-wide">Topic</label>
           </div>
           <div className="relative">
             <input
@@ -258,7 +258,7 @@ export const GenerationPanel = memo(function GenerationPanel({
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   className={cn(
-                    'absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-[10px]',
+                    'absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs',
                     topicValidation.valid ? 'text-emerald-400' : 'text-amber-400',
                   )}
                 >
@@ -298,7 +298,7 @@ export const GenerationPanel = memo(function GenerationPanel({
 
             {!topic && recentSearches.length > 0 && !showSuggestions && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-surface-100 border border-border rounded-lg shadow-elevated z-20">
-                <p className="px-3 py-1.5 text-[9px] text-text-tertiary uppercase tracking-wider">Recent</p>
+                <p className="px-3 py-1.5 text-xs text-text-tertiary uppercase tracking-wider">Recent</p>
                 {recentSearches.map((s, i) => (
                   <button
                     key={i}
@@ -321,14 +321,14 @@ export const GenerationPanel = memo(function GenerationPanel({
                 exit={{ opacity: 0, y: -4 }}
                 className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20"
               >
-                <p className="text-[10px] text-amber-300 mb-1">Did you mean one of these subjects?</p>
+                <p className="text-xs text-amber-600 dark:text-amber-300 mb-1">Did you mean one of these subjects?</p>
                 <div className="flex flex-wrap gap-1">
                   {topicValidation.alternatives.map((alt: { id: string; name: string; branch: string }, i: number) => (
                     <button
                       key={i}
                       type="button"
                       onClick={() => setSubjectId(alt.id)}
-                      className="px-2 py-1 text-[10px] rounded bg-amber-500/15 text-amber-200 border border-amber-500/20 hover:bg-amber-500/25 transition-colors"
+                      className="px-2 py-1 text-xs rounded bg-amber-500/10 text-amber-700 dark:text-amber-200 border border-amber-500/20 hover:bg-amber-500/20 transition-colors"
                     >
                       {alt.name} <span className="text-amber-400/60">({alt.branch})</span>
                     </button>
@@ -342,7 +342,7 @@ export const GenerationPanel = memo(function GenerationPanel({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <StepBadge number={4} />
-            <label className="text-[11px] font-semibold text-text-primary tracking-wide">Difficulty</label>
+            <label className="text-xs font-semibold text-text-primary tracking-wide">Difficulty</label>
           </div>
           <div className="flex gap-1">
             {difficulties.map((d) => (
@@ -367,7 +367,7 @@ export const GenerationPanel = memo(function GenerationPanel({
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <StepBadge number={5} />
-            <label className="text-[11px] font-semibold text-text-primary tracking-wide">Mode</label>
+            <label className="text-xs font-semibold text-text-primary tracking-wide">Mode</label>
           </div>
           <div className="flex gap-1 flex-wrap">
             {learningModes.map((m) => (
@@ -392,7 +392,7 @@ export const GenerationPanel = memo(function GenerationPanel({
         <div className="space-y-2 pt-1">
           <div className="flex items-center gap-2">
             <StepBadge number={6} />
-            <label className="text-[11px] font-semibold text-text-primary tracking-wide">Generate</label>
+            <label className="text-xs font-semibold text-text-primary tracking-wide">Generate</label>
           </div>
           {isGenerating ? (
             <button
@@ -427,8 +427,8 @@ export const GenerationPanel = memo(function GenerationPanel({
             exit={{ opacity: 0, y: 4 }}
             className="px-4 py-2 bg-emerald-500/10 border-t border-emerald-500/20 flex items-center justify-between"
           >
-            <span className="text-[10px] text-emerald-300">Lesson generated successfully</span>
-            <button onClick={onReset} className="flex items-center gap-1 text-[10px] text-text-tertiary hover:text-text-primary transition-colors">
+            <span className="text-xs text-emerald-300">Lesson generated successfully</span>
+            <button onClick={onReset} className="flex items-center gap-1 text-xs text-text-tertiary hover:text-text-primary transition-colors">
               <RefreshCw className="w-3 h-3" /> New Topic
             </button>
           </motion.div>
@@ -441,7 +441,7 @@ export const GenerationPanel = memo(function GenerationPanel({
             exit={{ opacity: 0, y: 4 }}
             className="px-4 py-2 bg-amber-500/10 border-t border-amber-500/20"
           >
-            <span className="text-[10px] text-amber-300">Generation cancelled</span>
+            <span className="text-xs text-amber-300">Generation cancelled</span>
           </motion.div>
         )}
 
@@ -453,13 +453,13 @@ export const GenerationPanel = memo(function GenerationPanel({
             className="px-4 py-2 bg-red-500/10 border-t border-red-500/20"
           >
             <div className="flex items-center justify-between mb-1">
-              <span className="text-[10px] text-red-300 font-medium">Generation failed</span>
-              <button onClick={onReset} className="flex items-center gap-1 text-[10px] text-text-tertiary hover:text-text-primary transition-colors">
+              <span className="text-xs text-red-300 font-medium">Generation failed</span>
+              <button onClick={onReset} className="flex items-center gap-1 text-xs text-text-tertiary hover:text-text-primary transition-colors">
                 <RefreshCw className="w-3 h-3" /> Retry
               </button>
             </div>
             {errorMessage && (
-              <p className="text-[9px] text-red-400/80 leading-relaxed break-all">{errorMessage}</p>
+              <p className="text-xs text-red-400/80 leading-relaxed break-all">{errorMessage}</p>
             )}
           </motion.div>
         )}

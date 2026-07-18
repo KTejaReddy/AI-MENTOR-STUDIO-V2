@@ -194,11 +194,11 @@ const QuestionCard = memo(function QuestionCard({
 
       {/* Header row */}
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-mono text-text-tertiary">
+        <span className="text-xs font-mono text-text-tertiary">
           Q{questionNumber} / {totalQuestions}
         </span>
         <span className={cn(
-          'px-2 py-0.5 rounded-full text-[9px] font-bold border uppercase tracking-wider',
+          'px-2 py-0.5 rounded-full text-xs font-bold border uppercase tracking-wider',
           difficultyStyle[question.difficulty],
         )}>
           {question.difficulty}
@@ -248,7 +248,7 @@ const QuestionCard = memo(function QuestionCard({
                 >
                   <div className="flex items-center gap-3 relative z-10">
                     <span className={cn(
-                      'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 transition-colors',
+                      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors',
                       !answered && !isSelected && 'bg-white/5 text-text-tertiary',
                       !answered && isSelected && 'bg-[#00f2fe] text-black',
                       showCorrect && 'bg-emerald-500 text-white',
@@ -289,17 +289,17 @@ const QuestionCard = memo(function QuestionCard({
                     <Badge
                       variant={selected === question.correctIndex ? 'success' : 'error'}
                       size="sm"
-                      className="text-[9px] uppercase tracking-wider"
+                      className="text-xs uppercase tracking-wider"
                     >
                       {selected === question.correctIndex ? '✓ Correct' : '✗ Incorrect'}
                     </Badge>
-                    <span className="text-[10px] text-text-tertiary">
+                    <span className="text-xs text-text-tertiary">
                       Correct answer: <strong className="text-text-primary">
                         {String.fromCharCode(65 + question.correctIndex)}) {question.options[question.correctIndex]}
                       </strong>
                     </span>
                   </div>
-                  <p className="text-[11px] text-text-secondary leading-relaxed">{question.explanation}</p>
+                  <p className="text-xs text-text-secondary leading-relaxed">{question.explanation}</p>
                 </div>
               </motion.div>
             )}
@@ -319,7 +319,7 @@ const QuestionCard = memo(function QuestionCard({
           <ChevronLeft className="w-4 h-4" />
           Previous
         </Button>
-        <span className="text-[10px] font-mono text-text-tertiary">
+        <span className="text-xs font-mono text-text-tertiary">
           {questionNumber} OF {totalQuestions}
         </span>
         {answered && (
@@ -416,7 +416,7 @@ function ResultsScreen({ score, total, onRestart }: ResultsScreenProps) {
       <Badge
         variant={passed ? 'success' : 'error'}
         size="default"
-        className="text-[10px] uppercase font-bold px-4 py-1 tracking-widest mt-1"
+        className="text-xs uppercase font-bold px-4 py-1 tracking-widest mt-1"
       >
         {passed ? '🏆 PASSED' : '📚 NEEDS REVIEW'}
       </Badge>
@@ -502,7 +502,7 @@ export const InteractiveQuiz = memo(function InteractiveQuiz({
         {questions.length === 0 && !isGenerating && (
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/8 border border-amber-500/20 mb-4">
             <Brain className="w-4 h-4 text-amber-400 shrink-0" />
-            <p className="text-[11px] text-amber-300">
+            <p className="text-xs text-amber-300">
               Displaying quiz in document format. Interactive mode requires multiple choice questions.
             </p>
           </div>
@@ -526,10 +526,10 @@ export const InteractiveQuiz = memo(function InteractiveQuiz({
           </div>
           <div>
             <p className="text-xs font-bold text-text-primary">Interactive Quiz</p>
-            <p className="text-[10px] text-text-tertiary">{questions.length} multiple choice questions</p>
+            <p className="text-xs text-text-tertiary">{questions.length} multiple choice questions</p>
           </div>
         </div>
-        <div className="flex items-center gap-3 text-[10px] text-text-tertiary">
+        <div className="flex items-center gap-3 text-xs text-text-tertiary">
           <span className="flex items-center gap-1">
             <Target className="w-3 h-3" />
             Score: <strong className="text-text-primary ml-0.5">{score}/{questions.length}</strong>

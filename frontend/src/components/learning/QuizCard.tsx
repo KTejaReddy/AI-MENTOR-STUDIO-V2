@@ -137,7 +137,7 @@ export const QuizCard = memo(function QuizCard() {
                       >
                         <div className="flex items-center gap-3 relative z-10">
                           <span className={cn(
-                            'w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-mono shrink-0',
+                            'w-6 h-6 rounded-full flex items-center justify-center text-xs font-mono shrink-0',
                             selected === i && answered && i === question.correct && 'bg-emerald-500 text-white',
                             selected === i && answered && i !== question.correct && 'bg-red-500 text-white',
                             selected === i && !answered && 'bg-[#00f2fe] text-black font-bold',
@@ -163,7 +163,7 @@ export const QuizCard = memo(function QuizCard() {
                       className="mt-4 p-4 rounded-xl bg-white/3 border border-white/5"
                     >
                       <div className="flex items-center gap-2 mb-1.5">
-                        <Badge variant={selected === question.correct ? 'success' : 'error'} size="sm" className="text-[9px]">
+                        <Badge variant={selected === question.correct ? 'success' : 'error'} size="sm" className="text-xs">
                           {selected === question.correct ? 'Correct Explanation' : 'Incorrect Explanation'}
                         </Badge>
                       </div>
@@ -178,7 +178,7 @@ export const QuizCard = memo(function QuizCard() {
                   <ChevronLeft className="w-4 h-4" />
                   Previous
                 </Button>
-                <span className="text-[10px] font-mono text-text-tertiary">
+                <span className="text-xs font-mono text-text-tertiary">
                   {current + 1} OF {sampleQuestions.length}
                 </span>
                 {answered && (
@@ -213,7 +213,7 @@ export const QuizCard = memo(function QuizCard() {
               <span className="text-5xl font-extrabold text-[#00f2fe] drop-shadow-[0_0_10px_rgba(0,242,254,0.3)]">{score}</span>
               <span className="text-lg text-text-tertiary font-mono">/ {sampleQuestions.length}</span>
             </div>
-            <Badge variant={score >= 2 ? 'success' : 'error'} size="default" className="text-[10px] uppercase font-mono px-3.5 py-1">
+            <Badge variant={score >= 2 ? 'success' : 'error'} size="default" className="text-xs uppercase font-mono px-3.5 py-1">
               {score >= 2 ? 'PASSED STATUS' : 'TRY AGAIN STATUS'}
             </Badge>
             <Button variant="primary" size="sm" className="mt-8 shadow-glow-accent font-semibold" onClick={handleRestart}>

@@ -48,14 +48,14 @@ export const ProjectCard = memo(function ProjectCard({ project }: ProjectCardPro
           <div className="flex items-center gap-2 p-3 rounded-xl bg-surface-150 border border-border">
             <Clock className="w-4 h-4 text-accent-light" />
             <div>
-              <p className="text-[10px] text-text-tertiary">Estimated Time</p>
+              <p className="text-xs text-text-tertiary">Estimated Time</p>
               <p className="text-xs font-medium text-text-primary">{project.estimatedTime}</p>
             </div>
           </div>
           <div className="flex items-center gap-2 p-3 rounded-xl bg-surface-150 border border-border">
             <ListChecks className="w-4 h-4 text-amber-400" />
             <div>
-              <p className="text-[10px] text-text-tertiary">Prerequisites</p>
+              <p className="text-xs text-text-tertiary">Prerequisites</p>
               <p className="text-xs font-medium text-text-primary">{project.prerequisites.length} topics</p>
             </div>
           </div>

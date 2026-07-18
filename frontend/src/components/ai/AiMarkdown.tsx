@@ -59,7 +59,7 @@ export const AiMarkdown = memo(function AiMarkdown({ content, className }: AiMar
             const isInline = !codeClassName
             if (isInline) {
               return (
-                <code className="px-1.5 py-0.5 rounded bg-surface-200 text-[10px] font-mono text-accent-light" {...props}>
+                <code className="px-1.5 py-0.5 rounded bg-surface-200 text-xs font-mono text-accent-light" {...props}>
                   {children}
                 </code>
               )
@@ -68,12 +68,12 @@ export const AiMarkdown = memo(function AiMarkdown({ content, className }: AiMar
             return (
               <div className="my-2 rounded-lg border border-border overflow-hidden last:mb-0">
                 {language && (
-                  <div className="px-3 py-1 bg-surface-150 border-b border-border text-[9px] font-mono text-text-tertiary">
+                  <div className="px-3 py-1 bg-surface-150 border-b border-border text-xs font-mono text-text-tertiary">
                     {language}
                   </div>
                 )}
                 <pre className="p-3 overflow-x-auto bg-surface-200/50">
-                  <code className="text-[10px] font-mono text-text-secondary leading-relaxed" {...props}>
+                  <code className="text-xs font-mono text-text-secondary leading-relaxed" {...props}>
                     {children}
                   </code>
                 </pre>
@@ -93,7 +93,7 @@ export const AiMarkdown = memo(function AiMarkdown({ content, className }: AiMar
             </thead>
           ),
           th: ({ children, ...props }) => (
-            <th className="px-3 py-2 text-left text-[10px] font-medium text-text-primary" {...props}>
+            <th className="px-3 py-2 text-left text-xs font-medium text-text-primary" {...props}>
               {children}
             </th>
           ),

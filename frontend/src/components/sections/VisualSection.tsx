@@ -13,7 +13,7 @@ export const VisualSection = memo(function VisualSection({ sectionId, data }: Se
             {v.content && <p className="text-xs text-text-secondary">{v.content}</p>}
             {!v.content && <p className="text-xs text-text-tertiary italic">[Visual]</p>}
           </div>
-          {v.caption && <p className="text-[10px] text-text-tertiary mt-1.5 text-center">{v.caption}</p>}
+          {v.caption && <p className="text-xs text-text-tertiary mt-1.5 text-center">{v.caption}</p>}
         </div>
       ))}
     </div>

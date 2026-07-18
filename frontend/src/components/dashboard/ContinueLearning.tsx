@@ -28,7 +28,7 @@ export const ContinueLearning = memo(function ContinueLearning() {
     <DashboardWidget
       title="Continue Learning"
       icon={<Clock className="w-4 h-4" />}
-      action={<button onClick={() => navigate('/learn')} className="text-[10px] text-accent-light hover:underline">Open</button>}
+      action={<button onClick={() => navigate('/learn')} className="text-xs text-accent-light hover:underline">Open</button>}
     >
       <div className="space-y-1.5">
         {recent.map((topic, idx) => (
@@ -42,9 +42,9 @@ export const ContinueLearning = memo(function ContinueLearning() {
             </span>
             <div className="flex-1 min-w-0">
               <div className="text-xs font-medium text-text-primary truncate">{topic.topic}</div>
-              <div className="text-[10px] text-text-tertiary">{topic.subject} · {topic.difficulty}</div>
+              <div className="text-xs text-text-tertiary">{topic.subject} · {topic.difficulty}</div>
             </div>
-            <div className="shrink-0 text-[10px] text-text-tertiary">
+            <div className="shrink-0 text-xs text-text-tertiary">
               {topic.completed}/{topic.total}
             </div>
           </button>

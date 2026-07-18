@@ -14,7 +14,7 @@ export const TimelineSection = memo(function TimelineSection({ sectionId, data }
           </div>
           <div className="pl-8">
             <div className="flex items-center gap-2 mb-0.5">
-              <span className="text-[10px] font-mono text-text-tertiary">{ev.era ?? ev.year ?? ev.date}</span>
+              <span className="text-xs font-mono text-text-tertiary">{ev.era ?? ev.year ?? ev.date}</span>
               <span className="text-xs font-medium text-text-primary">{ev.title ?? ev.event}</span>
             </div>
             <p className="text-xs text-text-secondary">{ev.description ?? ev.desc ?? ''}</p>

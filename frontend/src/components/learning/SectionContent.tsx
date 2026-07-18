@@ -263,7 +263,7 @@ const sectionContentMap: Record<string, ReactNode> = {
         <p className="text-xs text-text-tertiary max-w-xs">
           Interactive tree visualization will render here, allowing you to insert, delete, and search nodes visually.
         </p>
-        <span className="mt-4 px-3 py-1 rounded-full bg-violet-500/10 text-[10px] text-violet-400">
+        <span className="mt-4 px-3 py-1 rounded-full bg-violet-500/10 text-xs text-violet-400">
           Interactive component placeholder
         </span>
       </div>
@@ -282,23 +282,23 @@ const sectionContentMap: Record<string, ReactNode> = {
           <p className="text-xs font-medium text-text-primary mb-3">Problem Set</p>
           <ol className="space-y-3 text-xs">
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-[10px] font-medium text-accent-light shrink-0">1</span>
+              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-xs font-medium text-accent-light shrink-0">1</span>
               Implement a BST class with insert, search, and delete operations.
             </li>
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-[10px] font-medium text-accent-light shrink-0">2</span>
+              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-xs font-medium text-accent-light shrink-0">2</span>
               Write a function that returns the kth smallest element in the BST.
             </li>
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-[10px] font-medium text-accent-light shrink-0">3</span>
+              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-xs font-medium text-accent-light shrink-0">3</span>
               Implement a function to check if a binary tree is a valid BST.
             </li>
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-[10px] font-medium text-accent-light shrink-0">4</span>
+              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-xs font-medium text-accent-light shrink-0">4</span>
               Write a function to find the lowest common ancestor of two nodes.
             </li>
             <li className="flex gap-2">
-              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-[10px] font-medium text-accent-light shrink-0">5</span>
+              <span className="w-5 h-5 rounded-full bg-accent/10 flex items-center justify-center text-xs font-medium text-accent-light shrink-0">5</span>
               Implement a function to convert a sorted array to a balanced BST.
             </li>
           </ol>
@@ -326,7 +326,7 @@ const sectionContentMap: Record<string, ReactNode> = {
         ].map(({ mistake, fix }, i) => (
           <div key={i} className="p-3 rounded-xl bg-surface-150 border border-border">
             <div className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center text-[10px] text-red-400 shrink-0 mt-0.5">!</span>
+              <span className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center text-xs text-red-400 shrink-0 mt-0.5">!</span>
               <div>
                 <p className="text-xs font-medium text-red-300 mb-1">{mistake}</p>
                 <p className="text-xs text-text-tertiary">{fix}</p>

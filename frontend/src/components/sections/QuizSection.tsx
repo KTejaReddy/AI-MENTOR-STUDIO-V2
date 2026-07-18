@@ -20,7 +20,7 @@ export const QuizSection = memo(function QuizSection({ sectionId, data }: Sectio
                       : 'bg-surface-200 border border-border text-text-secondary'
                   }`}
                 >
-                  <span className="font-mono text-[10px] opacity-60 mr-2">{String.fromCharCode(65 + oi)}</span>
+                  <span className="font-mono text-xs opacity-60 mr-2">{String.fromCharCode(65 + oi)}</span>
                   {opt}
                 </div>
               ))}

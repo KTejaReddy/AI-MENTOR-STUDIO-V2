@@ -264,7 +264,7 @@ export function DocumentTutor() {
                           : 'text-text-secondary hover:text-text-primary hover:bg-surface-200'
                       )}
                     >
-                      <span className="text-[10px] text-text-tertiary mr-2 font-mono">{idx + 1}.</span>
+                      <span className="text-xs text-text-tertiary mr-2 font-mono">{idx + 1}.</span>
                       {ch.title}
                     </button>
                   ))}
@@ -349,25 +349,25 @@ export function DocumentTutor() {
                       </h2>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <div className="p-3 bg-surface-200/50 rounded-lg">
-                          <p className="text-[10px] text-text-tertiary uppercase font-semibold mb-0.5">Subject</p>
+                          <p className="text-xs text-text-tertiary uppercase font-semibold mb-0.5">Subject</p>
                           <p className="text-xs text-text-primary font-medium">{activeDoc.metadata.subject || '—'}</p>
                         </div>
                         <div className="p-3 bg-surface-200/50 rounded-lg">
-                          <p className="text-[10px] text-text-tertiary uppercase font-semibold mb-0.5">Difficulty</p>
+                          <p className="text-xs text-text-tertiary uppercase font-semibold mb-0.5">Difficulty</p>
                           <p className="text-xs text-text-primary font-medium capitalize">{activeDoc.metadata.difficulty || '—'}</p>
                         </div>
                         <div className="p-3 bg-surface-200/50 rounded-lg">
-                          <p className="text-[10px] text-text-tertiary uppercase font-semibold mb-0.5">Reading Time</p>
+                          <p className="text-xs text-text-tertiary uppercase font-semibold mb-0.5">Reading Time</p>
                           <p className="text-xs text-text-primary font-medium">{activeDoc.metadata.reading_time_minutes || 30} mins</p>
                         </div>
                         <div className="p-3 bg-surface-200/50 rounded-lg">
-                          <p className="text-[10px] text-text-tertiary uppercase font-semibold mb-0.5">Branch</p>
+                          <p className="text-xs text-text-tertiary uppercase font-semibold mb-0.5">Branch</p>
                           <p className="text-xs text-text-primary font-medium">{activeDoc.metadata.branch || 'General'}</p>
                         </div>
                       </div>
                       {activeDoc.metadata.learning_objectives?.length > 0 && (
                         <div className="mb-4">
-                          <p className="text-[10px] text-text-tertiary uppercase font-semibold mb-2">Learning Objectives</p>
+                          <p className="text-xs text-text-tertiary uppercase font-semibold mb-2">Learning Objectives</p>
                           <ul className="list-disc pl-5 text-xs text-text-secondary space-y-1">
                             {activeDoc.metadata.learning_objectives.map((obj: string, i: number) => (
                               <li key={i}>{obj}</li>
@@ -377,7 +377,7 @@ export function DocumentTutor() {
                       )}
                       {activeDoc.knowledge_graph?.nodes?.length > 0 && (
                         <div>
-                          <p className="text-[10px] text-text-tertiary uppercase font-semibold mb-2">Key Concepts</p>
+                          <p className="text-xs text-text-tertiary uppercase font-semibold mb-2">Key Concepts</p>
                           <div className="flex flex-wrap gap-1.5">
                             {activeDoc.knowledge_graph.nodes.map((node: any, i: number) => (
                               <Badge key={i} variant="accent" size="sm">{node.label}</Badge>
@@ -463,7 +463,7 @@ export function DocumentTutor() {
             role="menu"
             aria-label="AI actions"
           >
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-text-tertiary border-b border-border mb-1 uppercase tracking-wider">AI Actions</div>
+            <div className="px-3 py-1.5 text-xs font-semibold text-text-tertiary border-b border-border mb-1 uppercase tracking-wider">AI Actions</div>
             {['Explain Selection', 'Simplify', 'Generate Quiz', 'Generate Notes', 'Generate Flashcards'].map(action => (
               <button
                 key={action}
@@ -493,7 +493,7 @@ export function DocumentTutor() {
         </div>
         <div className="p-3 border-b border-border grid grid-cols-2 gap-1.5">
           {AI_ACTIONS.map((act) => (
-            <Button key={act.id} variant="secondary" size="sm" className="text-[10px] justify-start h-7 px-2 border-white/5 hover:border-[#00f2fe]/20" onClick={() => handleDocumentAction(act.label)} disabled={!activeDoc?.document_id || tutorLoading}>
+            <Button key={act.id} variant="secondary" size="sm" className="text-xs justify-start h-7 px-2 border-white/5 hover:border-[#00f2fe]/20" onClick={() => handleDocumentAction(act.label)} disabled={!activeDoc?.document_id || tutorLoading}>
               <act.icon className="w-3 h-3 shrink-0 text-[#00f2fe]" />
               <span className="truncate">{act.label}</span>
             </Button>

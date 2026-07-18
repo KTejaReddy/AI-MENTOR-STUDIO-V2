@@ -9,7 +9,7 @@ export const FlowchartSection = memo(function FlowchartSection({ sectionId, data
       {steps.map((step: any, i: number) => (
         <div key={i} className="relative pb-6 last:pb-0">
           <div className="absolute left-0 top-0 w-6 flex flex-col items-center">
-            <div className="w-6 h-6 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-[10px] font-bold text-accent-light z-10">
+            <div className="w-6 h-6 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-xs font-bold text-accent-light z-10">
               {step.step ?? i + 1}
             </div>
             {i < steps.length - 1 && (
@@ -19,7 +19,7 @@ export const FlowchartSection = memo(function FlowchartSection({ sectionId, data
           <div className="pl-4">
             <p className="text-xs font-medium text-text-primary mb-0.5">{step.title ?? step.name}</p>
             <p className="text-xs text-text-secondary mb-1">{step.description ?? step.desc ?? ''}</p>
-            {step.detail && <p className="text-[10px] text-text-tertiary">{step.detail}</p>}
+            {step.detail && <p className="text-xs text-text-tertiary">{step.detail}</p>}
           </div>
         </div>
       ))}

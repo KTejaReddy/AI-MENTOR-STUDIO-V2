@@ -42,7 +42,7 @@ export function Tabs({ tabs, defaultTab, onChange, className }: TabsProps) {
             {tab.icon && <span className="w-4 h-4">{tab.icon}</span>}
             {tab.label}
             {tab.badge && (
-              <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded-full bg-accent/15 text-accent-light">
+              <span className="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-accent/15 text-accent-light">
                 {tab.badge}
               </span>
             )}

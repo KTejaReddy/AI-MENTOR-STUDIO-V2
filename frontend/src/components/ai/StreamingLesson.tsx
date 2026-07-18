@@ -147,10 +147,10 @@ export const StreamingLesson = memo(function StreamingLesson({
         {errorCode && (
           <div className="mt-4 inline-block bg-red-500/10 border border-red-500/20 rounded-md px-3 py-1.5">
             <p className="text-xs font-mono text-red-300 font-bold">{errorCode}</p>
-            {errorStage && <p className="text-[10px] text-red-400/80 mt-0.5">Stage: {errorStage}</p>}
+            {errorStage && <p className="text-xs text-red-400/80 mt-0.5">Stage: {errorStage}</p>}
           </div>
         )}
-        {errorMessage && <p className="text-[11px] text-red-400/80 mt-3 break-all max-w-lg mx-auto bg-black/20 p-2 rounded-md font-mono">{errorMessage}</p>}
+        {errorMessage && <p className="text-xs text-red-400/80 mt-3 break-all max-w-lg mx-auto bg-black/20 p-2 rounded-md font-mono">{errorMessage}</p>}
       </motion.div>
     )
   }
@@ -185,7 +185,7 @@ export const StreamingLesson = memo(function StreamingLesson({
           </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-3 gap-2">
             <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-bold text-[#00C2FF] animate-pulse tracking-wide uppercase">
+              <span className="text-xs font-bold text-[#00C2FF] animate-pulse tracking-wide uppercase">
                 Generating lesson...
               </span>
               <div className="flex items-center gap-2 text-xs font-semibold text-text-primary">
@@ -214,15 +214,15 @@ export const StreamingLesson = memo(function StreamingLesson({
               </div>
             </div>
             
-            <div className="flex flex-col md:items-end gap-0.5 text-[10px] text-text-tertiary font-medium">
+            <div className="flex flex-col md:items-end gap-0.5 text-xs text-text-tertiary font-medium">
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-accent animate-pulse" />
                 <span>~{estimatedTimeRemaining}s remaining</span>
               </div>
               <div className="flex gap-2">
-                {metrics?.plannerTime && <span className="text-[9px]">Planner: {metrics.plannerTime}s</span>}
-                {metrics?.regeneratedSections ? <span className="text-[9px] text-amber-400/80">Retries: {metrics.regeneratedSections}</span> : null}
-                {metrics?.failedSections ? <span className="text-[9px] text-red-400/80">Failed: {metrics.failedSections}</span> : null}
+                {metrics?.plannerTime && <span className="text-xs">Planner: {metrics.plannerTime}s</span>}
+                {metrics?.regeneratedSections ? <span className="text-xs text-amber-400/80">Retries: {metrics.regeneratedSections}</span> : null}
+                {metrics?.failedSections ? <span className="text-xs text-red-400/80">Failed: {metrics.failedSections}</span> : null}
               </div>
             </div>
           </div>
@@ -243,20 +243,20 @@ export const StreamingLesson = memo(function StreamingLesson({
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   {tabInfo.subject && (
-                    <span className="text-[11px] text-text-secondary font-medium">
+                    <span className="text-xs text-text-secondary font-medium">
                       {tabInfo.subject}
                     </span>
                   )}
                   <span
                     className={cn(
-                      'px-2 py-0.5 rounded-full text-[10px] font-semibold border capitalize',
+                      'px-2 py-0.5 rounded-full text-xs font-semibold border capitalize',
                       difficultyColors[tabInfo.difficulty] || 'text-text-tertiary bg-surface-200 border-border',
                     )}
                   >
                     {tabInfo.difficulty}
                   </span>
                   {tabInfo.generationTime != null && (
-                    <span className="text-[10px] text-text-tertiary flex items-center gap-1">
+                    <span className="text-xs text-text-tertiary flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       Generated in {tabInfo.generationTime.toFixed(1)}s
                     </span>
@@ -285,17 +285,17 @@ export const StreamingLesson = memo(function StreamingLesson({
                   <h1 className="text-[22px] md:text-[28px] font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
                   <div className="ml-auto flex gap-2">
                     {currentSectionStatus === 'generating' && (
-                      <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent-light text-[10px] font-semibold border border-accent/20 flex items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent-light text-xs font-semibold border border-accent/20 flex items-center gap-1.5">
                         <Loader2 className="w-3 h-3 animate-spin" /> Generating
                       </span>
                     )}
                     {currentSectionStatus === 'completed' && (
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-semibold border border-emerald-500/20 flex items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20 flex items-center gap-1.5">
                         <CheckCircle2 className="w-3 h-3" /> Completed
                       </span>
                     )}
                     {currentSectionStatus === 'queued' && (
-                      <span className="px-2.5 py-1 rounded-full bg-surface-200 text-text-tertiary text-[10px] font-semibold border border-border flex items-center gap-1.5">
+                      <span className="px-2.5 py-1 rounded-full bg-surface-200 text-text-tertiary text-xs font-semibold border border-border flex items-center gap-1.5">
                         <Clock className="w-3 h-3" /> Queued
                       </span>
                     )}

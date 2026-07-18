@@ -198,7 +198,7 @@ export const ApiKeyManager = memo(function ApiKeyManager() {
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-mono font-medium text-text-primary">{maskDisplay(key.masked_key)}</span>
                       <span className={cn(
-                        'text-[10px] px-1.5 py-0.5 rounded-full font-medium',
+                        'text-xs px-1.5 py-0.5 rounded-full font-medium',
                         key.status === 'healthy' ? 'bg-emerald-500/10 text-emerald-400' :
                         key.status === 'invalid' ? 'bg-red-500/10 text-red-400' :
                         key.status === 'disabled' ? 'bg-surface-200 text-text-tertiary' :
@@ -206,9 +206,9 @@ export const ApiKeyManager = memo(function ApiKeyManager() {
                       )}>
                         {statusCfg.label}
                       </span>
-                      {key.label && <span className="text-[10px] text-text-tertiary truncate">{key.label}</span>}
+                      {key.label && <span className="text-xs text-text-tertiary truncate">{key.label}</span>}
                     </div>
-                    <div className="flex items-center gap-3 mt-0.5 text-[10px] text-text-tertiary">
+                    <div className="flex items-center gap-3 mt-0.5 text-xs text-text-tertiary">
                       <span>Req: {key.total_requests}</span>
                       <span>Err: {key.total_errors}</span>
                       {key.last_used_at && <span>Last: {new Date(key.last_used_at).toLocaleDateString()}</span>}
@@ -318,7 +318,7 @@ export const ApiKeyManager = memo(function ApiKeyManager() {
                   <Icon className={cn('w-4 h-4', cfg.color)} />
                   <div>
                     <div className="text-sm font-semibold text-text-primary">{count}</div>
-                    <div className="text-[10px] text-text-tertiary">{cfg.label}</div>
+                    <div className="text-xs text-text-tertiary">{cfg.label}</div>
                   </div>
                 </div>
               )
@@ -327,7 +327,7 @@ export const ApiKeyManager = memo(function ApiKeyManager() {
               <Key className="w-4 h-4 text-accent-light" />
               <div>
                 <div className="text-sm font-semibold text-text-primary">{keys.length}</div>
-                <div className="text-[10px] text-text-tertiary">Total Keys</div>
+                <div className="text-xs text-text-tertiary">Total Keys</div>
               </div>
             </div>
           </div>

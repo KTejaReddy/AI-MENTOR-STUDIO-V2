@@ -62,7 +62,7 @@ export const AICompanion = memo(function AICompanion() {
             <Sparkles className="w-3.5 h-3.5 text-accent-light" />
           </div>
           <span className="text-xs font-semibold text-text-primary">AI Assistant</span>
-          <span className="text-[9px] text-text-tertiary hidden sm:inline">Groq · Llama 3.3 70B</span>
+          <span className="text-xs text-text-tertiary hidden sm:inline">Groq · Llama 3.3 70B</span>
         </div>
         <div className="flex items-center gap-1 ml-auto">
           {messages.length > 0 && (
@@ -142,7 +142,7 @@ export const AICompanion = memo(function AICompanion() {
           <div className="flex flex-wrap gap-1.5">
             {suggestions.map((s) => (
               <button key={s.label} onClick={() => handleSuggestion(s.prompt)}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-medium text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary hover:bg-surface-150 transition-all"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary hover:bg-surface-150 transition-all"
               >
                 <s.icon className="w-3 h-3" /> {s.label}
               </button>

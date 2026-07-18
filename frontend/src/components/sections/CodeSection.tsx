@@ -12,7 +12,7 @@ export const CodeSection = memo(function CodeSection({ sectionId, data }: Sectio
             <span className="w-2 h-2 rounded-full bg-red-400/60" />
             <span className="w-2 h-2 rounded-full bg-yellow-400/60" />
             <span className="w-2 h-2 rounded-full bg-emerald-400/60" />
-            {ex.lang && <span className="text-[10px] text-text-tertiary ml-2 font-mono">{ex.lang}</span>}
+            {ex.lang && <span className="text-xs text-text-tertiary ml-2 font-mono">{ex.lang}</span>}
           </div>
           <pre className="p-4 text-xs font-mono leading-relaxed text-text-secondary overflow-x-auto">
             <code>{ex.code}</code>

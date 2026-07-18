@@ -205,21 +205,21 @@ export const MermaidViewer = memo(function MermaidViewer({
       <div className="flex items-center justify-between px-3 py-1.5 bg-surface-150 border-b border-border">
         <div className="flex items-center gap-2">
           <GitBranch className="w-3.5 h-3.5 text-accent-light" />
-          <span className="text-[10px] font-medium text-text-tertiary">
+          <span className="text-xs font-medium text-text-tertiary">
             {title || 'Diagram'}
           </span>
           {renderState === 'rendering' && (
-            <span className="text-[9px] text-accent animate-pulse font-semibold">Rendering…</span>
+            <span className="text-xs text-accent animate-pulse font-semibold">Rendering…</span>
           )}
           {renderState === 'error' && (
-            <span className="text-[9px] text-amber-400 font-semibold">Fallback view</span>
+            <span className="text-xs text-amber-400 font-semibold">Fallback view</span>
           )}
         </div>
         <div className="flex items-center gap-0.5">
           <IconButton label="Zoom out" size="sm" onClick={() => setZoom(Math.max(40, zoom - 10))}>
             <ZoomOut className="w-3.5 h-3.5" />
           </IconButton>
-          <span className="text-[10px] text-text-tertiary w-8 text-center">{zoom}%</span>
+          <span className="text-xs text-text-tertiary w-8 text-center">{zoom}%</span>
           <IconButton label="Zoom in" size="sm" onClick={() => setZoom(Math.min(250, zoom + 10))}>
             <ZoomIn className="w-3.5 h-3.5" />
           </IconButton>
@@ -261,30 +261,30 @@ export const MermaidViewer = memo(function MermaidViewer({
               <GitBranch className="w-7 h-7 text-accent-light" />
             </div>
             <p className="text-xs font-semibold text-text-primary">{title || 'Diagram'}</p>
-            <p className="text-[11px] text-text-tertiary max-w-xs leading-relaxed">
+            <p className="text-xs text-text-tertiary max-w-xs leading-relaxed">
               This diagram could not be rendered automatically.
               <br />
               Use the refresh button to retry.
             </p>
             {errorMsg && errorMsg !== 'null' && errorMsg !== 'undefined' && (
-              <p className="text-[9px] text-text-tertiary/60 max-w-xs leading-relaxed font-mono">{errorMsg}</p>
+              <p className="text-xs text-text-tertiary/60 max-w-xs leading-relaxed font-mono">{errorMsg}</p>
             )}
             {errorSourcesRef.current && (
               <details className="w-full max-w-md text-left mt-1">
-                <summary className="text-[10px] text-accent cursor-pointer font-medium">Show debug info</summary>
+                <summary className="text-xs text-accent cursor-pointer font-medium">Show debug info</summary>
                 <div className="mt-2 space-y-1">
-                  <p className="text-[9px] font-semibold text-text-tertiary/70">Parser error:</p>
+                  <p className="text-xs font-semibold text-text-tertiary/70">Parser error:</p>
                   <pre className="text-[8px] text-red-400/80 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-20 overflow-auto">{errorMsg}</pre>
-                  <p className="text-[9px] font-semibold text-text-tertiary/70">Original Mermaid:</p>
+                  <p className="text-xs font-semibold text-text-tertiary/70">Original Mermaid:</p>
                   <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSourcesRef.current.original}</pre>
-                  <p className="text-[9px] font-semibold text-text-tertiary/70">Repaired Mermaid:</p>
+                  <p className="text-xs font-semibold text-text-tertiary/70">Repaired Mermaid:</p>
                   <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSourcesRef.current.repaired}</pre>
                 </div>
               </details>
             )}
             <button
               onClick={() => render(diagram, true)}
-              className="mt-1 px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 text-[11px] text-accent-light font-semibold hover:bg-accent/20 transition-colors"
+              className="mt-1 px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 text-xs text-accent-light font-semibold hover:bg-accent/20 transition-colors"
             >
               Retry Render
             </button>

@@ -145,19 +145,19 @@ function MermaidBlock({ chart }: { chart: string }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
             d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
-        <p className="text-[11px] text-text-tertiary">Diagram could not be rendered</p>
+        <p className="text-xs text-text-tertiary">Diagram could not be rendered</p>
         {errorMsg && errorMsg !== 'null' && errorMsg !== 'undefined' && (
-          <p className="text-[9px] text-text-tertiary/60 max-w-xs leading-relaxed font-mono">{errorMsg}</p>
+          <p className="text-xs text-text-tertiary/60 max-w-xs leading-relaxed font-mono">{errorMsg}</p>
         )}
         {errorSources && (
           <details className="w-full max-w-md text-left mt-1">
-            <summary className="text-[10px] text-accent cursor-pointer font-medium">Show debug info</summary>
+            <summary className="text-xs text-accent cursor-pointer font-medium">Show debug info</summary>
             <div className="mt-2 space-y-1">
-              <p className="text-[9px] font-semibold text-text-tertiary/70">Parser error:</p>
+              <p className="text-xs font-semibold text-text-tertiary/70">Parser error:</p>
               <pre className="text-[8px] text-red-400/80 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-20 overflow-auto">{errorMsg}</pre>
-              <p className="text-[9px] font-semibold text-text-tertiary/70">Original Mermaid:</p>
+              <p className="text-xs font-semibold text-text-tertiary/70">Original Mermaid:</p>
               <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSources.original}</pre>
-              <p className="text-[9px] font-semibold text-text-tertiary/70">Repaired Mermaid:</p>
+              <p className="text-xs font-semibold text-text-tertiary/70">Repaired Mermaid:</p>
               <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSources.repaired}</pre>
             </div>
           </details>
@@ -181,17 +181,17 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
     <div className="rounded-lg border border-border overflow-hidden my-4">
       {lang && (
         <div className="flex items-center justify-between px-4 py-1.5 bg-surface-200 border-b border-border">
-          <span className="text-[10px] font-mono text-text-tertiary uppercase tracking-wider">{lang}</span>
+          <span className="text-xs font-mono text-text-tertiary uppercase tracking-wider">{lang}</span>
           <button
             onClick={() => navigator.clipboard.writeText(code)}
-            className="text-[10px] px-2 py-0.5 rounded bg-surface-300 hover:bg-surface-400 text-text-tertiary hover:text-text-primary transition-colors"
+            className="text-xs px-2 py-0.5 rounded bg-surface-300 hover:bg-surface-400 text-text-tertiary hover:text-text-primary transition-colors"
           >
             Copy
           </button>
         </div>
       )}
       <pre className="p-4 overflow-x-auto bg-surface-50" {...props}>
-        <code className="text-sm md:text-[11px] font-mono text-text-secondary leading-relaxed whitespace-pre">
+        <code className="text-sm md:text-xs font-mono text-text-secondary leading-relaxed whitespace-pre">
           {children}
         </code>
       </pre>
@@ -201,7 +201,7 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
 
 function InlineCode({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-sm md:text-[10px] font-mono text-accent-light border border-accent/20" {...props}>
+    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-sm md:text-xs font-mono text-accent-light border border-accent/20" {...props}>
       {children}
     </code>
   )
@@ -218,7 +218,7 @@ function Heading({ level, children, ...props }: { level: number; children?: Reac
     3: 'text-lg md:text-base font-semibold text-text-primary mt-6 mb-2',
     4: 'text-base md:text-sm font-medium text-text-primary mt-5 mb-2',
     5: 'text-sm md:text-xs font-medium text-text-primary mt-4 mb-1',
-    6: 'text-xs md:text-[11px] font-medium text-text-tertiary mt-3 mb-1 uppercase tracking-wider',
+    6: 'text-xs font-medium text-text-tertiary mt-3 mb-1 uppercase tracking-wider',
   }
   const Tag = `h${level}` as keyof React.JSX.IntrinsicElements as any
   return <Tag className={sizes[level] || sizes[3]} {...props}>{children}</Tag>
@@ -249,9 +249,9 @@ function TableBody({ children, ...props }: { children?: ReactNode } & React.HTML
 function TableCell({ isHeader, children, ...props }: { isHeader?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLTableCellElement>) {
   const base = 'px-4 py-2.5 text-left leading-relaxed'
   if (isHeader) {
-    return <th className={`${base} text-[10px] font-semibold text-text-primary uppercase tracking-wider`} {...props}>{children}</th>
+    return <th className={`${base} text-xs font-semibold text-text-primary uppercase tracking-wider`} {...props}>{children}</th>
   }
-  return <td className={`${base} text-[11px] text-text-secondary`} {...props}>{children}</td>
+  return <td className={`${base} text-xs text-text-secondary`} {...props}>{children}</td>
 }
 
 function BlockQuote({ children, ...props }: { children?: ReactNode } & React.BlockquoteHTMLAttributes<HTMLElement>) {
@@ -280,7 +280,7 @@ function BlockQuote({ children, ...props }: { children?: ReactNode } & React.Blo
 
   return (
     <div className={`${bgColor} ${borderColor} border-l-4 rounded-r-lg px-4 py-3 my-4`} {...props}>
-      <div className="text-[11px] text-text-secondary leading-relaxed prose-sm max-w-none [&>*:last-child]:mb-0">
+      <div className="text-xs text-text-secondary leading-relaxed prose-sm max-w-none [&>*:last-child]:mb-0">
         {children}
       </div>
     </div>
@@ -338,7 +338,7 @@ function Image({ src, alt, ...props }: { src?: string; alt?: string } & React.Im
   return (
     <div className="my-4 rounded-lg overflow-hidden border border-border">
       <img src={src} alt={alt || ''} className="w-full max-w-full" loading="lazy" {...props} />
-      {alt && <p className="px-3 py-1.5 text-[9px] text-text-tertiary text-center bg-surface-100">{alt}</p>}
+      {alt && <p className="px-3 py-1.5 text-xs text-text-tertiary text-center bg-surface-100">{alt}</p>}
     </div>
   )
 }

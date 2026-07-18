@@ -37,7 +37,7 @@ export const RightPanel = memo(function RightPanel({ topic = 'Binary Search Tree
           className="h-full text-sm leading-relaxed"
         />
       </div>
-      <div className="flex items-center justify-between px-4 py-2.5 border-t border-border text-[10px] text-text-tertiary bg-surface-100">
+      <div className="flex items-center justify-between px-4 py-2.5 border-t border-border text-xs text-text-tertiary bg-surface-100">
         <div className="flex items-center gap-3">
           <span>{wordCount} words</span>
           <span>{charCount} chars</span>
@@ -57,7 +57,7 @@ export const RightPanel = memo(function RightPanel({ topic = 'Binary Search Tree
         <div className="p-3 rounded-lg bg-surface-150 border border-border">
           <div className="flex items-center gap-2 mb-2">
             <Info className="w-3.5 h-3.5 text-accent-light" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">Details</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Details</span>
           </div>
           <div className="space-y-2 text-xs">
             {[
@@ -81,7 +81,7 @@ export const RightPanel = memo(function RightPanel({ topic = 'Binary Search Tree
         <div className="p-3 rounded-lg bg-surface-150 border border-border">
           <div className="flex items-center gap-2 mb-2">
             <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-[10px] font-semibold uppercase tracking-wider text-text-tertiary">Progress</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-text-tertiary">Progress</span>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
@@ -91,7 +91,7 @@ export const RightPanel = memo(function RightPanel({ topic = 'Binary Search Tree
             <div className="h-1.5 rounded-full bg-surface-200 overflow-hidden">
               <div className="h-full w-[33%] rounded-full bg-accent/70" />
             </div>
-            <div className="flex items-center justify-between text-[10px] text-text-tertiary">
+            <div className="flex items-center justify-between text-xs text-text-tertiary">
               <span>5 of 15 sections completed</span>
             </div>
           </div>

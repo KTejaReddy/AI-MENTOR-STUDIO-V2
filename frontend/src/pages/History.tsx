@@ -207,7 +207,7 @@ export function History() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-text-primary truncate tracking-tight group-hover:text-[#00f2fe] transition-colors">{entry.title}</p>
-                      <div className="flex items-center gap-2 mt-1 font-mono text-[9px] text-text-tertiary uppercase tracking-wide">
+                      <div className="flex items-center gap-2 mt-1 font-mono text-xs text-text-tertiary uppercase tracking-wide">
                         <span>{entry.subject}</span>
                         <span>·</span>
                         <span>{entry.time}</span>

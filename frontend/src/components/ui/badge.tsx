@@ -18,7 +18,7 @@ export function Badge({ className, variant = 'surface', size = 'default', ...pro
           'bg-amber-500/12 text-amber-400 border border-amber-500/20': variant === 'warning',
           'bg-red-500/12 text-red-400 border border-red-500/20': variant === 'error',
           'bg-sky-500/12 text-sky-400 border border-sky-500/20': variant === 'info',
-          'px-1.5 py-0.5 text-[10px]': size === 'sm',
+          'px-1.5 py-0.5 text-xs': size === 'sm',
           'px-2.5 py-0.5 text-xs': size === 'default',
         },
         className

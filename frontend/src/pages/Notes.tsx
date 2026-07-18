@@ -131,7 +131,7 @@ export function Notes() {
       </Dialog>
 
       <div className="h-full flex flex-col lg:flex-row">
-        <div className="lg:w-72 shrink-0 border-r border-border flex flex-col">
+        <div className="h-1/3 min-h-[250px] lg:h-full w-full lg:w-72 shrink-0 border-b lg:border-b-0 lg:border-r border-border flex flex-col">
           <div className="p-4 border-b border-border space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-text-primary">Notes</h2>
@@ -164,8 +164,8 @@ export function Notes() {
                       <span className="flex-1 text-xs font-medium text-text-primary truncate">{note.title}</span>
                       {note.pinned && <Pin className="w-3 h-3 text-accent-light shrink-0" />}
                     </div>
-                    <p className="text-[10px] text-text-tertiary mt-1 line-clamp-1">{note.content}</p>
-                    <p className="text-[10px] text-text-tertiary mt-0.5">{note.subject}</p>
+                    <p className="text-xs text-text-tertiary mt-1 line-clamp-1">{note.content}</p>
+                    <p className="text-xs text-text-tertiary mt-0.5">{note.subject}</p>
                   </button>
                 ))}
               </div>
@@ -205,7 +205,7 @@ export function Notes() {
                   />
                 )}
               </div>
-              <div className="flex items-center gap-4 px-6 py-3 border-t border-border text-[10px] font-mono text-text-tertiary bg-surface-100/40 backdrop-blur-sm">
+              <div className="flex items-center gap-4 px-6 py-3 border-t border-border text-xs font-mono text-text-tertiary bg-surface-100/40 backdrop-blur-sm">
                 <span>{wordCount} WORDS</span>
                 <span>{selected.content.length} CHARS</span>
                 <span className="flex items-center gap-1 ml-auto">

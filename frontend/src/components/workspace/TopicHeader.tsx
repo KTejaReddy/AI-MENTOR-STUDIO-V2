@@ -52,7 +52,7 @@ export const TopicHeader = memo(function TopicHeader({
               </IconButton>
             </Tooltip>
           )}
-          <nav className="hidden sm:flex items-center gap-1.5 text-[10px] text-text-tertiary min-w-0">
+          <nav className="hidden sm:flex items-center gap-1.5 text-xs text-text-tertiary min-w-0">
             <span className="truncate">{subject}</span>
             <ChevronRight className="w-3 h-3 shrink-0" />
             <span className="text-text-secondary truncate">{topic}</span>
@@ -103,7 +103,7 @@ export const TopicHeader = memo(function TopicHeader({
             <Badge variant={config.color} size="sm">{config.label}</Badge>
             <Badge variant="accent" size="sm">{mode}</Badge>
             <span className="text-text-tertiary">·</span>
-            <span className="flex items-center gap-1 text-[10px] text-text-tertiary">
+            <span className="flex items-center gap-1 text-xs text-text-tertiary">
               <Clock className="w-3 h-3" />
               {readingTime} read
             </span>

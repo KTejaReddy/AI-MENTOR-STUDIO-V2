@@ -12,7 +12,7 @@ export const KeyTermsSection = memo(function KeyTermsSection({ sectionId, data }
           <div>
             <p className="text-xs font-semibold text-text-primary mb-0.5">{typeof t === 'string' ? t : t.term ?? t.name}</p>
             {typeof t !== 'string' && (t.def ?? t.definition) && (
-              <p className="text-[10px] text-text-tertiary leading-relaxed">{t.def ?? t.definition}</p>
+              <p className="text-xs text-text-tertiary leading-relaxed">{t.def ?? t.definition}</p>
             )}
           </div>
         </div>

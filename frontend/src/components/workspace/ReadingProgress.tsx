@@ -22,9 +22,9 @@ export const ReadingProgress = memo(function ReadingProgress({
           style={{ width: `${progress}%` }}
         />
       </div>
-      <p className="text-[10px] text-text-tertiary text-right">{progress}% complete</p>
+      <p className="text-xs text-text-tertiary text-right">{progress}% complete</p>
       {activeSection && sectionTitles[activeSection] && (
-        <p className="text-[10px] text-text-tertiary truncate">
+        <p className="text-xs text-text-tertiary truncate">
           Current: <span className="text-accent-light">{sectionTitles[activeSection]}</span>
         </p>
       )}

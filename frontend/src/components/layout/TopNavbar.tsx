@@ -41,7 +41,6 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications()
   const { user, isAuthenticated, logout, logoutAll } = useAuth()
   const navigate = useNavigate()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const ThemeIcon = theme === 'dark' ? Moon : Sun
 
@@ -74,7 +73,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   return (
     <header className="m-0 md:mx-3 md:mt-3 pt-[env(safe-area-inset-top)] md:pt-0 h-[calc(3.5rem+env(safe-area-inset-top))] md:h-14 shrink-0 glass rounded-none md:rounded-2xl flex items-center justify-between px-3 md:px-4 z-40 shadow-sm md:shadow-lg relative border-b md:border border-border">
       <div className="flex items-center gap-2">
-        <IconButton label="Toggle sidebar" onClick={() => window.innerWidth < 768 ? setMobileMenuOpen(true) : onToggleSidebar()} className="hover:bg-white/5 md:hidden lg:flex">
+        <IconButton label="Toggle sidebar" onClick={onToggleSidebar} className="hover:bg-surface-200/50 flex">
           <Menu className="w-[18px] h-[18px]" />
         </IconButton>
 
@@ -87,7 +86,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           </span>
         </NavLink>
 
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar mask-edges flex-1 min-w-0">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -95,7 +94,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               end={item.to === '/'}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-10',
+                  'flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-10 shrink-0',
                   isActive
                     ? 'text-[#00f2fe]'
                     : 'text-text-tertiary hover:text-text-secondary'
@@ -104,8 +103,8 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             >
               {({ isActive }) => (
                 <>
-                  <item.icon className="w-3.5 h-3.5" />
-                  <span>{item.label}</span>
+                  <item.icon className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">{item.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="nav-pill"
@@ -120,8 +119,8 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
         </nav>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="hidden md:block">
+      <div className="flex items-center gap-1 md:gap-2 shrink-0">
+        <div>
           <Tooltip content="New Lesson (Ctrl+N)">
             <motion.button
               onClick={handleNewLesson}
@@ -147,7 +146,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           </Tooltip>
         </div>
 
-        <div className="hidden md:block">
+        <div>
           <Tooltip content={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
             <IconButton label="Toggle theme" onClick={toggleTheme}>
               <ThemeIcon className="w-[18px] h-[18px]" />
@@ -155,7 +154,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           </Tooltip>
         </div>
 
-        <div className="hidden md:block">
+        <div>
           <DropdownMenu
             align="end"
             trigger={
@@ -164,7 +163,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
                   <div className="relative">
                     <Bell className="w-[18px] h-[18px]" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-red-500 text-[9px] font-bold text-white border-2 border-surface">
+                      <span className="absolute -top-1 -right-1 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-red-500 text-[12px] font-bold text-white border-2 border-surface scale-90 origin-top-right">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}
@@ -177,7 +176,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               <div className="flex items-center justify-between px-3 py-2 border-b border-border">
                 <span className="text-xs font-semibold text-text-primary">Notifications</span>
                 {notifications.length > 0 && (
-                  <button onClick={clearAll} className="text-[10px] text-text-tertiary hover:text-text-primary flex items-center gap-1 transition-colors">
+                  <button onClick={clearAll} className="text-xs text-text-tertiary hover:text-text-primary flex items-center gap-1 transition-colors">
                     <Trash2 className="w-3 h-3" /> Clear All
                   </button>
                 )}
@@ -201,8 +200,8 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
                         <span className="text-xs font-medium text-text-primary leading-tight">{notif.title}</span>
                         {!notif.read && <div className="w-2 h-2 rounded-full bg-accent shrink-0 mt-1" />}
                       </div>
-                      <p className="text-[11px] text-text-secondary leading-relaxed">{notif.message}</p>
-                      <div className="text-[9px] text-text-tertiary mt-2">
+                      <p className="text-xs text-text-secondary leading-relaxed">{notif.message}</p>
+                      <div className="text-xs text-text-tertiary mt-2">
                         {new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </div>
                     </div>
@@ -213,7 +212,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           </DropdownMenu>
         </div>
 
-        <div className="hidden md:block">
+        <div>
           <Tooltip content={chatOpen ? 'Close AI chat' : 'Open AI chat'}>
             <IconButton
               label="AI Chat"
@@ -247,7 +246,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           >
             <div className="px-3 py-2.5 border-b border-border">
               <p className="text-sm font-semibold text-text-primary truncate">{user.full_name || 'User'}</p>
-              <p className="text-[11px] text-text-tertiary truncate">{user.email}</p>
+              <p className="text-xs text-text-tertiary truncate">{user.email}</p>
             </div>
             <DropdownMenuItem onClick={() => navigate('/settings')}>
               <User className="w-4 h-4" />
@@ -285,90 +284,6 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           ))}
         </div>
       </div>
-      {/* Mobile Navigation Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            <motion.div
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[280px] z-50 md:hidden bg-surface shadow-2xl border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
-            >
-              <div className="flex items-center gap-2 p-4 border-b border-border">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-muted/20">
-                  <Sparkles className="w-4 h-4 text-[#00f2fe]" />
-                </div>
-                <span className="text-base font-bold text-text-primary tracking-tight">
-                  Mentor AI
-                </span>
-              </div>
-              
-              <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
-                <div className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-2 px-2">Navigation</div>
-                {navItems.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    end={item.to === '/'}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      cn(
-                        'flex items-center gap-3 px-3 min-h-[48px] rounded-xl text-sm font-semibold transition-colors',
-                        isActive
-                          ? 'bg-accent/10 text-accent-light'
-                          : 'text-text-secondary hover:bg-surface-150 hover:text-text-primary'
-                      )
-                    }
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </NavLink>
-                ))}
-                
-                <div className="mt-6 text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-2 px-2">System</div>
-                {utilityItems.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      cn(
-                        'flex items-center gap-3 px-3 min-h-[48px] rounded-xl text-sm font-semibold transition-colors',
-                        isActive
-                          ? 'bg-accent/10 text-accent-light'
-                          : 'text-text-secondary hover:bg-surface-150 hover:text-text-primary'
-                      )
-                    }
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span>{item.label}</span>
-                  </NavLink>
-                ))}
-                
-                <button
-                  onClick={() => {
-                    toggleTheme()
-                    setMobileMenuOpen(false)
-                  }}
-                  className="flex items-center gap-3 px-3 min-h-[48px] rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-150 hover:text-text-primary transition-colors text-left"
-                >
-                  <ThemeIcon className="w-5 h-5" />
-                  <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
     </header>
   )
 }

@@ -20,14 +20,14 @@ export const MCQSection = memo(function MCQSection({ sectionId, data }: SectionC
                       : 'bg-surface-200 border border-border text-text-secondary'
                   }`}
                 >
-                  <span className="font-mono text-[10px] opacity-60 mr-2">{String.fromCharCode(65 + oi)}</span>
+                  <span className="font-mono text-xs opacity-60 mr-2">{String.fromCharCode(65 + oi)}</span>
                   {opt}
                 </div>
               ))}
             </div>
           )}
           {mcq.explanation && (
-            <div className="p-3 rounded-lg bg-accent/5 border border-accent/10 text-[10px] text-accent-light">
+            <div className="p-3 rounded-lg bg-accent/5 border border-accent/10 text-xs text-accent-light">
               <span className="font-semibold">Answer: {mcq.answer ?? mcq.correctOption}</span> — {mcq.explanation}
             </div>
           )}

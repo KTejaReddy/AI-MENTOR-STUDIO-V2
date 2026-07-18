@@ -173,7 +173,7 @@ export function Register() {
 
           <div className="my-6 flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-[11px] font-medium uppercase tracking-wider text-text-tertiary">Or continue with</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-text-tertiary">Or continue with</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
