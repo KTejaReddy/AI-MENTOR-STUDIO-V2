@@ -241,11 +241,11 @@ SECTION_ROUTING: Dict[str, SectionRoutingConfig] = {
     # Quiz — structured MCQ with precise correct answers
     "quiz": SectionRoutingConfig(
         section_type="quiz",
-        preferred_models=[_QWEN27B, _QWEN32B],
-        fallback_models=[_LLAMA70B, _LLAMA4S],
-        max_tokens=4096,
-        temperature=0.5,
-        requires_reasoning=True,
+        preferred_models=[_LLAMA8B, _LLAMA70B],
+        fallback_models=[_LLAMA4S, _GPT20B],
+        max_tokens=5000,
+        temperature=0.3,
+        requires_reasoning=False,
         description="10 MCQs + short answer + long answer with detailed explanations",
     ),
 

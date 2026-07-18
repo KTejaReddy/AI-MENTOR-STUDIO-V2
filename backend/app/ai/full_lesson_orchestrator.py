@@ -110,11 +110,14 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
             messages=[Message(role="user", content=prompt)],
             model=model_id,
             temperature=0.3,
-            max_tokens=3000,
+            max_tokens=5000,
             stream=False
         )
         response = await provider.complete(request)
         content = response.content
+        
+        # Fallback: strip <think> blocks if the model still emits them (handles mid-stream truncation too)
+        content = re.sub(r'<think>.*?(?:</think>|$)', '', content, flags=re.DOTALL).strip()
         
         # --- NEW LOGGING REQUESTED BY USER ---
         raw_dict = getattr(response, 'raw', {}) or {}
