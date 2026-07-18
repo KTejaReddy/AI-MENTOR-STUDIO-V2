@@ -115,8 +115,10 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
         )
         response = await provider.complete(request)
         content = response.content
+        logger.info(f"RAW_JSON_QUIZ: {content}")
         
         sanitized = sanitize_json(content)
+        logger.info(f"SANITIZED_JSON: {sanitized}")
         
         try:
             json_obj = json.loads(sanitized)
@@ -553,16 +555,19 @@ async def generate_lesson_full(
     # Step 3: Semantic Review and Regeneration
     # ONLY proceed if the full lesson stream completed successfully.
     if stream_successful:
-        logger.info("Running Semantic Reviewer on all generated sections...")
+        logger.info("ENTER_SEMANTIC_REVIEW")
         reviewer_agent.set_provider(provider)
-        
         for st, title in active_sections:
-            # Graceful reviewer degradation: if anything fails, just keep the section.
-            try:
-                if st == "quiz":
-                    logger.info("QUIZ_JSON_PIPELINE_START")
+            logger.info(f"SECTION={st}")
+            
+            if st == "quiz":
+                try:
+                    logger.info("ENTER_QUIZ_PIPELINE")
+                    
                     # Step 1: Generate initial JSON quiz
                     json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [])
+                    logger.info(f"RAW_JSON_QUIZ: {json.dumps(json_obj)}")
+                    
                     quiz_issues, valid_json = validate_json_quiz(json_obj)
                     
                     attempts = 1
@@ -581,6 +586,8 @@ async def generate_lesson_full(
                         quiz_issues, valid_json = validate_json_quiz(valid_json)
                         attempts += 1
                         
+                    logger.info(f"VALIDATED_JSON: {json.dumps(valid_json)}")
+                    
                     if quiz_issues:
                         logger.warning(f"QUIZ_VALIDATION_FAIL (Final Attempt {attempts}): {quiz_issues}. Keeping best partial quiz.")
                     else:
@@ -588,9 +595,12 @@ async def generate_lesson_full(
                         
                     content = convert_json_to_quiz_markdown(valid_json)
                     logger.info("QUIZ_JSON_PIPELINE_COMPLETE")
-                    logger.info(f"QUIZ_SECTION_READY: {len(content)} bytes")
+                    logger.info(f"QUIZ_MARKDOWN_LENGTH: {len(content)}")
+                    logger.info("QUIZ_SECTION_READY")
+                    
                     accumulated_content[st] = content
                     
+                    logger.info("STREAMING_QUIZ_SECTION")
                     # Yield as one block since it was JSON generated
                     yield {
                         "type": "section_clear",
@@ -617,10 +627,15 @@ async def generate_lesson_full(
                     }
                     
                     logger.info(f"QUIZ_SENT_TO_FRONTEND:\n{content}")
+                    logger.info("LEAVING_QUIZ_PIPELINE")
                     continue
+                except Exception:
+                    logger.exception("QUIZ_PIPELINE_FATAL_ERROR")
+                    raise
                     
+            # Graceful reviewer degradation: if anything fails, just keep the section.
+            try:
                 content = accumulated_content[st]
-                
                 if not content.strip():
                     logger.warning(f"Section {st} is empty, scheduling regeneration")
                     async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
