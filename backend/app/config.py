@@ -41,7 +41,20 @@ class Settings(BaseSettings):
 
     @property
     def cors_origin_list(self) -> List[str]:
-        return json.loads(self.cors_origins)
+        try:
+            origins = json.loads(self.cors_origins)
+            if not isinstance(origins, list):
+                origins = [str(origins)]
+        except json.JSONDecodeError:
+            # If it's a simple comma-separated string
+            origins = [o.strip() for o in self.cors_origins.split(",") if o.strip()]
+            
+        # Ensure the frontend deployed origin is explicitly allowed
+        frontend_origin = "https://ai-mentor-studio-v2-1.onrender.com"
+        if frontend_origin not in origins:
+            origins.append(frontend_origin)
+            
+        return origins
 
 
 settings = Settings()
