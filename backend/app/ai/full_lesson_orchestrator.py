@@ -96,8 +96,8 @@ async def generate_lesson_full(
     )
 
     accumulated_content = {st: "" for st, _ in active_sections}
-    # Relaxed header pattern. Matches '## 1. Title (Section ID: st)' OR '## Title'
-    header_pattern = re.compile(r"^##\s+(?:\d+\.\s+)?(.*?)(?:\s*\(Section ID:\s*([a-zA-Z0-9]+)\))?$", re.IGNORECASE)
+    # Relaxed header pattern. Matches any Markdown heading 1-6 levels deep, optionally surrounded by bolding.
+    header_pattern = re.compile(r"^\s*(?:\*|_)*#+\s+(?:\*|_)*(.*)$", re.IGNORECASE)
 
     current_buffer = ""
     active_st = None
@@ -177,8 +177,17 @@ async def generate_lesson_full(
                     for line in lines:
                         match = header_pattern.match(line.strip())
                         if match:
-                            title_group = match.group(1).strip()
-                            st_group = match.group(2)
+                            raw_title = match.group(1).strip("*_: ")
+                            st_match = re.search(r"[\(\[\{]?Section ID:\s*([a-zA-Z0-9_]+)[\)\]\}]?", raw_title, re.IGNORECASE)
+                            st_group = st_match.group(1) if st_match else None
+                            
+                            if st_match:
+                                title_group = raw_title[:st_match.start()].strip("*_: -.")
+                            else:
+                                title_group = raw_title.strip("*_: -.")
+                                
+                            title_group = re.sub(r"^(?:Section\s*\d+|Step\s*\d+|\d+)\s*[:\.\-\)]?\s*", "", title_group, flags=re.IGNORECASE).strip()
+                            logger.info(f"[PARSER] Detected Heading: '{line.strip()}' -> title='{title_group}', st='{st_group}'")
                             
                             # Fallback mapping if Section ID is missing from LLM output
                             new_st = st_group
@@ -193,7 +202,12 @@ async def generate_lesson_full(
                                 # Fuzzy match title
                                 matched = False
                                 for pst, ptitle in active_sections:
-                                    if ptitle.lower() in title_group.lower():
+                                    norm_ptitle = ptitle.lower().replace(" ", "")
+                                    norm_title = title_group.lower().replace(" ", "")
+                                    
+                                    # Handle brackets stripping in title for matching
+                                    clean_title = re.sub(r"[\[\]\{\}\(\)]", "", norm_title)
+                                    if clean_title == norm_ptitle or norm_ptitle in clean_title:
                                         new_st = pst
                                         matched = True
                                         break
