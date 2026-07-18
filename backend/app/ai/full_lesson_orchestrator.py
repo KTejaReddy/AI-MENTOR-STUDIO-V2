@@ -123,16 +123,21 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
         
         usage = getattr(response, 'usage', {}) or {}
         completion_tokens = usage.get("completion_tokens", -1)
+        prompt_tokens = usage.get("prompt_tokens", -1)
+        total_tokens = usage.get("total_tokens", -1)
         
-        logger.info(f"QUIZ_GENERATION_DIAGNOSTICS:")
-        logger.info(f" - Streamed: {request.stream}")
-        logger.info(f" - Max Tokens Configured: {request.max_tokens}")
-        logger.info(f" - Payload Length: {len(content)}")
-        logger.info(f" - Finish Reason: {finish_reason}")
-        logger.info(f" - Completion Tokens: {completion_tokens}")
+        logger.info("finish_reason=%s", finish_reason)
+        logger.info("completion_tokens=%s", completion_tokens)
+        logger.info("prompt_tokens=%s", prompt_tokens)
+        logger.info("total_tokens=%s", total_tokens)
         
-        tail = content[-300:] if len(content) >= 300 else content
-        logger.info(f" - Last 300 chars: {repr(tail)}")
+        logger.info("RAW_LENGTH=%d", len(content))
+        logger.info("LAST_300=%r", content[-300:])
+        logger.info("FIRST_200=%r", content[:200])
+        logger.info("OPEN_BRACES=%d", content.count("{"))
+        logger.info("CLOSE_BRACES=%d", content.count("}"))
+        logger.info("OPEN_BRACKETS=%d", content.count("["))
+        logger.info("CLOSE_BRACKETS=%d", content.count("]"))
         # -------------------------------------
         
         logger.info(f"RAW_JSON_QUIZ: {content}")
