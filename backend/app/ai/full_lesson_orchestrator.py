@@ -71,7 +71,7 @@ def validate_json_quiz(json_obj: Dict) -> tuple[List[str], Dict]:
         
     return issues, json_obj
 
-async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, difficulty: str, needed_count: int = 10, existing_questions: List[Dict] = None) -> Dict:
+async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, difficulty: str, needed_count: int = 10, existing_questions: List[Dict] = None, learning_mode: str = "default") -> Dict:
     if existing_questions is None:
         existing_questions = []
         
@@ -627,7 +627,7 @@ async def generate_lesson_full(
                     logger.info("ENTER_QUIZ_PIPELINE")
                     
                     # Step 1: Generate initial JSON quiz
-                    json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [])
+                    json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [], learning_mode)
                     logger.info(f"RAW_JSON_QUIZ: {json.dumps(json_obj)}")
                     
                     quiz_issues, valid_json = validate_json_quiz(json_obj)
@@ -639,7 +639,7 @@ async def generate_lesson_full(
                         if needed > 0:
                             # Generate only missing questions
                             new_json_obj = await _generate_quiz_json(
-                                provider, subject, topic, difficulty, needed, valid_json.get("questions", [])
+                                provider, subject, topic, difficulty, needed, valid_json.get("questions", []), learning_mode
                             )
                             # Merge questions
                             if new_json_obj and isinstance(new_json_obj.get("questions"), list):
@@ -763,6 +763,7 @@ async def generate_lesson_full(
     }
 
 async def _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, issues=None):
+    model_id = get_model_for_section(st, "default")
     yield {
         "type": "section_retry",
         "section_type": st,
