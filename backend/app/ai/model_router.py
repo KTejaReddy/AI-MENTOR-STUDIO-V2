@@ -51,6 +51,20 @@ class ModelRouter:
             
         return best_model
 
+    def route(
+        self,
+        section_type: str,
+        learning_mode: str = "default",
+        subject: str = "",
+        topic: str = "",
+        difficulty: str = "intermediate",
+    ) -> str:
+        """
+        Legacy routing method preserved for backward compatibility.
+        Internally delegates to select_model() via the ModelPool.
+        """
+        return self.select_model(section_type, learning_mode)
+
     def get_fallback_chain(self, section_type: str, learning_mode: str = "default") -> List[str]:
         """Returns the full list of compatible models in priority order based on health."""
         mode_overrides = LEARNING_MODE_OVERRIDES.get(learning_mode, {})
