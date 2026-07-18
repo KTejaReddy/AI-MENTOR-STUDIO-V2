@@ -271,6 +271,14 @@ export function useAIGeneration(activeTab?: any) {
     try {
       await generateLesson(request, (event: SseEvent) => {
         if (controller.signal.aborted) return
+        
+        // Log to window for ErrorBoundary diagnostics
+        (window as any)._lastSSEEvent = event;
+        (window as any)._generationState = {
+            progress: Object.keys(playedStatuses.current).length,
+            currentStatuses: playedStatuses.current,
+            activeBufferLength: Object.keys(rawSectionsBuffer.current).length
+        };
 
         switch (event.type) {
           case 'plan': {
@@ -315,7 +323,9 @@ export function useAIGeneration(activeTab?: any) {
               if (!rawSectionsBuffer.current[st]) {
                 rawSectionsBuffer.current[st] = { content: '', isDone: false, isError: false, sectionData: null }
               }
-              rawSectionsBuffer.current[st].content += (event.content || '')
+              rawSectionsBuffer.current[st].content += (event.content || '');
+              const win = window as any;
+              win._lastRenderedSection = st;
             }
             break
           }
@@ -341,8 +351,7 @@ export function useAIGeneration(activeTab?: any) {
               rawSectionsBuffer.current[st].isDone = true
               rawSectionsBuffer.current[st].isError = event.status === 'error'
               rawSectionsBuffer.current[st].sectionData = incomingData
-              
-              if (incomingData.content && incomingData.content.length > rawSectionsBuffer.current[st].content.length) {
+              if (incomingData.content && typeof incomingData.content === 'string' && typeof rawSectionsBuffer.current[st].content === 'string' && incomingData.content.length > (rawSectionsBuffer.current[st].content?.length || 0)) {
                 rawSectionsBuffer.current[st].content = incomingData.content
               }
 

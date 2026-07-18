@@ -51,10 +51,60 @@ async def generate_lesson_full(
         "- Practice Problems: Provide multiple problems with increasing difficulty.\n"
         "- Summary: Provide a substantial, comprehensive summary.\n"
         "Use valid Mermaid syntax (```mermaid) for any visual diagrams, charts, or graphs. "
-        "MERMAID RULES: Do not use HTML tags in node labels. Always quote node labels containing special characters (e.g. A[\"Label (Info)\"]). "
         "Use $ for inline math and $$ for block math. "
         "Do not output markdown code blocks unless it is actual code or mermaid."
     )
+    
+    # Build strict quiz formatting rules if 'quiz' is in planned sections
+    has_quiz = any(st == "quiz" for st, _ in active_sections)
+    quiz_instructions = ""
+    if has_quiz:
+        quiz_instructions = (
+            "\nQUIZ RULES: You must generate EXACTLY 10 university-style Multiple Choice Questions.\n"
+            "Format EACH question exactly as follows:\n"
+            "Question: [Text]\n"
+            "Option A: [Text]\n"
+            "Option B: [Text]\n"
+            "Option C: [Text]\n"
+            "Option D: [Text]\n"
+            "Correct Answer: [Option Letter]\n"
+            "Explanation: [Detailed explanation]\n"
+            "Subject-specific constraint: If programming, include code snippets in the question. "
+            "If math, include equations. If electronics, include circuit descriptions.\n"
+        )
+
+    # Build Mermaid templates based on subject
+    subject_lower = subject.lower()
+    mermaid_templates = ""
+    if "program" in subject_lower or "comput" in subject_lower:
+        mermaid_templates = (
+            "\nMERMAID TEMPLATES (Programming): You MUST use these exact structures and only populate placeholders:\n"
+            "1. Flowchart: `graph TD; A[\"Start\"] --> B[\"Process\"]; B --> C[\"End\"];`\n"
+            "2. Tree: `graph TD; Root[\"Root\"] --> C1[\"Child1\"]; Root --> C2[\"Child2\"];`\n"
+            "3. Graph: `graph LR; N1[\"Node1\"] <--> N2[\"Node2\"];`\n"
+        )
+    elif "math" in subject_lower:
+        mermaid_templates = (
+            "\nMERMAID TEMPLATES (Mathematics): You MUST use these exact structures and only populate placeholders:\n"
+            "1. Process Flow: `graph TD; S1[\"Step1\"] --> S2[\"Step2\"];`\n"
+        )
+    elif "electronic" in subject_lower or "circuit" in subject_lower:
+        mermaid_templates = (
+            "\nMERMAID TEMPLATES (Electronics): You MUST use these exact structures and only populate placeholders:\n"
+            "1. Logic Gate: `graph LR; A[\"Input\"] --> B((\"AND\")); C[\"Input\"] --> B; B --> D[\"Output\"];`\n"
+            "2. Block Diagram: `graph TD; MCU[\"MCU\"] --> S[\"Sensor\"];`\n"
+            "3. State Machine: `stateDiagram-v2; [*] --> Idle; Idle --> Active;`\n"
+        )
+    elif "network" in subject_lower:
+        mermaid_templates = (
+            "\nMERMAID TEMPLATES (Networking): You MUST use these exact structures and only populate placeholders:\n"
+            "1. Topology: `graph LR; R[\"Router\"] --> S[\"Switch\"]; S --> P[\"PC\"];`\n"
+            "2. Packet Flow: `sequenceDiagram; Client->>Server: SYN; Server-->>Client: SYN-ACK;`\n"
+        )
+    else:
+        mermaid_templates = "\nMERMAID RULES: Do not use HTML tags in node labels. Always quote node labels containing special characters (e.g. A[\"Label (Info)\"]).\n"
+        
+    system_prompt += quiz_instructions + mermaid_templates
     
     section_titles_str = "\n".join([f"## {idx+1}. {title} (Section ID: {st})" for idx, (st, title) in enumerate(active_sections)])
     
@@ -93,16 +143,45 @@ async def generate_lesson_full(
     current_buffer = ""
     active_st = None
     
-    def validate_mermaid(content: str) -> str:
-        """Strip hopelessly invalid mermaid diagrams to prevent frontend rendering errors."""
-        def repl(match):
+    async def validate_mermaid(content: str) -> str:
+        """Strip hopelessly invalid mermaid diagrams and regenerate them."""
+        parts = []
+        last_end = 0
+        for match in re.finditer(r"```mermaid\s+(.*?)```", content, flags=re.DOTALL):
+            parts.append(content[last_end:match.start()])
             block = match.group(1)
             # Basic validation: if there's raw HTML tags in nodes, it's likely invalid.
             if "<" in block and ">" in block:
-                logger.warning("Stripped invalid mermaid diagram containing HTML tags.")
-                return "\n*Diagram omitted due to invalid syntax*\n"
-            return match.group(0)
-        return re.sub(r"```mermaid\s+(.*?)```", repl, content, flags=re.DOTALL)
+                logger.warning("Stripped invalid mermaid diagram containing HTML tags. Regenerating...")
+                prompt = (
+                    "Regenerate ONLY the Mermaid diagram for this context. "
+                    "Use valid Mermaid syntax. DO NOT use HTML tags in node labels. Quote special characters.\n"
+                    f"Context: {topic}\n"
+                    f"Invalid diagram:\n```mermaid\n{block}\n```"
+                )
+                req = CompletionRequest(
+                    messages=[Message(role="user", content=prompt)],
+                    model=model_id,
+                    temperature=0.4,
+                    max_tokens=512,
+                )
+                try:
+                    # Quick synchronous-like request to regenerate diagram
+                    # Uses the same key as the stream since we use provider
+                    res = await provider.complete(req)
+                    new_block = res.choices[0].message.content if res.choices else ""
+                    if "```mermaid" not in new_block:
+                        new_block = f"```mermaid\n{new_block}\n```"
+                    parts.append(new_block)
+                except Exception as e:
+                    logger.error(f"Failed to regenerate mermaid: {e}")
+                    parts.append("\n*Diagram omitted due to invalid syntax*\n")
+            else:
+                parts.append(match.group(0))
+            last_end = match.end()
+            
+        parts.append(content[last_end:])
+        return "".join(parts)
     
     # Notify that we are starting the overall generation
     # The frontend expects individual section statuses, so we will mark the first one as generating
@@ -234,7 +313,7 @@ async def generate_lesson_full(
                                     new_st = active_st if active_st else active_sections[0][0]
                                     
                             if active_st and new_st != active_st:
-                                validated_content = validate_mermaid(accumulated_content[active_st])
+                                validated_content = await validate_mermaid(accumulated_content[active_st])
                                 accumulated_content[active_st] = validated_content
                                 yield {
                                     "type": "section_done",
@@ -281,7 +360,7 @@ async def generate_lesson_full(
         }
         
     if active_st:
-        validated_content = validate_mermaid(accumulated_content[active_st])
+        validated_content = await validate_mermaid(accumulated_content[active_st])
         accumulated_content[active_st] = validated_content
         yield {
             "type": "section_done",
