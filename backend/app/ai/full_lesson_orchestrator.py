@@ -182,6 +182,13 @@ async def generate_lesson_full(
                             
                             # Fallback mapping if Section ID is missing from LLM output
                             new_st = st_group
+                            
+                            if new_st and new_st not in accumulated_content:
+                                if new_st.lower() in accumulated_content:
+                                    new_st = new_st.lower()
+                                else:
+                                    new_st = None
+                                    
                             if not new_st:
                                 # Fuzzy match title
                                 matched = False
