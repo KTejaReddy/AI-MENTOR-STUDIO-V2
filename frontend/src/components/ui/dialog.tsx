@@ -31,7 +31,7 @@ export function Dialog({ open, onClose, children }: DialogProps) {
         onClick={onClose}
       />
       <div
-        className="relative z-10 w-full max-w-lg mx-4 animate-scale-in"
+        className="relative z-10 w-full max-w-lg mx-4 animate-scale-in max-h-[90vh] overflow-y-auto scrollbar-thin"
         role="dialog"
         aria-modal="true"
       >

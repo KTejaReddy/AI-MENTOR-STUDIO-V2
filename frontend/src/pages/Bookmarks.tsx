@@ -110,7 +110,7 @@ export function Bookmarks() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex gap-1.5 justify-end mt-4 pt-3 border-t border-white/5 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 relative z-10">
+                          <div className="flex gap-1.5 justify-end mt-4 pt-3 border-t border-white/5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-y-0 md:translate-y-1 md:group-hover:translate-y-0 relative z-10">
                             <IconButton label="Open" size="sm" className="hover:bg-white/5"><ExternalLink className="w-3.5 h-3.5 text-[#00f2fe]" /></IconButton>
                             <IconButton label="Delete" size="sm" onClick={() => handleDelete(bookmark.title)} className="hover:bg-white/5"><Trash2 className="w-3.5 h-3.5 hover:text-red-400" /></IconButton>
                           </div>
@@ -132,7 +132,7 @@ export function Bookmarks() {
                         <div className="hidden sm:flex gap-1">
                           {bookmark.tags.map((tag) => <Badge key={tag} variant="surface" size="sm">{tag}</Badge>)}
                         </div>
-                        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                        <div className="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity shrink-0">
                           <IconButton label="Open" size="sm"><ExternalLink className="w-3.5 h-3.5" /></IconButton>
                           <IconButton label="Delete" size="sm" onClick={() => handleDelete(bookmark.title)}><Trash2 className="w-3.5 h-3.5" /></IconButton>
                         </div>

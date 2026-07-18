@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
@@ -10,7 +10,7 @@ import { TabBar } from '@/components/workspace/TabBar'
 import { GenerationPanel } from '@/components/ai/GenerationPanel'
 import { StreamingLesson } from '@/components/ai/StreamingLesson'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { GraduationCap, Sparkles, Loader2 } from 'lucide-react'
+import { GraduationCap, Sparkles, Loader2, List, ChevronLeft, ChevronRight, X } from 'lucide-react'
 
 function truncateLabel(label: string, max = 25): string {
   if (label.length <= max) return label
@@ -23,6 +23,7 @@ export function Learn() {
   const location = useLocation()
   const navigate = useNavigate()
   const [sidebarVisible, setSidebarVisible] = useState(true)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const [accumulated, setAccumulated] = useState('')
   const [activeSectionId, setActiveSectionId] = useState<string | null>(
     activeTab?.memory?.currentSectionId || null
@@ -143,6 +144,7 @@ export function Learn() {
     if (tab) {
       updateMemory(tab.id, { currentSectionId: sectionId })
     }
+    setMobileDrawerOpen(false) // Close drawer on mobile selection
     const el = document.querySelector(`[data-section-id="${sectionId}"]`)
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -156,20 +158,79 @@ export function Learn() {
   const hasAnyTabs = tabs.length > 0
   const showAiContent = aiGen.status !== 'idle' || aiGen.lesson !== null
 
-  return (
-    <div className="h-full flex overflow-hidden bg-surface-50">
-      {sidebarVisible && activeTab && (
-        <LeftSidebar
-          sectionStatuses={aiGen.sectionStatuses}
-          isGenerating={aiGen.status === 'generating'}
-          completedCount={Object.values(aiGen.sectionStatuses || {}).filter((s) => s === 'completed' || s === 'error').length}
-          totalCount={Object.keys(aiGen.sectionStatuses || {}).length}
-          activeSectionId={activeSectionId}
-          onSelectSection={handleSelectSection}
-        />
-      )}
+  const activeSectionKeys = useMemo(() => {
+    if (!aiGen.sectionStatuses) return []
+    return Object.keys(aiGen.sectionStatuses)
+  }, [aiGen.sectionStatuses])
 
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+  const currentIndex = activeSectionKeys.indexOf(activeSectionId || '')
+  
+  const handlePrevSection = () => {
+    if (currentIndex > 0) handleSelectSection(activeSectionKeys[currentIndex - 1])
+  }
+  
+  const handleNextSection = () => {
+    if (currentIndex >= 0 && currentIndex < activeSectionKeys.length - 1) {
+      handleSelectSection(activeSectionKeys[currentIndex + 1])
+    }
+  }
+
+  return (
+    <div className="h-full flex overflow-hidden bg-surface-50 relative">
+      <div className="hidden md:block h-full">
+        {sidebarVisible && activeTab && (
+          <LeftSidebar
+            sectionStatuses={aiGen.sectionStatuses}
+            isGenerating={aiGen.status === 'generating'}
+            completedCount={Object.values(aiGen.sectionStatuses || {}).filter((s) => s === 'completed' || s === 'error').length}
+            totalCount={Object.keys(aiGen.sectionStatuses || {}).length}
+            activeSectionId={activeSectionId}
+            onSelectSection={handleSelectSection}
+          />
+        )}
+      </div>
+
+      {/* Mobile Drawer Overlay */}
+      <AnimatePresence>
+        {mobileDrawerOpen && activeTab && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm"
+              onClick={() => setMobileDrawerOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-4/5 max-w-[300px] z-50 md:hidden bg-surface flex flex-col shadow-2xl border-r border-white/10"
+            >
+              <div className="flex justify-between items-center p-4 border-b border-white/5">
+                <span className="font-bold text-text-primary">Lesson Sections</span>
+                <button onClick={() => setMobileDrawerOpen(false)} className="p-2 -mr-2 text-text-secondary hover:text-text-primary bg-surface-100 rounded-full">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <LeftSidebar
+                  sectionStatuses={aiGen.sectionStatuses}
+                  isGenerating={aiGen.status === 'generating'}
+                  completedCount={Object.values(aiGen.sectionStatuses || {}).filter((s) => s === 'completed' || s === 'error').length}
+                  totalCount={Object.keys(aiGen.sectionStatuses || {}).length}
+                  activeSectionId={activeSectionId}
+                  onSelectSection={handleSelectSection}
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {hasAnyTabs ? (
           <>
             <TabBar onNewLesson={() => setGenerateDialogOpen(true)} />
@@ -177,7 +238,7 @@ export function Learn() {
             <div
               ref={contentRef}
               onScroll={handleScroll}
-              className="flex-1 overflow-y-auto scroll-smooth"
+              className="flex-1 overflow-y-auto scroll-smooth pb-20 md:pb-0"
             >
               {showAiContent && activeTab ? (
                 <StreamingLesson
@@ -222,6 +283,40 @@ export function Learn() {
                 </div>
               )}
             </div>
+
+            {/* Mobile Bottom Navigation & FAB */}
+            {showAiContent && activeTab && (
+              <div className="md:hidden fixed bottom-4 left-0 right-0 z-40 px-4 pointer-events-none flex flex-col gap-3">
+                <div className="flex justify-end pointer-events-auto">
+                  <button
+                    onClick={() => setMobileDrawerOpen(true)}
+                    className="flex items-center justify-center w-12 h-12 rounded-full bg-accent text-white shadow-xl hover:bg-accent-dark transition-colors"
+                  >
+                    <List className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="flex items-center justify-between glass rounded-xl border border-white/10 p-2 shadow-lg pointer-events-auto bg-surface-50/80 backdrop-blur-md">
+                  <button
+                    onClick={handlePrevSection}
+                    disabled={currentIndex <= 0}
+                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-text-primary disabled:opacity-50 disabled:cursor-not-allowed rounded-lg active:bg-white/5"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Prev
+                  </button>
+                  <span className="text-xs font-semibold text-text-tertiary">
+                    {currentIndex >= 0 ? `${currentIndex + 1} / ${activeSectionKeys.length}` : ''}
+                  </span>
+                  <button
+                    onClick={handleNextSection}
+                    disabled={currentIndex < 0 || currentIndex >= activeSectionKeys.length - 1}
+                    className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-accent disabled:opacity-50 disabled:cursor-not-allowed rounded-lg active:bg-accent/10"
+                  >
+                    Next <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center py-20 px-6">

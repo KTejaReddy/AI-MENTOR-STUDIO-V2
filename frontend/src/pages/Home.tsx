@@ -93,7 +93,7 @@ function QuickActionCard({ icon, title, description, onClick, colorClass }: Quic
       whileHover={{ y: -6, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="glass p-4 rounded-xl text-left border border-white/5 hover:border-accent/20 hover:shadow-[0_0_25px_rgba(0,194,255,0.08)] bg-white/3 transition-all duration-300 relative overflow-hidden group w-full cursor-pointer flex flex-col justify-between h-32"
+      className="glass interactive-item p-4 rounded-xl text-left border border-white/5 hover:border-accent/20 hover:shadow-[0_0_25px_rgba(0,194,255,0.08)] bg-white/3 transition-all duration-300 relative overflow-hidden group w-full cursor-pointer flex flex-col justify-between h-32"
     >
       <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-accent-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       <div className="flex items-center justify-between">
@@ -236,7 +236,7 @@ export function Home() {
           </div>
 
           {/* Quick Actions */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8 interactive-group">
             {quickActions.map((action, i) => (
               <motion.div
                 key={action.title}
@@ -288,7 +288,7 @@ export function Home() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 interactive-group">
                 {recentTopics.slice(0, 3).map((topic, i) => {
                   const progressPercent = topic.total > 0 ? Math.round((topic.completed / topic.total) * 100) : 0
                   const branch = getBranchForSubject(topic.subject)
@@ -300,7 +300,7 @@ export function Home() {
                       transition={{ delay: 0.15 + i * 0.05 }}
                       whileHover={{ y: -6, scale: 1.02 }}
                       onClick={() => handleLessonOpen(topic)}
-                      className="glass p-5 rounded-xl border border-white/5 hover:border-accent/20 hover:shadow-[0_0_20px_rgba(0,194,255,0.06)] bg-white/3 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group"
+                      className="glass interactive-item p-5 rounded-xl border border-white/5 hover:border-accent/20 hover:shadow-[0_0_20px_rgba(0,194,255,0.06)] bg-white/3 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group"
                     >
                       <div>
                         <span className="text-[9px] uppercase tracking-wider font-mono text-accent font-bold mb-1 block">

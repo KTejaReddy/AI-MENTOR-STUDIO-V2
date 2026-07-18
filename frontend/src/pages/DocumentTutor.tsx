@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { FileUp, FileText, Search, BookMarked, List, Loader2, Zap, LayoutTemplate, PanelLeftClose, PanelLeftOpen, ChevronRight, Sparkles } from 'lucide-react'
+import { FileUp, FileText, Search, BookMarked, List, Loader2, Zap, LayoutTemplate, PanelLeftClose, PanelLeftOpen, ChevronRight, Sparkles, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
@@ -205,15 +205,18 @@ export function DocumentTutor() {
     <div className="flex h-full w-full bg-surface overflow-hidden text-text-primary">
       {/* LEFT SIDEBAR - Document Library & Outline */}
       <div className={cn(
-        'border-r border-border flex flex-col bg-surface-150 shrink-0 transition-all duration-200',
-        sidebarOpen ? 'w-64' : 'w-0 overflow-hidden'
+        'border-r border-border flex flex-col bg-surface-150 shrink-0 transition-all duration-200 z-40',
+        sidebarOpen ? 'w-full md:w-64 absolute md:relative inset-y-0 left-0' : 'w-0 overflow-hidden'
       )}>
-        <div className="p-4 border-b border-border space-y-3">
+        <div className="p-4 border-b border-border space-y-3 flex items-center justify-between">
           <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileUpload} accept=".pdf,.docx,.pptx,.txt,.md" />
-          <Button onClick={() => fileInputRef.current?.click()} className="w-full" disabled={loading}>
+          <Button onClick={() => fileInputRef.current?.click()} className="flex-1" disabled={loading}>
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileUp className="w-4 h-4" />}
             {loading ? 'Processing...' : 'Upload Document'}
           </Button>
+          <button onClick={() => setSidebarOpen(false)} className="md:hidden p-2 text-text-tertiary">
+             <X className="w-4 h-4" />
+          </button>
         </div>
 
         <div className="flex-1 overflow-y-auto scrollbar-thin p-3">

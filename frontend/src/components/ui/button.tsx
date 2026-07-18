@@ -37,15 +37,15 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] relative overflow-hidden select-none',
           {
-            'bg-gradient-to-br from-accent to-accent-dark text-white shadow-glow-accent hover:shadow-glow-accent-lg hover:brightness-110 focus-visible:ring-accent/40': variant === 'primary',
-            'bg-surface-200 text-text-secondary border border-border hover:border-border-light hover:text-text-primary hover:bg-surface-250 hover:shadow-sm focus-visible:ring-accent/30': variant === 'secondary',
+            'bg-gradient-to-br from-accent to-accent-dark text-white shadow-glow-accent hover:shadow-glow-accent-lg hover:brightness-110 hover:scale-[1.02] focus-visible:ring-accent/40': variant === 'primary',
+            'bg-surface-200 text-text-secondary border border-border hover:border-border-light hover:text-text-primary hover:bg-surface-250 hover:shadow-sm hover:scale-[1.02] focus-visible:ring-accent/30': variant === 'secondary',
             'text-text-tertiary hover:text-text-primary hover:bg-surface-150 focus-visible:ring-accent/30': variant === 'ghost',
-            'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:text-red-300 focus-visible:ring-red-500/30': variant === 'danger',
-            'bg-accent/10 text-accent-light border border-accent/20 hover:bg-accent/15 focus-visible:ring-accent/30': variant === 'accent',
-            'h-8 px-3 text-xs': size === 'sm',
-            'h-10 px-4 text-sm': size === 'default',
-            'h-12 px-6 text-base': size === 'lg',
-            'h-9 w-9 p-0': size === 'icon',
+            'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:text-red-300 hover:scale-[1.02] focus-visible:ring-red-500/30': variant === 'danger',
+            'bg-accent/10 text-accent-light border border-accent/20 hover:bg-accent/15 hover:scale-[1.02] focus-visible:ring-accent/30': variant === 'accent',
+            'h-10 px-4 md:h-8 md:px-3 text-sm md:text-xs': size === 'sm',
+            'h-12 px-6 md:h-10 md:px-4 text-base md:text-sm': size === 'default',
+            'h-14 px-8 md:h-12 md:px-6 text-lg md:text-base': size === 'lg',
+            'h-11 w-11 md:h-9 md:w-9 p-0': size === 'icon',
           },
           className
         )}

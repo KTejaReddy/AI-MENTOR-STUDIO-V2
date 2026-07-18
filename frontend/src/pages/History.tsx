@@ -215,7 +215,7 @@ export function History() {
                         {entry.score && <Badge variant={parseInt(entry.score) >= 8 ? 'success' : 'warning'} size="sm" className="ml-1 text-[8px]">{entry.score}</Badge>}
                       </div>
                     </div>
-                    <IconButton label="Delete" size="sm" onClick={(e: React.MouseEvent) => handleDelete(e, entry)} className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/5">
+                    <IconButton label="Delete" size="sm" onClick={(e: React.MouseEvent) => handleDelete(e, entry)} className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-white/5 shrink-0">
                       <Trash2 className="w-4 h-4 hover:text-red-400" />
                     </IconButton>
                   </motion.div>

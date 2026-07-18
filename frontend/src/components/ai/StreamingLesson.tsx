@@ -200,14 +200,14 @@ export const StreamingLesson = memo(function StreamingLesson({
 
       {/* Lesson header: Topic / Subject / Difficulty / Time */}
       {tabInfo && (isDone || isGenerating) && (
-        <div className="px-6 md:px-10 lg:px-16 pt-6 pb-2">
+        <div className="px-4 md:px-10 lg:px-16 pt-8 pb-4 md:pt-6 md:pb-2">
           <div className="max-w-3xl mx-auto w-full">
             <div className="flex items-start gap-4 mb-1">
               <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center shrink-0 border border-accent/20">
                 <GraduationCap className="w-5 h-5 text-accent-light" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-xl font-bold text-text-primary leading-tight">
+                <h1 className="text-2xl md:text-xl font-bold text-text-primary leading-tight">
                   {tabInfo.topic}
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -237,7 +237,7 @@ export const StreamingLesson = memo(function StreamingLesson({
         </div>
       )}
 
-      <div ref={scrollContainerRef} className="flex-1 p-6 md:p-10 lg:px-16 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 p-4 py-8 md:p-10 lg:px-16 overflow-y-auto">
         <div className="max-w-3xl mx-auto w-full">
           <AnimatePresence mode="wait">
             {activeSectionId ? (

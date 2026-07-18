@@ -191,7 +191,7 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
         </div>
       )}
       <pre className="p-4 overflow-x-auto bg-surface-50" {...props}>
-        <code className="text-[11px] font-mono text-text-secondary leading-relaxed whitespace-pre">
+        <code className="text-sm md:text-[11px] font-mono text-text-secondary leading-relaxed whitespace-pre">
           {children}
         </code>
       </pre>
@@ -201,24 +201,24 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
 
 function InlineCode({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-[10px] font-mono text-accent-light border border-accent/20" {...props}>
+    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-sm md:text-[10px] font-mono text-accent-light border border-accent/20" {...props}>
       {children}
     </code>
   )
 }
 
 function Paragraph({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className="text-xs text-text-secondary leading-relaxed mb-4 last:mb-0" {...props}>{children}</p>
+  return <p className="text-base md:text-xs text-text-secondary leading-relaxed mb-4 last:mb-0" {...props}>{children}</p>
 }
 
 function Heading({ level, children, ...props }: { level: number; children?: ReactNode } & React.HTMLAttributes<HTMLHeadingElement>) {
   const sizes: Record<number, string> = {
-    1: 'text-xl font-bold text-text-primary mt-8 mb-4 pb-2 border-b border-border/50',
-    2: 'text-lg font-semibold text-text-primary mt-7 mb-3 pb-1.5 border-b border-border/30',
-    3: 'text-base font-semibold text-text-primary mt-6 mb-2',
-    4: 'text-sm font-medium text-text-primary mt-5 mb-2',
-    5: 'text-xs font-medium text-text-primary mt-4 mb-1',
-    6: 'text-[11px] font-medium text-text-tertiary mt-3 mb-1 uppercase tracking-wider',
+    1: 'text-2xl md:text-xl font-bold text-text-primary mt-8 mb-4 pb-2 border-b border-border/50',
+    2: 'text-xl md:text-lg font-semibold text-text-primary mt-7 mb-3 pb-1.5 border-b border-border/30',
+    3: 'text-lg md:text-base font-semibold text-text-primary mt-6 mb-2',
+    4: 'text-base md:text-sm font-medium text-text-primary mt-5 mb-2',
+    5: 'text-sm md:text-xs font-medium text-text-primary mt-4 mb-1',
+    6: 'text-xs md:text-[11px] font-medium text-text-tertiary mt-3 mb-1 uppercase tracking-wider',
   }
   const Tag = `h${level}` as keyof React.JSX.IntrinsicElements as any
   return <Tag className={sizes[level] || sizes[3]} {...props}>{children}</Tag>

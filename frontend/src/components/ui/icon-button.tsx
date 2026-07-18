@@ -20,8 +20,8 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
             'text-text-tertiary hover:text-text-primary hover:bg-surface-150': variant === 'ghost',
             'text-text-secondary border border-border hover:border-border-light hover:text-text-primary hover:bg-surface-150': variant === 'secondary',
             'bg-accent text-white hover:bg-accent-dark shadow-glow-sm': variant === 'primary',
-            'h-8 w-8': size === 'sm',
-            'h-9 w-9': size === 'default',
+            'h-10 w-10 md:h-8 md:w-8': size === 'sm',
+            'h-11 w-11 md:h-9 md:w-9': size === 'default',
           },
           className
         )}

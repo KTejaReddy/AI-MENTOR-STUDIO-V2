@@ -91,16 +91,16 @@ export function Settings() {
         </DialogContent>
       </Dialog>
 
-      <div className="h-full flex">
-        <div className="w-52 shrink-0 border-r border-border bg-surface-50/40 p-3">
-          <div className="section-title mb-3">Settings</div>
-          <div className="space-y-0.5">
+      <div className="h-full flex flex-col md:flex-row">
+        <div className="w-full md:w-52 shrink-0 border-b md:border-b-0 md:border-r border-border bg-surface-50/40 p-3">
+          <div className="hidden md:block section-title mb-3">Settings</div>
+          <div className="flex md:flex-col gap-1 md:gap-0.5 overflow-x-auto md:overflow-visible pb-1 md:pb-0 scrollbar-none">
             {settingsNav.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={cn(
-                  'w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all',
+                  'flex md:w-full items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap shrink-0',
                   activeTab === item.id
                     ? 'text-accent-light bg-accent/10'
                     : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-150'

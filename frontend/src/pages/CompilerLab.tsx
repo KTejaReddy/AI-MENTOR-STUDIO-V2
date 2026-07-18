@@ -179,7 +179,7 @@ export function CompilerLab() {
       </div>
 
       {/* Main Split Area */}
-      <div className="flex-1 flex overflow-hidden min-h-0 relative">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0 relative">
         {/* Editor Pane */}
         <div className="flex-1 flex flex-col min-w-0 h-full">
           <div className="flex-1 relative border-r border-border h-full bg-[#1e1e1e]">
@@ -211,10 +211,11 @@ export function CompilerLab() {
         {!outputPanelOpen && (
           <button
             onClick={() => setOutputPanelOpen(true)}
-            className="shrink-0 w-6 flex items-center justify-center border-l border-border bg-surface-100 hover:bg-surface-150 transition-colors text-text-tertiary hover:text-text-primary z-20"
+            className="shrink-0 h-6 md:w-6 md:h-full flex items-center justify-center border-t md:border-t-0 md:border-l border-border bg-surface-100 hover:bg-surface-150 transition-colors text-text-tertiary hover:text-text-primary z-20"
             aria-label="Open output panel"
           >
-            <PanelRightOpen className="w-3 h-3 text-[#00f2fe]" />
+            <span className="md:hidden text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 text-[#00f2fe]">Open Panel <PanelRightOpen className="w-3 h-3 rotate-90" /></span>
+            <PanelRightOpen className="hidden md:block w-3 h-3 text-[#00f2fe]" />
           </button>
         )}
 
@@ -225,7 +226,7 @@ export function CompilerLab() {
             minWidth={280}
             maxWidth={550}
             side="right"
-            className="flex flex-col bg-surface-150/90 backdrop-blur-md border-l border-border relative h-full"
+            className="flex flex-col bg-surface-150/90 backdrop-blur-md border-t md:border-t-0 md:border-l border-border relative h-1/2 md:h-full max-md:!w-full z-30 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] md:shadow-none"
           >
             <div className="flex-1 flex flex-col w-full h-full min-w-0 overflow-hidden">
               <div className="flex border-b border-border h-9 shrink-0 w-full bg-surface-200/50">

@@ -438,23 +438,24 @@
   }
 
   .skeleton {
-    background: linear-gradient(90deg, var(--surface-200) 25%, var(--surface-250) 50%, var(--surface-200) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 2s ease-in-out infinite;
+    background: linear-gradient(90deg, var(--surface-200) 0%, var(--surface-250) 50%, var(--surface-200) 100%);
+    background-size: 400% 100%;
+    animation: shimmer 2.5s ease-in-out infinite;
     border-radius: 8px;
   }
 
   .empty-state-icon {
-    width: 4rem;
-    height: 4rem;
-    border-radius: 1rem;
-    background: color-mix(in srgb, var(--surface-150) 60%, transparent);
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 8%, transparent), color-mix(in srgb, var(--surface-200) 15%, transparent));
     backdrop-filter: blur(16px);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 1rem;
-    border: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+    border: 1px solid var(--border-light);
+    box-shadow: 0 8px 32px -12px var(--glow-accent), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
   }
 
   .panel-header {
@@ -541,8 +542,8 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% { background-position: 400% 0; }
+  100% { background-position: -400% 0; }
 }
 
 @keyframes float {

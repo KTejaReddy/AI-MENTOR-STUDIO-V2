@@ -75,7 +75,7 @@ export function SubjectCard({
         transition: hovered ? 'transform 0.08s ease-out' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)'
       }}
       className={cn(
-        'card-hover p-5 text-left w-full group relative overflow-hidden',
+        'card-hover interactive-item p-5 text-left w-full group relative overflow-hidden',
         !hovered && 'float-3d',
         className
       )}
