@@ -557,20 +557,10 @@ async def generate_lesson_full(
         reviewer_agent.set_provider(provider)
         
         for st, title in active_sections:
-            content = accumulated_content[st]
-            
             # Graceful reviewer degradation: if anything fails, just keep the section.
             try:
-                if not content.strip():
-                    logger.warning(f"Section {st} is empty, scheduling regeneration")
-                    async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
-                        yield event
-                        if event.get("type") == "section_done":
-                            accumulated_content[st] = event["section_data"]["content"]
-                    yield {"type": "ping", "timestamp": time.time()}
-                    continue
-                    
                 if st == "quiz":
+                    logger.info("QUIZ_JSON_PIPELINE_START")
                     # Step 1: Generate initial JSON quiz
                     json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [])
                     quiz_issues, valid_json = validate_json_quiz(json_obj)
@@ -597,6 +587,8 @@ async def generate_lesson_full(
                         logger.info("QUIZ_VALIDATION_PASS")
                         
                     content = convert_json_to_quiz_markdown(valid_json)
+                    logger.info("QUIZ_JSON_PIPELINE_COMPLETE")
+                    logger.info(f"QUIZ_SECTION_READY: {len(content)} bytes")
                     accumulated_content[st] = content
                     
                     # Yield as one block since it was JSON generated
@@ -625,6 +617,17 @@ async def generate_lesson_full(
                     }
                     
                     logger.info(f"QUIZ_SENT_TO_FRONTEND:\n{content}")
+                    continue
+                    
+                content = accumulated_content[st]
+                
+                if not content.strip():
+                    logger.warning(f"Section {st} is empty, scheduling regeneration")
+                    async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
+                        yield event
+                        if event.get("type") == "section_done":
+                            accumulated_content[st] = event["section_data"]["content"]
+                    yield {"type": "ping", "timestamp": time.time()}
                     continue
                 
                 review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
