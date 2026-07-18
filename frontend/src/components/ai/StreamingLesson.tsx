@@ -162,6 +162,11 @@ export const StreamingLesson = memo(function StreamingLesson({
   const estimatedTimeRemaining = (total - done) * 15
 
   const currentSectionStatus = activeSectionId ? (sectionStatuses[activeSectionId] || 'waiting') : 'waiting'
+  const quizSection = lesson?.sections?.['quiz']
+  if (activeSectionId === 'quiz') {
+    console.log("QUIZ SECTION", quizSection)
+    console.log("QUIZ CONTENT", quizSection?.content)
+  }
   const rawCurrentSectionContent = (activeSectionId && lesson?.sections?.[activeSectionId]?.content) || ''
   const currentSectionContent = rawCurrentSectionContent
   const safeAccumulatedContent = accumulatedContent

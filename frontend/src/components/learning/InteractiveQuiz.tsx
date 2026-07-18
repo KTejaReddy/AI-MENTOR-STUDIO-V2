@@ -445,7 +445,30 @@ export const InteractiveQuiz = memo(function InteractiveQuiz({
   content,
   isGenerating = false,
 }: InteractiveQuizProps) {
-  const questions = useMemo(() => parseQuizMarkdown(content), [content])
+  const questions = useMemo(() => {
+    console.log("RAW QUIZ CONTENT", content)
+    const parsedQuestions = parseQuizMarkdown(content)
+    console.log("PARSED QUESTIONS", parsedQuestions)
+    
+    if (parsedQuestions.length === 0) {
+      console.log("PARSED 0 QUESTIONS - STARTING TRACE");
+      const questionSplitter = /(?:^|\n)\s*(?:\*{0,2})(?:Q\s*)?(\d+)[\.\)]\s*(?:\*{0,2})/gm;
+      let m;
+      let count = 0;
+      while ((m = questionSplitter.exec(content)) !== null) { count++; }
+      console.log("Question Splitter Regex matched blocks:", count);
+      
+      if (count > 0) {
+          const optionLinePattern = /^(?:\*{0,2})?[A-Ea-e][\.\)]\s+.+/;
+          console.log("Option Regex:", optionLinePattern.toString());
+          const correctPattern = /\*{0,2}Correct\s+Answer\s*:\s*\[?([A-Ea-e])\]?(?:\s*[-—]\s*(.+?))?\*{0,2}/i;
+          console.log("Answer Regex:", correctPattern.toString());
+          console.log("Does the payload contain 'Correct Answer:'?", content.includes('Correct Answer:'));
+      }
+    }
+    
+    return parsedQuestions
+  }, [content])
 
   const [current, setCurrent] = useState(0)
   const [selections, setSelections] = useState<Record<number, number | null>>({})
