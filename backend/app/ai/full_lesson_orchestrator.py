@@ -12,6 +12,8 @@ from app.ai.model_router_config import get_model_for_section
 
 logger = logging.getLogger(__name__)
 
+import json
+
 def convert_json_to_quiz_markdown(json_obj: Dict) -> str:
     lines = []
     questions = json_obj.get("questions", [])
@@ -25,7 +27,54 @@ def convert_json_to_quiz_markdown(json_obj: Dict) -> str:
         lines.append("")
     return "\n".join(lines)
 
-async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, difficulty: str) -> str:
+def sanitize_json(raw: str) -> str:
+    # 1. Strip ALL <think>...</think> blocks
+    content = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL)
+    # 2. Extract ONLY the first complete JSON object
+    match = re.search(r'\{.*\}', content, flags=re.DOTALL)
+    if match:
+        content = match.group(0)
+    return content
+
+def validate_json_quiz(json_obj: Dict) -> tuple[List[str], Dict]:
+    issues = []
+    questions = json_obj.get("questions", [])
+    if not isinstance(questions, list):
+        issues.append("JSON root must contain a 'questions' array.")
+        return issues, json_obj
+        
+    valid_questions = []
+    for q in questions:
+        q_issues = []
+        if not q.get("question"):
+            q_issues.append("Missing question text")
+        opts = q.get("options", {})
+        for opt in ['A', 'B', 'C', 'D']:
+            if not opts.get(opt):
+                q_issues.append(f"Missing Option {opt}")
+        if not q.get("correctAnswer"):
+            q_issues.append("Missing correctAnswer")
+        if not q.get("explanation"):
+            q_issues.append("Missing explanation")
+            
+        if not q_issues:
+            valid_questions.append(q)
+            
+    if len(valid_questions) > 10:
+        logger.info("QUIZ_TRIMMED_TO_10")
+        valid_questions = valid_questions[:10]
+        
+    json_obj["questions"] = valid_questions
+    
+    if len(valid_questions) < 10:
+        issues.append(f"Found {len(valid_questions)} questions instead of exactly 10.")
+        
+    return issues, json_obj
+
+async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, difficulty: str, needed_count: int = 10, existing_questions: List[Dict] = None) -> Dict:
+    if existing_questions is None:
+        existing_questions = []
+        
     prompt = (
         f"You are a university professor creating a quiz for the topic '{topic}' in '{subject}'.\n"
         "You MUST output ONLY valid JSON. Do not use markdown blocks. Do not add <think> tags.\n"
@@ -45,12 +94,15 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
         '    }\n'
         '  ]\n'
         '}\n'
-        "Generate EXACTLY 10 questions."
+        f"Generate EXACTLY {needed_count} new questions."
     )
+    if existing_questions:
+        prompt += f"\n\nDO NOT repeat these existing questions:\n{json.dumps(existing_questions, indent=2)}"
+        
     model_id = get_model_for_section("quiz", "default")
     key = await key_manager.acquire_key_async(model_id)
     if not key:
-        return ""
+        return {}
     
     try:
         provider.set_api_key(key.key)
@@ -63,15 +115,21 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
         )
         response = await provider.complete(request)
         content = response.content
-        content = re.sub(r"^```json\s*", "", content)
-        content = re.sub(r"```\s*$", "", content)
-        content = re.sub(r"<think>.*?</think>", "", content, flags=re.DOTALL).strip()
-        import json
-        json_obj = json.loads(content)
-        return convert_json_to_quiz_markdown(json_obj)
+        
+        sanitized = sanitize_json(content)
+        
+        try:
+            json_obj = json.loads(sanitized)
+            return json_obj
+        except Exception as e:
+            logger.error(f"RAW_JSON_RESPONSE:\n{content}")
+            logger.error(f"SANITIZED_JSON:\n{sanitized}")
+            logger.error(f"JSON_PARSE_FAIL: {e}")
+            return {}
+            
     except Exception as e:
         logger.error(f"JSON quiz generation failed: {e}")
-        return ""
+        return {}
     finally:
         key_manager.release_key(key, success=True)
 
@@ -149,24 +207,13 @@ async def generate_lesson_full(
         "Do not output markdown code blocks unless it is actual code or mermaid."
     )
     
-    # Build strict quiz formatting rules if 'quiz' is in planned sections
+    # Remove quiz from single-pass markdown generation
+    active_sections_for_markdown = [(st, title) for st, title in active_sections if st != "quiz"]
+
+    # Build strict quiz formatting rules if 'quiz' is in planned sections (Not applicable anymore for single-pass)
     has_quiz = any(st == "quiz" for st, _ in active_sections)
     quiz_instructions = ""
-    if has_quiz:
-        quiz_instructions = (
-            "\nQUIZ RULES: You must generate EXACTLY 10 university-style Multiple Choice Questions.\n"
-            "DO NOT use <think> tags or output any reasoning. Output ONLY the final structured quiz.\n"
-            "Format EACH question exactly as follows:\n"
-            "Question: [Text]\n"
-            "Option A: [Text]\n"
-            "Option B: [Text]\n"
-            "Option C: [Text]\n"
-            "Option D: [Text]\n"
-            "Correct Answer: [Option Letter]\n"
-            "Explanation: [Detailed explanation]\n"
-            "Subject-specific constraint: If programming, include code snippets in the question. "
-            "If math, include equations. If electronics, include circuit descriptions.\n"
-        )
+    # We leave quiz out of system prompt because it's handled via JSON entirely now.
 
     # Build Mermaid templates based on subject
     subject_lower = subject.lower()
@@ -201,7 +248,7 @@ async def generate_lesson_full(
         
     system_prompt += quiz_instructions + mermaid_templates
     
-    section_titles_str = "\n".join([f"## {idx+1}. {title} (Section ID: {st})" for idx, (st, title) in enumerate(active_sections)])
+    section_titles_str = "\n".join([f"## {idx+1}. {title} (Section ID: {st})" for idx, (st, title) in enumerate(active_sections_for_markdown)])
     
     user_prompt = (
         f"Subject: {subject}\n"
@@ -280,8 +327,8 @@ async def generate_lesson_full(
     
     # Notify that we are starting the overall generation
     # The frontend expects individual section statuses, so we will mark the first one as generating
-    if active_sections:
-        active_st = active_sections[0][0]
+    if active_sections_for_markdown:
+        active_st = active_sections_for_markdown[0][0]
         yield {
             "type": "section_status",
             "section_type": active_st,
@@ -524,53 +571,58 @@ async def generate_lesson_full(
                     continue
                     
                 if st == "quiz":
-                    logger.info(f"COMPLETE QUIZ TEXT BEFORE VALIDATION:\n{content}")
-                    quiz_issues = validate_quiz(content)
+                    # Step 1: Generate initial JSON quiz
+                    json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [])
+                    quiz_issues, valid_json = validate_json_quiz(json_obj)
                     
                     attempts = 1
                     while quiz_issues and attempts < 2:
                         logger.warning(f"QUIZ_VALIDATION_FAIL (Attempt {attempts}): {quiz_issues}")
-                        async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, quiz_issues):
-                            yield event
-                            if event.get("type") == "section_done":
-                                content = event["section_data"]["content"]
-                        
-                        logger.info(f"COMPLETE REGENERATED QUIZ (Attempt {attempts + 1}):\n{content}")
-                        quiz_issues = validate_quiz(content)
+                        needed = 10 - len(valid_json.get("questions", []))
+                        if needed > 0:
+                            # Generate only missing questions
+                            new_json_obj = await _generate_quiz_json(
+                                provider, subject, topic, difficulty, needed, valid_json.get("questions", [])
+                            )
+                            # Merge questions
+                            if new_json_obj and isinstance(new_json_obj.get("questions"), list):
+                                valid_json.setdefault("questions", []).extend(new_json_obj["questions"])
+                                
+                        quiz_issues, valid_json = validate_json_quiz(valid_json)
                         attempts += 1
                         
                     if quiz_issues:
-                        logger.warning(f"QUIZ_VALIDATION_FAIL (Attempt {attempts}): {quiz_issues}. Falling back to deterministic JSON.")
-                        json_markdown = await _generate_quiz_json(provider, subject, topic, difficulty)
-                        if json_markdown:
-                            content = json_markdown
-                            accumulated_content[st] = content
-                            yield {
-                                "type": "section_clear",
-                                "section_type": st,
-                                "engine_id": engine_id
-                            }
-                            yield {
-                                "type": "section_chunk",
-                                "section_type": st,
-                                "content": content,
-                                "engine_id": engine_id
-                            }
-                            yield {
-                                "type": "section_done",
-                                "section_type": st,
-                                "section_data": {
-                                    "type": st,
-                                    "content": content,
-                                },
-                                "status": "completed",
-                                "engine_id": engine_id,
-                                "elapsed": 0,
-                                "model": "json-fallback",
-                            }
-                    
-                    if not quiz_issues or json_markdown:
+                        logger.warning(f"QUIZ_VALIDATION_FAIL (Final Attempt {attempts}): {quiz_issues}. Keeping best partial quiz.")
+                    else:
                         logger.info("QUIZ_VALIDATION_PASS")
+                        
+                    content = convert_json_to_quiz_markdown(valid_json)
+                    accumulated_content[st] = content
+                    
+                    # Yield as one block since it was JSON generated
+                    yield {
+                        "type": "section_clear",
+                        "section_type": st,
+                        "engine_id": engine_id
+                    }
+                    yield {
+                        "type": "section_chunk",
+                        "section_type": st,
+                        "content": content,
+                        "engine_id": engine_id
+                    }
+                    yield {
+                        "type": "section_done",
+                        "section_type": st,
+                        "section_data": {
+                            "type": st,
+                            "content": content,
+                        },
+                        "status": "completed",
+                        "engine_id": engine_id,
+                        "elapsed": 0,
+                        "model": "json-primary",
+                    }
                     
                     logger.info(f"QUIZ_SENT_TO_FRONTEND:\n{content}")
                     continue
