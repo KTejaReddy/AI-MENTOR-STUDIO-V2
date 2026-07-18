@@ -56,7 +56,7 @@ const DropdownMenuItem = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElemen
       ref={ref}
       role="menuitem"
       className={cn(
-        'flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm cursor-pointer transition-colors',
+        'flex items-center gap-2.5 px-3 py-2 min-h-[48px] rounded-lg text-sm cursor-pointer transition-colors',
         danger
           ? 'text-red-400 hover:bg-red-500/10'
           : 'text-text-secondary hover:text-text-primary hover:bg-surface-300/50',

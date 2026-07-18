@@ -245,7 +245,7 @@ export const GenerationPanel = memo(function GenerationPanel({
               }}
               placeholder="e.g. Binary Search Trees, Merge Sort, Deadlock"
               className={cn(
-                'w-full px-3 py-2 rounded-lg border text-xs text-text-primary placeholder:text-text-tertiary outline-none transition-all',
+                'w-full px-3 py-2 min-h-[48px] rounded-xl border text-[15px] text-text-primary placeholder:text-text-tertiary outline-none transition-all',
                 topicValidation && !topicValidation.valid ? 'border-amber-500/50 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/20' : 'border-border focus:border-accent/50 focus:ring-1 focus:ring-accent/20',
                 !subjectId ? 'bg-surface-150/50 border-border/50 cursor-not-allowed' : 'bg-surface-200/80',
               )}
@@ -352,7 +352,7 @@ export const GenerationPanel = memo(function GenerationPanel({
                 onClick={() => setDifficulty(d.value)}
                 disabled={isGenerating}
                 className={cn(
-                  'flex-1 px-1.5 py-1.5 rounded-lg text-[9px] font-medium transition-all border',
+                  'flex-1 px-1.5 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all border',
                   difficulty === d.value
                     ? 'bg-accent/20 text-accent-light border-accent/30 shadow-sm'
                     : 'bg-surface-200/60 text-text-tertiary border-border hover:text-text-secondary hover:bg-surface-200',
@@ -377,7 +377,7 @@ export const GenerationPanel = memo(function GenerationPanel({
                 onClick={() => setLearningMode(m.value)}
                 disabled={isGenerating}
                 className={cn(
-                  'px-2 py-1.5 rounded-lg text-[9px] font-medium transition-all border',
+                  'px-3 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all border flex-grow sm:flex-grow-0',
                   learningMode === m.value
                     ? 'bg-accent/20 text-accent-light border-accent/30 shadow-sm'
                     : 'bg-surface-200/60 text-text-tertiary border-border hover:text-text-secondary hover:bg-surface-200',
@@ -398,7 +398,7 @@ export const GenerationPanel = memo(function GenerationPanel({
             <button
               type="button"
               onClick={onCancel}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg bg-red-500/15 text-red-300 border border-red-500/25 text-xs font-medium hover:bg-red-500/25 transition-all active:scale-[0.98]"
+              className="w-full flex items-center justify-center gap-1.5 px-4 min-h-[48px] py-2.5 rounded-xl bg-red-500/15 text-red-300 border border-red-500/25 text-sm font-medium hover:bg-red-500/25 transition-all active:scale-[0.98]"
             >
               <Loader2 className="w-3.5 h-3.5 animate-spin" /> Stop Generation
             </button>
@@ -407,7 +407,7 @@ export const GenerationPanel = memo(function GenerationPanel({
               type="submit"
               disabled={!canGenerate}
               className={cn(
-                'w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs font-medium transition-all border',
+                'w-full flex items-center justify-center gap-1.5 px-4 min-h-[48px] py-2.5 rounded-xl text-sm font-bold transition-all border',
                 canGenerate
                   ? 'bg-accent/20 text-accent-light border-accent/30 hover:bg-accent/30 hover:shadow-glow-sm active:scale-[0.98] cursor-pointer'
                   : 'bg-surface-200/50 text-text-tertiary border-border cursor-not-allowed opacity-50',

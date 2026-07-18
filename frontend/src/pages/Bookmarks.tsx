@@ -50,10 +50,10 @@ export function Bookmarks() {
                 <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search bookmarks..." className="input pl-9" />
               </div>
               <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                <button onClick={() => setViewMode('grid')} className={cn('p-2 transition-colors', viewMode === 'grid' ? 'bg-surface-200 text-text-primary' : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-100')} aria-label="Grid view">
+                <button onClick={() => setViewMode('grid')} className={cn('p-2 min-h-[48px] min-w-[48px] flex items-center justify-center transition-colors', viewMode === 'grid' ? 'bg-surface-200 text-text-primary' : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-100')} aria-label="Grid view">
                   <Grid3X3 className="w-4 h-4" />
                 </button>
-                <button onClick={() => setViewMode('list')} className={cn('p-2 border-l border-border transition-colors', viewMode === 'list' ? 'bg-surface-200 text-text-primary' : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-100')} aria-label="List view">
+                <button onClick={() => setViewMode('list')} className={cn('p-2 min-h-[48px] min-w-[48px] flex items-center justify-center border-l border-border transition-colors', viewMode === 'list' ? 'bg-surface-200 text-text-primary' : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-100')} aria-label="List view">
                   <List className="w-4 h-4" />
                 </button>
               </div>
@@ -63,13 +63,13 @@ export function Bookmarks() {
           {allTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 mb-4">
               {allTags.map(tag => (
-                <button key={tag} onClick={() => setTagFilter(tagFilter === tag ? null : tag)} className={cn('px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all', tagFilter === tag ? 'bg-accent/15 text-accent-light border border-accent/20' : 'bg-surface-150 text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary')}>
+                <button key={tag} onClick={() => setTagFilter(tagFilter === tag ? null : tag)} className={cn('px-3 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all', tagFilter === tag ? 'bg-accent/15 text-accent-light border border-accent/20' : 'bg-surface-150 text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary')}>
                   {tag}
                 </button>
               ))}
               {tagFilter && (
-                <button onClick={() => setTagFilter(null)} className="px-2 py-1 rounded-lg text-[10px] text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-0.5">
-                  <X className="w-3 h-3" /> Clear
+                <button onClick={() => setTagFilter(null)} className="px-3 py-1.5 min-h-[48px] rounded-xl text-xs text-text-tertiary hover:text-text-primary transition-colors flex items-center gap-1">
+                  <X className="w-3.5 h-3.5" /> Clear
                 </button>
               )}
             </div>
@@ -96,7 +96,7 @@ export function Bookmarks() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 interactive-group">
                     {filtered.map((bookmark, i) => (
                       <motion.div key={bookmark.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                        <div className="glass float-3d interactive-item p-5 group h-full rounded-2xl border border-white/5 shadow-md relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-[#00f2fe]/20 hover:shadow-[0_0_20px_rgba(0,242,254,0.08)] flex flex-col justify-between">
+                        <div className="glass float-3d interactive-item p-5 group h-full rounded-2xl border border-border shadow-md relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-[#00f2fe]/20 hover:shadow-[0_0_20px_rgba(0,242,254,0.08)] flex flex-col justify-between">
                           <div className="absolute inset-0 bg-gradient-to-tr from-[#00f2fe]/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                           <div className="flex items-start gap-3.5 relative z-10">
                             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
@@ -106,13 +106,13 @@ export function Bookmarks() {
                               <p className="text-xs font-bold text-text-primary truncate mb-1 group-hover:text-[#00f2fe] transition-colors">{bookmark.title}</p>
                               <p className="text-[9px] font-mono text-text-tertiary mb-2 uppercase tracking-wide">{bookmark.subject} · {bookmark.added}</p>
                               <div className="flex flex-wrap gap-1 mt-1.5">
-                                {bookmark.tags.map((tag) => <Badge key={tag} variant="surface" size="sm" className="text-[8px] bg-white/3 border-white/5">{tag}</Badge>)}
+                                {bookmark.tags.map((tag) => <Badge key={tag} variant="surface" size="sm" className="text-[8px] bg-surface-200 border-border">{tag}</Badge>)}
                               </div>
                             </div>
                           </div>
-                          <div className="flex gap-1.5 justify-end mt-4 pt-3 border-t border-white/5 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-y-0 md:translate-y-1 md:group-hover:translate-y-0 relative z-10">
-                            <IconButton label="Open" size="sm" className="hover:bg-white/5"><ExternalLink className="w-3.5 h-3.5 text-[#00f2fe]" /></IconButton>
-                            <IconButton label="Delete" size="sm" onClick={() => handleDelete(bookmark.title)} className="hover:bg-white/5"><Trash2 className="w-3.5 h-3.5 hover:text-red-400" /></IconButton>
+                          <div className="flex gap-1.5 justify-end mt-4 pt-3 border-t border-border opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-y-0 md:translate-y-1 md:group-hover:translate-y-0 relative z-10">
+                            <IconButton label="Open" size="sm" className="hover:bg-surface-200"><ExternalLink className="w-3.5 h-3.5 text-[#00f2fe]" /></IconButton>
+                            <IconButton label="Delete" size="sm" onClick={() => handleDelete(bookmark.title)} className="hover:bg-surface-200"><Trash2 className="w-3.5 h-3.5 hover:text-red-400" /></IconButton>
                           </div>
                         </div>
                       </motion.div>

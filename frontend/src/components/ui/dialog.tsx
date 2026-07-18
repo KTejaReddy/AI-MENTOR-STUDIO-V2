@@ -25,13 +25,13 @@ export function Dialog({ open, onClose, children }: DialogProps) {
   if (!open) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
-        className="relative z-10 w-full max-w-lg mx-4 animate-scale-in max-h-[90vh] overflow-y-auto scrollbar-thin"
+        className="relative z-10 w-full max-w-lg mx-0 md:mx-4 animate-scale-in max-h-[90vh] overflow-y-auto scrollbar-thin"
         role="dialog"
         aria-modal="true"
       >
@@ -46,7 +46,7 @@ const DialogContent = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>
     <div
       ref={ref}
       className={cn(
-        'bg-surface-100 border border-border rounded-2xl shadow-elevated p-6',
+        'bg-surface-100 border border-border rounded-t-3xl md:rounded-2xl rounded-b-none md:rounded-b-2xl shadow-elevated p-5 md:p-8',
         className
       )}
       {...props}

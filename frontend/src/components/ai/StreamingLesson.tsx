@@ -163,10 +163,6 @@ export const StreamingLesson = memo(function StreamingLesson({
 
   const currentSectionStatus = activeSectionId ? (sectionStatuses[activeSectionId] || 'waiting') : 'waiting'
   const quizSection = lesson?.sections?.['quiz']
-  if (activeSectionId === 'quiz') {
-    console.log("QUIZ SECTION", quizSection)
-    console.log("QUIZ CONTENT", quizSection?.content)
-  }
   const rawCurrentSectionContent = (activeSectionId && lesson?.sections?.[activeSectionId]?.content) || ''
   const currentSectionContent = rawCurrentSectionContent
   const safeAccumulatedContent = accumulatedContent
@@ -235,14 +231,14 @@ export const StreamingLesson = memo(function StreamingLesson({
 
       {/* Lesson header: Topic / Subject / Difficulty / Time */}
       {tabInfo && (isDone || isGenerating) && (
-        <div className="px-4 md:px-10 lg:px-16 pt-8 pb-4 md:pt-6 md:pb-2">
+        <div className="px-4 md:px-10 lg:px-16 pt-8 pb-4 md:pt-6 md:pb-2 flex flex-col gap-4 md:gap-8">
           <div className="max-w-3xl mx-auto w-full">
             <div className="flex items-start gap-4 mb-1">
               <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center shrink-0 border border-accent/20">
                 <GraduationCap className="w-5 h-5 text-accent-light" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-2xl md:text-xl font-bold text-text-primary leading-tight">
+                <h1 className="text-[26px] md:text-[32px] font-bold text-text-primary leading-tight">
                   {tabInfo.topic}
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -272,7 +268,7 @@ export const StreamingLesson = memo(function StreamingLesson({
         </div>
       )}
 
-      <div ref={scrollContainerRef} className="flex-1 p-4 py-8 md:p-10 lg:px-16 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 px-4 py-6 md:p-10 lg:px-16 overflow-y-auto">
         <div className="max-w-3xl mx-auto w-full">
           <AnimatePresence mode="wait">
             {activeSectionId ? (
@@ -286,7 +282,7 @@ export const StreamingLesson = memo(function StreamingLesson({
               >
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
                   {(() => { const ActiveIcon = getSectionIcon(activeSectionId); return <ActiveIcon className="w-6 h-6 text-accent-light" /> })()}
-                  <h1 className="text-2xl font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
+                  <h1 className="text-[22px] md:text-[28px] font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
                   <div className="ml-auto flex gap-2">
                     {currentSectionStatus === 'generating' && (
                       <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent-light text-[10px] font-semibold border border-accent/20 flex items-center gap-1.5">

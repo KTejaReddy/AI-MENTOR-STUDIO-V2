@@ -122,7 +122,7 @@ apiClient.interceptors.response.use(
     }
 
     const url = originalRequest.url || '';
-    if (import.meta.env.DEV) console.debug(`[Interceptor] 401 on ${url}`);
+    // if (import.meta.env.DEV) console.debug(`[Interceptor] 401 on ${url}`);
 
     // Login/register failures → never try to refresh
     if (url.includes('/auth/login') || url.includes('/auth/register')) {
@@ -131,7 +131,7 @@ apiClient.interceptors.response.use(
 
     // Refresh endpoint failure → refresh token itself is dead
     if (url.includes('/auth/refresh')) {
-      if (import.meta.env.DEV) console.debug('[Interceptor] Refresh token expired — clearing auth');
+      // if (import.meta.env.DEV) console.debug('[Interceptor] Refresh token expired — clearing auth');
       clearTokens();
       dispatchAuthExpired();
       return Promise.reject(error);
@@ -154,7 +154,7 @@ apiClient.interceptors.response.use(
     // No refresh token available → immediate failure
     const refreshToken = getRefreshToken();
     if (!refreshToken) {
-      if (import.meta.env.DEV) console.debug('[Interceptor] No refresh token — clearing auth');
+      // if (import.meta.env.DEV) console.debug('[Interceptor] No refresh token — clearing auth');
       clearTokens();
       dispatchAuthExpired();
       return Promise.reject(error);
@@ -163,7 +163,7 @@ apiClient.interceptors.response.use(
     // Attempt one-time token refresh
     originalRequest._retry = true;
     isRefreshing = true;
-    if (import.meta.env.DEV) console.debug('[Interceptor] Attempting token refresh...');
+    // if (import.meta.env.DEV) console.debug('[Interceptor] Attempting token refresh...');
 
     try {
       const res = await axios.post(`${API_BASE}/api/v1/auth/refresh`, {
@@ -173,7 +173,7 @@ apiClient.interceptors.response.use(
       });
 
       const { access_token, refresh_token: newRefreshToken } = res.data;
-      if (import.meta.env.DEV) console.debug('[Interceptor] Refresh succeeded');
+      // if (import.meta.env.DEV) console.debug('[Interceptor] Refresh succeeded');
       setTokens(access_token, newRefreshToken);
 
       processQueue(null, access_token);
@@ -183,7 +183,7 @@ apiClient.interceptors.response.use(
       }
       return apiClient(originalRequest);
     } catch (refreshError) {
-      if (import.meta.env.DEV) console.debug('[Interceptor] Refresh failed — clearing auth');
+      // if (import.meta.env.DEV) console.debug('[Interceptor] Refresh failed — clearing auth');
       processQueue(refreshError, null);
       clearTokens();
       dispatchAuthExpired();
@@ -329,10 +329,10 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}): Pro
           // Retry with new token
           const retryHeaders = new Headers(options.headers || {});
           retryHeaders.set('Authorization', `Bearer ${data.access_token}`);
-          if (import.meta.env.DEV) console.debug('[fetchWithAuth] Token refreshed, retrying...');
+          // if (import.meta.env.DEV) console.debug('[fetchWithAuth] Token refreshed, retrying...');
           return fetch(url, { ...options, headers: retryHeaders });
         }
-        if (import.meta.env.DEV) console.debug('[fetchWithAuth] Refresh failed — clearing auth');
+        // if (import.meta.env.DEV) console.debug('[fetchWithAuth] Refresh failed — clearing auth');
         clearTokens();
         dispatchAuthExpired();
       } catch {

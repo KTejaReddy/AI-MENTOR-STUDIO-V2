@@ -12,6 +12,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         className={cn(
           variant === 'default' ? 'input' : 'input-glass',
+          'min-h-[48px] md:min-h-0 md:h-10 text-sm md:text-xs',
           className
         )}
         {...props}

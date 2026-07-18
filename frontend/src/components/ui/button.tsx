@@ -42,10 +42,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             'text-text-tertiary hover:text-text-primary hover:bg-surface-150 focus-visible:ring-accent/30': variant === 'ghost',
             'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:text-red-300 hover:scale-[1.02] focus-visible:ring-red-500/30': variant === 'danger',
             'bg-accent/10 text-accent-light border border-accent/20 hover:bg-accent/15 hover:scale-[1.02] focus-visible:ring-accent/30': variant === 'accent',
-            'h-10 px-4 md:h-8 md:px-3 text-sm md:text-xs': size === 'sm',
-            'h-12 px-6 md:h-10 md:px-4 text-base md:text-sm': size === 'default',
-            'h-14 px-8 md:h-12 md:px-6 text-lg md:text-base': size === 'lg',
-            'h-11 w-11 md:h-9 md:w-9 p-0': size === 'icon',
+            'min-h-[48px] px-4 md:min-h-[32px] md:h-8 md:px-3 text-sm md:text-xs': size === 'sm',
+            'min-h-[48px] px-6 md:min-h-[40px] md:h-10 md:px-4 text-base md:text-sm': size === 'default',
+            'min-h-[56px] px-8 md:min-h-[48px] md:h-12 md:px-6 text-lg md:text-base': size === 'lg',
+            'min-h-[48px] min-w-[48px] md:min-h-[36px] md:min-w-[36px] md:h-9 md:w-9 p-0': size === 'icon',
           },
           className
         )}

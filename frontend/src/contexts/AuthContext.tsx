@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = getAnyAccessToken();
 
       if (!token) {
-        if (import.meta.env.DEV) console.debug('[Auth] No token — unauthenticated');
+        // if (import.meta.env.DEV) console.debug('[Auth] No token — unauthenticated');
         if (!cancelled) {
           setUser(null);
           setIsLoading(false);
@@ -104,16 +104,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (import.meta.env.DEV) console.debug('[Auth] Access token present — verifying with /auth/me');
+      // if (import.meta.env.DEV) console.debug('[Auth] Access token present — verifying with /auth/me');
 
       try {
         const profile = await fetchProfile();
         if (!cancelled) {
-          if (import.meta.env.DEV) console.debug('[Auth] /auth/me succeeded — user authenticated');
+          // if (import.meta.env.DEV) console.debug('[Auth] /auth/me succeeded — user authenticated');
           setUser(profile);
         }
       } catch {
-        if (import.meta.env.DEV) console.debug('[Auth] /auth/me failed — clearing authentication');
+        // if (import.meta.env.DEV) console.debug('[Auth] /auth/me failed — clearing authentication');
         if (!cancelled) {
           clearAllStorage();
           setUser(null);
@@ -133,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // fails on a subsequent request during the session).
   useEffect(() => {
     const handleExpired = () => {
-      if (import.meta.env.DEV) console.debug('[Auth] auth:expired event — clearing session');
+      // if (import.meta.env.DEV) console.debug('[Auth] auth:expired event — clearing session');
       clearAllStorage();
       setUser(null);
       setIsLoading(false);

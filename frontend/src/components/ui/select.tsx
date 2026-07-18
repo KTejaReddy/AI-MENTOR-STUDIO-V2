@@ -142,7 +142,7 @@ export function CustomSelect({
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          'w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl border transition-all text-xs font-semibold select-none',
+          'w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-[48px] rounded-xl border transition-all text-sm font-semibold select-none',
           isOpen 
             ? 'border-[#00f2fe]/40 shadow-[0_0_15px_rgba(0,242,254,0.15)] ring-1 ring-[#00f2fe]/20 bg-[#111827]' 
             : 'border-white/5 bg-white/3 hover:border-white/10 hover:bg-white/5 text-text-primary',

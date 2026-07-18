@@ -40,7 +40,7 @@ export const TabBar = memo(function TabBar({ onNewLesson }: TabBarProps) {
 
   return (
     <div className="flex items-center bg-surface-200/80 border-b border-border shrink-0 overflow-hidden" role="tablist" aria-label="Learning sessions">
-      <div ref={scrollRef} className="flex-1 flex overflow-x-auto scrollbar-none">
+      <div ref={scrollRef} className="flex-1 flex overflow-x-auto scrollbar-none touch-pan-x snap-x snap-mandatory">
         {sorted.map((tab) => {
           const isActive = tab.id === activeTabId
           const truncated = truncateLabel(tab.label)
@@ -57,7 +57,7 @@ export const TabBar = memo(function TabBar({ onNewLesson }: TabBarProps) {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchTab(tab.id) } }}
               onMouseDown={(e) => handleMiddleClick(e, tab.id)}
               className={cn(
-                'group flex items-center gap-1.5 px-2.5 py-2 text-xs border-r border-border transition-colors shrink-0 max-w-48 cursor-pointer relative',
+                'group flex items-center gap-1.5 px-3 py-2 min-h-[48px] text-[13px] border-r border-border transition-colors shrink-0 max-w-48 cursor-pointer relative snap-start',
                 isActive
                   ? 'bg-surface-50 text-text-primary border-t-2 border-t-accent border-b-0 shadow-sm'
                   : 'bg-surface-200 text-text-tertiary hover:bg-surface-150 hover:text-text-secondary border-t-2 border-t-transparent',
@@ -86,10 +86,10 @@ export const TabBar = memo(function TabBar({ onNewLesson }: TabBarProps) {
               <button
                 onClick={(e) => { e.stopPropagation(); pinTab(tab.id, !tab.pinned) }}
                 className={cn(
-                  'shrink-0 p-0.5 rounded transition-all',
+                  'shrink-0 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded transition-all -ml-1',
                   tab.pinned
                     ? 'text-accent-light opacity-100'
-                    : 'opacity-0 group-hover:opacity-100 text-text-tertiary hover:text-text-primary',
+                    : 'opacity-0 md:opacity-0 group-hover:opacity-100 opacity-100 sm:opacity-0 text-text-tertiary hover:text-text-primary',
                 )}
                 aria-label={tab.pinned ? 'Unpin tab' : 'Pin tab'}
               >
@@ -99,8 +99,8 @@ export const TabBar = memo(function TabBar({ onNewLesson }: TabBarProps) {
               {/* Close button */}
               <button
                 onClick={(e) => { e.stopPropagation(); closeTab(tab.id) }}
-                className="shrink-0 p-0.5 rounded hover:bg-surface-300/50 text-text-tertiary hover:text-text-primary opacity-0 group-hover:opacity-100 transition-opacity"
-                aria-label={`Close ${tab.label}`}
+                className="shrink-0 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center rounded opacity-100 sm:opacity-0 sm:group-hover:opacity-100 text-text-tertiary hover:text-red-400 hover:bg-red-400/10 transition-all -ml-1"
+                aria-label="Close tab"
               >
                 <X className="w-3 h-3" />
               </button>

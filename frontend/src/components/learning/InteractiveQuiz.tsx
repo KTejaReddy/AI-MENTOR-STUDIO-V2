@@ -233,7 +233,7 @@ const QuestionCard = memo(function QuestionCard({
                   disabled={answered}
                   aria-label={`Option ${String.fromCharCode(65 + i)}: ${opt}`}
                   className={cn(
-                    'w-full text-left px-4 py-3.5 rounded-xl text-xs font-medium transition-all border relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
+                    'w-full text-left min-h-[48px] px-4 py-3.5 rounded-xl text-xs font-medium transition-all border relative overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50',
                     // Default
                     !answered && !isSelected && 'border-white/6 bg-white/2 text-text-secondary hover:border-[#00f2fe]/30 hover:text-text-primary hover:bg-[#00f2fe]/5',
                     // Selected but not yet answered
@@ -314,7 +314,7 @@ const QuestionCard = memo(function QuestionCard({
           size="sm"
           onClick={onPrev}
           disabled={isFirst}
-          className="border-white/6 hover:border-white/12 gap-1.5"
+          className="border-white/6 hover:border-white/12 gap-1.5 min-h-[48px]"
         >
           <ChevronLeft className="w-4 h-4" />
           Previous
@@ -327,7 +327,7 @@ const QuestionCard = memo(function QuestionCard({
             variant="primary"
             size="sm"
             onClick={onNext}
-            className="shadow-glow-accent gap-1.5"
+            className="shadow-glow-accent gap-1.5 min-h-[48px]"
           >
             {isLast ? 'Finish Quiz' : 'Next Question'}
             <ChevronRight className="w-4 h-4" />
@@ -446,28 +446,7 @@ export const InteractiveQuiz = memo(function InteractiveQuiz({
   isGenerating = false,
 }: InteractiveQuizProps) {
   const questions = useMemo(() => {
-    console.log("RAW QUIZ CONTENT", content)
-    const parsedQuestions = parseQuizMarkdown(content)
-    console.log("PARSED QUESTIONS", parsedQuestions)
-    
-    if (parsedQuestions.length === 0) {
-      console.log("PARSED 0 QUESTIONS - STARTING TRACE");
-      const questionSplitter = /(?:^|\n)\s*(?:\*{0,2})(?:Q\s*)?(\d+)[\.\)]\s*(?:\*{0,2})/gm;
-      let m;
-      let count = 0;
-      while ((m = questionSplitter.exec(content)) !== null) { count++; }
-      console.log("Question Splitter Regex matched blocks:", count);
-      
-      if (count > 0) {
-          const optionLinePattern = /^(?:\*{0,2})?[A-Ea-e][\.\)]\s+.+/;
-          console.log("Option Regex:", optionLinePattern.toString());
-          const correctPattern = /\*{0,2}Correct\s+Answer\s*:\s*\[?([A-Ea-e])\]?(?:\s*[-—]\s*(.+?))?\*{0,2}/i;
-          console.log("Answer Regex:", correctPattern.toString());
-          console.log("Does the payload contain 'Correct Answer:'?", content.includes('Correct Answer:'));
-      }
-    }
-    
-    return parsedQuestions
+    return parseQuizMarkdown(content)
   }, [content])
 
   const [current, setCurrent] = useState(0)

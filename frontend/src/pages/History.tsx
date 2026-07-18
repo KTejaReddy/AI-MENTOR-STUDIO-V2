@@ -151,7 +151,7 @@ export function History() {
               { id: 'code', label: 'Code' }, { id: 'quiz', label: 'Quizzes' }, { id: 'question', label: 'Questions' },
             ].map((f) => (
               <button key={f.id} onClick={() => setFilter(f.id)} className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap',
+                'px-3 py-1.5 min-h-[48px] rounded-xl text-sm font-medium transition-all whitespace-nowrap',
                 filter === f.id ? 'bg-accent/15 text-accent-light border border-accent/20' : 'bg-surface-150 text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary'
               )}>
                 {f.label}
@@ -187,7 +187,7 @@ export function History() {
           )}
 
           {!loading && filtered.length > 0 && (
-            <div className="relative pl-6 border-l border-white/5 space-y-3 ml-3 my-4">
+            <div className="relative pl-6 border-l border-border space-y-3 ml-3 my-4">
               {filtered.map((entry, i) => {
                 const Icon = activityIcons[entry.type]
                 return (
@@ -197,12 +197,12 @@ export function History() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.03, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     onClick={() => handleEntryClick(entry)}
-                    className="group flex items-center gap-4 px-4 py-3.5 rounded-2xl glass breathe-3d border border-white/5 hover:border-[#00f2fe]/20 hover:shadow-[0_0_20px_rgba(0,242,254,0.06)] hover:bg-[#05050b]/40 transition-all duration-300 cursor-pointer relative"
+                    className="group flex items-center gap-4 px-4 py-3.5 rounded-2xl glass breathe-3d border border-border hover:border-[#00f2fe]/20 hover:shadow-[0_0_20px_rgba(0,242,254,0.06)] hover:bg-surface-200/50 transition-all duration-300 cursor-pointer relative"
                   >
                     {/* Timeline Node Connector */}
                     <div className="absolute -left-[31px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#00f2fe] border-2 border-surface shadow-[0_0_8px_rgba(0,242,254,0.8)] z-10 transition-transform duration-300 group-hover:scale-125" />
                     
-                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/5', activityColors[entry.type])}>
+                    <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-border', activityColors[entry.type])}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -215,7 +215,7 @@ export function History() {
                         {entry.score && <Badge variant={parseInt(entry.score) >= 8 ? 'success' : 'warning'} size="sm" className="ml-1 text-[8px]">{entry.score}</Badge>}
                       </div>
                     </div>
-                    <IconButton label="Delete" size="sm" onClick={(e: React.MouseEvent) => handleDelete(e, entry)} className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-white/5 shrink-0">
+                    <IconButton label="Delete" size="sm" onClick={(e: React.MouseEvent) => handleDelete(e, entry)} className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity hover:bg-surface-200 shrink-0">
                       <Trash2 className="w-4 h-4 hover:text-red-400" />
                     </IconButton>
                   </motion.div>

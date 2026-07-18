@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '320px',
+      },
       colors: {
         surface: {
           DEFAULT: 'var(--surface)',

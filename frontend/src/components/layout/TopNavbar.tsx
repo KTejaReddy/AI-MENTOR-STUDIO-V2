@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { IconButton } from '@/components/ui/icon-button'
@@ -6,7 +7,7 @@ import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from '@/compone
 import { useTheme } from '@/contexts/ThemeContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { useAuth } from '@/contexts/AuthContext'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles, Menu, MessageSquare, Home, GraduationCap, History,
   Bookmark, StickyNote, Settings2, Info, Sun, Moon, FileText,
@@ -40,6 +41,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications()
   const { user, isAuthenticated, logout, logoutAll } = useAuth()
   const navigate = useNavigate()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const ThemeIcon = theme === 'dark' ? Moon : Sun
 
@@ -70,9 +72,9 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   }
 
   return (
-    <header className="m-0 md:mx-3 md:mt-3 h-14 shrink-0 glass rounded-none md:rounded-2xl flex items-center justify-between px-3 md:px-4 z-40 shadow-sm md:shadow-lg relative border-b md:border border-white/5">
+    <header className="m-0 md:mx-3 md:mt-3 pt-[env(safe-area-inset-top)] md:pt-0 h-[calc(3.5rem+env(safe-area-inset-top))] md:h-14 shrink-0 glass rounded-none md:rounded-2xl flex items-center justify-between px-3 md:px-4 z-40 shadow-sm md:shadow-lg relative border-b md:border border-border">
       <div className="flex items-center gap-2">
-        <IconButton label="Toggle sidebar" onClick={onToggleSidebar} className="hover:bg-white/5">
+        <IconButton label="Toggle sidebar" onClick={() => window.innerWidth < 768 ? setMobileMenuOpen(true) : onToggleSidebar()} className="hover:bg-white/5 md:hidden lg:flex">
           <Menu className="w-[18px] h-[18px]" />
         </IconButton>
 
@@ -283,6 +285,90 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           ))}
         </div>
       </div>
+      {/* Mobile Navigation Drawer */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/60 z-50 md:hidden backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 left-0 w-[280px] z-50 md:hidden bg-surface shadow-2xl border-r border-border flex flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+            >
+              <div className="flex items-center gap-2 p-4 border-b border-border">
+                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent-muted/20">
+                  <Sparkles className="w-4 h-4 text-[#00f2fe]" />
+                </div>
+                <span className="text-base font-bold text-text-primary tracking-tight">
+                  Mentor AI
+                </span>
+              </div>
+              
+              <div className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
+                <div className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-2 px-2">Navigation</div>
+                {navItems.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.to === '/'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center gap-3 px-3 min-h-[48px] rounded-xl text-sm font-semibold transition-colors',
+                        isActive
+                          ? 'bg-accent/10 text-accent-light'
+                          : 'text-text-secondary hover:bg-surface-150 hover:text-text-primary'
+                      )
+                    }
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                ))}
+                
+                <div className="mt-6 text-[10px] font-bold text-text-tertiary uppercase tracking-wider mb-2 px-2">System</div>
+                {utilityItems.map((item) => (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center gap-3 px-3 min-h-[48px] rounded-xl text-sm font-semibold transition-colors',
+                        isActive
+                          ? 'bg-accent/10 text-accent-light'
+                          : 'text-text-secondary hover:bg-surface-150 hover:text-text-primary'
+                      )
+                    }
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                ))}
+                
+                <button
+                  onClick={() => {
+                    toggleTheme()
+                    setMobileMenuOpen(false)
+                  }}
+                  className="flex items-center gap-3 px-3 min-h-[48px] rounded-xl text-sm font-semibold text-text-secondary hover:bg-surface-150 hover:text-text-primary transition-colors text-left"
+                >
+                  <ThemeIcon className="w-5 h-5" />
+                  <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   )
 }
