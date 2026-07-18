@@ -22,7 +22,9 @@ interface StreamingLessonProps {
   metrics?: {
     plannerTime?: number
     totalTime?: number
-    sections: Record<string, { model: string; elapsed: number; key?: string }>
+    failedSections?: number
+    regeneratedSections?: number
+    sections: Record<string, { model: string; elapsed: number; key?: string; retries?: number }>
   }
   activeSectionId?: string | null
   onSelectSection?: (sectionId: string) => void
@@ -184,7 +186,11 @@ export const StreamingLesson = memo(function StreamingLesson({
                 <Clock className="w-3.5 h-3.5 text-accent animate-pulse" />
                 <span>~{estimatedTimeRemaining}s remaining</span>
               </div>
-              {metrics?.plannerTime && <div className="text-[9px]">Planner: {metrics.plannerTime}s</div>}
+              <div className="flex gap-2">
+                {metrics?.plannerTime && <span className="text-[9px]">Planner: {metrics.plannerTime}s</span>}
+                {metrics?.regeneratedSections ? <span className="text-[9px] text-amber-400/80">Retries: {metrics.regeneratedSections}</span> : null}
+                {metrics?.failedSections ? <span className="text-[9px] text-red-400/80">Failed: {metrics.failedSections}</span> : null}
+              </div>
             </div>
           </div>
         </motion.div>

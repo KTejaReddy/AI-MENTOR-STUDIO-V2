@@ -150,6 +150,18 @@ class TeachingAgent(ABC):
                 if not content or len(content) < self.config.min_content_length:
                     raise RuntimeError(f"Content too short ({len(content) if content else 0} chars)")
 
+                # Strict Validation
+                content_lower = content.lower()
+                st = self.section_type
+                if st in ("diagram", "diagrams") and "mermaid" not in content_lower:
+                    raise RuntimeError("Validation failed: Missing Mermaid diagram")
+                if st in ("formula", "formulae", "formulaExplanation") and "$" not in content:
+                    raise RuntimeError("Validation failed: Missing mathematical expressions")
+                if st in ("code", "codeExamples", "examples") and "```" not in content:
+                    raise RuntimeError("Validation failed: Missing code blocks")
+                if st in ("graph", "graphs") and "mermaid" not in content_lower and "```" not in content:
+                    raise RuntimeError("Validation failed: Missing graph representation")
+
                 # Quality checks
                 quality_score = await self._run_quality_checks(content, subject, topic)
 
@@ -191,9 +203,14 @@ class TeachingAgent(ABC):
 
         # All retries exhausted
         self.status = AgentStatus.FAILED
+        placeholder = (
+            f"### {self.section_type.title()}\n\n"
+            f"> *This section could not be generated after {self.config.max_retries} attempts. "
+            f"Please try again later.*"
+        )
         return GenerationResult(
             section_type=self.section_type,
-            content="",
+            content=placeholder,
             title=self.section_type,
             status=AgentStatus.FAILED,
             model_used=model_id,

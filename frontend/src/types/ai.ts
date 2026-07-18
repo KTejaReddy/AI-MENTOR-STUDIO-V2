@@ -327,11 +327,12 @@ export interface SseSectionDone {
   type: 'section_done'
   section_type: string
   section_data: any
-  status: 'completed' | 'error'
+  status: 'completed' | 'error' | 'failed'
   engine_id: string
   elapsed: number
   model: string
   key?: string
+  retries?: number
 }
 
 export interface SseSectionStatus {

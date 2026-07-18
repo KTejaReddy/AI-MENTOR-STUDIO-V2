@@ -245,6 +245,7 @@ async def generate_lesson_parallel(
                 "elapsed": section_elapsed,
                 "model": result.model_used,
                 "quality_score": result.quality_score,
+                "retries": result.retries,
             })
 
         except Exception as e:
@@ -280,26 +281,32 @@ async def generate_lesson_parallel(
         # Since all tasks run in parallel, future queues act as our in-memory buffer.
         queue = queues[idx]
 
+        total_wait_time = 0.0
         while True:
             try:
-                item = await asyncio.wait_for(queue.get(), timeout=timeout_seconds)
+                item = await asyncio.wait_for(queue.get(), timeout=15.0)
             except asyncio.TimeoutError:
-                if tasks[idx] and not tasks[idx].done():
-                    tasks[idx].cancel()
-                yield {
-                    "type": "section_done",
-                    "section_type": sec_type,
-                    "section_data": {
-                        "type": sec_type, "title": stitle,
-                        "content": "*Section generation timed out*",
-                    },
-                    "status": "failed",
-                    "engine_id": engine_id,
-                    "elapsed": round(time.time() - start_time, 2),
-                    "model": "unknown",
-                }
-                section_status[sec_type] = "failed"
-                break
+                total_wait_time += 15.0
+                if total_wait_time >= timeout_seconds:
+                    if tasks[idx] and not tasks[idx].done():
+                        tasks[idx].cancel()
+                    yield {
+                        "type": "section_done",
+                        "section_type": sec_type,
+                        "section_data": {
+                            "type": sec_type, "title": stitle,
+                            "content": "*Section generation timed out*",
+                        },
+                        "status": "failed",
+                        "engine_id": engine_id,
+                        "elapsed": round(time.time() - start_time, 2),
+                        "model": "unknown",
+                    }
+                    section_status[sec_type] = "failed"
+                    break
+                else:
+                    yield {"type": "ping", "timestamp": time.time()}
+                    continue
 
             if item is None:
                 break  # sentinel — section complete

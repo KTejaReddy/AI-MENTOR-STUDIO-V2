@@ -15,7 +15,9 @@ interface GenerationResult {
   metrics: {
     plannerTime?: number
     totalTime?: number
-    sections: Record<string, { model: string; elapsed: number; key?: string }>
+    failedSections?: number
+    regeneratedSections?: number
+    sections: Record<string, { model: string; elapsed: number; key?: string; retries?: number }>
   }
 }
 
@@ -389,8 +391,11 @@ export function useAIGeneration(activeTab?: any) {
                       model: event.model || 'unknown',
                       elapsed: event.elapsed || 0,
                       key: event.key || 'unknown',
+                      retries: event.retries || 0,
                     }
-                  }
+                  },
+                  failedSections: (prev.metrics.failedSections || 0) + (event.status === 'error' || event.status === 'failed' ? 1 : 0),
+                  regeneratedSections: (prev.metrics.regeneratedSections || 0) + ((event.retries || 0) > 0 ? 1 : 0),
                 }
               }))
             }
@@ -424,7 +429,7 @@ export function useAIGeneration(activeTab?: any) {
           case 'cancelled':
             isGenerationActiveRef.current = false
             if (playTimerRef.current) clearInterval(playTimerRef.current)
-            setResult((prev) => ({ ...prev, status: 'cancelled' }))
+            setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled' }))
             break
         }
       }, controller.signal)
@@ -436,7 +441,7 @@ export function useAIGeneration(activeTab?: any) {
       isGenerationActiveRef.current = false
       if (playTimerRef.current) clearInterval(playTimerRef.current)
       if (err.name === 'AbortError') {
-        setResult((prev) => ({ ...prev, status: 'cancelled' }))
+        setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled. Note: Switching tabs will abort active generation.' }))
       } else {
         setResult((prev) => ({
           ...prev,
