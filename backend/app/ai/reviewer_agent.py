@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from app.ai.base import AIProvider, CompletionRequest, Message
 from app.ai.key_manager import key_manager
+from app.ai.model_router_config import get_model_for_section
 
 logger = logging.getLogger(__name__)
 
@@ -40,15 +41,21 @@ class ReviewerAgent:
             return ReviewResult(True, 1.0, [], [], {})
 
         system_prompt = (
-            "You are a strict academic reviewer. Your job is to semantically review a section of a university-level lesson "
-            "and determine if it meets high-quality standards. Do not just check for syntax, check for ACTUAL presence of concepts. "
-            "Output your response strictly as JSON with the following format:\n"
-            '{"passed": true/false, "score": 0.0-1.0, "issues": ["issue 1", ...], "suggestions": ["suggestion 1", ...]}\n\n'
+            "You are a strict academic reviewer evaluating a section of a university-level lesson. "
+            "You must ensure the section meets high-quality academic standards for depth, completeness, and approximate length. "
+            "Do not just check for syntax; check for ACTUAL presence of concepts and sufficient detail.\n\n"
             "Criteria based on section_type:\n"
+            "- overview/introduction: Must be substantial (≥ 250 words) and set clear learning objectives.\n"
+            "- explanation/theory: Must be deeply comprehensive (≥ 600 words), avoiding superficial summaries.\n"
+            "- formulae/chemistry: Must actually define equations with math notation and include step-by-step derivations where appropriate.\n"
             "- codeExamples/algorithm/complexity: Must actually contain code implementations or algorithmic logic.\n"
-            "- diagrams/graphs: Must actually describe a visual concept clearly (Mermaid syntax is a plus).\n"
-            "- formulae/chemistry: Must actually define equations, formulae, or chemical structures with math notation.\n"
-            "- general: Must be deep, comprehensive, and accurate."
+            "- examples: Must provide at least three complex, worked-out examples.\n"
+            "- practiceProblems: Must provide multiple problems with increasing difficulty.\n"
+            "- summary: Must provide a substantial, comprehensive summary.\n"
+            "- diagrams/graphs: Must actually describe a visual concept clearly (Mermaid syntax is mandatory if a diagram is expected).\n\n"
+            "If the section is too brief, lacks necessary derivations, or misses the mandated examples, FAIL it.\n"
+            "Output your response STRICTLY as JSON with the following format:\n"
+            '{"passed": true/false, "score": 0.0-1.0, "issues": ["issue 1", ...], "suggestions": ["suggestion 1", ...]}\n'
         )
 
         user_prompt = (

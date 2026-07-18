@@ -42,6 +42,14 @@ async def generate_lesson_full(
     # Step 2: Generate the entire lesson in one pass
     system_prompt = (
         "You are a world-class university professor. Generate a highly detailed, deeply comprehensive lesson. "
+        "The complete lesson MUST be approximately 2500-3500 words in total length. "
+        "You MUST meet these minimum requirements for sections if they are present:\n"
+        "- Overview: ≥ 250 words.\n"
+        "- Explanation: ≥ 600 words.\n"
+        "- Formulae: Must include step-by-step derivations where appropriate.\n"
+        "- Examples: Provide at least three complex, worked-out examples.\n"
+        "- Practice Problems: Provide multiple problems with increasing difficulty.\n"
+        "- Summary: Provide a substantial, comprehensive summary.\n"
         "You MUST generate the lesson exactly according to the requested section headers. "
         "Use valid Mermaid syntax (```mermaid) for any visual diagrams, charts, or graphs. "
         "Use $ for inline math and $$ for block math. "
@@ -257,13 +265,20 @@ async def generate_lesson_full(
                 logger.warning(f"Section {st} is empty, scheduling regeneration")
                 async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
                     yield event
+                    if event.get("type") == "section_done":
+                        accumulated_content[st] = event["section_data"]["content"]
+                yield {"type": "ping", "timestamp": time.time()}
                 continue
                 
             review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
+            yield {"type": "ping", "timestamp": time.time()}
+            
             if not review_result.passed:
                 logger.warning(f"Section {st} failed semantic review, regenerating. Issues: {review_result.issues}")
                 async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, review_result.issues):
                     yield event
+                    if event.get("type") == "section_done":
+                        accumulated_content[st] = event["section_data"]["content"]
         except Exception as e:
             logger.error(f"Semantic reviewer/regen crashed for section {st}: {e}. Degrading gracefully.")
             # Yield section done for original content so frontend doesn't hang
@@ -280,6 +295,30 @@ async def generate_lesson_full(
                 "model": model_id,
                 "quality_score": getattr(review_result, 'score', 1.0) if 'review_result' in locals() else 1.0,
             }
+
+    lesson_data = {
+        "metadata": {
+            "title": f"{subject} - {topic}",
+            "subject": subject,
+            "topic": topic,
+            "difficulty": difficulty,
+            "learning_mode": learning_mode,
+            "total_generation_time": round(time.time() - start_time, 2),
+        },
+        "sections": {
+            st: {
+                "type": st,
+                "title": title,
+                "content": accumulated_content.get(st, ""),
+            } for st, title in active_sections
+        }
+    }
+
+    yield {
+        "type": "lesson",
+        "data": lesson_data,
+        "elapsed": round(time.time() - start_time, 2),
+    }
 
     yield {
         "type": "done",
@@ -309,7 +348,8 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
 
     prompt = (
         f"You are a university professor. Regenerate the '{title}' section for the topic '{topic}' in '{subject}'.\n"
-        "Ensure it is highly detailed, deeply comprehensive, and addresses the following issues:\n"
+        "Ensure it is highly detailed, deeply comprehensive, and meets university-level standards for length and depth.\n"
+        "Address the following issues strictly:\n"
         f"{chr(10).join(issues) if issues else 'The previous attempt was completely blank.'}\n\n"
         "Use valid Mermaid syntax (```mermaid) for any visual diagrams. Use $ for inline math and $$ for block math.\n"
         "Output ONLY the markdown content for this specific section, without the header."
