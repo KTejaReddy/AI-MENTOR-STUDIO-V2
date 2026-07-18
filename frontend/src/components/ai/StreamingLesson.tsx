@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import { InteractiveQuiz } from '@/components/learning/InteractiveQuiz'
@@ -10,6 +10,30 @@ import {
   HelpCircle, ClipboardList, Clock, Map, Code2, Sigma,
   Network, Edit3, Type, FileArchive,
 } from 'lucide-react'
+
+class MarkdownErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error?: Error}> {
+  constructor(props: any) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error }
+  }
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Markdown Render Crash:", error, errorInfo)
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-md text-red-400">
+          <p className="font-bold">Error rendering this section.</p>
+          <p className="text-xs font-mono mt-1 opacity-80">{this.state.error?.message}</p>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 interface StreamingLessonProps {
   status: GenerationStatus
@@ -321,7 +345,9 @@ export const StreamingLesson = memo(function StreamingLesson({
                             {activeSectionId === 'quiz' ? (
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} isGenerating />
                             ) : (
-                              <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
+                              <MarkdownErrorBoundary>
+                                <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
+                              </MarkdownErrorBoundary>
                             )}
                             <span className="inline-block w-2.5 h-4 bg-gradient-to-t from-[#00f2fe] to-[#8b5cf6] animate-pulse ml-1 align-middle rounded-sm shadow-[0_0_8px_rgba(0,242,254,0.8)]" />
                           </div>
@@ -330,7 +356,9 @@ export const StreamingLesson = memo(function StreamingLesson({
                             {activeSectionId === 'quiz' ? (
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} />
                             ) : (
-                              <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
+                              <MarkdownErrorBoundary>
+                                <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
+                              </MarkdownErrorBoundary>
                             )}
                           </div>
                         )}

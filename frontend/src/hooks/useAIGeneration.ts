@@ -158,12 +158,13 @@ export function useAIGeneration(activeTab?: any) {
     let lastUpdateTime = 0
 
     const loop = (timestamp: number) => {
-      // Throttle updates to ~40ms (25fps) to prevent UI blocking
-      if (timestamp - lastUpdateTime < 40) {
+      // Throttle updates to ~50ms (20fps) to prevent React crashes from rapid streaming
+      if (timestamp - lastUpdateTime < 50) {
         playTimerRef.current = requestAnimationFrame(loop)
         return
       }
       
+      lastUpdateTime = timestamp
       const plannedOrder = plannedSectionsRef.current
 
       if (plannedOrder.length === 0) {
@@ -171,103 +172,63 @@ export function useAIGeneration(activeTab?: any) {
         return
       }
 
-      let idx = currentSectionIdxRef.current
-
-      if (idx >= plannedOrder.length) {
-        if (!isGenerationActiveRef.current) {
-          playTimerRef.current = null
-          setResult(prev => ({
-            ...prev,
-            status: 'done',
-            progress: 100,
-            lesson: buildPartialLesson(playedSections.current)
-          }))
-        }
-        return
-      }
-
       let stateUpdated = false
-      
-      // Fast-forward multiple completed sections in one frame if they are ready!
-      while (idx < plannedOrder.length) {
-        const st = plannedOrder[idx]
+      let allDone = true
+      let completedCount = 0
+
+      for (const st of plannedOrder) {
         const rawSec = rawSectionsBuffer.current[st]
 
         if (!rawSec) {
-          if (playedStatuses.current[st] !== 'generating') {
-            playedStatuses.current[st] = 'generating'
+          allDone = false
+          if (playedStatuses.current[st] !== 'waiting') {
+            playedStatuses.current[st] = 'waiting'
             stateUpdated = true
           }
-          break // Wait for backend
+          continue
         }
+
+        const currentStatus = rawSec.isError ? 'error' : rawSec.isDone ? 'completed' : 'generating'
+        if (!rawSec.isDone) allDone = false
+        if (rawSec.isDone && !rawSec.isError) completedCount++
 
         const visibleContent = playedSections.current[st]?.content || ''
         const targetContent = rawSec.content || ''
-        const visibleLen = visibleContent.length
-        const targetLen = targetContent.length
 
-        // FAST FORWARD IF DONE (Zero artificial delay)
-        if (rawSec.isDone) {
-          playedStatuses.current[st] = rawSec.isError ? 'error' : 'completed'
+        if (visibleContent !== targetContent || playedStatuses.current[st] !== currentStatus) {
+          playedStatuses.current[st] = currentStatus
           playedSections.current[st] = {
-            ...rawSec.sectionData,
+            ...(rawSec.sectionData || playedSections.current[st] || {}),
             content: targetContent,
             type: st as any,
             title: plannedTitlesRef.current[st] || st
           }
-          idx++
-          currentSectionIdxRef.current = idx
           stateUpdated = true
-          continue // instantly process the next section without waiting!
-        }
-
-        // PROGRESSIVE TYPING (Only for currently generating sections)
-        if (visibleLen < targetLen) {
-          let charsToAppend = 10 
-          const diff = targetLen - visibleLen
-          if (diff > 800) charsToAppend = 60 
-          else if (diff > 300) charsToAppend = 35
-          else if (diff > 100) charsToAppend = 18
-
-          const newContent = targetContent.slice(0, visibleLen + charsToAppend)
-          playedSections.current[st] = {
-            type: st as any,
-            title: plannedTitlesRef.current[st] || st,
-            content: newContent
-          }
-          playedStatuses.current[st] = 'generating'
-          stateUpdated = true
-          break // typed some characters, wait for next frame
-        } else {
-          // Waiting for more chunks from backend
-          if (playedStatuses.current[st] !== 'generating') {
-            playedStatuses.current[st] = 'generating'
-            stateUpdated = true
-          }
-          break
         }
       }
 
       if (stateUpdated) {
-        lastUpdateTime = timestamp
-        const completedCount = currentSectionIdxRef.current
-        const st = plannedOrder[completedCount]
-        let sectionProgress = 0
-        if (st && rawSectionsBuffer.current[st]) {
-           const vc = playedSections.current[st]?.content?.length || 0
-           const tc = rawSectionsBuffer.current[st]?.content?.length || 1
-           sectionProgress = vc / tc
-        }
-        
-        const totalCount = plannedOrder.length
-        const overallProgress = Math.round(((completedCount + sectionProgress) / totalCount) * 100)
+        const total = plannedOrder.length
+        const progress = total > 0 ? Math.min(Math.round((completedCount / total) * 100), 100) : 0
 
         setResult(prev => ({
           ...prev,
-          progress: Math.min(overallProgress, 99),
-          lesson: buildPartialLesson(playedSections.current),
-          sectionStatuses: { ...playedStatuses.current }
+          status: 'generating',
+          progress: progress,
+          sectionStatuses: { ...playedStatuses.current },
+          lesson: buildPartialLesson({ ...playedSections.current })
         }))
+      }
+
+      if (allDone && !isGenerationActiveRef.current) {
+        playTimerRef.current = null
+        setResult(prev => ({
+          ...prev,
+          status: 'done',
+          progress: 100,
+          lesson: buildPartialLesson({ ...playedSections.current })
+        }))
+        return
       }
 
       playTimerRef.current = requestAnimationFrame(loop)
@@ -357,10 +318,13 @@ export function useAIGeneration(activeTab?: any) {
             break
           }
 
+          case 'section_retry':
           case 'section_clear': {
             const st = event.section_type
             if (st && rawSectionsBuffer.current[st]) {
               rawSectionsBuffer.current[st].content = ''
+              rawSectionsBuffer.current[st].isDone = false
+              rawSectionsBuffer.current[st].isError = false
             }
             break
           }
