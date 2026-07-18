@@ -44,14 +44,14 @@ class ContentMapper:
 
         for section_type in sections.keys():
             section_data = sections[section_type]
-                if isinstance(section_data, dict):
-                    component = SECTION_COMPONENT_MAP.get(section_type, "UnknownCard")
-                    ordered.append({
-                        "type": section_type,
-                        "component": component,
-                        "props": section_data,
-                        "title": section_data.get("title", section_type.replace("_", " ").title()),
-                    })
+            if isinstance(section_data, dict):
+                component = SECTION_COMPONENT_MAP.get(section_type, "UnknownCard")
+                ordered.append({
+                    "type": section_type,
+                    "component": component,
+                    "props": section_data,
+                    "title": section_data.get("title", section_type.replace("_", " ").title()),
+                })
 
         return ordered
 
@@ -76,11 +76,11 @@ class ContentMapper:
 
         for section_type in sections.keys():
             section_data = sections[section_type]
-                items.append({
-                    "id": section_type,
-                    "title": section_data.get("title", section_type.replace("_", " ").title()),
-                    "icon": section_icons.get(section_type, "FileText"),
-                })
+            items.append({
+                "id": section_type,
+                "title": section_data.get("title", section_type.replace("_", " ").title()),
+                "icon": section_icons.get(section_type, "FileText"),
+            })
 
         return items
 
