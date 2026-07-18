@@ -335,8 +335,8 @@ SECTION_ROUTING: Dict[str, SectionRoutingConfig] = {
     ),
     "codeExamples": SectionRoutingConfig(
         section_type="codeExamples",
-        preferred_models=[_QWEN32B, _LLAMA70B],
-        fallback_models=[_QWEN27B, _LLAMA4S],
+        preferred_models=[_LLAMA70B, _LLAMA4S],
+        fallback_models=[_LLAMA8B, _LLAMA70B],
         max_tokens=4096,
         temperature=0.65,
         requires_reasoning=True,

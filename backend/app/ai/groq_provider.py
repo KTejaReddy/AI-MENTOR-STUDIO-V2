@@ -251,7 +251,7 @@ class GroqProvider(AIProvider):
 
             # Key-manager-based path: try all available keys with automatic failover
             excluded_keys: set = set()
-            max_attempts = 15
+            max_attempts = 50
             backoff = 2.0
 
             for attempt in range(max_attempts):
