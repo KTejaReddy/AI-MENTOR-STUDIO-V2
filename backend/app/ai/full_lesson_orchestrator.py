@@ -137,10 +137,10 @@ async def generate_lesson_full(
 
     keep_alive_task = asyncio.create_task(_keep_alive().__anext__())
     stream_gen = _stream_generator().__aiter__()
+    fetch_task = asyncio.create_task(stream_gen.__anext__())
 
     try:
         while True:
-            fetch_task = asyncio.create_task(stream_gen.__anext__())
             done, pending = await asyncio.wait(
                 [fetch_task, keep_alive_task],
                 return_when=asyncio.FIRST_COMPLETED
@@ -164,7 +164,9 @@ async def generate_lesson_full(
                 except StopAsyncIteration:
                     break
                     
+                # Process the chunk...
                 current_buffer += chunk
+                fetch_task = asyncio.create_task(stream_gen.__anext__())
                 
                 # Check for line breaks to parse headers
                 if "\n" in current_buffer:
