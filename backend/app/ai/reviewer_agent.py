@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from app.ai.base import AIProvider, CompletionRequest, Message
 from app.ai.key_manager import key_manager
-from app.ai.model_router_config import get_model_for_section
+from app.ai.model_router import get_model_for_section
 
 logger = logging.getLogger(__name__)
 
@@ -66,26 +66,25 @@ class ReviewerAgent:
             "Review this content based on the criteria. Output only valid JSON."
         )
 
-        model_id = get_model_for_section("explanation", "default")
-        key = await key_manager.acquire_key_async(model_id)
-        if not key:
-            # Skip review if no keys
-            return ReviewResult(True, 1.0, [], [], {})
-
-        self.provider.set_api_key(key.key)
+        from app.ai.resilience import execute_with_failover
         
-        request = CompletionRequest(
-            messages=[
-                Message(role="system", content=system_prompt),
-                Message(role="user", content=user_prompt)
-            ],
-            model=model_id,
-            temperature=0.1,
-            max_tokens=1024
-        )
-
+        def _build_req(mid: str) -> CompletionRequest:
+            return CompletionRequest(
+                messages=[
+                    Message(role="system", content=system_prompt),
+                    Message(role="user", content=user_prompt)
+                ],
+                model=mid,
+                temperature=0.1,
+                max_tokens=1024
+            )
         try:
-            response = await self.provider.complete(request)
+            response = await execute_with_failover(
+                provider=self.provider,
+                section_type="semanticReview",
+                learning_mode="default",
+                request_builder=_build_req
+            )
             data = json.loads(response.content)
             passed = data.get("passed", True)
             score = data.get("score", 1.0)
@@ -104,8 +103,6 @@ class ReviewerAgent:
                 suggestions=suggestions,
                 metrics={"reviewed_by": "llm_semantic", "fallback": "reviewer_failed", "error": str(e)}
             )
-        finally:
-            key_manager.release_key(key, success=True)
 
         return ReviewResult(
             passed=passed,

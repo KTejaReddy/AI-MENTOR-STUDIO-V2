@@ -157,6 +157,7 @@ class GroqProvider(AIProvider):
             )
             response.raise_for_status()
             data = response.json()
+            data["headers"] = dict(response.headers)
             api_key.record_use()
             elapsed = time.time() - start_time
             tokens = 0

@@ -8,7 +8,7 @@ from app.ai.base import AIProvider, CompletionRequest, Message
 from app.ai.key_manager import key_manager
 from app.ai.planner_agent import planner_agent
 from app.ai.reviewer_agent import reviewer_agent
-from app.ai.model_router_config import get_model_for_section
+from app.ai.model_router import get_model_for_section
 
 logger = logging.getLogger(__name__)
 
@@ -99,21 +99,24 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
     if existing_questions:
         prompt += f"\n\nDO NOT repeat these existing questions:\n{json.dumps(existing_questions, indent=2)}"
         
-    model_id = get_model_for_section("quiz", "default")
-    key = await key_manager.acquire_key_async(model_id)
-    if not key:
-        return {}
+    from app.ai.resilience import execute_with_failover
     
-    try:
-        provider.set_api_key(key.key)
-        request = CompletionRequest(
+    def _build_req(mid: str) -> CompletionRequest:
+        return CompletionRequest(
             messages=[Message(role="user", content=prompt)],
-            model=model_id,
+            model=mid,
             temperature=0.3,
             max_tokens=5000,
             stream=False
         )
-        response = await provider.complete(request)
+        
+    try:
+        response = await execute_with_failover(
+            provider=provider,
+            section_type="quiz",
+            learning_mode=learning_mode, # Make sure we pass this
+            request_builder=_build_req
+        )
         content = response.content
         
         # Fallback: strip <think> blocks if the model still emits them (handles mid-stream truncation too)
@@ -160,8 +163,6 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
     except Exception as e:
         logger.error(f"JSON quiz generation failed: {e}")
         return {}
-    finally:
-        key_manager.release_key(key, success=True)
 
 
 def validate_quiz(content: str) -> List[str]:
@@ -297,16 +298,19 @@ async def generate_lesson_full(
     # Let the provider handle key management and failover automatically.
     # We no longer explicitly acquire and lock a single key here.
     
-    request = CompletionRequest(
-        messages=[
-            Message(role="system", content=system_prompt),
-            Message(role="user", content=user_prompt)
-        ],
-        model=model_id,
-        temperature=0.7,
-        max_tokens=8192,
-        stream=True,
-    )
+    from app.ai.resilience import stream_with_failover
+    
+    def _build_req(mid: str) -> CompletionRequest:
+        return CompletionRequest(
+            messages=[
+                Message(role="system", content=system_prompt),
+                Message(role="user", content=user_prompt)
+            ],
+            model=mid,
+            temperature=0.7,
+            max_tokens=8192,
+            stream=True,
+        )
 
     accumulated_content = {st: "" for st, _ in active_sections}
     # Relaxed header pattern. Matches any Markdown heading 1-6 levels deep, optionally surrounded by bolding.
@@ -379,7 +383,13 @@ async def generate_lesson_full(
         try:
             in_think = False
             think_buffer = ""
-            async for event in provider.complete_stream(request):
+            first_st = active_sections_for_markdown[0][0] if active_sections_for_markdown else "overview"
+            async for event in stream_with_failover(provider, first_st, learning_mode, _build_req):
+                if event.error == "FAILOVER_CLEAR":
+                    yield {"_internal_error": True, "code": "FAILOVER_CLEAR", "stage": "llm_streaming", "details": "Failover clear"}
+                    in_think = False
+                    think_buffer = ""
+                    continue
                 if event.error:
                     logger.error(f"Provider stream error: {event.error}")
                     yield {"_internal_error": True, "code": "STREAM_DISCONNECT", "stage": "llm_streaming", "details": str(event.error)}
@@ -463,13 +473,37 @@ async def generate_lesson_full(
                     break
                     
                 if isinstance(chunk, dict) and chunk.get("_internal_error"):
-                    yield {
-                        "type": "error",
-                        "content": f"Generation interrupted: {chunk.get('details', 'Unknown error')}",
-                        "code": chunk.get("code"),
-                        "stage": chunk.get("stage")
-                    }
-                    break
+                    if chunk.get("code") == "FAILOVER_CLEAR":
+                        # The stream wrapper hit a rate limit and is retrying.
+                        # We must clear the frontend buffer and our internal buffer!
+                        current_buffer = ""
+                        accumulated_content = {st: "" for st, _ in active_sections}
+                        # Resend section clear for all active sections
+                        for st, _ in active_sections:
+                            yield {
+                                "type": "section_clear",
+                                "section_type": st,
+                                "engine_id": engine_id
+                            }
+                        if active_sections_for_markdown:
+                            active_st = active_sections_for_markdown[0][0]
+                            yield {
+                                "type": "section_status",
+                                "section_type": active_st,
+                                "status": "generating",
+                                "title": active_sections[0][1],
+                                "engine_id": engine_id,
+                            }
+                        fetch_task = asyncio.create_task(get_next(stream_gen))
+                        continue
+                    else:
+                        yield {
+                            "type": "error",
+                            "content": f"Generation interrupted: {chunk.get('details', 'Unknown error')}",
+                            "code": chunk.get("code"),
+                            "stage": chunk.get("stage")
+                        }
+                        break
                 
                 # Process the chunk...
                 current_buffer += chunk
@@ -772,28 +806,36 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
             "Explanation: [Detailed explanation]\n"
         )
     
-    model_id = get_model_for_section(st, "default")
-    key = await key_manager.acquire_key_async(model_id)
-    if not key:
-        return
-        
-    provider.set_api_key(key.key)
-
-    request = CompletionRequest(
-        messages=[
-            Message(role="user", content=prompt)
-        ],
-        model=model_id,
-        temperature=0.7,
-        max_tokens=2048,
-        stream=True,
-    )
+    from app.ai.resilience import stream_with_failover
+    
+    def _build_req(mid: str) -> CompletionRequest:
+        return CompletionRequest(
+            messages=[
+                Message(role="user", content=prompt)
+            ],
+            model=mid,
+            temperature=0.7,
+            max_tokens=2048,
+            stream=True,
+        )
     
     accumulated = ""
     in_think = False
     think_buffer = ""
     try:
-        async for event in provider.complete_stream(request):
+        async for event in stream_with_failover(provider, st, "default", _build_req):
+            if event.error == "FAILOVER_CLEAR":
+                # Clear what was generated so far
+                accumulated = ""
+                in_think = False
+                think_buffer = ""
+                yield {
+                    "type": "section_clear",
+                    "section_type": st,
+                    "engine_id": engine_id
+                }
+                continue
+                
             if event.content:
                 chunk = event.content
                 think_buffer += chunk
@@ -841,9 +883,9 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
                 "content": think_buffer,
                 "engine_id": engine_id,
             }
-    finally:
-        key_manager.release_key(key, success=True)
-        
+    except Exception as e:
+        logger.error(f"Regeneration failed: {e}")
+        # Could yield an error here, but we will let the existing flow end gracefully
     yield {
         "type": "section_done",
         "section_type": st,

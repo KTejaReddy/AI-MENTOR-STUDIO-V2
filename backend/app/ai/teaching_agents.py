@@ -12,7 +12,8 @@ from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, List, AsyncGenerator
 
 from app.ai.base import AIProvider, CompletionRequest, Message
-from app.ai.model_router_config import get_model_for_section, get_section_config, SectionRoutingConfig
+from app.ai.model_router_config import get_section_config, SectionRoutingConfig
+from app.ai.model_router import get_model_for_section
 from app.ai.key_manager import key_manager, KeyManager, ApiKey as MgrApiKey
 
 logger = logging.getLogger(__name__)

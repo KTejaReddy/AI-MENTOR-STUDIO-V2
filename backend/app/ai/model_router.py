@@ -2,6 +2,7 @@
 Model Router — Configuration-driven model selection with section-specific routing.
 """
 import os
+import logging
 from typing import Dict, List, Optional, Callable
 from dataclasses import dataclass, field
 
@@ -11,68 +12,61 @@ from .model_router_config import (
     LEARNING_MODE_OVERRIDES,
     ModelConfig,
     SectionRoutingConfig,
-    get_model_for_section,
     get_model_config,
     get_section_config,
     list_all_models,
     list_section_routing,
 )
+from .model_pool import model_pool
+
+logger = logging.getLogger(__name__)
 
 
 class ModelRouter:
     """
-    Routes requests to appropriate models based on:
-    - Section type (explanation, quiz, code, etc.)
-    - Learning mode (interview, exam, deep, etc.)
-    - Subject/topic tags
-    - Custom overrides
+    Routes requests to appropriate models using the ModelPool for load balancing and health checks.
     """
 
-    def __init__(self):
-        self._custom_resolver: Optional[Callable] = None
-        self._overrides: Dict[str, str] = {}
-
-    def set_custom_resolver(self, resolver: Callable) -> None:
-        self._custom_resolver = resolver
-
-    def add_override(self, subject_or_mode: str, model_key: str) -> None:
-        """Add a model override for a subject or mode."""
-        if model_key in MODEL_REGISTRY:
-            self._overrides[subject_or_mode.lower()] = model_key
+    def select_model(self, section_type: str, learning_mode: str = "default") -> str:
+        """
+        Selects the best available model for a task, returning the model ID.
+        """
+        mode_overrides = LEARNING_MODE_OVERRIDES.get(learning_mode, {})
+        if section_type in mode_overrides:
+            preferred = [mode_overrides[section_type]]
+            fallback = []
         else:
-            raise ValueError(f"Unknown model key: {model_key}")
+            routing = SECTION_ROUTING.get(section_type)
+            if not routing:
+                logger.warning(f"No routing config found for {section_type}, defaulting to Llama 70B")
+                preferred = ["llama-3.3-70b-versatile"]
+                fallback = ["openai/gpt-oss-120b"]
+            else:
+                preferred = routing.preferred_models
+                fallback = routing.fallback_models
+                
+        best_model = model_pool.select_best_model(preferred, fallback)
+        if not best_model:
+            return "llama-3.3-70b-versatile"
+            
+        return best_model
 
-    def route(
-        self,
-        section_type: str,
-        learning_mode: str = "default",
-        subject: str = "",
-        topic: str = "",
-        difficulty: str = "intermediate",
-    ) -> str:
-        """
-        Get the model ID for a given section type and learning mode.
-        """
-        # 1. Custom resolver (highest priority)
-        if self._custom_resolver:
-            result = self._custom_resolver(section_type, learning_mode, subject, topic)
-            if result and result in MODEL_REGISTRY:
-                return result
-
-        # 2. Subject/mode override
-        subject_key = subject.lower().replace(" ", "-")
-        if subject_key in self._overrides:
-            model_key = self._overrides[subject_key]
-            if model_key in MODEL_REGISTRY:
-                return MODEL_REGISTRY[model_key].id
-
-        if learning_mode in self._overrides:
-            model_key = self._overrides[learning_mode]
-            if model_key in MODEL_REGISTRY:
-                return MODEL_REGISTRY[model_key].id
-
-        # 3. Section-specific routing (primary mechanism)
-        return get_model_for_section(section_type, learning_mode, difficulty)
+    def get_fallback_chain(self, section_type: str, learning_mode: str = "default") -> List[str]:
+        """Returns the full list of compatible models in priority order based on health."""
+        mode_overrides = LEARNING_MODE_OVERRIDES.get(learning_mode, {})
+        if section_type in mode_overrides:
+            preferred = [mode_overrides[section_type]]
+            fallback = []
+        else:
+            routing = SECTION_ROUTING.get(section_type)
+            if not routing:
+                preferred = ["llama-3.3-70b-versatile"]
+                fallback = ["openai/gpt-oss-120b"]
+            else:
+                preferred = routing.preferred_models
+                fallback = routing.fallback_models
+                
+        return model_pool.get_fallback_chain(preferred, fallback)
 
     def get_routes(self) -> Dict[str, str]:
         return {k: v.id for k, v in MODEL_REGISTRY.items()}
@@ -92,3 +86,9 @@ class ModelRouter:
 
 # Global instance
 model_router = ModelRouter()
+
+# Legacy wrapper to prevent breaking existing code during migration
+def get_model_for_section(
+    section_type: str, learning_mode: str = "default", difficulty: str = "intermediate"
+) -> str:
+    return model_router.select_model(section_type, learning_mode)

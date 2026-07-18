@@ -12,7 +12,7 @@ from typing import Dict, Any, Optional, List, AsyncGenerator
 from enum import Enum
 
 from app.ai.base import AIProvider, CompletionRequest, Message
-from app.ai.model_router_config import (
+from app.ai.model_router import (
     get_model_for_section,
     get_section_config,
     SectionRoutingConfig,
