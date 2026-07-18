@@ -7,6 +7,7 @@ import logging
 import time
 from typing import List, AsyncGenerator, Optional, Dict, Any
 
+import asyncio
 import httpx
 
 from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk
