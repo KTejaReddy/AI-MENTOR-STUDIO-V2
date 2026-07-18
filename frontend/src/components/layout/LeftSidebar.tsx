@@ -8,29 +8,21 @@ import {
   Network, Edit3, Type, FileArchive,
 } from 'lucide-react'
 
-const SECTION_ORDER = [
-  'overview', 'explanation', 'keyConcepts', 'importantDefinitions',
-  'analogy', 'examples', 'caseStudy', 'codeExamples',
-  'formulaExplanation', 'diagrams', 'commonMistakes', 'interviewQuestions',
-  'quiz', 'assignment', 'miniProject', 'cheatSheet',
-  'revisionNotes', 'summary',
-]
-
-const SECTION_LABELS: Record<string, string> = {
-  overview: 'Overview', explanation: 'Explanation', keyConcepts: 'Key Concepts',
-  importantDefinitions: 'Definitions', analogy: 'Analogy', examples: 'Examples',
-  caseStudy: 'Case Study', codeExamples: 'Code Examples', formulaExplanation: 'Formulas',
-  diagrams: 'Diagrams', commonMistakes: 'Common Mistakes', interviewQuestions: 'Interview Prep',
-  quiz: 'Quiz', assignment: 'Assignment', miniProject: 'Mini Project',
-  cheatSheet: 'Cheat Sheet', revisionNotes: 'Revision Notes', summary: 'Summary',
+const getSectionLabel = (key: string, title?: string) => {
+  if (title) return title;
+  const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+  return capitalized.replace(/([A-Z])/g, ' $1').trim();
 }
 
-const SECTION_ICONS: Record<string, React.ComponentType<any>> = {
-  overview: Map, explanation: BookOpen, keyConcepts: Type, importantDefinitions: Bookmark,
-  analogy: Lightbulb, examples: List, caseStudy: FileText, codeExamples: Code2,
-  formulaExplanation: Sigma, diagrams: Network, commonMistakes: AlertTriangle,
-  interviewQuestions: HelpCircle, quiz: ClipboardList, assignment: GraduationCap,
-  miniProject: Puzzle, cheatSheet: FileArchive, revisionNotes: Edit3, summary: FileText,
+const getSectionIcon = (key: string) => {
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    overview: Map, explanation: BookOpen, keyConcepts: Type, importantDefinitions: Bookmark,
+    analogy: Lightbulb, examples: List, caseStudy: FileText, codeExamples: Code2,
+    formulaExplanation: Sigma, diagrams: Network, commonMistakes: AlertTriangle,
+    interviewQuestions: HelpCircle, quiz: ClipboardList, assignment: GraduationCap,
+    miniProject: Puzzle, cheatSheet: FileArchive, revisionNotes: Edit3, summary: FileText,
+  }
+  return iconMap[key] || FileText
 }
 
 function StatusIcon({ status }: { status: string }) {
@@ -67,13 +59,11 @@ export const LeftSidebar = memo(function LeftSidebar({
   activeSectionId = null,
   onSelectSection,
 }: LeftSidebarProps) {
-  const statusCount = totalCount || SECTION_ORDER.length
+  const statusCount = totalCount || Object.keys(sectionStatuses).length
   const doneCount = completedCount || Object.values(sectionStatuses).filter((s) => s === 'completed' || s === 'error').length
   const pct = statusCount > 0 ? Math.round((doneCount / statusCount) * 100) : 0
 
-  const sections = Object.keys(sectionStatuses).length > 0
-    ? SECTION_ORDER.filter((s) => s in sectionStatuses)
-    : SECTION_ORDER
+  const sections = Object.keys(sectionStatuses)
 
   return (
     <aside className="w-80 h-full flex flex-col overflow-hidden shrink-0 panel" style={{ pointerEvents: 'auto' }}>
@@ -96,8 +86,8 @@ export const LeftSidebar = memo(function LeftSidebar({
       <nav className="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-0.5" role="navigation" aria-label="Section navigation" style={{ pointerEvents: 'auto' }}>
         {sections.map((sectionId, idx) => {
           const sStatus = sectionStatuses[sectionId] || 'waiting'
-          const Icon = SECTION_ICONS[sectionId] || BookOpen
-          const label = SECTION_LABELS[sectionId] || sectionId
+          const Icon = getSectionIcon(sectionId)
+          const label = getSectionLabel(sectionId)
           const isActive = activeSectionId === sectionId
 
             return (

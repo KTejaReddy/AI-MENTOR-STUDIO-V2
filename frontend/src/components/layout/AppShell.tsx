@@ -6,6 +6,7 @@ import { AICompanion } from '@/components/companion/AICompanion'
 import { Toaster } from '@/components/ui/toaster'
 import { GlobalCommandPalette } from '@/components/layout/GlobalCommandPalette'
 import { BackgroundEffects } from '@/components/effects/BackgroundEffects'
+import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
 
 const pageVariants = {
   initial: { opacity: 0, scale: 0.985, y: 12 },
@@ -89,7 +90,9 @@ export function AppShell() {
               exit="exit"
               className="h-full w-full overflow-hidden"
             >
-              <Outlet />
+              <ErrorBoundary>
+                <Outlet />
+              </ErrorBoundary>
             </motion.div>
           </AnimatePresence>
         </main>

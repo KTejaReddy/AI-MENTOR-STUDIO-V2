@@ -24,7 +24,7 @@ from app.ai.teaching_agents import (
     InterviewAgent, CheatSheetAgent, OverviewAgent, KeyConceptsAgent,
     ImportantDefinitionsAgent, CodeExamplesAgent, FormulaExplanationAgent,
     DiagramsAgent, MiniProjectAgent, RevisionNotesAgent, SummaryAgent,
-    AgentConfig, GenerationResult,
+    GenericSectionAgent, AgentConfig, GenerationResult,
 )
 from app.ai.planner_agent import planner_agent, ALL_SECTIONS as PLANNER_ALL_SECTIONS
 from app.ai.cache import lesson_cache
@@ -112,20 +112,6 @@ AGENT_CLASSES = {
     "summary":            SummaryAgent,
 }
 
-_validation_errors = []
-for sec_type in PLANNER_ALL_SECTIONS:
-    if sec_type not in AGENT_CLASSES:
-        _validation_errors.append(f"Planner section '{sec_type}' has no agent class in AGENT_CLASSES")
-    elif sec_type not in SECTION_ROUTING:
-        _validation_errors.append(f"Planner section '{sec_type}' has no model routing config")
-if _validation_errors:
-    msg = "STARTUP VALIDATION FAILED:\n" + "\n".join(f"  - {e}" for e in _validation_errors)
-    logger.critical(msg)
-    raise RuntimeError(msg)
-else:
-    logger.info("Startup validation PASSED: all %d planner sections have agent + model routing", len(PLANNER_ALL_SECTIONS))
-
-
 async def generate_lesson_parallel(
     provider: AIProvider,
     subject: str,
@@ -191,16 +177,14 @@ async def generate_lesson_parallel(
     }
 
     # ── Step 2: Build configs for every planned section ───────────────────────
-    _section_order = [(st, ti) for st, ti in SECTION_ORDER if st in planned_set]
+    _section_order = active_sections
     if not _section_order:
         yield {"type": "done", "finish_reason": "no_sections", "elapsed": 0}
         return
 
     section_configs: List[tuple] = []
     for sec_type, stitle in _section_order:
-        cls = AGENT_CLASSES.get(sec_type)
-        if not cls:
-            raise RuntimeError(f"No agent registered for section type: {sec_type}")
+        cls = AGENT_CLASSES.get(sec_type, GenericSectionAgent)
         model_id = model_router.route(
             sec_type, learning_mode=learning_mode,
             difficulty=difficulty, subject=subject, topic=topic,

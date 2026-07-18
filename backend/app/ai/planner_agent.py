@@ -14,47 +14,137 @@ from app.ai.topic_analyzer import topic_analyzer
 logger = logging.getLogger(__name__)
 
 
-# Canonical ordered list of all supported sections
-ALL_SECTIONS = [
-    "overview",
-    "explanation",
-    "keyConcepts",
-    "importantDefinitions",
-    "analogy",
-    "examples",
-    "caseStudy",
-    "codeExamples",
-    "formulaExplanation",
-    "diagrams",
-    "commonMistakes",
-    "interviewQuestions",
-    "quiz",
-    "assignment",
-    "miniProject",
-    "cheatSheet",
-    "revisionNotes",
-    "summary",
-]
-
-SECTION_TITLES = {
-    "overview": "1. Overview",
-    "explanation": "2. Detailed Explanation",
-    "keyConcepts": "3. Key Concepts",
-    "importantDefinitions": "4. Important Definitions",
-    "analogy": "5. Real-world Analogy",
-    "examples": "6. Worked Examples",
-    "caseStudy": "7. Case Study",
-    "codeExamples": "8. Code Examples",
-    "formulaExplanation": "9. Formula Explanation",
-    "diagrams": "10. Diagrams",
-    "commonMistakes": "11. Common Mistakes",
-    "interviewQuestions": "12. Interview Questions",
-    "quiz": "13. Quiz",
-    "assignment": "14. Assignment",
-    "miniProject": "15. Mini Project",
-    "cheatSheet": "16. Cheat Sheet",
-    "revisionNotes": "17. Revision Notes",
-    "summary": "18. Summary",
+# Dynamic templates mapping subject categories to section structures
+SUBJECT_TEMPLATES = {
+    "programming": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Detailed Explanation"),
+        ("algorithm", "3. Algorithm"),
+        ("codeExamples", "4. Code Examples"),
+        ("complexity", "5. Time & Space Complexity"),
+        ("visualization", "6. Visualization"),
+        ("interviewQuestions", "7. Interview Questions"),
+        ("quiz", "8. Quiz"),
+        ("summary", "9. Summary")
+    ],
+    "mathematics": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Theory & Concepts"),
+        ("formulae", "3. Important Formulae"),
+        ("theorems", "4. Theorems & Proofs"),
+        ("examples", "5. Solved Problems"),
+        ("practiceProblems", "6. Practice Problems"),
+        ("graphs", "7. Graphs"),
+        ("quiz", "8. Quiz"),
+        ("summary", "9. Summary")
+    ],
+    "electronics": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Principles"),
+        ("circuitDiagrams", "3. Circuit Diagrams"),
+        ("truthTables", "4. Truth Tables & Logic"),
+        ("timingDiagrams", "5. Timing Diagrams"),
+        ("applications", "6. Real-World Applications"),
+        ("examples", "7. Examples"),
+        ("quiz", "8. Quiz"),
+        ("summary", "9. Summary")
+    ],
+    "electrical": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Principles"),
+        ("circuitDiagrams", "3. Circuit Diagrams"),
+        ("applications", "4. Real-World Applications"),
+        ("examples", "5. Examples"),
+        ("quiz", "6. Quiz"),
+        ("summary", "7. Summary")
+    ],
+    "mechanical": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("diagrams", "3. Mechanical Diagrams"),
+        ("formulae", "4. Key Formulae"),
+        ("applications", "5. Applications"),
+        ("examples", "6. Solved Problems"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
+    ],
+    "civil": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("diagrams", "3. Structural Diagrams"),
+        ("formulae", "4. Key Formulae"),
+        ("applications", "5. Applications"),
+        ("examples", "6. Solved Problems"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
+    ],
+    "physics": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("lawsAndTheorems", "3. Laws & Theorems"),
+        ("formulae", "4. Important Formulae"),
+        ("diagrams", "5. Diagrams & Visuals"),
+        ("examples", "6. Solved Numerical Problems"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
+    ],
+    "chemistry": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Theory & Concepts"),
+        ("chemicalEquations", "3. Chemical Equations"),
+        ("molecularStructures", "4. Molecular Structures"),
+        ("reactions", "5. Reactions & Mechanisms"),
+        ("applications", "6. Applications"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
+    ],
+    "biology": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("diagrams", "3. Biological Diagrams"),
+        ("processes", "4. Mechanisms & Processes"),
+        ("applications", "5. Real-World Applications"),
+        ("quiz", "6. Quiz"),
+        ("summary", "7. Summary")
+    ],
+    "english": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("grammar", "3. Grammar"),
+        ("examples", "4. Writing Examples"),
+        ("communicationSkills", "5. Communication Skills"),
+        ("commonMistakes", "6. Common Mistakes"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
+    ],
+    "communication": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("grammar", "3. Grammar"),
+        ("examples", "4. Writing Examples"),
+        ("communicationSkills", "5. Communication Skills"),
+        ("commonMistakes", "6. Common Mistakes"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
+    ],
+    "management": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Core Concepts"),
+        ("caseStudy", "3. Case Studies"),
+        ("frameworks", "4. Frameworks & Models"),
+        ("applications", "5. Practical Applications"),
+        ("quiz", "6. Quiz"),
+        ("summary", "7. Summary")
+    ],
+    "general": [
+        ("overview", "1. Overview"),
+        ("explanation", "2. Detailed Explanation"),
+        ("keyConcepts", "3. Key Concepts"),
+        ("examples", "4. Examples & Case Studies"),
+        ("applications", "5. Applications"),
+        ("quiz", "6. Quiz"),
+        ("summary", "7. Summary")
+    ]
 }
 
 
@@ -160,22 +250,25 @@ class PlannerAgent:
         # Get mode config — fall back to default
         mode_cfg = self.MODE_CONFIG.get(learning_mode, self.MODE_CONFIG["default"])
 
-        # Start from all sections in canonical order
-        sections = list(ALL_SECTIONS)
-
-        # Mode-specific section filtering disabled to ensure all 10 sections are always planned
-
-        # Topic-specific pruning disabled to ensure all 10 sections are always planned
+        # Get dynamic template based on topic category
+        category_lower = topic_category.lower()
+        template_key = "general"
+        for key in SUBJECT_TEMPLATES.keys():
+            if key in category_lower:
+                template_key = key
+                break
+        
+        template = SUBJECT_TEMPLATES[template_key]
+        sections = [sec[0] for sec in template]
+        section_titles = {sec[0]: sec[1] for sec in template}
 
         # Guarantee explanation is always first
         if "explanation" not in sections:
             sections.insert(0, "explanation")
-        elif sections[0] != "explanation":
+            section_titles["explanation"] = "Explanation"
+        elif sections[0] != "explanation" and sections[0] != "overview":
             sections.remove("explanation")
             sections.insert(0, "explanation")
-
-        # Build title map only for planned sections
-        section_titles = {s: SECTION_TITLES[s] for s in sections if s in SECTION_TITLES}
 
         note = mode_cfg.get("note", "")
         if difficulty == "beginner":

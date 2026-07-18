@@ -24,6 +24,13 @@ export function Learn() {
   const navigate = useNavigate()
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
+  // Read openGenerate from location state and open dialog
+  useEffect(() => {
+    if (location.state && (location.state as any).openGenerate) {
+      setGenerateDialogOpen(true)
+      navigate('.', { replace: true, state: {} })
+    }
+  }, [location.state, navigate])
   const [accumulated, setAccumulated] = useState('')
   const [activeSectionId, setActiveSectionId] = useState<string | null>(
     activeTab?.memory?.currentSectionId || null
@@ -37,30 +44,6 @@ export function Learn() {
 
   const aiGenRef = useRef(aiGen)
   aiGenRef.current = aiGen
-
-  const lessonIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-
-  // Read openGenerate from location state and open dialog
-  useEffect(() => {
-    if (location.state && (location.state as any).openGenerate) {
-      setGenerateDialogOpen(true)
-      navigate('.', { replace: true, state: {} })
-    }
-  }, [location.state, navigate])
-
-  // Stable lesson sync
-  useEffect(() => {
-    lessonIntervalRef.current = setInterval(() => {
-      const lesson = aiGenRef.current.lesson
-      const tab = activeTabRef.current
-      if (lesson && tab && tab.aiLesson !== lesson) {
-        updateTab(tab.id, { aiLesson: lesson })
-      }
-    }, 2000)
-    return () => {
-      if (lessonIntervalRef.current) clearInterval(lessonIntervalRef.current)
-    }
-  }, [activeTab?.id, updateTab])
 
   useEffect(() => {
     const lesson = aiGenRef.current.lesson

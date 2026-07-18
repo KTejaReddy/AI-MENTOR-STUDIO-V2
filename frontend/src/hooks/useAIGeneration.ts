@@ -2,34 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import type { GenerateRequest, Lesson, MappedLesson, GenerationStatus, SseEvent, SectionData } from '@/types/ai'
 import { generateLesson } from '@/lib/api/ai'
 
-const ALL_SECTION_TYPES = [
-  'overview', 'explanation', 'keyConcepts', 'importantDefinitions',
-  'analogy', 'examples', 'caseStudy', 'codeExamples',
-  'formulaExplanation', 'diagrams', 'commonMistakes', 'interviewQuestions',
-  'quiz', 'assignment', 'miniProject', 'cheatSheet',
-  'revisionNotes', 'summary'
-]
 
-const SECTION_TITLES: Record<string, string> = {
-  overview: '1. Overview',
-  explanation: '2. Detailed Explanation',
-  keyConcepts: '3. Key Concepts',
-  importantDefinitions: '4. Important Definitions',
-  analogy: '5. Real-world Analogy',
-  examples: '6. Worked Examples',
-  caseStudy: '7. Case Study',
-  codeExamples: '8. Code Examples',
-  formulaExplanation: '9. Formula Explanation',
-  diagrams: '10. Diagrams',
-  commonMistakes: '11. Common Mistakes',
-  interviewQuestions: '12. Interview Questions',
-  quiz: '13. Quiz',
-  assignment: '14. Assignment',
-  miniProject: '15. Mini Project',
-  cheatSheet: '16. Cheat Sheet',
-  revisionNotes: '17. Revision Notes',
-  summary: '18. Summary',
-}
 
 interface GenerationResult {
   status: GenerationStatus
@@ -59,7 +32,8 @@ export function useAIGeneration(activeTab?: any) {
   })
   
   const abortRef = useRef<AbortController | null>(null)
-  const plannedSectionsRef = useRef<string[]>(ALL_SECTION_TYPES)
+  const plannedSectionsRef = useRef<string[]>([])
+  const plannedTitlesRef = useRef<Record<string, string>>({})
   
   // Buffers and Playback Refs
   const rawSectionsBuffer = useRef<Record<string, { content: string; isDone: boolean; isError: boolean; sectionData: any }>>({})
@@ -89,11 +63,14 @@ export function useAIGeneration(activeTab?: any) {
       const initialStatuses: Record<string, 'waiting' | 'queued' | 'generating' | 'retrying' | 'completed' | 'error'> = {}
       
       if (hasLesson && activeTab.aiLesson?.sections) {
+        const storedSections = Object.keys(activeTab.aiLesson.sections)
+        plannedSectionsRef.current = storedSections
         let completedCount = 0
-        for (const st of ALL_SECTION_TYPES) {
+        for (const st of storedSections) {
           if (activeTab.aiLesson.sections[st]) {
             initialStatuses[st] = 'completed'
             completedCount++
+            plannedTitlesRef.current[st] = activeTab.aiLesson.sections[st].title || st
           } else {
             initialStatuses[st] = 'waiting'
           }
@@ -101,11 +78,11 @@ export function useAIGeneration(activeTab?: any) {
         
         playedSections.current = { ...activeTab.aiLesson.sections }
         playedStatuses.current = initialStatuses
-        currentSectionIdxRef.current = ALL_SECTION_TYPES.length
+        currentSectionIdxRef.current = storedSections.length
         isGenerationActiveRef.current = false
         
-        const total = ALL_SECTION_TYPES.length
-        const progress = Math.min(Math.round((completedCount / total) * 100), 100)
+        const total = storedSections.length
+        const progress = total > 0 ? Math.min(Math.round((completedCount / total) * 100), 100) : 0
         
         setResult({
           status: 'done',
@@ -185,9 +162,7 @@ export function useAIGeneration(activeTab?: any) {
         return
       }
       
-      const plannedOrder = ALL_SECTION_TYPES.filter(st => 
-        plannedSectionsRef.current.includes(st)
-      )
+      const plannedOrder = plannedSectionsRef.current
 
       if (plannedOrder.length === 0) {
         playTimerRef.current = requestAnimationFrame(loop)
@@ -236,7 +211,7 @@ export function useAIGeneration(activeTab?: any) {
             ...rawSec.sectionData,
             content: targetContent,
             type: st as any,
-            title: SECTION_TITLES[st] || st
+            title: plannedTitlesRef.current[st] || st
           }
           idx++
           currentSectionIdxRef.current = idx
@@ -255,7 +230,7 @@ export function useAIGeneration(activeTab?: any) {
           const newContent = targetContent.slice(0, visibleLen + charsToAppend)
           playedSections.current[st] = {
             type: st as any,
-            title: SECTION_TITLES[st] || st,
+            title: plannedTitlesRef.current[st] || st,
             content: newContent
           }
           playedStatuses.current[st] = 'generating'
@@ -310,12 +285,10 @@ export function useAIGeneration(activeTab?: any) {
     rawSectionsBuffer.current = {}
     playedSections.current = {}
     playedStatuses.current = {}
-    for (const st of ALL_SECTION_TYPES) {
-      playedStatuses.current[st] = 'waiting'
-    }
     currentSectionIdxRef.current = 0
     isGenerationActiveRef.current = true
-    plannedSectionsRef.current = ALL_SECTION_TYPES
+    plannedSectionsRef.current = []
+    plannedTitlesRef.current = {}
 
     setResult({
       status: 'generating', lesson: null, mapped: null,
@@ -339,6 +312,7 @@ export function useAIGeneration(activeTab?: any) {
             const planned: string[] = event.sections || []
             if (planned.length > 0) {
               plannedSectionsRef.current = planned
+              plannedTitlesRef.current = event.section_titles || {}
               const planStatuses: Record<string, 'waiting' | 'queued' | 'generating' | 'retrying' | 'completed' | 'error'> = {}
               for (const s of planned) {
                 planStatuses[s] = 'waiting'
@@ -348,7 +322,8 @@ export function useAIGeneration(activeTab?: any) {
               }
               setResult((prev) => ({ 
                 ...prev, 
-                metrics: { ...prev.metrics, plannerTime: event.elapsed || 0 }
+                metrics: { ...prev.metrics, plannerTime: event.elapsed || 0 },
+                sectionStatuses: { ...prev.sectionStatuses, ...planStatuses }
               }))
             }
             break

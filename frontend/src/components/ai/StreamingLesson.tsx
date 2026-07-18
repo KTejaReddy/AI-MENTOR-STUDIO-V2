@@ -34,29 +34,21 @@ interface StreamingLessonProps {
   }
 }
 
-const SECTION_ORDER = [
-  'overview', 'explanation', 'keyConcepts', 'importantDefinitions',
-  'analogy', 'examples', 'caseStudy', 'codeExamples',
-  'formulaExplanation', 'diagrams', 'commonMistakes', 'interviewQuestions',
-  'quiz', 'assignment', 'miniProject', 'cheatSheet',
-  'revisionNotes', 'summary',
-]
-
-const SECTION_LABELS: Record<string, string> = {
-  overview: 'Overview', explanation: 'Explanation', keyConcepts: 'Key Concepts',
-  importantDefinitions: 'Definitions', analogy: 'Analogy', examples: 'Examples',
-  caseStudy: 'Case Study', codeExamples: 'Code Examples', formulaExplanation: 'Formulas',
-  diagrams: 'Diagrams', commonMistakes: 'Common Mistakes', interviewQuestions: 'Interview Prep',
-  quiz: 'Quiz', assignment: 'Assignment', miniProject: 'Mini Project',
-  cheatSheet: 'Cheat Sheet', revisionNotes: 'Revision Notes', summary: 'Summary',
+const getSectionLabel = (key: string, title?: string) => {
+  if (title) return title;
+  const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
+  return capitalized.replace(/([A-Z])/g, ' $1').trim();
 }
 
-const SECTION_ICONS: Record<string, React.ComponentType<any>> = {
-  overview: Map, explanation: BookOpen, keyConcepts: Type, importantDefinitions: Bookmark,
-  analogy: Lightbulb, examples: List, caseStudy: FileText, codeExamples: Code2,
-  formulaExplanation: Sigma, diagrams: Network, commonMistakes: AlertTriangle,
-  interviewQuestions: HelpCircle, quiz: ClipboardList, assignment: GraduationCap,
-  miniProject: Puzzle, cheatSheet: FileArchive, revisionNotes: Edit3, summary: FileText,
+const getSectionIcon = (key: string) => {
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    overview: Map, explanation: BookOpen, keyConcepts: Type, importantDefinitions: Bookmark,
+    analogy: Lightbulb, examples: List, caseStudy: FileText, codeExamples: Code2,
+    formulaExplanation: Sigma, diagrams: Network, commonMistakes: AlertTriangle,
+    interviewQuestions: HelpCircle, quiz: ClipboardList, assignment: GraduationCap,
+    miniProject: Puzzle, cheatSheet: FileArchive, revisionNotes: Edit3, summary: FileText,
+  }
+  return iconMap[key] || FileText
 }
 
 function TypewriterText({ text, speed = 12 }: { text: string; speed?: number }) {
@@ -129,8 +121,8 @@ export const StreamingLesson = memo(function StreamingLesson({
     )
   }
 
-  const planned = SECTION_ORDER.filter((s) => s in sectionStatuses)
-  const total = planned.length || SECTION_ORDER.length
+  const planned = Object.keys(sectionStatuses)
+  const total = planned.length
   const done = planned.filter((s) => sectionStatuses[s] === 'completed' || sectionStatuses[s] === 'error').length
   const pct = (done / total) * 100
   const estimatedTimeRemaining = (total - done) * 15
@@ -165,11 +157,11 @@ export const StreamingLesson = memo(function StreamingLesson({
                 <span>{done} / {total} completed</span>
                 <span className="text-text-tertiary font-normal">·</span>
                 {(() => {
-                  const currentGenerating = SECTION_ORDER.find((s) => sectionStatuses[s] === 'generating')
-                  const currentGeneratingLabel = currentGenerating ? SECTION_LABELS[currentGenerating] : ''
-                  const activeIdx = currentGenerating ? SECTION_ORDER.indexOf(currentGenerating) : -1
-                  const prevSection = activeIdx > 0 ? SECTION_ORDER[activeIdx - 1] : null
-                  const prevLabel = prevSection ? SECTION_LABELS[prevSection] : ''
+                  const currentGenerating = planned.find((s) => sectionStatuses[s] === 'generating')
+                  const currentGeneratingLabel = currentGenerating ? (lesson?.sections?.[currentGenerating]?.title || getSectionLabel(currentGenerating)) : ''
+                  const activeIdx = currentGenerating ? planned.indexOf(currentGenerating) : -1
+                  const prevSection = activeIdx > 0 ? planned[activeIdx - 1] : null
+                  const prevLabel = prevSection ? (lesson?.sections?.[prevSection]?.title || getSectionLabel(prevSection)) : ''
                   return (
                     <>
                       {prevLabel && <span className="text-text-tertiary font-medium line-through decoration-emerald-400/50">{prevLabel} ✓</span>}
@@ -250,8 +242,8 @@ export const StreamingLesson = memo(function StreamingLesson({
                 style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
               >
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-                  {(() => { const ActiveIcon = SECTION_ICONS[activeSectionId] || BookOpen; return <ActiveIcon className="w-6 h-6 text-accent-light" /> })()}
-                  <h1 className="text-2xl font-bold text-text-primary">{SECTION_LABELS[activeSectionId] || activeSectionId}</h1>
+                  {(() => { const ActiveIcon = getSectionIcon(activeSectionId); return <ActiveIcon className="w-6 h-6 text-accent-light" /> })()}
+                  <h1 className="text-2xl font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
                   <div className="ml-auto flex gap-2">
                     {currentSectionStatus === 'generating' && (
                       <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent-light text-[10px] font-semibold border border-accent/20 flex items-center gap-1.5">

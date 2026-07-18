@@ -32,6 +32,7 @@ from app.ai.teaching_agents import (
     DiagramsAgent,
     RevisionNotesAgent,
     SummaryAgent,
+    GenericSectionAgent,
     AgentConfig,
     GenerationResult,
 )
@@ -169,23 +170,7 @@ async def generate_lesson_sequential(
 
     async def run_agent(section_type: str, title: str, index: int):
         """Run a single teaching agent (called sequentially by the outer loop)."""
-        agent_class = AGENT_CLASSES.get(section_type)
-        if not agent_class:
-            logger.warning("No agent for section type: %s", section_type)
-            yield {
-                "type": "section_done",
-                "section_type": section_type,
-                "section_data": {
-                    "type": section_type,
-                    "title": title,
-                    "content": "*Section skipped — no agent available*",
-                },
-                "status": "failed",
-                "engine_id": engine_id,
-                "elapsed": round(time.time() - start_time, 2),
-                "model": "unknown",
-            }
-            return
+        agent_class = AGENT_CLASSES.get(section_type, GenericSectionAgent)
 
         # Get model for this section via intelligent router
         model_id = model_router.route(section_type, learning_mode=learning_mode, difficulty=difficulty, subject=subject, topic=topic)
@@ -512,9 +497,16 @@ def _build_agent_config(section_type: str, model_id: str, learning_mode: str) ->
         ),
     }
 
-    agent_config = configs.get(section_type)
-    if agent_config is None:
-        raise ValueError(f"No agent config found for section type: {section_type}")
+    generic_config = AgentConfig(
+        section_type=section_type,
+        system_prompt="You are an expert academic tutor. Provide clear, comprehensive, and accurate educational content.",
+        prompt_template=f"Write a comprehensive and highly detailed section titled '{section_type}' for the topic {{topic}} in {{subject}}.",
+        model_id=model_id,
+        max_tokens=8192,
+        temperature=0.7,
+        min_content_length=200,
+    )
+    agent_config = configs.get(section_type, generic_config)
 
     # Enforce strict document teaching constraints across all agents
     agent_config.system_prompt += """

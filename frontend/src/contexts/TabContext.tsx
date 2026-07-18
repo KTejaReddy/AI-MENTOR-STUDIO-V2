@@ -86,10 +86,10 @@ export function TabProvider({ children }: { children: ReactNode }) {
     tickRef.current = window.setInterval(() => {
       setTabs((prev) =>
         prev.map((t) =>
-          t.id === activeTabId ? { ...t, studyTime: t.studyTime + 1 } : t,
+          t.id === activeTabId ? { ...t, studyTime: t.studyTime + 60 } : t,
         ),
       )
-    }, 1000)
+    }, 60000)
     return () => { if (tickRef.current) clearInterval(tickRef.current) }
   }, [activeTabId, setTabs])
 

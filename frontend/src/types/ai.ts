@@ -7,6 +7,11 @@ export interface SectionBase {
   metadata?: Record<string, any>
 }
 
+export interface GenericSection extends SectionBase {
+  type: string
+  content: string
+}
+
 export interface ExplanationSection extends SectionBase {
   type: 'explanation'
   content: string
@@ -174,6 +179,7 @@ export type SectionData =
   | ProofSection
   | AssignmentSection
   | CommonMistakesSection
+  | GenericSection
 
 // ===== Lesson Types =====
 
@@ -352,6 +358,8 @@ export interface SseSectionClear {
 export interface SsePlan {
   type: 'plan'
   sections: string[]
+  section_titles?: Record<string, string>
+  topic_category?: string
   elapsed?: number
 }
 

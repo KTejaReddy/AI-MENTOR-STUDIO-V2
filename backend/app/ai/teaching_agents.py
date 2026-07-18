@@ -634,3 +634,11 @@ class RevisionNotesAgent(TeachingAgent):
 class SummaryAgent(TeachingAgent):
     @property
     def section_type(self) -> str: return "summary"
+
+class GenericSectionAgent(TeachingAgent):
+    def __init__(self, config: AgentConfig, key_pool: Any = None):
+        super().__init__(config, key_pool)
+
+    @property
+    def section_type(self) -> str: 
+        return self.config.section_type
