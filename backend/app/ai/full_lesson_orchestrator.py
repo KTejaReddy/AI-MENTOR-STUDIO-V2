@@ -18,12 +18,12 @@ def convert_json_to_quiz_markdown(json_obj: Dict) -> str:
     lines = []
     questions = json_obj.get("questions", [])
     for i, q in enumerate(questions, 1):
-        lines.append(f"**Question {i}:** {q.get('question', '')}")
+        lines.append(f"{i}. {q.get('question', '')}")
         opts = q.get("options", {})
         for k in ['A', 'B', 'C', 'D']:
-            lines.append(f"Option {k}: {opts.get(k, '')}")
-        lines.append(f"Correct Answer: {q.get('correctAnswer', 'A')}")
-        lines.append(f"Explanation: {q.get('explanation', '')}")
+            lines.append(f"{k}. {opts.get(k, '')}")
+        lines.append(f"**Correct Answer: {q.get('correctAnswer', 'A')}**")
+        lines.append(f"**Explanation:** {q.get('explanation', '')}")
         lines.append("")
     return "\n".join(lines)
 
