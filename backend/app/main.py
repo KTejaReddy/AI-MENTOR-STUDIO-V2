@@ -57,30 +57,41 @@ async def lifespan(app: FastAPI):
     """Async lifespan: startup → yield → shutdown."""
     # ── Startup ──────────────────────────────────────────────────────────────
     setup_logging(settings.log_level)
-    init_db()
+    async def init_services():
+        # Yield to event loop to allow server to start accepting connections
+        await asyncio.sleep(0.1)
+        
+        try:
+            # Run blocking DB init in thread
+            await asyncio.to_thread(init_db)
 
-    # Initialize provider and gateway
-    provider = GroqProvider(key_manager=key_manager)
-    gateway.set_provider(provider)
+            # Initialize provider and gateway
+            provider = GroqProvider(key_manager=key_manager)
+            gateway.set_provider(provider)
 
-    # Warm up shared HTTP connection pool
-    _ = get_shared_client()
-    logger.info("Shared HTTP client pool warmed up")
+            # Warm up shared HTTP connection pool
+            _ = get_shared_client()
+            logger.info("Shared HTTP client pool warmed up")
 
-    env_count = len(key_manager.keys)
-    db_count = load_keys_from_db()
-    total = len(key_manager.keys)
-    healthy = key_manager.get_healthy_count()
-    logger.info(
-        f"AI Gateway initialized: {env_count} from env, {db_count} from DB, "
-        f"{total} total, {healthy} healthy"
-    )
-    if healthy == 0:
-        logger.warning("No healthy API keys available — AI generation will fail")
+            env_count = len(key_manager.keys)
+            db_count = await asyncio.to_thread(load_keys_from_db)
+            total = len(key_manager.keys)
+            healthy = key_manager.get_healthy_count()
+            logger.info(
+                f"AI Gateway initialized: {env_count} from env, {db_count} from DB, "
+                f"{total} total, {healthy} healthy"
+            )
+            if healthy == 0:
+                logger.warning("No healthy API keys available — AI generation will fail")
 
-    # Start background key recovery task
-    await key_manager.start_recovery_task()
-    logger.info("Key recovery background task started")
+            # Start background key recovery task
+            await key_manager.start_recovery_task()
+            logger.info("Key recovery background task started")
+        except Exception as e:
+            logger.error(f"Error during background initialization: {e}")
+
+    # Start initialization in background so health check responds immediately
+    asyncio.create_task(init_services())
 
     yield
 
@@ -144,6 +155,14 @@ def create_app() -> FastAPI:
             status_code=exc.status_code,
             content={"detail": exc.detail},
         )
+
+    @app.get("/")
+    def root():
+        return {"status": "ok", "service": "Mentor AI Studio", "version": "2"}
+
+    @app.get("/health")
+    def health():
+        return {"status": "healthy"}
 
     return app
 
