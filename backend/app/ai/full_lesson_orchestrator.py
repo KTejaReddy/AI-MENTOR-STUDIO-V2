@@ -115,6 +115,26 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
         )
         response = await provider.complete(request)
         content = response.content
+        
+        # --- NEW LOGGING REQUESTED BY USER ---
+        raw_dict = getattr(response, 'raw', {}) or {}
+        choices = raw_dict.get("choices", [{}])
+        finish_reason = choices[0].get("finish_reason") if choices else "unknown"
+        
+        usage = getattr(response, 'usage', {}) or {}
+        completion_tokens = usage.get("completion_tokens", -1)
+        
+        logger.info(f"QUIZ_GENERATION_DIAGNOSTICS:")
+        logger.info(f" - Streamed: {request.stream}")
+        logger.info(f" - Max Tokens Configured: {request.max_tokens}")
+        logger.info(f" - Payload Length: {len(content)}")
+        logger.info(f" - Finish Reason: {finish_reason}")
+        logger.info(f" - Completion Tokens: {completion_tokens}")
+        
+        tail = content[-300:] if len(content) >= 300 else content
+        logger.info(f" - Last 300 chars: {repr(tail)}")
+        # -------------------------------------
+        
         logger.info(f"RAW_JSON_QUIZ: {content}")
         
         sanitized = sanitize_json(content)
