@@ -12,6 +12,32 @@ from app.ai.model_router_config import get_model_for_section
 
 logger = logging.getLogger(__name__)
 
+def validate_quiz(content: str) -> List[str]:
+    issues = []
+    # Count questions
+    q_count = len(re.findall(r"(?i)\*\*Question|Question\s*\d*:", content))
+    if q_count != 10:
+        issues.append(f"Found {q_count} questions instead of exactly 10.")
+    
+    # Check for options A, B, C, D
+    for opt in ['A', 'B', 'C', 'D']:
+        opt_count = len(re.findall(rf"(?i)\bOption\s+{opt}\b|\b{opt}\)", content))
+        if opt_count < 10:
+            issues.append(f"Missing Option {opt} in some questions (found {opt_count}/10).")
+            
+    # Check for Correct Answer
+    ans_count = len(re.findall(r"(?i)Correct Answer", content))
+    if ans_count < 10:
+        issues.append(f"Missing 'Correct Answer' in some questions (found {ans_count}/10).")
+        
+    # Check for Explanation
+    exp_count = len(re.findall(r"(?i)Explanation", content))
+    if exp_count < 10:
+        issues.append(f"Missing 'Explanation' in some questions (found {exp_count}/10).")
+        
+    return issues
+
+
 async def generate_lesson_full(
     provider: AIProvider,
     subject: str,
@@ -210,13 +236,46 @@ async def generate_lesson_full(
 
     async def _stream_generator():
         try:
+            in_think = False
+            think_buffer = ""
             async for event in provider.complete_stream(request):
                 if event.error:
                     logger.error(f"Provider stream error: {event.error}")
                     yield {"_internal_error": True, "code": "STREAM_DISCONNECT", "stage": "llm_streaming", "details": str(event.error)}
                     break
                 if event.content:
-                    yield event.content
+                    chunk = event.content
+                    think_buffer += chunk
+                    
+                    while think_buffer:
+                        if not in_think:
+                            start_idx = think_buffer.find("<think>")
+                            if start_idx != -1:
+                                if start_idx > 0:
+                                    yield think_buffer[:start_idx]
+                                in_think = True
+                                think_buffer = think_buffer[start_idx + 7:]
+                            else:
+                                # Safe to yield everything except the last 6 chars (in case of partial <think>)
+                                if len(think_buffer) < 7:
+                                    break
+                                yield think_buffer[:-6]
+                                think_buffer = think_buffer[-6:]
+                                break
+                        else:
+                            end_idx = think_buffer.find("</think>")
+                            if end_idx != -1:
+                                in_think = False
+                                think_buffer = think_buffer[end_idx + 8:]
+                            else:
+                                # We are inside <think>, discard everything
+                                think_buffer = ""
+                                break
+            
+            # Flush remaining buffer at the end of the stream
+            if think_buffer and not in_think:
+                # If there's a partial match that never completed, just yield it
+                yield think_buffer
         except Exception as e:
             logger.error(f"Stream exception: {e}")
             yield {"_internal_error": True, "code": "STREAM_EXCEPTION", "stage": "llm_streaming", "details": str(e)}
@@ -400,6 +459,21 @@ async def generate_lesson_full(
                     yield {"type": "ping", "timestamp": time.time()}
                     continue
                     
+                if st == "quiz":
+                    quiz_issues = validate_quiz(content)
+                    if quiz_issues:
+                        logger.warning(f"QUIZ_VALIDATION_FAIL: {quiz_issues}")
+                        async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, quiz_issues):
+                            yield event
+                            if event.get("type") == "section_done":
+                                accumulated_content[st] = event["section_data"]["content"]
+                        logger.info("QUIZ_REGENERATED")
+                    else:
+                        logger.info("QUIZ_VALIDATION_PASS")
+                    
+                    logger.info("QUIZ_SENT_TO_FRONTEND")
+                    continue
+                
                 review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
                 yield {"type": "ping", "timestamp": time.time()}
                 
@@ -517,16 +591,57 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
     )
     
     accumulated = ""
+    in_think = False
+    think_buffer = ""
     try:
         async for event in provider.complete_stream(request):
             if event.content:
-                accumulated += event.content
-                yield {
-                    "type": "section_chunk",
-                    "section_type": st,
-                    "content": event.content,
-                    "engine_id": engine_id,
-                }
+                chunk = event.content
+                think_buffer += chunk
+                
+                while think_buffer:
+                    if not in_think:
+                        start_idx = think_buffer.find("<think>")
+                        if start_idx != -1:
+                            if start_idx > 0:
+                                accumulated += think_buffer[:start_idx]
+                                yield {
+                                    "type": "section_chunk",
+                                    "section_type": st,
+                                    "content": think_buffer[:start_idx],
+                                    "engine_id": engine_id,
+                                }
+                            in_think = True
+                            think_buffer = think_buffer[start_idx + 7:]
+                        else:
+                            if len(think_buffer) < 7:
+                                break
+                            accumulated += think_buffer[:-6]
+                            yield {
+                                "type": "section_chunk",
+                                "section_type": st,
+                                "content": think_buffer[:-6],
+                                "engine_id": engine_id,
+                            }
+                            think_buffer = think_buffer[-6:]
+                            break
+                    else:
+                        end_idx = think_buffer.find("</think>")
+                        if end_idx != -1:
+                            in_think = False
+                            think_buffer = think_buffer[end_idx + 8:]
+                        else:
+                            think_buffer = ""
+                            break
+                            
+        if think_buffer and not in_think:
+            accumulated += think_buffer
+            yield {
+                "type": "section_chunk",
+                "section_type": st,
+                "content": think_buffer,
+                "engine_id": engine_id,
+            }
     finally:
         key_manager.release_key(key, success=True)
         
