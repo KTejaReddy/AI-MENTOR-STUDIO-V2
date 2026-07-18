@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from app.ai.base import AIProvider, CompletionRequest, Message
 from app.ai.key_pool import key_pool
 from app.ai.model_router import model_router
-from app.ai.agents import AGENT_CONFIGS, SECTION_ORDER
+from app.ai.agents import AGENT_CONFIGS
 
 logger = logging.getLogger(__name__)
 

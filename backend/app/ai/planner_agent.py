@@ -167,7 +167,6 @@ class PlannerAgent:
     - 'explanation' is ALWAYS first and always included
     - Mode-specific sections are boosted to front
     - Irrelevant sections are removed (e.g. 'quiz' for quick_revision)
-    - Order is preserved from ALL_SECTIONS canonical order
     """
 
     # Sections always included regardless of mode

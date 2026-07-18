@@ -8,7 +8,6 @@ from app.ai.stream_manager import StreamManager, stream_manager
 from app.ai.health_monitor import HealthMonitor, health_monitor
 from app.ai.gateway import Gateway, gateway
 from app.ai.content_mapper import ContentMapper, content_mapper
-from app.ai.content_planner import ContentPlanner, content_planner
 from app.ai.topic_analyzer import TopicAnalyzer, TopicAnalysis, topic_analyzer
 from app.ai.cache import LessonCache, lesson_cache
 
@@ -23,7 +22,6 @@ __all__ = [
     "HealthMonitor", "health_monitor",
     "Gateway", "gateway",
     "ContentMapper", "content_mapper",
-    "ContentPlanner", "content_planner",
     "TopicAnalyzer", "TopicAnalysis", "topic_analyzer",
     "LessonCache", "lesson_cache",
 ]

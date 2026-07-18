@@ -16,7 +16,6 @@ from app.ai.health_monitor import health_monitor
 from app.ai.cache import lesson_cache
 from app.ai.topic_analyzer import topic_analyzer
 from app.ai.content_mapper import content_mapper
-from app.ai.content_planner import content_planner
 from app.ai.planner_agent import planner_agent
 from app.ai.teaching_orchestrator import generate_lesson as generate_lesson_v2
 

@@ -34,18 +34,7 @@ SECTION_COMPONENT_MAP = {
     "proof": "ProofCard",
 }
 
-SECTION_ORDER = [
-    # Orchestrator 11 agents
-    "explanation", "caseStudy", "analogy", "examples",
-    "quiz", "assignment", "projects",
-    "commonMistakes", "interviewQuestions", "cheatSheet",
-    # Legacy section types (low priority)
-    "introduction", "definition", "coreConcepts", "working",
-    "codeExamples", "advantages", "disadvantages",
-    "realWorldApplications", "industryUsage", "summary",
-    "prerequisites", "diagram", "formula", "proof", "code",
-    "complexity", "visualization",
-]
+
 
 
 class ContentMapper:
@@ -53,9 +42,8 @@ class ContentMapper:
         sections = data.get("sections", {})
         ordered = []
 
-        for section_type in SECTION_ORDER:
-            if section_type in sections:
-                section_data = sections[section_type]
+        for section_type in sections.keys():
+            section_data = sections[section_type]
                 if isinstance(section_data, dict):
                     component = SECTION_COMPONENT_MAP.get(section_type, "UnknownCard")
                     ordered.append({
@@ -86,9 +74,8 @@ class ContentMapper:
             "summary": "FileText",
         }
 
-        for section_type in SECTION_ORDER:
-            if section_type in sections:
-                section_data = sections[section_type]
+        for section_type in sections.keys():
+            section_data = sections[section_type]
                 items.append({
                     "id": section_type,
                     "title": section_data.get("title", section_type.replace("_", " ").title()),

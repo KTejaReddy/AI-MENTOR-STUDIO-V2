@@ -40,27 +40,6 @@ from app.ai.cache import lesson_cache
 
 logger = logging.getLogger(__name__)
 
-# Section order for progressive display
-SECTION_ORDER = [
-    ("overview", "1. Overview"),
-    ("explanation", "2. Detailed Explanation"),
-    ("keyConcepts", "3. Key Concepts"),
-    ("importantDefinitions", "4. Important Definitions"),
-    ("analogy", "5. Real-world Analogy"),
-    ("examples", "6. Worked Examples"),
-    ("caseStudy", "7. Case Study"),
-    ("codeExamples", "8. Code Examples"),
-    ("formulaExplanation", "9. Formula Explanation"),
-    ("diagrams", "10. Diagrams"),
-    ("commonMistakes", "11. Common Mistakes"),
-    ("interviewQuestions", "12. Interview Questions"),
-    ("quiz", "13. Quiz"),
-    ("assignment", "14. Assignment"),
-    ("miniProject", "15. Mini Project"),
-    ("cheatSheet", "16. Cheat Sheet"),
-    ("revisionNotes", "17. Revision Notes"),
-    ("summary", "18. Summary"),
-]
 
 AGENT_CLASSES = {
     "overview": OverviewAgent,

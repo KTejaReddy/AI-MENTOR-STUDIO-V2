@@ -1068,18 +1068,3 @@ def create_agent(section_type: str, key_pool: KeyPool) -> TeachingAgent:
 
     config = AGENT_CONFIGS[section_type]
     return cls(config, key_pool)
-
-
-# Section generation order (for progressive display)
-SECTION_ORDER = [
-    "explanation",
-    "caseStudy",
-    "analogy",
-    "examples",
-    "quiz",
-    "assignment",
-    "projects",
-    "commonMistakes",
-    "interviewQuestions",
-    "cheatSheet",
-]
