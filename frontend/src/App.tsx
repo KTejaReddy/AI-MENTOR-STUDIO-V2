@@ -17,7 +17,6 @@ import { CompilerLab } from '@/pages/CompilerLab'
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute'
 import { Login } from '@/pages/Login'
 import { Register } from '@/pages/Register'
-import { AuthCallback } from '@/pages/AuthCallback'
 
 export default function App() {
   return (
@@ -29,7 +28,6 @@ export default function App() {
               {/* Public auth routes - no layout */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/auth/callback" element={<AuthCallback />} />
 
               {/* App layout with navbar/sidebar */}
               <Route element={<AppShell />}>

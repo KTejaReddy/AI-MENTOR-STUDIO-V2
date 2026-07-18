@@ -71,6 +71,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     const verify = async () => {
+      const hash = window.location.hash.substring(1);
+      if (hash && hash.includes('access_token=')) {
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
+        const userRaw = params.get('user');
+        
+        if (accessToken && refreshToken && userRaw) {
+          try {
+            const userData = JSON.parse(decodeURIComponent(userRaw));
+            localStorage.setItem('access_token', accessToken);
+            localStorage.setItem('refresh_token', refreshToken);
+            localStorage.setItem('profile', JSON.stringify(userData));
+            localStorage.setItem('remember_me', 'true');
+            // Clear hash from url without triggering navigation
+            window.history.replaceState(null, '', window.location.pathname + window.location.search);
+          } catch (e) {
+            console.error('[Auth] Failed to parse oauth data from hash');
+          }
+        }
+      }
+
       const token = getAnyAccessToken();
 
       if (!token) {

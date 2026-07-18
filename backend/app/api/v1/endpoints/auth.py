@@ -383,8 +383,8 @@ async def google_callback(
         f"&expires_in={expires_in}"
         f"&user={quote(json.dumps(_build_user_dict(user)))}"
     )
-    logger.info(f"Google OAuth callback: redirecting to frontend at {frontend_url}/auth/callback")
-    return RedirectResponse(url=f"{frontend_url}/auth/callback#{params}")
+    logger.info(f"Google OAuth callback: redirecting to frontend dashboard at {frontend_url}/")
+    return RedirectResponse(url=f"{frontend_url}/#{params}")
 
 
 # ─── User Profile ─────────────────────────────────────────────────────────────
