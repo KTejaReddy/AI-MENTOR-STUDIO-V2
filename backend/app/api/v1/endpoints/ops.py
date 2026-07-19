@@ -57,10 +57,10 @@ def get_overview(
     ).scalar() or 0
 
     # 2. Total & Today's tokens
-    total_tokens = db.query(func.sum(AiRequestAnalytics.total_tokens)).scalar() or 0
-    today_tokens = db.query(func.sum(AiRequestAnalytics.total_tokens)).filter(
+    total_tokens = int(db.query(func.sum(AiRequestAnalytics.total_tokens)).scalar() or 0)
+    today_tokens = int(db.query(func.sum(AiRequestAnalytics.total_tokens)).filter(
         AiRequestAnalytics.request_timestamp >= today_start
-    ).scalar() or 0
+    ).scalar() or 0)
 
     # 3. Sections generated (where success = True and section_name != "full_lesson" and section_name != "chat")
     sections_generated = db.query(func.count(AiRequestAnalytics.id)).filter(
@@ -72,12 +72,12 @@ def get_overview(
     ).scalar() or 0
 
     # 4. Average Lesson Time (Total latency of full_lesson requests)
-    avg_lesson_time_ms = db.query(func.avg(AiRequestAnalytics.latency_ms)).filter(
+    avg_lesson_time_ms = float(db.query(func.avg(AiRequestAnalytics.latency_ms)).filter(
         and_(
             AiRequestAnalytics.success == True,
             AiRequestAnalytics.section_name == "full_lesson"
         )
-    ).scalar() or 0
+    ).scalar() or 0)
     avg_lesson_time_sec = round(avg_lesson_time_ms / 1000.0, 2) if avg_lesson_time_ms else 0.0
 
     # 5. Lessons today (number of unique full_lesson generations today)
@@ -148,7 +148,7 @@ def get_overview(
         AiRequestAnalytics.lesson_id.isnot(None)
     ).group_by(AiRequestAnalytics.lesson_id).subquery()
 
-    avg_lesson_tokens = db.query(func.avg(lesson_tokens_sub.c.lesson_sum)).scalar() or 50000
+    avg_lesson_tokens = float(db.query(func.avg(lesson_tokens_sub.c.lesson_sum)).scalar() or 50000)
     
     # Calculate estimates based on model pool limits
     remaining_lessons = 0
@@ -222,7 +222,7 @@ def get_models_stats(
     ).filter(
         AiRequestAnalytics.lesson_id.isnot(None)
     ).group_by(AiRequestAnalytics.lesson_id).subquery()
-    avg_lesson_tokens = db.query(func.avg(lesson_tokens_sub.c.lesson_sum)).scalar() or 50000
+    avg_lesson_tokens = float(db.query(func.avg(lesson_tokens_sub.c.lesson_sum)).scalar() or 50000)
 
     results = []
     
@@ -251,19 +251,19 @@ def get_models_stats(
             # Accumulate today's stats
             if m_id in today_map:
                 requests_today += today_map[m_id].requests
-                tokens_today += today_map[m_id].tokens or 0
+                tokens_today += int(today_map[m_id].tokens or 0)
             
             # Accumulate historical metrics
             if m_id in all_map:
                 row = all_map[m_id]
                 requests_total += row.requests
-                tokens_total += row.tokens or 0
-                failures += row.failures or 0
-                retries += row.retries or 0
-                fallbacks += row.fallbacks or 0
-                avg_tokens += row.avg_tokens or 0
-                avg_latency += row.avg_latency or 0.0
-                avg_size += row.avg_chars or 0
+                tokens_total += int(row.tokens or 0)
+                failures += int(row.failures or 0)
+                retries += int(row.retries or 0)
+                fallbacks += int(row.fallbacks or 0)
+                avg_tokens += float(row.avg_tokens or 0)
+                avg_latency += float(row.avg_latency or 0.0)
+                avg_size += float(row.avg_chars or 0)
 
             # Pull rate limits from active pool
             h_info = model_pool.models.get(m_id)
@@ -362,9 +362,9 @@ def get_keys_stats(
         
         db_row = stats_map.get(prefix)
         requests = db_row.requests if db_row else 0
-        tokens = db_row.tokens or 0 if db_row else 0
-        avg_latency = db_row.avg_latency or 0.0 if db_row else 0.0
-        failures = db_row.failures or 0 if db_row else 0
+        tokens = int(db_row.tokens or 0) if db_row else 0
+        avg_latency = float(db_row.avg_latency or 0.0) if db_row else 0.0
+        failures = int(db_row.failures or 0) if db_row else 0
         
         status_val = "healthy"
         if hasattr(k_obj, "status"):
@@ -478,8 +478,8 @@ def get_errors_dashboard(
     provider_errors = max(0, total_failures - timeouts - rate_limits)
 
     # Retries and fallbacks (overall today)
-    retries = db.query(func.sum(AiRequestAnalytics.retry_count)).scalar() or 0
-    fallbacks = db.query(func.sum(case((AiRequestAnalytics.fallback_used == True, 1), else_=0))).scalar() or 0
+    retries = int(db.query(func.sum(AiRequestAnalytics.retry_count)).scalar() or 0)
+    fallbacks = int(db.query(func.sum(case((AiRequestAnalytics.fallback_used == True, 1), else_=0))).scalar() or 0)
     
     cancelled = error_query.filter(
         or_(
@@ -548,7 +548,7 @@ def get_charts_data(
                 "date": row.date,
                 "requests": row.requests,
                 "tokens": int(row.tokens) if row.tokens else 0,
-                "latency_sec": round(row.latency / 1000.0, 2) if row.latency else 0.0
+                "latency_sec": round(float(row.latency) / 1000.0, 2) if row.latency else 0.0
             }
             for row in historical
         ],
