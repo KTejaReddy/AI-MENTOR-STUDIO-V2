@@ -339,59 +339,9 @@ export const GenerationPanel = memo(function GenerationPanel({
           </AnimatePresence>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <StepBadge number={4} />
-            <label className="text-xs font-semibold text-text-primary tracking-wide">Difficulty</label>
-          </div>
-          <div className="flex gap-1">
-            {difficulties.map((d) => (
-              <button
-                key={d.value}
-                type="button"
-                onClick={() => setDifficulty(d.value)}
-                disabled={isGenerating}
-                className={cn(
-                  'flex-1 px-1.5 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all border',
-                  difficulty === d.value
-                    ? 'bg-accent/20 text-accent-light border-accent/30 shadow-sm'
-                    : 'bg-surface-200/60 text-text-tertiary border-border hover:text-text-secondary hover:bg-surface-200',
-                )}
-              >
-                {d.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <StepBadge number={5} />
-            <label className="text-xs font-semibold text-text-primary tracking-wide">Mode</label>
-          </div>
-          <div className="flex gap-1 flex-wrap">
-            {learningModes.map((m) => (
-              <button
-                key={m.value}
-                type="button"
-                onClick={() => setLearningMode(m.value)}
-                disabled={isGenerating}
-                className={cn(
-                  'px-3 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all border flex-grow sm:flex-grow-0',
-                  learningMode === m.value
-                    ? 'bg-accent/20 text-accent-light border-accent/30 shadow-sm'
-                    : 'bg-surface-200/60 text-text-tertiary border-border hover:text-text-secondary hover:bg-surface-200',
-                )}
-              >
-                {m.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <div className="space-y-2 pt-1">
           <div className="flex items-center gap-2">
-            <StepBadge number={6} />
+            <StepBadge number={4} />
             <label className="text-xs font-semibold text-text-primary tracking-wide">Generate</label>
           </div>
           {isGenerating ? (
