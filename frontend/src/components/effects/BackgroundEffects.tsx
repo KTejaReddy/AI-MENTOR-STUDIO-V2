@@ -1,8 +1,9 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 
-function useAurora() {
+function useAurora(disabled: boolean) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
+    if (disabled) return
     const el = ref.current
     if (!el) return
     let frame: number
@@ -24,30 +25,33 @@ function useAurora() {
   return ref
 }
 
-function useParticles() {
+function useParticles(disabled: boolean) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const mouseRef = useRef({ x: 0, y: 0, active: false })
 
   const onMouseMove = useCallback((e: MouseEvent) => {
+    if (disabled) return
     mouseRef.current.x = e.clientX
     mouseRef.current.y = e.clientY
     mouseRef.current.active = true
-  }, [])
+  }, [disabled])
 
   const onMouseLeave = useCallback(() => {
     mouseRef.current.active = false
   }, [])
 
   useEffect(() => {
+    if (disabled) return
     window.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseleave', onMouseLeave)
     return () => {
       window.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseleave', onMouseLeave)
     }
-  }, [onMouseMove, onMouseLeave])
+  }, [onMouseMove, onMouseLeave, disabled])
 
   useEffect(() => {
+    if (disabled) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -332,9 +336,10 @@ function useParticles() {
   return canvasRef
 }
 
-function useNoise() {
+function useNoise(disabled: boolean) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
+    if (disabled) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -366,9 +371,19 @@ function useNoise() {
 }
 
 export function BackgroundEffects() {
-  const auroraRef = useAurora()
-  const particlesRef = useParticles()
-  const noiseRef = useNoise()
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth < 768 : false)
+  
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  const auroraRef = useAurora(isMobile)
+  const particlesRef = useParticles(isMobile)
+  const noiseRef = useNoise(isMobile)
+
+  if (isMobile) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden>

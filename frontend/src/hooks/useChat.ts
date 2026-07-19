@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import { getAuthHeaders, mergeHeaders } from '@/lib/api/client'
 
@@ -17,6 +17,16 @@ export function useChat() {
   const [error, setError] = useState<string | null>(null)
   
   const abortControllerRef = useRef<AbortController | null>(null)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+        abortControllerRef.current = null
+      }
+    }
+  }, [])
 
   const clear = useCallback(() => {
     if (abortControllerRef.current) {

@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -546,6 +546,21 @@
   100% { background-position: -400% 0; }
 }
 
+@media (max-width: 767px) {
+  /* Strip heavy mobile effects */
+  .glass, .glass-strong, .glass-card, .glass-nav, .card-glass, .panel,
+  .breathe-3d, .float-3d, .interactive-item {
+    backdrop-filter: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+    background-color: var(--surface-100) !important;
+    border: 1px solid var(--border) !important;
+  }
+}
+
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-8px); }
@@ -796,7 +811,7 @@
    Covers: all states, dark & light themes, Chrome autofill
    ============================================================ */
 
-/* ── Dark theme ────────────────────────────────────────────── */
+/* â”€â”€ Dark theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 [data-theme="dark"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 [data-theme="dark"] textarea,
 [data-theme="dark"] select {
@@ -849,7 +864,7 @@
   -webkit-text-fill-color: #FFFFFF;
 }
 
-/* Chrome autofill override — dark */
+/* Chrome autofill override â€” dark */
 [data-theme="dark"] input:-webkit-autofill,
 [data-theme="dark"] input:-webkit-autofill:hover,
 [data-theme="dark"] input:-webkit-autofill:focus,
@@ -863,7 +878,7 @@
   transition: background-color 9999s ease-in-out 0s;
 }
 
-/* ── Light theme ───────────────────────────────────────────── */
+/* â”€â”€ Light theme â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 [data-theme="light"] input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
 [data-theme="light"] textarea,
 [data-theme="light"] select {
@@ -910,7 +925,7 @@
   -webkit-text-fill-color: #111827;
 }
 
-/* Chrome autofill override — light */
+/* Chrome autofill override â€” light */
 [data-theme="light"] input:-webkit-autofill,
 [data-theme="light"] input:-webkit-autofill:hover,
 [data-theme="light"] input:-webkit-autofill:focus,
@@ -1055,3 +1070,4 @@
     background-clip: text;
   }
 }
+

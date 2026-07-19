@@ -51,6 +51,7 @@ export function useAIGeneration(activeTab?: any) {
   useEffect(() => {
     return () => {
       if (playTimerRef.current) cancelAnimationFrame(playTimerRef.current)
+      if (abortRef.current) abortRef.current.abort()
     }
   }, [])
 

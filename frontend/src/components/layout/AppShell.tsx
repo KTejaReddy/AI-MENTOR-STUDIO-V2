@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TopNavbar } from './TopNavbar'
 import { MobileDrawer } from './MobileDrawer'
@@ -36,6 +36,7 @@ export function AppShell() {
   const [chatOpen, setChatOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
+  const outlet = useOutlet()
   const isLearnPage = location.pathname === '/learn'
 
   const handleNewLesson = useCallback(() => {
@@ -104,7 +105,7 @@ export function AppShell() {
               className="h-full w-full overflow-hidden"
             >
               <ErrorBoundary>
-                <Outlet />
+                {outlet}
               </ErrorBoundary>
             </motion.div>
           </AnimatePresence>
