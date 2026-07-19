@@ -420,10 +420,12 @@ export function Dashboard() {
   }
 
   return (
-    <div className="h-full w-full flex flex-col bg-[#07070d] text-text-primary overflow-hidden relative">
+    <div className="min-h-screen w-full flex flex-col bg-[#07070d] text-text-primary relative">
       
-      {/* ─── Premium Ops Header ───────────────────────────────────────────────── */}
-      <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#090911]/50 backdrop-blur-md relative z-10">
+      {/* ─── Sticky Header & Tabs ─────────────────────────────────────────────── */}
+      <div className="sticky top-0 z-20 flex flex-col">
+        {/* ─── Premium Ops Header ───────────────────────────────────────────────── */}
+        <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#090911]/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-glow-sm">
             <Shield className="h-5 w-5" />
@@ -459,8 +461,8 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* ─── Ops Tabs Selector ────────────────────────────────────────────────── */}
-      <div className="shrink-0 flex items-center px-6 border-b border-white/5 bg-[#08080e] overflow-x-auto no-scrollbar gap-1 relative z-10 py-1.5">
+        {/* ─── Ops Tabs Selector ────────────────────────────────────────────────── */}
+        <div className="shrink-0 flex items-center px-6 border-b border-white/5 bg-[#08080e]/90 backdrop-blur-md overflow-x-auto no-scrollbar gap-1 py-1.5">
         {[
           { id: 'overview', label: 'System Overview', icon: BarChart2 },
           { id: 'live', label: 'Live Monitor', icon: Terminal },
@@ -482,10 +484,11 @@ export function Dashboard() {
             {tab.label}
           </button>
         ))}
+        </div>
       </div>
 
       {/* ─── Central Content Workspace ─────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto p-6 min-h-0 relative z-0">
+      <div className="flex-1 p-6 relative z-0 flex flex-col">
         {loading && activeTab !== 'live' ? (
           <div className="flex h-full w-full items-center justify-center">
             <div className="flex flex-col items-center gap-2">
@@ -982,7 +985,7 @@ export function Dashboard() {
               animate={{ opacity: 0.5 }}
               exit={{ opacity: 0 }}
               onClick={() => setDrawerOpen(false)}
-              className="absolute inset-0 bg-black z-40"
+              className="fixed inset-0 bg-black z-40"
             />
             
             {/* Drawer */}
@@ -991,7 +994,7 @@ export function Dashboard() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute right-0 top-0 bottom-0 w-full md:w-[600px] bg-[#090910] border-l border-white/5 p-6 z-50 flex flex-col shadow-2xl overflow-hidden"
+              className="fixed right-0 top-0 bottom-0 w-full md:w-[600px] bg-[#090910] border-l border-white/5 p-6 z-50 flex flex-col shadow-2xl overflow-hidden"
             >
               <div className="shrink-0 flex items-center justify-between pb-4 border-b border-white/5 mb-6">
                 <div>
