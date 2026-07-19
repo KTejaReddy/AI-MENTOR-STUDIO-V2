@@ -14,7 +14,7 @@ export function Login() {
   const [error, setError] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { login, isAuthenticated } = useAuth()
+  const { login, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const particlesRef = useRef<HTMLDivElement>(null)
@@ -22,8 +22,15 @@ export function Login() {
   const from = (location.state as any)?.from?.pathname || '/'
 
   useEffect(() => {
-    if (isAuthenticated) navigate(from, { replace: true })
-  }, [isAuthenticated, navigate, from])
+    if (isAuthenticated && user) {
+      const ADMIN_EMAILS = ['arkoreai0@gmail.com']
+      if (ADMIN_EMAILS.includes(user.email)) {
+        navigate('/ops-dashboard', { replace: true })
+      } else {
+        navigate(from, { replace: true })
+      }
+    }
+  }, [isAuthenticated, user, navigate, from])
 
   useEffect(() => {
     const canvas = document.createElement('canvas')
@@ -92,7 +99,12 @@ export function Login() {
     try {
       const data = await authApi.login(email, password)
       login(data.access_token, data.refresh_token, data.user, rememberMe)
-      navigate(from, { replace: true })
+      const ADMIN_EMAILS = ['arkoreai0@gmail.com']
+      if (ADMIN_EMAILS.includes(data.user?.email)) {
+        navigate('/ops-dashboard', { replace: true })
+      } else {
+        navigate(from, { replace: true })
+      }
     } catch (err: any) {
       const detail = err.response?.data?.detail
       if (Array.isArray(detail)) setError(detail[0]?.msg || 'Invalid input')
