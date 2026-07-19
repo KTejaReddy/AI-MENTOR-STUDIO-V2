@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, and_, or_, Integer, cast
+from sqlalchemy import func, desc, and_, or_, Integer, cast, Date
 from sse_starlette.sse import EventSourceResponse
 
 from app.db.session import get_db
@@ -507,9 +507,10 @@ def get_charts_data(
     start_date = datetime.utcnow() - timedelta(days=days)
     
     # 1. Requests, tokens, latency grouped by day
-    # SQLite/PostgreSQL date formatting compatibility:
-    # Use strftime for SQLite, cast/to_char for Postgres. Since default is SQLite:
-    date_group = func.strftime("%Y-%m-%d", AiRequestAnalytics.request_timestamp)
+    if db.bind.dialect.name == "sqlite":
+        date_group = func.strftime("%Y-%m-%d", AiRequestAnalytics.request_timestamp)
+    else:
+        date_group = cast(AiRequestAnalytics.request_timestamp, Date)
     
     historical = db.query(
         date_group.label("date"),
