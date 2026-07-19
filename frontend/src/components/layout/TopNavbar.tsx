@@ -86,7 +86,20 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           </span>
         </NavLink>
 
-        <nav className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar mask-edges flex-1 min-w-0">
+        <nav className="flex items-center gap-0.5 md:gap-1 overflow-x-auto no-scrollbar mask-edges flex-1 min-w-0 touch-pan-x snap-x snap-mandatory">
+          {/* Mobile-only prominent New Lesson button as the first item in scroll */}
+          <div className="md:hidden pr-2 snap-start shrink-0 flex items-center justify-center">
+            <motion.button
+              onClick={handleNewLesson}
+              whileTap={{ scale: 0.95 }}
+              animate={{ boxShadow: ['0 0 12px rgba(0,242,254,0.3)', '0 0 24px rgba(0,242,254,0.5)', '0 0 12px rgba(0,242,254,0.3)'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-[#00f2fe] via-[#4facfe] to-[#8b5cf6] text-white text-[13px] font-bold shadow-lg"
+            >
+              <Plus className="w-4 h-4" />
+              <span>New Lesson</span>
+            </motion.button>
+          </div>
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -94,7 +107,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               end={item.to === '/'}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-10 shrink-0',
+                  'flex items-center gap-1 md:gap-1.5 px-3 md:px-3 py-1.5 md:py-1.5 rounded-full text-[13px] md:text-xs font-semibold transition-all duration-300 relative z-10 shrink-0 snap-start',
                   isActive
                     ? 'text-[#00f2fe]'
                     : 'text-text-tertiary hover:text-text-secondary'
@@ -103,7 +116,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             >
               {({ isActive }) => (
                 <>
-                  <item.icon className="w-3 h-3 md:w-3.5 md:h-3.5 shrink-0" />
+                  <item.icon className="w-3.5 h-3.5 md:w-3.5 md:h-3.5 shrink-0" />
                   <span className="whitespace-nowrap">{item.label}</span>
                   {isActive && (
                     <motion.div
@@ -120,7 +133,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
       </div>
 
       <div className="flex items-center gap-1 md:gap-2 shrink-0">
-        <div>
+        <div className="hidden md:block">
           <Tooltip content="New Lesson (Ctrl+N)">
             <motion.button
               onClick={handleNewLesson}

@@ -10,6 +10,7 @@ import {
   HelpCircle, ClipboardList, Clock, Map, Code2, Sigma,
   Network, Edit3, Type, FileArchive,
 } from 'lucide-react'
+import { FloatingReadingToolbar } from '@/components/learning/FloatingReadingToolbar'
 
 class MarkdownErrorBoundary extends React.Component<{children: React.ReactNode, sectionId?: string}, {hasError: boolean, error?: Error}> {
   constructor(props: any) {
@@ -55,6 +56,7 @@ interface StreamingLessonProps {
   activeSectionId?: string | null
   onSelectSection?: (sectionId: string) => void
   tabInfo?: {
+    id: string
     topic: string
     subject: string
     difficulty: string
@@ -231,14 +233,14 @@ export const StreamingLesson = memo(function StreamingLesson({
 
       {/* Lesson header: Topic / Subject / Difficulty / Time */}
       {tabInfo && (isDone || isGenerating) && (
-        <div className="px-4 md:px-10 lg:px-16 pt-8 pb-4 md:pt-6 md:pb-2 flex flex-col gap-4 md:gap-8">
+        <div className="px-4 md:px-10 lg:px-16 pt-4 pb-2 md:pt-6 md:pb-2 flex flex-col gap-4 md:gap-8">
           <div className="max-w-3xl mx-auto w-full">
             <div className="flex items-start gap-4 mb-1">
-              <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center shrink-0 border border-accent/20">
+              <div className="w-10 h-10 rounded-xl bg-accent/15 items-center justify-center shrink-0 border border-accent/20 hidden md:flex">
                 <GraduationCap className="w-5 h-5 text-accent-light" />
               </div>
               <div className="min-w-0">
-                <h1 className="text-[26px] md:text-[32px] font-bold text-text-primary leading-tight">
+                <h1 className="text-[22px] md:text-[32px] font-bold text-text-primary leading-tight">
                   {tabInfo.topic}
                 </h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
@@ -256,7 +258,7 @@ export const StreamingLesson = memo(function StreamingLesson({
                     {tabInfo.difficulty}
                   </span>
                   {tabInfo.generationTime != null && (
-                    <span className="text-xs text-text-tertiary flex items-center gap-1">
+                    <span className="text-xs text-text-tertiary items-center gap-1 hidden md:flex">
                       <Clock className="w-3 h-3" />
                       Generated in {tabInfo.generationTime.toFixed(1)}s
                     </span>
@@ -280,9 +282,9 @@ export const StreamingLesson = memo(function StreamingLesson({
                 transition={{ type: 'spring', stiffness: 130, damping: 17 }}
                 style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
               >
-                <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
-                  {(() => { const ActiveIcon = getSectionIcon(activeSectionId); return <ActiveIcon className="w-6 h-6 text-accent-light" /> })()}
-                  <h1 className="text-[22px] md:text-[28px] font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
+                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 pb-3 md:pb-4 border-b border-border">
+                  {(() => { const ActiveIcon = getSectionIcon(activeSectionId); return <ActiveIcon className="w-5 h-5 md:w-6 md:h-6 text-accent-light max-md:hidden" /> })()}
+                  <h1 className="text-[20px] md:text-[28px] font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
                   <div className="ml-auto flex gap-2">
                     {currentSectionStatus === 'generating' && (
                       <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent-light text-xs font-semibold border border-accent/20 flex items-center gap-1.5">
@@ -306,9 +308,9 @@ export const StreamingLesson = memo(function StreamingLesson({
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center py-20 text-center"
+                    className="flex flex-col items-center justify-center py-10 md:py-20 text-center"
                   >
-                    <div className="empty-state-icon">
+                    <div className="empty-state-icon max-md:hidden">
                       <Loader2 className="w-6 h-6 text-text-tertiary animate-spin" />
                     </div>
                     <p className="text-sm text-text-secondary font-medium">Waiting to generate...</p>
@@ -325,7 +327,7 @@ export const StreamingLesson = memo(function StreamingLesson({
                     {/* Energy Sweep Scanline */}
                     {(currentSectionStatus === 'generating' || currentSectionStatus === 'retrying') && (
                       <motion.div
-                        className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#00f2fe] to-transparent opacity-50 z-20"
+                        className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#00f2fe] to-transparent opacity-50 z-20 max-md:hidden"
                         animate={{ top: ['0%', '100%'] }}
                         transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
                       />
@@ -391,6 +393,18 @@ export const StreamingLesson = memo(function StreamingLesson({
           </AnimatePresence>
         </div>
       </div>
+
+      {tabInfo && (
+        <FloatingReadingToolbar
+          scrollContainerRef={scrollContainerRef}
+          activeSectionId={activeSectionId}
+          tabId={tabInfo.id}
+          title={tabInfo.topic}
+          totalSections={total}
+          completedSections={done}
+          currentSectionIndex={activeSectionId ? planned.indexOf(activeSectionId) : 0}
+        />
+      )}
     </div>
   )
 })

@@ -48,8 +48,15 @@ export function AppShell() {
         handleNewLesson()
       }
     }
+    const handleToggleChat = () => {
+      setChatOpen(true)
+    }
     window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
+    window.addEventListener('mentor-toggle-chat', handleToggleChat)
+    return () => {
+      window.removeEventListener('keydown', handleKey)
+      window.removeEventListener('mentor-toggle-chat', handleToggleChat)
+    }
   }, [handleNewLesson])
 
   return (

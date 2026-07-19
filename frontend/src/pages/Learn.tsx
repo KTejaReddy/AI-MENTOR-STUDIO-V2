@@ -158,7 +158,7 @@ export function Learn() {
 
   return (
     <div className="h-full flex overflow-hidden bg-surface-50 relative">
-      <div className="h-full flex-shrink-0 w-[68px] min-[430px]:w-48 md:w-56 lg:w-64 transition-all duration-300">
+      <div className="h-full flex-shrink-0 w-[68px] md:w-56 lg:w-64 transition-all duration-300 z-20 relative">
         {sidebarVisible && activeTab && (
           <LeftSidebar
             sectionStatuses={aiGen.sectionStatuses}
@@ -195,6 +195,7 @@ export function Learn() {
                   tabInfo={
                     activeTab
                       ? {
+                          id: activeTab.id,
                           topic: activeTab.topic,
                           subject: activeTab.subject,
                           difficulty: activeTab.difficulty,

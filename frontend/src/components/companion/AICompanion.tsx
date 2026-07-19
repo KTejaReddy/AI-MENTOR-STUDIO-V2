@@ -25,7 +25,19 @@ export const AICompanion = memo(function AICompanion() {
   const listRef = useRef<HTMLDivElement>(null)
   const lastInputRef = useRef('')
 
-  useEffect(() => { inputRef.current?.focus() }, [])
+  useEffect(() => { 
+    inputRef.current?.focus() 
+    
+    const handleContextEvent = (e: Event) => {
+      const customEvent = e as CustomEvent
+      if (customEvent.detail?.context) {
+        setInput(`Regarding ${customEvent.detail.context}:\n\n`)
+        setTimeout(() => inputRef.current?.focus(), 100)
+      }
+    }
+    window.addEventListener('mentor-toggle-chat', handleContextEvent)
+    return () => window.removeEventListener('mentor-toggle-chat', handleContextEvent)
+  }, [])
 
   useEffect(() => {
     if (listRef.current) {

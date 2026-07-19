@@ -191,7 +191,7 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
         </div>
       )}
       <pre className="p-4 overflow-x-auto bg-surface-50" {...props}>
-        <code className="text-sm md:text-xs font-mono text-text-secondary leading-relaxed whitespace-pre">
+        <code className="text-[13px] leading-[1.7] md:text-xs font-mono text-text-secondary md:leading-relaxed whitespace-pre">
           {children}
         </code>
       </pre>
@@ -201,24 +201,24 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
 
 function InlineCode({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-sm md:text-xs font-mono text-accent-light border border-accent/20" {...props}>
+    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-[13px] md:text-xs font-mono text-accent-light border border-accent/20" {...props}>
       {children}
     </code>
   )
 }
 
 function Paragraph({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className="text-base md:text-xs text-text-secondary leading-relaxed mb-4 last:mb-0" {...props}>{children}</p>
+  return <p className="text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed mb-6 md:mb-4 last:mb-0" {...props}>{children}</p>
 }
 
 function Heading({ level, children, ...props }: { level: number; children?: ReactNode } & React.HTMLAttributes<HTMLHeadingElement>) {
   const sizes: Record<number, string> = {
-    1: 'text-2xl md:text-xl font-bold text-text-primary mt-8 mb-4 pb-2 border-b border-border/50',
-    2: 'text-xl md:text-lg font-semibold text-text-primary mt-7 mb-3 pb-1.5 border-b border-border/30',
-    3: 'text-lg md:text-base font-semibold text-text-primary mt-6 mb-2',
-    4: 'text-base md:text-sm font-medium text-text-primary mt-5 mb-2',
-    5: 'text-sm md:text-xs font-medium text-text-primary mt-4 mb-1',
-    6: 'text-xs font-medium text-text-tertiary mt-3 mb-1 uppercase tracking-wider',
+    1: 'text-2xl md:text-xl font-bold text-text-primary mt-10 mb-6 md:mt-8 md:mb-4 pb-2 border-b border-border/50',
+    2: 'text-xl md:text-lg font-semibold text-text-primary mt-8 mb-5 md:mt-7 md:mb-3 pb-1.5 border-b border-border/30',
+    3: 'text-lg md:text-base font-semibold text-text-primary mt-7 mb-4 md:mt-6 md:mb-2',
+    4: 'text-base md:text-sm font-medium text-text-primary mt-6 mb-3 md:mt-5 md:mb-2',
+    5: 'text-sm md:text-xs font-medium text-text-primary mt-5 mb-2 md:mt-4 md:mb-1',
+    6: 'text-[13px] md:text-xs font-medium text-text-tertiary mt-4 mb-2 md:mt-3 md:mb-1 uppercase tracking-wider',
   }
   const Tag = `h${level}` as keyof React.JSX.IntrinsicElements as any
   return <Tag className={sizes[level] || sizes[3]} {...props}>{children}</Tag>
@@ -226,8 +226,8 @@ function Heading({ level, children, ...props }: { level: number; children?: Reac
 
 function Table({ children, ...props }: { children?: ReactNode } & React.TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="overflow-x-auto my-4 rounded-lg border border-border">
-      <table className="w-full text-xs border-collapse" {...props}>
+    <div className="overflow-x-auto my-6 md:my-4 rounded-lg border border-border">
+      <table className="w-full text-[13px] md:text-xs border-collapse" {...props}>
         {children}
       </table>
     </div>
@@ -247,11 +247,11 @@ function TableBody({ children, ...props }: { children?: ReactNode } & React.HTML
 }
 
 function TableCell({ isHeader, children, ...props }: { isHeader?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLTableCellElement>) {
-  const base = 'px-4 py-2.5 text-left leading-relaxed'
+  const base = 'px-4 py-3 md:py-2.5 text-left leading-[1.7] md:leading-relaxed'
   if (isHeader) {
-    return <th className={`${base} text-xs font-semibold text-text-primary uppercase tracking-wider`} {...props}>{children}</th>
+    return <th className={`${base} text-[13px] md:text-xs font-semibold text-text-primary uppercase tracking-wider`} {...props}>{children}</th>
   }
-  return <td className={`${base} text-xs text-text-secondary`} {...props}>{children}</td>
+  return <td className={`${base} text-[14px] md:text-xs text-text-secondary`} {...props}>{children}</td>
 }
 
 function BlockQuote({ children, ...props }: { children?: ReactNode } & React.BlockquoteHTMLAttributes<HTMLElement>) {
@@ -279,8 +279,8 @@ function BlockQuote({ children, ...props }: { children?: ReactNode } & React.Blo
   }
 
   return (
-    <div className={`${bgColor} ${borderColor} border-l-4 rounded-r-lg px-4 py-3 my-4`} {...props}>
-      <div className="text-xs text-text-secondary leading-relaxed prose-sm max-w-none [&>*:last-child]:mb-0">
+    <div className={`${bgColor} ${borderColor} border-l-4 rounded-r-lg px-5 py-4 my-6 md:px-4 md:py-3 md:my-4`} {...props}>
+      <div className="text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed prose-sm max-w-none [&>*:last-child]:mb-0">
         {children}
       </div>
     </div>
@@ -299,19 +299,19 @@ function extractText(node: React.ReactNode): string {
 
 function List({ ordered, children, ...props }: { ordered?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLOListElement | HTMLUListElement>) {
   if (ordered) {
-    return <ol {...props} className="space-y-1.5 mb-4 list-decimal list-outside ml-4">{children}</ol>
+    return <ol {...props} className="space-y-2 md:space-y-1.5 mb-6 md:mb-4 list-decimal list-outside ml-4">{children}</ol>
   }
-  return <ul {...props} className="space-y-1.5 mb-4 list-disc list-outside ml-4">{children}</ul>
+  return <ul {...props} className="space-y-2 md:space-y-1.5 mb-6 md:mb-4 list-disc list-outside ml-4">{children}</ul>
 }
 
 function ListItem({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLLIElement>) {
-  return <li className="text-xs text-text-secondary leading-relaxed" {...props}>{children}</li>
+  return <li className="text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed" {...props}>{children}</li>
 }
 
 function TaskListItem({ checked, children, ...props }: { checked: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLLIElement>) {
   return (
-    <li {...props} className="flex items-start gap-2 text-xs text-text-secondary leading-relaxed mb-1.5">
-      <span className={`mt-0.5 w-3.5 h-3.5 rounded border flex items-center justify-center shrink-0 ${
+    <li {...props} className="flex items-start gap-2 text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed mb-2 md:mb-1.5">
+      <span className={`mt-[4px] md:mt-0.5 w-4 h-4 md:w-3.5 md:h-3.5 rounded border flex items-center justify-center shrink-0 ${
         checked ? 'bg-accent border-accent' : 'border-text-tertiary'
       }`}>
         {checked && (
