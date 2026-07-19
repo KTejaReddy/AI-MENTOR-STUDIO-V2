@@ -490,7 +490,7 @@ class GroqProvider(AIProvider):
                     else:
                         prompt_toks = count_prompt_tokens(request.messages, request.model)
                         comp_toks = count_tokens_tiktoken(accumulated_content, request.model)
-                        tot_toks = prompt_toks + comp_toks
+                        tot_toks = (prompt_toks + comp_toks) if (prompt_toks is not None and comp_toks is not None) else None
 
                     log_ai_request_analytics({
                         "lesson_id": lesson_id,
@@ -560,7 +560,7 @@ class GroqProvider(AIProvider):
                         "latency_ms": latency_ms,
                         "prompt_tokens": prompt_toks,
                         "completion_tokens": comp_toks,
-                        "total_tokens": prompt_toks + comp_toks,
+                        "total_tokens": (prompt_toks + comp_toks) if (prompt_toks is not None and comp_toks is not None) else None,
                         "stream_chunks": stream_chunks_count,
                         "retry_count": retry_count,
                         "fallback_used": fallback_used,
@@ -599,7 +599,7 @@ class GroqProvider(AIProvider):
                         "latency_ms": latency_ms,
                         "prompt_tokens": prompt_toks,
                         "completion_tokens": comp_toks,
-                        "total_tokens": prompt_toks + comp_toks,
+                        "total_tokens": (prompt_toks + comp_toks) if (prompt_toks is not None and comp_toks is not None) else None,
                         "stream_chunks": stream_chunks_count,
                         "retry_count": retry_count,
                         "fallback_used": fallback_used,
@@ -639,7 +639,7 @@ class GroqProvider(AIProvider):
                         "latency_ms": latency_ms,
                         "prompt_tokens": prompt_toks,
                         "completion_tokens": comp_toks,
-                        "total_tokens": prompt_toks + comp_toks,
+                        "total_tokens": (prompt_toks + comp_toks) if (prompt_toks is not None and comp_toks is not None) else None,
                         "stream_chunks": stream_chunks_count,
                         "retry_count": retry_count,
                         "fallback_used": fallback_used,

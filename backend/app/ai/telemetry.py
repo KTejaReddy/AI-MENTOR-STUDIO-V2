@@ -1,13 +1,20 @@
 import asyncio
 import logging
-import tiktoken
 from datetime import datetime, timezone
 from typing import Dict, Any, List
 
 logger = logging.getLogger(__name__)
 
-def count_tokens_tiktoken(text: str, model_name: str) -> int:
+try:
+    import tiktoken
+except ImportError:
+    tiktoken = None
+    logger.warning("tiktoken module not found. Tokenizer counting will be disabled.")
+
+def count_tokens_tiktoken(text: str, model_name: str) -> int | None:
     """Accurately count tokens in text using tiktoken BPE tokenizer."""
+    if tiktoken is None:
+        return None
     if not text:
         return 0
     try:
@@ -25,8 +32,10 @@ def count_tokens_tiktoken(text: str, model_name: str) -> int:
     
     return len(encoding.encode(text))
 
-def count_prompt_tokens(messages: List[Any], model_name: str) -> int:
+def count_prompt_tokens(messages: List[Any], model_name: str) -> int | None:
     """Calculate total prompt tokens from a list of Messages/dicts."""
+    if tiktoken is None:
+        return None
     total_tokens = 0
     for msg in messages:
         # Accept both Message dataclass objects and dict payloads
@@ -35,7 +44,7 @@ def count_prompt_tokens(messages: List[Any], model_name: str) -> int:
         
         # Structure the message markers for exact BPE count
         msg_text = f"<|im_start|>{role}\n{content}<|im_end|>\n"
-        total_tokens += count_tokens_tiktoken(msg_text, model_name)
+        total_tokens += count_tokens_tiktoken(msg_text, model_name) or 0
     total_tokens += 3  # Assistant response priming offset
     return total_tokens
 
