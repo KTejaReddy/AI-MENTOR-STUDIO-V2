@@ -87,6 +87,7 @@ export function FloatingReadingToolbar({
 
     let lastScrollY = container.scrollTop
     let ticking = false
+    let lastSaveTime = 0
 
     const handleScroll = () => {
       if (!ticking) {
@@ -113,8 +114,10 @@ export function FloatingReadingToolbar({
           }
 
           // Auto-save progress throttled
-          if (Math.abs(scrollDelta) > 50) {
+          const now = Date.now()
+          if (Math.abs(currentScrollY - lastScrollY) > 50 && now - lastSaveTime > 1000) {
             updateMemory(tabId, { scrollPosition: currentScrollY, currentSectionId: activeSectionId || null })
+            lastSaveTime = now
           }
 
           lastScrollY = currentScrollY

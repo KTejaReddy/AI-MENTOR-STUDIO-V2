@@ -18,6 +18,41 @@ const suggestions = [
   { icon: Globe, label: 'Real World', prompt: 'What are real-world applications of' },
 ]
 
+const ChatMessage = memo(function ChatMessage({ msg }: { msg: any }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={cn('flex gap-2.5', msg.role === 'user' ? 'justify-end' : 'justify-start')}
+    >
+      {msg.role === 'assistant' && (
+        <div className="w-7 h-7 rounded-lg bg-accent/15 flex items-center justify-center shrink-0 mt-1">
+          <Sparkles className="w-3.5 h-3.5 text-accent-light" />
+        </div>
+      )}
+      <div className={cn(
+        'max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed overflow-hidden',
+        msg.role === 'user'
+          ? 'bg-accent/15 text-text-primary rounded-tr-sm'
+          : 'bg-surface-100 border border-border text-text-secondary rounded-tl-sm prose-sm prose-invert prose-p:leading-normal prose-pre:my-2 prose-pre:bg-surface-200'
+      )}>
+        {msg.role === 'user' ? (
+          msg.content
+        ) : (
+          msg.content ? (
+            <MarkdownRenderer content={msg.content} />
+          ) : (
+            <div className="flex items-center gap-2 h-5 text-text-tertiary">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span className="text-xs animate-pulse">Thinking...</span>
+            </div>
+          )
+        )}
+      </div>
+    </motion.div>
+  )
+}, (prev, next) => prev.msg.id === next.msg.id && prev.msg.content === next.msg.content)
+
 export const AICompanion = memo(function AICompanion() {
   const [input, setInput] = useState('')
   const { messages, status, error, sendMessage, clear, stop } = useChat()
@@ -100,37 +135,7 @@ export const AICompanion = memo(function AICompanion() {
 
         <AnimatePresence>
           {messages.map((msg) => (
-            <motion.div
-              key={msg.id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={cn('flex gap-2.5', msg.role === 'user' ? 'justify-end' : 'justify-start')}
-            >
-              {msg.role === 'assistant' && (
-                <div className="w-7 h-7 rounded-lg bg-accent/15 flex items-center justify-center shrink-0 mt-1">
-                  <Sparkles className="w-3.5 h-3.5 text-accent-light" />
-                </div>
-              )}
-              <div className={cn(
-                'max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed overflow-hidden',
-                msg.role === 'user'
-                  ? 'bg-accent/15 text-text-primary rounded-tr-sm'
-                  : 'bg-surface-100 border border-border text-text-secondary rounded-tl-sm prose-sm prose-invert prose-p:leading-normal prose-pre:my-2 prose-pre:bg-surface-200'
-              )}>
-                {msg.role === 'user' ? (
-                  msg.content
-                ) : (
-                  msg.content ? (
-                    <MarkdownRenderer content={msg.content} />
-                  ) : (
-                    <div className="flex items-center gap-2 h-5 text-text-tertiary">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span className="text-xs animate-pulse">Thinking...</span>
-                    </div>
-                  )
-                )}
-              </div>
-            </motion.div>
+            <ChatMessage key={msg.id} msg={msg} />
           ))}
           {status === 'error' && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2.5 justify-start">

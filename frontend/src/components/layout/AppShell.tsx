@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TopNavbar } from './TopNavbar'
+import { MobileDrawer } from './MobileDrawer'
 import { AICompanion } from '@/components/companion/AICompanion'
 import { Toaster } from '@/components/ui/toaster'
 import { GlobalCommandPalette } from '@/components/layout/GlobalCommandPalette'
@@ -31,7 +32,7 @@ const pageVariants = {
 }
 
 export function AppShell() {
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 768 : true)
   const [chatOpen, setChatOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
@@ -68,6 +69,11 @@ export function AppShell() {
         onToggleChat={() => setChatOpen(!chatOpen)}
         chatOpen={chatOpen}
         onNewLesson={handleNewLesson}
+      />
+
+      <MobileDrawer
+        isOpen={sidebarOpen && window.innerWidth < 768}
+        onClose={() => setSidebarOpen(false)}
       />
 
       <div className="flex-1 flex overflow-hidden min-h-0 relative z-10 p-0 md:p-3 md:pt-2 gap-0 md:gap-3">

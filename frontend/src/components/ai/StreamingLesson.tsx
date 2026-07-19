@@ -175,7 +175,7 @@ export const StreamingLesson = memo(function StreamingLesson({
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-surface-150/80 backdrop-blur-sm border-b border-border shrink-0 sticky top-0 z-10"
+          className="sticky top-0 z-30 bg-surface/95 max-md:bg-surface-150/95 backdrop-blur-xl max-md:backdrop-blur-none border-b border-border shadow-sm"
         >
           <div className="h-1 w-full bg-surface-300">
             <motion.div
@@ -346,7 +346,6 @@ export const StreamingLesson = memo(function StreamingLesson({
 
                     <AnimatePresence mode="wait">
                       <motion.div
-                        key={activeSectionId + (showTyping ? '-typing' : '-final')}
                         initial={{ opacity: 0, filter: 'blur(8px)', y: 8 }}
                         animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
                         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}

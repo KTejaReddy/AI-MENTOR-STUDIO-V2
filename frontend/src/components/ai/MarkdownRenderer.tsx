@@ -88,7 +88,7 @@ function repairMermaid(code: string): string {
   return repairStateDiagramNotes(repaired)
 }
 
-function MermaidBlock({ chart }: { chart: string }) {
+const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -167,7 +167,7 @@ function MermaidBlock({ chart }: { chart: string }) {
   }
 
   return <div ref={ref} className="my-6 flex justify-center" />
-}
+})
 
 function CodeBlock({ className, children, ...props }: { className?: string; children?: ReactNode } & React.HTMLAttributes<HTMLPreElement>) {
   const lang = className?.replace('language-', '') || ''
