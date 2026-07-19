@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiClient, fetchProfile } from '@/lib/api/client';
 
 export interface User {
@@ -62,6 +63,7 @@ function clearAllStorage() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(getStoredUser);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   // On mount: verify token with backend — ONE attempt only.
   // The Axios 401 interceptor handles token refresh transparently.
@@ -87,6 +89,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.setItem('remember_me', 'true');
             // Clear hash from url without triggering navigation
             window.history.replaceState(null, '', window.location.pathname + window.location.search);
+            
+            const ADMIN_EMAILS = ['arkoreai0@gmail.com'];
+            if (ADMIN_EMAILS.includes(userData.email)) {
+              navigate('/ops-dashboard', { replace: true });
+            } else {
+              navigate('/', { replace: true });
+            }
           } catch (e) {
             console.error('[Auth] Failed to parse oauth data from hash');
           }
@@ -152,7 +161,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     storage.setItem('profile', JSON.stringify(userData));
     setUser(userData);
     setIsLoading(false);
-  }, []);
+
+    const ADMIN_EMAILS = ['arkoreai0@gmail.com'];
+    if (ADMIN_EMAILS.includes(userData.email)) {
+      navigate('/ops-dashboard', { replace: true });
+    } else {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
 
   const logout = useCallback(async () => {
     try {

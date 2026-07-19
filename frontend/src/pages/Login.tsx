@@ -99,12 +99,6 @@ export function Login() {
     try {
       const data = await authApi.login(email, password)
       login(data.access_token, data.refresh_token, data.user, rememberMe)
-      const ADMIN_EMAILS = ['arkoreai0@gmail.com']
-      if (ADMIN_EMAILS.includes(data.user?.email)) {
-        navigate('/ops-dashboard', { replace: true })
-      } else {
-        navigate(from, { replace: true })
-      }
     } catch (err: any) {
       const detail = err.response?.data?.detail
       if (Array.isArray(detail)) setError(detail[0]?.msg || 'Invalid input')
