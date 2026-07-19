@@ -35,6 +35,7 @@ class ReviewerAgent:
         subject: str,
         topic: str,
         difficulty: str = "intermediate",
+        lesson_id: str = None,
     ) -> ReviewResult:
         if not self.provider:
             logger.error("Provider not set for ReviewerAgent")
@@ -76,7 +77,14 @@ class ReviewerAgent:
                 ],
                 model=mid,
                 temperature=0.1,
-                max_tokens=1024
+                max_tokens=1024,
+                extra={
+                    "lesson_id": lesson_id,
+                    "section_name": f"{section_type}_review",
+                    "subject": subject,
+                    "topic": topic,
+                    "learning_mode": "default"
+                }
             )
         try:
             response = await execute_with_failover(

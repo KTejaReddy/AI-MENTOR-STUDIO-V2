@@ -9,9 +9,11 @@ import re
 import asyncio
 import httpx
 from typing import List, AsyncGenerator, Optional, Dict, Any
+from datetime import datetime, timezone
 
 from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk
 from app.ai.key_manager import KeyManager, key_manager as default_key_manager
+from app.ai.telemetry import log_ai_request_analytics, count_tokens_tiktoken, count_prompt_tokens
 
 logger = logging.getLogger(__name__)
 
@@ -181,6 +183,19 @@ class GroqProvider(AIProvider):
 
         model_tracker.start_request(request.model)
         start_time = time.time()
+        start_time_dt = datetime.now(timezone.utc)
+        
+        # Telemetry extraction
+        extra = request.extra or {}
+        lesson_id = extra.get("lesson_id")
+        section_name = extra.get("section_name")
+        subject = extra.get("subject")
+        topic = extra.get("topic")
+        learning_mode = extra.get("learning_mode")
+        retry_count = extra.get("retry_count", 0)
+        fallback_used = extra.get("fallback_used", False)
+        masked_key = api_key.key[:12] + "..." if api_key else "unknown"
+
         try:
             response = await client.post(
                 f"{self._base_url}/chat/completions",
@@ -200,8 +215,43 @@ class GroqProvider(AIProvider):
             # Sticky routing: save successful key
             self._last_successful_key[request.model] = api_key.key
             
+            # Save success telemetry
+            end_time = datetime.now(timezone.utc)
+            latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+            
+            usage = data.get("usage") or {}
+            prompt_toks = usage.get("prompt_tokens", 0)
+            comp_toks = usage.get("completion_tokens", 0)
+            tot_toks = usage.get("total_tokens", 0)
+            
+            content = data["choices"][0]["message"]["content"]
+            
+            log_ai_request_analytics({
+                "lesson_id": lesson_id,
+                "section_name": section_name,
+                "subject": subject,
+                "topic": topic,
+                "learning_mode": learning_mode,
+                "model_used": request.model,
+                "api_key_identifier": masked_key,
+                "provider": "groq",
+                "start_time": start_time_dt,
+                "end_time": end_time,
+                "latency_ms": latency_ms,
+                "prompt_tokens": prompt_toks,
+                "completion_tokens": comp_toks,
+                "total_tokens": tot_toks,
+                "stream_chunks": 0,
+                "retry_count": retry_count,
+                "fallback_used": fallback_used,
+                "success": True,
+                "response_characters": len(content),
+                "response_words": len(content.split()),
+                "response_lines": len(content.splitlines()),
+            })
+            
             return CompletionResponse(
-                content=data["choices"][0]["message"]["content"],
+                content=content,
                 model=data["model"],
                 usage=data.get("usage"),
                 raw=data,
@@ -220,25 +270,118 @@ class GroqProvider(AIProvider):
                     from app.ai.health_cache import health_cache
                     health_cache.mark_model_cooldown(request.model, quota_cooldown)
                     api_key.mark_cooldown(quota_cooldown, model_id=request.model)
-                    raise QuotaExhaustedError(f"Groq API error {status}: {response_text[:500]}")
+                    error_detail = f"QuotaExhaustedError: Groq API error {status}: {response_text[:500]}"
                 else:
                     api_key.mark_cooldown(60, model_id=request.model)
+                    error_detail = f"Groq API error {status}: {response_text[:500]}"
             elif status in (401, 403):
                 api_key.mark_failed(300, model_id=request.model)
+                error_detail = f"Groq API error {status}: {response_text[:500]}"
+            else:
+                error_detail = f"Groq API error {status}: {response_text[:500]}"
             
-            error_detail = f"Groq API error {status}: {response_text[:500]}"
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
+            
+            # Save failed telemetry
+            end_time = datetime.now(timezone.utc)
+            latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+            prompt_toks = count_prompt_tokens(request.messages, request.model)
+            
+            log_ai_request_analytics({
+                "lesson_id": lesson_id,
+                "section_name": section_name,
+                "subject": subject,
+                "topic": topic,
+                "learning_mode": learning_mode,
+                "model_used": request.model,
+                "api_key_identifier": masked_key,
+                "provider": "groq",
+                "start_time": start_time_dt,
+                "end_time": end_time,
+                "latency_ms": latency_ms,
+                "prompt_tokens": prompt_toks,
+                "completion_tokens": 0,
+                "total_tokens": prompt_toks,
+                "stream_chunks": 0,
+                "retry_count": retry_count,
+                "fallback_used": fallback_used,
+                "success": False,
+                "error_message": error_detail,
+                "response_characters": 0,
+                "response_words": 0,
+                "response_lines": 0,
+            })
             raise RuntimeError(error_detail)
         except httpx.TimeoutException:
             api_key.mark_cooldown(60, model_id=request.model)
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
+            
+            # Save failed telemetry (timeout)
+            end_time = datetime.now(timezone.utc)
+            latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+            prompt_toks = count_prompt_tokens(request.messages, request.model)
+            
+            log_ai_request_analytics({
+                "lesson_id": lesson_id,
+                "section_name": section_name,
+                "subject": subject,
+                "topic": topic,
+                "learning_mode": learning_mode,
+                "model_used": request.model,
+                "api_key_identifier": masked_key,
+                "provider": "groq",
+                "start_time": start_time_dt,
+                "end_time": end_time,
+                "latency_ms": latency_ms,
+                "prompt_tokens": prompt_toks,
+                "completion_tokens": 0,
+                "total_tokens": prompt_toks,
+                "stream_chunks": 0,
+                "retry_count": retry_count,
+                "fallback_used": fallback_used,
+                "success": False,
+                "error_message": "Groq API request timed out",
+                "response_characters": 0,
+                "response_words": 0,
+                "response_lines": 0,
+            })
             raise RuntimeError("Groq API request timed out")
         except Exception as e:
             api_key.mark_failed(60, model_id=request.model)
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
+            
+            # Save failed telemetry (other error)
+            end_time = datetime.now(timezone.utc)
+            latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+            prompt_toks = count_prompt_tokens(request.messages, request.model)
+            
+            log_ai_request_analytics({
+                "lesson_id": lesson_id,
+                "section_name": section_name,
+                "subject": subject,
+                "topic": topic,
+                "learning_mode": learning_mode,
+                "model_used": request.model,
+                "api_key_identifier": masked_key,
+                "provider": "groq",
+                "start_time": start_time_dt,
+                "end_time": end_time,
+                "latency_ms": latency_ms,
+                "prompt_tokens": prompt_toks,
+                "completion_tokens": 0,
+                "total_tokens": prompt_toks,
+                "stream_chunks": 0,
+                "retry_count": retry_count,
+                "fallback_used": fallback_used,
+                "success": False,
+                "error_message": str(e),
+                "response_characters": 0,
+                "response_words": 0,
+                "response_lines": 0,
+            })
             raise RuntimeError(f"Groq API request failed: {str(e)}")
 
     async def complete_stream(
@@ -289,6 +432,22 @@ class GroqProvider(AIProvider):
                 headers = self._build_headers(api_key.key)
                 success = False
 
+                # Telemetry variables
+                start_time_dt = datetime.now(timezone.utc)
+                stream_chunks_count = 0
+                accumulated_content = ""
+                api_usage = None
+                masked_key = api_key.key[:12] + "..." if api_key else "unknown"
+                
+                extra = request.extra or {}
+                lesson_id = extra.get("lesson_id")
+                section_name = extra.get("section_name")
+                subject = extra.get("subject")
+                topic = extra.get("topic")
+                learning_mode = extra.get("learning_mode")
+                retry_count = extra.get("retry_count", attempt)
+                fallback_used = extra.get("fallback_used", False) or (attempt > 0)
+
                 try:
                     async with client.stream(
                         "POST",
@@ -300,10 +459,14 @@ class GroqProvider(AIProvider):
                         async for line in response.aiter_lines():
                             chunk = self._parse_sse_line(line)
                             if chunk is not None:
+                                stream_chunks_count += 1
                                 if chunk.content:
+                                    accumulated_content += chunk.content
                                     completion_tokens += len(chunk.content.split())
-                                if chunk.usage and "completion_tokens" in chunk.usage:
-                                    completion_tokens = chunk.usage["completion_tokens"]
+                                if chunk.usage:
+                                    api_usage = chunk.usage
+                                    if "completion_tokens" in chunk.usage:
+                                        completion_tokens = chunk.usage["completion_tokens"]
                                 yield chunk
                                 if chunk.finish_reason == "stop":
                                     success = True
@@ -315,6 +478,43 @@ class GroqProvider(AIProvider):
                         
                     api_key.record_use()
                     self._last_successful_key[request.model] = api_key.key
+                    
+                    # Log successful stream
+                    end_time = datetime.now(timezone.utc)
+                    latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+                    
+                    if api_usage:
+                        prompt_toks = api_usage.get("prompt_tokens", 0)
+                        comp_toks = api_usage.get("completion_tokens", 0)
+                        tot_toks = api_usage.get("total_tokens", 0)
+                    else:
+                        prompt_toks = count_prompt_tokens(request.messages, request.model)
+                        comp_toks = count_tokens_tiktoken(accumulated_content, request.model)
+                        tot_toks = prompt_toks + comp_toks
+
+                    log_ai_request_analytics({
+                        "lesson_id": lesson_id,
+                        "section_name": section_name,
+                        "subject": subject,
+                        "topic": topic,
+                        "learning_mode": learning_mode,
+                        "model_used": request.model,
+                        "api_key_identifier": masked_key,
+                        "provider": "groq",
+                        "start_time": start_time_dt,
+                        "end_time": end_time,
+                        "latency_ms": latency_ms,
+                        "prompt_tokens": prompt_toks,
+                        "completion_tokens": comp_toks,
+                        "total_tokens": tot_toks,
+                        "stream_chunks": stream_chunks_count,
+                        "retry_count": retry_count,
+                        "fallback_used": fallback_used,
+                        "success": True,
+                        "response_characters": len(accumulated_content),
+                        "response_words": len(accumulated_content.split()),
+                        "response_lines": len(accumulated_content.splitlines()),
+                    })
                     return
 
                 except httpx.HTTPStatusError as e:
@@ -326,27 +526,90 @@ class GroqProvider(AIProvider):
                     except Exception:
                         pass
                         
+                    error_detail = f"HTTP {status}: {response_text[:500]}"
                     if status in (429, 503):
                         quota_cooldown = _parse_groq_quota_error(response_text)
                         if quota_cooldown:
                             from app.ai.health_cache import health_cache
                             health_cache.mark_model_cooldown(request.model, quota_cooldown)
                             api_key.mark_cooldown(quota_cooldown, model_id=request.model)
-                            yield StreamChunk(content="", error=f"QuotaExhaustedError: {response_text[:200]}")
-                            return
+                            error_detail = f"QuotaExhaustedError: {response_text[:200]}"
                         else:
                             api_key.mark_cooldown(60, model_id=request.model)
                     else:
                         api_key.mark_failed(300, model_id=request.model)
                         excluded_keys.add(api_key.key)
-                        
+
+                    # Log failed stream
+                    end_time = datetime.now(timezone.utc)
+                    latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+                    prompt_toks = count_prompt_tokens(request.messages, request.model)
+                    comp_toks = count_tokens_tiktoken(accumulated_content, request.model)
+                    
+                    log_ai_request_analytics({
+                        "lesson_id": lesson_id,
+                        "section_name": section_name,
+                        "subject": subject,
+                        "topic": topic,
+                        "learning_mode": learning_mode,
+                        "model_used": request.model,
+                        "api_key_identifier": masked_key,
+                        "provider": "groq",
+                        "start_time": start_time_dt,
+                        "end_time": end_time,
+                        "latency_ms": latency_ms,
+                        "prompt_tokens": prompt_toks,
+                        "completion_tokens": comp_toks,
+                        "total_tokens": prompt_toks + comp_toks,
+                        "stream_chunks": stream_chunks_count,
+                        "retry_count": retry_count,
+                        "fallback_used": fallback_used,
+                        "success": False,
+                        "error_message": error_detail,
+                        "response_characters": len(accumulated_content),
+                        "response_words": len(accumulated_content.split()),
+                        "response_lines": len(accumulated_content.splitlines()),
+                    })
+
                     if self._api_key:
-                        yield StreamChunk(content="", error=f"HTTP {status}: {response_text[:200]}")
+                        yield StreamChunk(content="", error=error_detail)
                         return
                     continue
 
                 except httpx.TimeoutException:
                     api_key.mark_cooldown(30, model_id=request.model)
+                    
+                    # Log failed stream (timeout)
+                    end_time = datetime.now(timezone.utc)
+                    latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+                    prompt_toks = count_prompt_tokens(request.messages, request.model)
+                    comp_toks = count_tokens_tiktoken(accumulated_content, request.model)
+                    
+                    log_ai_request_analytics({
+                        "lesson_id": lesson_id,
+                        "section_name": section_name,
+                        "subject": subject,
+                        "topic": topic,
+                        "learning_mode": learning_mode,
+                        "model_used": request.model,
+                        "api_key_identifier": masked_key,
+                        "provider": "groq",
+                        "start_time": start_time_dt,
+                        "end_time": end_time,
+                        "latency_ms": latency_ms,
+                        "prompt_tokens": prompt_toks,
+                        "completion_tokens": comp_toks,
+                        "total_tokens": prompt_toks + comp_toks,
+                        "stream_chunks": stream_chunks_count,
+                        "retry_count": retry_count,
+                        "fallback_used": fallback_used,
+                        "success": False,
+                        "error_message": "Groq API request timed out",
+                        "response_characters": len(accumulated_content),
+                        "response_words": len(accumulated_content.split()),
+                        "response_lines": len(accumulated_content.splitlines()),
+                    })
+
                     if self._api_key:
                         yield StreamChunk(content="", error="Request timed out")
                         return
@@ -355,6 +618,38 @@ class GroqProvider(AIProvider):
                 except Exception as e:
                     api_key.mark_failed(60, model_id=request.model)
                     excluded_keys.add(api_key.key)
+                    
+                    # Log failed stream (general exception)
+                    end_time = datetime.now(timezone.utc)
+                    latency_ms = (end_time - start_time_dt).total_seconds() * 1000.0
+                    prompt_toks = count_prompt_tokens(request.messages, request.model)
+                    comp_toks = count_tokens_tiktoken(accumulated_content, request.model)
+                    
+                    log_ai_request_analytics({
+                        "lesson_id": lesson_id,
+                        "section_name": section_name,
+                        "subject": subject,
+                        "topic": topic,
+                        "learning_mode": learning_mode,
+                        "model_used": request.model,
+                        "api_key_identifier": masked_key,
+                        "provider": "groq",
+                        "start_time": start_time_dt,
+                        "end_time": end_time,
+                        "latency_ms": latency_ms,
+                        "prompt_tokens": prompt_toks,
+                        "completion_tokens": comp_toks,
+                        "total_tokens": prompt_toks + comp_toks,
+                        "stream_chunks": stream_chunks_count,
+                        "retry_count": retry_count,
+                        "fallback_used": fallback_used,
+                        "success": False,
+                        "error_message": str(e),
+                        "response_characters": len(accumulated_content),
+                        "response_words": len(accumulated_content.split()),
+                        "response_lines": len(accumulated_content.splitlines()),
+                    })
+
                     if self._api_key:
                         yield StreamChunk(content="", error=f"Request failed: {str(e)}")
                         return
@@ -390,6 +685,8 @@ class GroqProvider(AIProvider):
     def _build_payload(self, request: CompletionRequest, stream: bool = False) -> Dict[str, Any]:
         payload = request.to_dict()
         payload["stream"] = stream
+        if stream:
+            payload["stream_options"] = {"include_usage": True}
         return payload
 
     def _build_headers(self, api_key: str) -> Dict[str, str]:

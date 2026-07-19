@@ -5,6 +5,8 @@ import logging
 import time
 from typing import AsyncGenerator, Dict, Any, Optional, List
 
+from app.ai.broadcaster import ops_broadcaster
+
 from app.ai.base import AIProvider, CompletionRequest, Message
 from app.ai.groq_provider import GroqProvider
 from app.ai.key_manager import key_manager
@@ -182,11 +184,16 @@ class Gateway:
         }
 
         active_stream = await stream_manager.create(subject, topic)
-        yield {
+        start_event = {
             "type": "stream_start",
             "engine_id": active_stream.id,
             "model": model_id,
+            "lesson_id": active_stream.id,
+            "subject": subject,
+            "topic": topic,
         }
+        ops_broadcaster.broadcast(start_event)
+        yield start_event
 
         start_time = time.time()
 
@@ -196,9 +203,10 @@ class Gateway:
             async for event in generate_lesson_v2(
                 provider, subject, topic, difficulty, learning_mode, active_stream.id, sections_planned, source_material=context, is_document=is_document
             ):
+                yielded_event = None
                 if event["type"] == "plan":
                     # Forward planner decision to frontend immediately
-                    yield {
+                    yielded_event = {
                         "type": "plan",
                         "sections": event.get("sections", []),
                         "section_titles": event.get("section_titles", {}),
@@ -206,7 +214,7 @@ class Gateway:
                         "engine_id": active_stream.id,
                     }
                 elif event["type"] == "section_done":
-                    yield {
+                    yielded_event = {
                         "type": "section_done",
                         "section_type": event["section_type"],
                         "section_data": event["section_data"],
@@ -217,7 +225,7 @@ class Gateway:
                         "quality_score": event.get("quality_score"),
                     }
                 elif event["type"] == "section_status":
-                    yield {
+                    yielded_event = {
                         "type": "section_status",
                         "section_type": event["section_type"],
                         "status": event["status"],
@@ -225,30 +233,30 @@ class Gateway:
                         "engine_id": active_stream.id,
                     }
                 elif event["type"] in ("section_queued", "section_running", "section_started", "section_retry", "section_fallback"):
-                    yield {
+                    yielded_event = {
                         **event,
                         "engine_id": active_stream.id
                     }
                 elif event["type"] == "section_chunk":
-                    yield {
+                    yielded_event = {
                         "type": "section_chunk",
                         "section_type": event["section_type"],
                         "content": event.get("content", ""),
                         "engine_id": active_stream.id,
                     }
                 elif event["type"] == "section_clear":
-                    yield {
+                    yielded_event = {
                         "type": "section_clear",
                         "section_type": event["section_type"],
                         "engine_id": active_stream.id,
                     }
                 elif event["type"] == "done":
-                    yield event
+                    yielded_event = event
                 elif event["type"] == "lesson":
                     lesson_data = event["data"]
                     lesson_cache.set(subject, topic, difficulty, learning_mode, lesson_data)
                     mapped = self.map_lesson(lesson_data)
-                    yield {
+                    yielded_event = {
                         "type": "lesson",
                         "data": lesson_data,
                         "mapped": mapped,
@@ -259,17 +267,31 @@ class Gateway:
                     }
                     health_monitor.record_request(True, (time.time() - start_time) * 1000)
                 elif event["type"] == "error":
-                    yield event
+                    yielded_event = event
+                
+                if yielded_event:
+                    ops_broadcaster.broadcast({
+                        "lesson_id": active_stream.id,
+                        "subject": subject,
+                        "topic": topic,
+                        **yielded_event
+                    })
+                    yield yielded_event
         except Exception as e:
             total_time = time.time() - start_time
             logger.error("Teaching Orchestrator failed at %.2fs: %s", total_time, str(e), exc_info=True)
-            yield {
+            err_event = {
                 "type": "error", 
                 "content": f"Generation failed: {str(e)}", 
                 "code": "ORCHESTRATOR_EXCEPTION", 
                 "stage": "orchestrator",
-                "details": str(e)
+                "details": str(e),
+                "lesson_id": active_stream.id,
+                "subject": subject,
+                "topic": topic,
             }
+            ops_broadcaster.broadcast(err_event)
+            yield err_event
 
         finally:
             await stream_manager.remove(active_stream.id)

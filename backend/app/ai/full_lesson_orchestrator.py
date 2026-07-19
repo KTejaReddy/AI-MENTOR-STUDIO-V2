@@ -71,7 +71,16 @@ def validate_json_quiz(json_obj: Dict) -> tuple[List[str], Dict]:
         
     return issues, json_obj
 
-async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, difficulty: str, needed_count: int = 10, existing_questions: List[Dict] = None, learning_mode: str = "default") -> Dict:
+async def _generate_quiz_json(
+    provider: AIProvider,
+    subject: str,
+    topic: str,
+    difficulty: str,
+    needed_count: int = 10,
+    existing_questions: List[Dict] = None,
+    learning_mode: str = "default",
+    engine_id: str = None
+) -> Dict:
     if existing_questions is None:
         existing_questions = []
         
@@ -107,7 +116,14 @@ async def _generate_quiz_json(provider: AIProvider, subject: str, topic: str, di
             model=mid,
             temperature=0.3,
             max_tokens=5000,
-            stream=False
+            stream=False,
+            extra={
+                "lesson_id": engine_id,
+                "section_name": "quiz",
+                "subject": subject,
+                "topic": topic,
+                "learning_mode": learning_mode
+            }
         )
         
     try:
@@ -310,6 +326,13 @@ async def generate_lesson_full(
             temperature=0.7,
             max_tokens=8192,
             stream=True,
+            extra={
+                "lesson_id": engine_id,
+                "section_name": "full_lesson",
+                "subject": subject,
+                "topic": topic,
+                "learning_mode": learning_mode
+            }
         )
 
     accumulated_content = {st: "" for st, _ in active_sections}
@@ -632,7 +655,7 @@ async def generate_lesson_full(
                     logger.info("ENTER_QUIZ_PIPELINE")
                     
                     # Step 1: Generate initial JSON quiz
-                    json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [], learning_mode)
+                    json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [], learning_mode, engine_id)
                     logger.info(f"RAW_JSON_QUIZ: {json.dumps(json_obj)}")
                     
                     quiz_issues, valid_json = validate_json_quiz(json_obj)
@@ -644,7 +667,7 @@ async def generate_lesson_full(
                         if needed > 0:
                             # Generate only missing questions
                             new_json_obj = await _generate_quiz_json(
-                                provider, subject, topic, difficulty, needed, valid_json.get("questions", []), learning_mode
+                                provider, subject, topic, difficulty, needed, valid_json.get("questions", []), learning_mode, engine_id
                             )
                             # Merge questions
                             if new_json_obj and isinstance(new_json_obj.get("questions"), list):
@@ -712,7 +735,7 @@ async def generate_lesson_full(
                     yield {"type": "ping", "timestamp": time.time()}
                     continue
                 
-                review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty)
+                review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty, lesson_id=engine_id)
                 yield {"type": "ping", "timestamp": time.time()}
                 
                 if not review_result.passed:

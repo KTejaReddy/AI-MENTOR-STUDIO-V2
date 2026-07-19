@@ -17,6 +17,9 @@ import { CompilerLab } from '@/pages/CompilerLab'
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute'
 import { Login } from '@/pages/Login'
 import { Register } from '@/pages/Register'
+import { AdminRoute } from '@/components/layout/AdminRoute'
+import { Dashboard } from '@/pages/ops/Dashboard'
+import { NotFound } from '@/pages/NotFound'
 
 export default function App() {
   return (
@@ -28,6 +31,11 @@ export default function App() {
               {/* Public auth routes - no layout */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+
+              {/* Admin Protected Dashboard */}
+              <Route element={<AdminRoute />}>
+                <Route path="/ops-dashboard" element={<Dashboard />} />
+              </Route>
 
               {/* App layout with navbar/sidebar */}
               <Route element={<AppShell />}>
@@ -45,8 +53,10 @@ export default function App() {
 
                 {/* Public pages inside app shell */}
                 <Route path="/about" element={<About />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
               </Route>
+
+              {/* Catch-all for routing failures */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </TabProvider>
         </AuthProvider>
