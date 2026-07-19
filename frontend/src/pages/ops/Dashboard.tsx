@@ -324,17 +324,26 @@ export function Dashboard() {
 
   // --- Beautiful custom SVG line chart generator ---
   const renderLineChart = (data: any[], valKey: string, stroke: string, fillGradId: string) => {
-    if (!data || data.length === 0) return <div className="text-xs text-text-tertiary">No data available</div>
+    if (!data || data.length === 0) return <div className="text-xs text-text-tertiary flex h-full items-center justify-center">No analytics data yet</div>
     
     const w = 500
     const h = 180
     const padding = 25
     
-    const maxVal = Math.max(...data.map(d => d[valKey]), 10)
+    const rawValues = data.map(d => Number(d[valKey]) || 0)
+    const actualMax = Math.max(...rawValues, 0)
+    const safeMax = Math.max(actualMax, 1) // Prevent division by zero
+    
     const points = data.map((d, i) => {
-      const x = padding + (i / (data.length - 1)) * (w - padding * 2)
-      const y = h - padding - (d[valKey] / maxVal) * (h - padding * 2)
-      return { x, y, label: d.date, value: d[valKey] }
+      const safeCount = Math.max(data.length - 1, 1)
+      const x = data.length === 1 
+        ? w / 2 
+        : padding + (i / safeCount) * (w - padding * 2)
+        
+      const safeVal = Number(d[valKey]) || 0
+      const y = h - padding - (safeVal / safeMax) * (h - padding * 2)
+      
+      return { x, y, label: d.date || '', value: safeVal }
     })
     
     const pathD = points.reduce((acc, p, i) => {
@@ -379,13 +388,13 @@ export function Dashboard() {
         {points.length > 0 && (
           <>
             <text x={points[0].x} y={h - 6} fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="start">
-              {points[0].label.slice(5)}
+              {points[0].label ? points[0].label.slice(5) : ''}
             </text>
             <text x={points[points.length - 1].x} y={h - 6} fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="end">
-              {points[points.length - 1].label.slice(5)}
+              {points[points.length - 1].label ? points[points.length - 1].label.slice(5) : ''}
             </text>
             <text x={padding - 4} y={padding + 4} fill="rgba(255,255,255,0.3)" fontSize="8" textAnchor="end">
-              {maxVal.toLocaleString()}
+              {actualMax.toLocaleString()}
             </text>
           </>
         )}
