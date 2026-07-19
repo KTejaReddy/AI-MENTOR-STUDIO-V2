@@ -8,23 +8,38 @@ import mermaid from 'mermaid'
 import { ReactNode } from 'react'
 import 'katex/dist/katex.min.css'
 
-mermaid.initialize({
-  startOnLoad: false,
-  securityLevel: 'loose',
-  theme: 'base',
-  themeVariables: {
-    primaryColor: 'transparent',
-    primaryTextColor: 'var(--text-primary)',
-    primaryBorderColor: 'var(--accent)',
-    lineColor: 'var(--text-tertiary)',
-    secondaryColor: 'var(--surface-200)',
-    tertiaryColor: 'var(--surface-100)',
-    fontSize: '12px',
-  },
-  flowchart: { useMaxWidth: true, htmlLabels: true },
-  sequence: { useMaxWidth: true },
-  gantt: { useMaxWidth: true },
-})
+const lightThemeVariables = {
+  primaryColor: 'transparent',
+  primaryTextColor: '#111827',
+  primaryBorderColor: '#00C2FF',
+  lineColor: '#6B7280',
+  secondaryColor: '#F3F4F6',
+  tertiaryColor: '#FFFFFF',
+  fontSize: '12px',
+}
+
+const darkThemeVariables = {
+  primaryColor: 'transparent',
+  primaryTextColor: '#f8fafc',
+  primaryBorderColor: '#00f2fe',
+  lineColor: '#64748b',
+  secondaryColor: '#101224',
+  tertiaryColor: '#080812',
+  fontSize: '12px',
+}
+
+function initMermaidTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark')
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: 'base',
+    themeVariables: isDark ? darkThemeVariables : lightThemeVariables,
+    flowchart: { useMaxWidth: true, htmlLabels: true },
+    sequence: { useMaxWidth: true },
+    gantt: { useMaxWidth: true },
+  })
+}
 
 /** Fix invalid `note "text"` in stateDiagram-v2 by converting to proper `note right of` syntax. */
 function repairStateDiagramNotes(code: string): string {
@@ -104,6 +119,7 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
 
     const originalCode = chart
     const tryRender = async (code: string, isRetry: boolean) => {
+      initMermaidTheme()
       const id = `md-mermaid-${Math.random().toString(36).slice(2, 9)}`
       if (isRetry) {
         try {
