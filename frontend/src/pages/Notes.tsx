@@ -193,7 +193,7 @@ export function Notes() {
               </div>
               <div className="flex-1 p-8 overflow-y-auto scrollbar-thin max-w-4xl mx-auto w-full leading-relaxed">
                 {previewMode ? (
-                  <div className="prose prose-invert max-w-none text-sm leading-loose">
+                  <div className="prose dark:prose-invert max-w-none text-sm leading-loose">
                     <MarkdownRenderer content={selected.content} />
                   </div>
                 ) : (

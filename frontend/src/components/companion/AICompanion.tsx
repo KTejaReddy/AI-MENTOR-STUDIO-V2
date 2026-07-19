@@ -34,7 +34,7 @@ const ChatMessage = memo(function ChatMessage({ msg }: { msg: any }) {
         'max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed overflow-hidden',
         msg.role === 'user'
           ? 'bg-accent/15 text-text-primary rounded-tr-sm'
-          : 'bg-surface-100 border border-border text-text-secondary rounded-tl-sm prose-sm prose-invert prose-p:leading-normal prose-pre:my-2 prose-pre:bg-surface-200'
+          : 'bg-surface-100 border border-border text-text-secondary rounded-tl-sm prose-sm dark:prose-invert prose-p:leading-normal prose-pre:my-2 prose-pre:bg-surface-200'
       )}>
         {msg.role === 'user' ? (
           msg.content

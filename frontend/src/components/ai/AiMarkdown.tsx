@@ -11,7 +11,7 @@ export const AiMarkdown = memo(function AiMarkdown({ content, className }: AiMar
   if (!content) return null
 
   return (
-    <div className={cn('prose prose-invert max-w-none text-sm', className)}>
+    <div className={cn('prose dark:prose-invert max-w-none text-sm', className)}>
       <ReactMarkdown
         components={{
           h1: ({ children, ...props }) => (

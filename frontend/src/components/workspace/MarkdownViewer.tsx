@@ -25,7 +25,7 @@ export function MarkdownViewer({ content, className }: MarkdownViewerProps) {
 
   return (
     <ScrollArea className={cn('h-full', className)}>
-      <div className="prose prose-invert max-w-none px-1">
+      <div className="prose dark:prose-invert max-w-none px-1">
         {/* Simple markdown rendering - will be replaced with react-markdown */}
         <div className="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap">
           {content}

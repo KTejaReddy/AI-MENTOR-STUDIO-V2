@@ -109,7 +109,7 @@ const sectionContentMap: Record<string, ReactNode> = {
       icon={<BookOpenText className="w-4 h-4 text-accent-light" />}
       title="Explanation"
     >
-      <div className="prose prose-invert max-w-none text-sm text-text-secondary leading-relaxed space-y-4">
+      <div className="prose dark:prose-invert max-w-none text-sm text-text-secondary leading-relaxed space-y-4">
         <p>A <strong>Binary Search Tree (BST)</strong> is a node-based binary tree data structure with the following properties:</p>
         <ul className="space-y-2">
           <li>The left subtree of a node contains only nodes with keys <strong>less than</strong> the node's key</li>
