@@ -249,14 +249,7 @@ export const StreamingLesson = memo(function StreamingLesson({
                       {tabInfo.subject}
                     </span>
                   )}
-                  <span
-                    className={cn(
-                      'px-2 py-0.5 rounded-full text-xs font-semibold border capitalize',
-                      difficultyColors[tabInfo.difficulty] || 'text-text-tertiary bg-surface-200 border-border',
-                    )}
-                  >
-                    {tabInfo.difficulty}
-                  </span>
+
                   {tabInfo.generationTime != null && (
                     <span className="text-xs text-text-tertiary items-center gap-1 hidden md:flex">
                       <Clock className="w-3 h-3" />
