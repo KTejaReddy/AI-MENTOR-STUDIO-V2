@@ -5,7 +5,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional, List, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from sqlalchemy import func, desc, and_, or_, Integer, cast, Date
+from sqlalchemy import func, desc, and_, or_, Integer, cast, Date, case
 from sse_starlette.sse import EventSourceResponse
 
 from app.db.session import get_db
@@ -200,9 +200,9 @@ def get_models_stats(
         func.avg(AiRequestAnalytics.total_tokens).label("avg_tokens"),
         func.avg(AiRequestAnalytics.latency_ms).label("avg_latency"),
         func.avg(AiRequestAnalytics.response_characters).label("avg_chars"),
-        func.sum(func.cast(AiRequestAnalytics.success == False, Integer)).label("failures"),
+        func.sum(case((AiRequestAnalytics.success == False, 1), else_=0)).label("failures"),
         func.sum(AiRequestAnalytics.retry_count).label("retries"),
-        func.sum(func.cast(AiRequestAnalytics.fallback_used, Integer)).label("fallbacks"),
+        func.sum(case((AiRequestAnalytics.fallback_used == True, 1), else_=0)).label("fallbacks"),
     ).group_by(AiRequestAnalytics.model_used).all()
 
     today_stats = db.query(
@@ -341,7 +341,7 @@ def get_keys_stats(
         func.count(AiRequestAnalytics.id).label("requests"),
         func.sum(AiRequestAnalytics.total_tokens).label("tokens"),
         func.avg(AiRequestAnalytics.latency_ms).label("avg_latency"),
-        func.sum(func.cast(AiRequestAnalytics.success == False, Integer)).label("failures"),
+        func.sum(case((AiRequestAnalytics.success == False, 1), else_=0)).label("failures"),
     ).group_by(AiRequestAnalytics.api_key_identifier).all()
 
     stats_map = {row.api_key_identifier: row for row in key_stats}
@@ -479,7 +479,7 @@ def get_errors_dashboard(
 
     # Retries and fallbacks (overall today)
     retries = db.query(func.sum(AiRequestAnalytics.retry_count)).scalar() or 0
-    fallbacks = db.query(func.sum(func.cast(AiRequestAnalytics.fallback_used, Integer))).scalar() or 0
+    fallbacks = db.query(func.sum(case((AiRequestAnalytics.fallback_used == True, 1), else_=0))).scalar() or 0
     
     cancelled = error_query.filter(
         or_(
@@ -519,7 +519,7 @@ def get_charts_data(
         func.avg(AiRequestAnalytics.latency_ms).label("latency")
     ).filter(
         AiRequestAnalytics.request_timestamp >= start_date
-    ).group_by("date").order_by("date").all()
+    ).group_by(date_group).order_by(date_group).all()
 
     # 2. Model distribution
     model_dist = db.query(
