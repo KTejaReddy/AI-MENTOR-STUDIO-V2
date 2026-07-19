@@ -9,22 +9,32 @@ import { ReactNode } from 'react'
 import 'katex/dist/katex.min.css'
 
 const lightThemeVariables = {
-  primaryColor: 'transparent',
+  primaryColor: '#FFFFFF',
   primaryTextColor: '#111827',
-  primaryBorderColor: '#00C2FF',
+  textColor: '#111827',
   lineColor: '#6B7280',
-  secondaryColor: '#F3F4F6',
-  tertiaryColor: '#FFFFFF',
+  mainBkg: '#FFFFFF',
+  primaryBorderColor: '#00C2FF',
+  secondaryBorderColor: '#9CA3AF',
+  tertiaryBorderColor: '#D1D5DB',
+  clusterBkg: '#F3F4F6',
+  clusterBorder: '#D1D5DB',
+  edgeLabelBackground: '#FFFFFF',
   fontSize: '12px',
 }
 
 const darkThemeVariables = {
-  primaryColor: 'transparent',
+  primaryColor: '#080812',
   primaryTextColor: '#f8fafc',
+  textColor: '#f8fafc',
+  lineColor: '#94a3b8',
+  mainBkg: '#080812',
   primaryBorderColor: '#00f2fe',
-  lineColor: '#64748b',
-  secondaryColor: '#101224',
-  tertiaryColor: '#080812',
+  secondaryBorderColor: '#475569',
+  tertiaryBorderColor: '#334155',
+  clusterBkg: '#101224',
+  clusterBorder: '#1c2040',
+  edgeLabelBackground: '#080812',
   fontSize: '12px',
 }
 
