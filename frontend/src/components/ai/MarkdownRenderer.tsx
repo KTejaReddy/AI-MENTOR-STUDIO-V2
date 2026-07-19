@@ -8,6 +8,9 @@ import mermaid from 'mermaid'
 import { ReactNode } from 'react'
 import 'katex/dist/katex.min.css'
 
+mermaid.initialize({ startOnLoad: false })
+
+
 const lightThemeVariables = {
   primaryColor: '#FFFFFF',
   primaryTextColor: '#111827',
