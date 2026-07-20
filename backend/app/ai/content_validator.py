@@ -15,7 +15,10 @@ def validate_and_repair_latex(text: str) -> Tuple[str, bool]:
     repaired = text
     is_valid = True
 
-    # 1. Double/Triple delimiter normalization (e.g. $$$ or $$$$ -> $$)
+    # 1. Globally normalize double-escaped begin/end tags so they are correctly matched and wrapped
+    repaired = re.sub(r'\\\\(begin|end)', r'\\\1', repaired)
+
+    # 2. Double/Triple delimiter normalization (e.g. $$$ or $$$$ -> $$)
     repaired = re.sub(r'\${3,}', '$$', repaired)
 
     # Temporary hide valid block math to find bare environments easily
@@ -27,7 +30,7 @@ def validate_and_repair_latex(text: str) -> Tuple[str, bool]:
     repaired = re.sub(r'\$\$[\s\S]*?\$\$', hide_double_dollar, repaired)
     repaired = re.sub(r'\\\[[\s\S]*?\\\]', hide_double_dollar, repaired)
 
-    # 2. Ensure un-delimited LaTeX environments are wrapped in $$
+    # 3. Ensure un-delimited LaTeX environments are wrapped in $$
     # Since all valid blocks are hidden, any remaining \begin is bare!
     def wrap_bare(match):
         return f"\n$$\n{match.group(0).strip()}\n$$\n"
@@ -37,15 +40,15 @@ def validate_and_repair_latex(text: str) -> Tuple[str, bool]:
     for idx, block in enumerate(block_maths):
         repaired = repaired.replace(f"__BLOCK_MATH_{idx}__", block)
 
-    # 3. Unmatched dollar signs ($) repair/balancing
+    # 4. Unmatched dollar signs ($) repair/balancing
     repaired, math_ok = _balance_inline_math_delimiters(repaired)
     if not math_ok:
         is_valid = False
 
-    # 4. Repair malformed matrix syntax (missing \\ row breaks inside matrix blocks)
+    # 5. Repair malformed matrix syntax (missing \\ row breaks inside matrix blocks)
     repaired = _repair_matrix_syntax(repaired)
 
-    # 5. Fix double-escaped backslashes inside math blocks (e.g., \\begin -> \begin, \\alpha -> \alpha)
+    # 6. Fix double-escaped backslashes inside math blocks (e.g., \\begin -> \begin, \\alpha -> \alpha)
     repaired = _fix_math_escapes(repaired)
 
     was_changed = repaired != original
