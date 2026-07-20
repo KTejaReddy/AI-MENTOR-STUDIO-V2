@@ -11,7 +11,7 @@ import httpx
 from typing import List, AsyncGenerator, Optional, Dict, Any
 from datetime import datetime, timezone
 
-from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk
+from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk, ClientRequestError
 from app.ai.key_manager import KeyManager, key_manager as default_key_manager
 from app.ai.telemetry import log_ai_request_analytics, count_tokens_tiktoken, count_prompt_tokens
 
@@ -296,9 +296,10 @@ class GroqProvider(AIProvider):
                 else:
                     api_key.mark_cooldown(60, model_id=request.model)
                     error_detail = f"Groq API error {status}: {response_text[:500]}"
-            elif status in (401, 403):
+            elif status in (400, 401, 403, 422):
                 api_key.mark_failed(300, model_id=request.model)
-                error_detail = f"Groq API error {status}: {response_text[:500]}"
+                error_detail = f"ClientRequestError: Groq API error {status}: {response_text[:500]}"
+                client_error = True
             else:
                 error_detail = f"Groq API error {status}: {response_text[:500]}"
             
@@ -334,6 +335,8 @@ class GroqProvider(AIProvider):
                 "response_words": 0,
                 "response_lines": 0,
             })
+            if status in (400, 401, 403, 422):
+                raise ClientRequestError(error_detail)
             raise RuntimeError(error_detail)
         except httpx.TimeoutException:
             api_key.mark_cooldown(60, model_id=request.model)
@@ -558,6 +561,11 @@ class GroqProvider(AIProvider):
                             error_detail = f"QuotaExhaustedError: {response_text[:200]}"
                         else:
                             api_key.mark_cooldown(60, model_id=request.model)
+                    elif status in (400, 401, 403, 422):
+                        # Client error, don't ban the key permanently, but exclude for this stream
+                        api_key.mark_failed(300, model_id=request.model)
+                        excluded_keys.add(api_key.key)
+                        client_error = True
                     else:
                         api_key.mark_failed(300, model_id=request.model)
                         excluded_keys.add(api_key.key)
@@ -593,8 +601,14 @@ class GroqProvider(AIProvider):
                         "response_lines": len(accumulated_content.splitlines()),
                     })
 
-                    if self._api_key:
-                        yield StreamChunk(content="", error=error_detail)
+                    if self._api_key or status in (400, 422):
+                        # For 400/422, failing over won't help if the request payload itself is bad.
+                        # But for 401/403, a different key might work. Wait, the instructions said:
+                        # "Update health logic so that 400, 401, 403, 422 do NOT mark a model unhealthy."
+                        # We will raise ClientRequestError instead of yielding StreamChunk, 
+                        # or we yield StreamChunk with a special error format?
+                        # `stream_with_failover` checks `chunk.error` and raises RuntimeError.
+                        yield StreamChunk(content="", error=error_detail, finish_reason="client_error")
                         return
                     continue
 

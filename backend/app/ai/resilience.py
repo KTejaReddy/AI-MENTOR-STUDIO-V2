@@ -1,7 +1,7 @@
 import logging
 import time
 from typing import AsyncGenerator, Callable, Any
-from app.ai.base import CompletionRequest, CompletionResponse, StreamChunk
+from app.ai.base import CompletionRequest, CompletionResponse, StreamChunk, ClientRequestError
 from app.ai.model_pool import model_pool
 from app.ai.model_router import model_router
 from app.ai.base import AIProvider
@@ -41,7 +41,8 @@ async def execute_with_failover(
             
         except Exception as e:
             logger.warning(f"Model {model_id} failed during execute_with_failover: {e}")
-            model_pool.report_failure(model_id, str(e))
+            if not isinstance(e, ClientRequestError):
+                model_pool.report_failure(model_id, str(e))
             last_error = e
             continue
             
@@ -74,6 +75,8 @@ async def stream_with_failover(
                 chunks_yielded += 1
                 
                 if chunk.error:
+                    if chunk.finish_reason == "client_error":
+                        raise ClientRequestError(f"Stream error: {chunk.error}")
                     raise RuntimeError(f"Stream error: {chunk.error}")
                     
                 yield chunk
@@ -84,7 +87,8 @@ async def stream_with_failover(
             
         except Exception as e:
             logger.warning(f"Model {model_id} failed during stream_with_failover: {e}")
-            model_pool.report_failure(model_id, str(e))
+            if not isinstance(e, ClientRequestError):
+                model_pool.report_failure(model_id, str(e))
             failed_mid_stream = chunks_yielded > 0
             
             if failed_mid_stream and attempt < len(fallback_chain) - 1:

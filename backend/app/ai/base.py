@@ -10,6 +10,11 @@ class Message:
     content: str
 
 
+class ClientRequestError(RuntimeError):
+    """Raised when the API returns a client error (400, 401, 403, 422)."""
+    pass
+
+
 @dataclass
 class CompletionRequest:
     messages: List[Message]
@@ -26,7 +31,6 @@ class CompletionRequest:
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
             "stream": self.stream,
-            **self.extra,
         }
 
 
