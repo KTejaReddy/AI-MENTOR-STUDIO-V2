@@ -206,6 +206,28 @@ class GroqProvider(AIProvider):
             data = response.json()
             data["headers"] = dict(response.headers)
             api_key.record_use()
+            
+            # Telemetry Update
+            try:
+                if hasattr(api_key, "metrics"):
+                    model = request.model
+                    headers = response.headers
+                    rem_req = headers.get("x-ratelimit-remaining-requests")
+                    if rem_req: api_key.metrics.model_remaining_requests[model] = int(rem_req)
+                    
+                    rem_tok = headers.get("x-ratelimit-remaining-tokens")
+                    if rem_tok: api_key.metrics.model_remaining_tokens[model] = int(rem_tok)
+                    
+                    lim_req = headers.get("x-ratelimit-limit-requests")
+                    if lim_req and rem_req:
+                        api_key.metrics.model_rpm[model] = int(lim_req) - int(rem_req)
+                        
+                    lim_tok = headers.get("x-ratelimit-limit-tokens")
+                    if lim_tok and rem_tok:
+                        api_key.metrics.model_tpm[model] = int(lim_tok) - int(rem_tok)
+            except Exception as e:
+                logger.warning(f"Failed to parse rate limit headers: {e}")
+
             elapsed = time.time() - start_time
             tokens = 0
             if data.get("usage"):

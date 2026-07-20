@@ -6,6 +6,7 @@ from pydantic import BaseModel
 logger = logging.getLogger(__name__)
 
 from app.ai.health_cache import health_cache
+from app.ai.smart_router import smart_router
 
 class ModelHealth(BaseModel):
     model_id: str
@@ -61,6 +62,12 @@ class ModelPool:
             health_cache.mark_pair_cooldown(key_prefix, model_id, int(backoff))
         
         logger.warning(f"Model {model_id} marked as unhealthy for {backoff}s. Error: {error_type}")
+
+    def route(self, section_type: str) -> str:
+        """
+        New interface for AdaptiveMultiModelOrchestrator to use the SmartRouter.
+        """
+        return smart_router.route(section_type)
 
     def select_best_model(self, preferred: List[str], fallback: List[str]) -> Optional[str]:
         all_models = preferred + fallback

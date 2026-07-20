@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     supabase_anon_key: str = ""
     supabase_service_role_key: str = ""
     supabase_db_password: str = ""
+    
+    # Orchestrator Configuration
+    orchestrator_mode: str = "legacy"  # 'legacy' or 'adaptive'
+    shadow_percentage: int = 5  # 0 to 100
 
     @property
     def cors_origin_list(self) -> List[str]:

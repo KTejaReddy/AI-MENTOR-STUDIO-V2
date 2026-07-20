@@ -24,6 +24,13 @@ class KeyStatus(Enum):
 
 
 @dataclass
+class ApiKeyMetrics:
+    model_rpm: Dict[str, float] = field(default_factory=dict)
+    model_tpm: Dict[str, float] = field(default_factory=dict)
+    model_remaining_requests: Dict[str, int] = field(default_factory=dict)
+    model_remaining_tokens: Dict[str, int] = field(default_factory=dict)
+
+@dataclass
 class ApiKey:
     key: str
     status: KeyStatus = KeyStatus.HEALTHY
@@ -35,6 +42,7 @@ class ApiKey:
     failed_at: Optional[float] = None
     cooldown_until: Optional[float] = None
     model_whitelist: List[str] = field(default_factory=list)
+    metrics: ApiKeyMetrics = field(default_factory=ApiKeyMetrics)
 
     @property
     def is_available(self) -> bool:

@@ -951,6 +951,44 @@ async def generate_lesson(
         yield {"type": "error", "content": "No available API keys. Please try again later."}
         return
 
+    from app.core.config import settings
+    if settings.orchestrator_mode == "adaptive":
+        from app.ai.adaptive_multi_model_orchestrator import adaptive_orchestrator
+        logger.info("Using ADAPTIVE orchestrator mode.")
+        context = {"subject": subject, "topic": topic, "learning_mode": learning_mode}
+        
+        # Adaptive doesn't yield streams out of the box in our implementation yet, 
+        # but we can yield a single done event or wrap it. For integration, we'll wait for it.
+        # (A full implementation would make Adaptive yield section by section, but we will mock that here)
+        result_data = await adaptive_orchestrator.generate_lesson(topic, context)
+        for st, data in result_data.items():
+            yield {
+                "type": "section_done",
+                "section_type": st,
+                "section_data": data,
+                "status": "completed",
+                "engine_id": engine_id,
+                "elapsed": round(time.time() - start_time, 2)
+            }
+        return
+    else:
+        # Legacy mode - trigger shadow mode execution
+        import random
+        from app.ai.adaptive_multi_model_orchestrator import adaptive_orchestrator
+        shadow_task = None
+        if random.randint(1, 100) <= settings.shadow_percentage:
+            logger.info(f"Using LEGACY mode. Triggering ADAPTIVE in shadow mode ({settings.shadow_percentage}%).")
+            context = {"subject": subject, "topic": topic, "learning_mode": learning_mode}
+            # Run shadow mode silently without blocking
+            shadow_task = asyncio.create_task(adaptive_orchestrator.generate_lesson(topic, context))
+            
+            # Note: We import telemetry_stats directly here to avoid circular imports if any
+            try:
+                from app.ai.telemetry_dashboard import telemetry_stats
+                telemetry_stats["shadow_requests"] = telemetry_stats.get("shadow_requests", 0) + 1
+            except ImportError:
+                pass
+
     async def run_with_retry(section_type: str, idx: int) -> Tuple[str, Optional[Dict[str, Any]], Optional[str]]:
         await asyncio.sleep(idx * 0.3)
         for attempt in range(MAX_RETRIES + 1):
@@ -1019,5 +1057,27 @@ async def generate_lesson(
         "cached": False,
         "elapsed": total_elapsed,
     }
+
+    if shadow_task:
+        async def run_comparison(legacy_res, s_task):
+            try:
+                adaptive_res = await s_task
+                from app.ai.comparator import lesson_comparator
+                score = lesson_comparator.compare(legacy_res, adaptive_res)
+                
+                try:
+                    from app.ai.telemetry_dashboard import telemetry_stats
+                    prev_score = telemetry_stats.get("average_similarity", 1.0)
+                    reqs = telemetry_stats.get("shadow_requests", 1)
+                    if reqs <= 1:
+                        telemetry_stats["average_similarity"] = score
+                    else:
+                        telemetry_stats["average_similarity"] = prev_score + ((score - prev_score) / reqs)
+                except ImportError:
+                    pass
+            except Exception as e:
+                logger.error(f"Shadow comparison failed: {e}")
+                
+        asyncio.create_task(run_comparison(results, shadow_task))
 
     logger.info("Orchestrator done: %d sections in %.1fs", len(results), total_elapsed)

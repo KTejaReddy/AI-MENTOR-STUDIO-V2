@@ -32,6 +32,12 @@ class ApiKeyMetrics:
     consecutive_failures: int = 0
     total_latency: float = 0.0
     errors_by_type: Dict[str, int] = field(default_factory=dict)
+    
+    # Model-specific tracking
+    model_rpm: Dict[str, float] = field(default_factory=dict)
+    model_tpm: Dict[str, float] = field(default_factory=dict)
+    model_remaining_requests: Dict[str, int] = field(default_factory=dict)
+    model_remaining_tokens: Dict[str, int] = field(default_factory=dict)
 
 
 @dataclass
