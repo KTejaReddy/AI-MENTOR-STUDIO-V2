@@ -33,8 +33,6 @@ async def generate_lesson(request: Request, body: GenerateLessonRequest, current
             async for event in gateway.generate(
                 subject=body.subject,
                 topic=body.topic,
-                difficulty=body.difficulty,
-                learning_mode=body.learning_mode,
                 output_language=body.output_language,
                 context=body.context,
             ):

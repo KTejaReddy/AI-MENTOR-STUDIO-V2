@@ -137,8 +137,6 @@ async def _generate_section(
     section_type: str,
     subject: str,
     topic: str,
-    difficulty: str,
-    learning_mode: str,
     group_index: int,
 ) -> Tuple[str, Optional[Dict[str, Any]], Optional[str]]:
     """Generate a single section. Returns (section_type, section_data, error)."""
@@ -227,8 +225,6 @@ async def generate_sections(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str,
-    learning_mode: str,
     engine_id: str = "",
 ) -> AsyncGenerator[Dict[str, Any], None]:
     """Generate lesson sections concurrently. Yields each section as it completes."""
@@ -242,7 +238,7 @@ async def generate_sections(
     # Generate sections group by group
     for gi, group in enumerate(SECTION_GROUPS):
         tasks = [
-            _generate_section(provider, st, subject, topic, difficulty, learning_mode, gi)
+            _generate_section(provider, st, subject, topic, gi)
             for st in group
         ]
 
@@ -290,8 +286,6 @@ async def generate_sections_v2(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str,
-    learning_mode: str,
     engine_id: str = "",
 ) -> AsyncGenerator[Dict[str, Any], None]:
     """Generate sections in parallel across all API keys using asyncio.gather."""
@@ -300,7 +294,7 @@ async def generate_sections_v2(
 
     all_sections = [st for group in SECTION_GROUPS for st in group]
     tasks = [
-        _generate_section(provider, st, subject, topic, difficulty, learning_mode, 0)
+        _generate_section(provider, st, subject, topic, 0)
         for st in all_sections
     ]
 

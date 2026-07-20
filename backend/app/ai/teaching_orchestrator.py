@@ -76,8 +76,6 @@ async def generate_lesson(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str = "intermediate",
-    learning_mode: str = "default",
     engine_id: str = "",
     planned_sections: Optional[List[str]] = None,
     source_material: str = "",
@@ -92,8 +90,6 @@ async def generate_lesson(
         provider=provider,
         subject=subject,
         topic=topic,
-        difficulty=difficulty,
-        learning_mode=learning_mode,
         engine_id=engine_id,
         planned_sections=planned_sections,
         source_material=source_material,
@@ -106,8 +102,6 @@ async def generate_lesson_sequential(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str = "intermediate",
-    learning_mode: str = "default",
     engine_id: str = "",
     planned_sections: Optional[List[str]] = None,  # kept for gateway compat
 ) -> AsyncGenerator[Dict[str, Any], None]:
@@ -119,12 +113,12 @@ async def generate_lesson_sequential(
       3. Every chunk is yielded immediately → live streaming to frontend
     """
     start_time = time.time()
-    logger.info("Teaching Orchestrator: Starting for %s / %s [%s/%s]", subject, topic, difficulty, learning_mode)
+    logger.info("Teaching Orchestrator: Starting for %s / %s [%s/%s]", subject, topic)
 
     config = OrchestratorConfig()
 
     # ── Step 1: Planner Agent decides what to generate ─────────────────────
-    plan = planner_agent.plan(subject, topic, difficulty, learning_mode)
+    plan = planner_agent.plan(subject, topic)
     active_sections = [(st, plan.section_titles.get(st, st)) for st in plan.sections]
     learning_note = plan.learning_note
 
@@ -152,7 +146,7 @@ async def generate_lesson_sequential(
         agent_class = AGENT_CLASSES.get(section_type, GenericSectionAgent)
 
         # Get model for this section via intelligent router
-        model_id = model_router.route(section_type, learning_mode=learning_mode, difficulty=difficulty, subject=subject, topic=topic)
+        model_id = model_router.route(section_type, subject=subject, topic=topic)
 
         # Build agent config with correct token limits from router config
         agent_config = _build_agent_config(section_type, model_id, learning_mode)
@@ -177,8 +171,6 @@ async def generate_lesson_sequential(
             async for item in agent.generate(
                 subject=subject,
                 topic=topic,
-                difficulty=difficulty,
-                learning_mode=learning_mode,
                 context=context,
             ):
                 if isinstance(item, dict) and item.get("type") in ("section_chunk", "section_clear"):
@@ -251,8 +243,6 @@ async def generate_lesson_sequential(
             "title": f"{subject}: {topic}",
             "subject": subject,
             "topic": topic,
-            "difficulty": difficulty,
-            "learningMode": learning_mode,
             "estimatedReadingTime": max(20, len(results) * 10),
             "prerequisites_list": [],
             "learningObjectives": [],
@@ -281,7 +271,7 @@ async def generate_lesson_sequential(
             }
 
     # Cache the lesson
-    lesson_cache.set(subject, topic, difficulty, learning_mode, lesson)
+    lesson_cache.set(subject, topic, lesson)
 
     # Final yield
     yield {
@@ -304,7 +294,7 @@ async def generate_lesson_sequential(
     )
 
 
-def _build_agent_config(section_type: str, model_id: str, learning_mode: str) -> AgentConfig:
+def _build_agent_config(section_type: str, model_id: str) -> AgentConfig:
     """Build configuration for a specific agent."""
     from app.ai.model_router_config import get_section_config
 

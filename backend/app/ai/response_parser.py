@@ -36,8 +36,6 @@ REQUIRED_METADATA_FIELDS = {
     "title": str,
     "subject": str,
     "topic": str,
-    "difficulty": str,
-    "learningMode": str,
 }
 
 
@@ -410,8 +408,6 @@ class ResponseParser:
                 "title": title,
                 "subject": subject,
                 "topic": topic,
-                "difficulty": "intermediate",
-                "learningMode": "default",
                 "estimatedReadingTime": max(5, len(content) // 2000),
                 "prerequisites_list": [],
                 "learningObjectives": [],
@@ -478,8 +474,6 @@ class ResponseParser:
             "title": topic or "Untitled Lesson",
             "subject": subject,
             "topic": topic,
-            "difficulty": "intermediate",
-            "learningMode": "default",
             "estimatedReadingTime": 5,
             "prerequisites_list": [],
             "learningObjectives": [],

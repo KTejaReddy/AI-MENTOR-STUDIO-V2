@@ -428,8 +428,6 @@ async def generate_lesson(request: Request, document_id: str, body: DocumentGene
         async for event in gateway.generate(
             subject=subject,
             topic=topic,
-            difficulty=body.difficulty,
-            learning_mode="deep",
             output_language="English",
             context=context,
             is_document=True,

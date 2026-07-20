@@ -87,21 +87,17 @@ class TeachingAgent(ABC):
         provider.set_api_key(key.key)
         return provider
 
-    def _build_prompt(self, subject: str, topic: str, difficulty: str, learning_mode: str) -> str:
+    def _build_prompt(self, subject: str, topic: str) -> str:
         """Build the user prompt from template."""
         return self.config.prompt_template.format(
             topic=topic,
             subject=subject,
-            difficulty=difficulty,
-            learning_mode=learning_mode,
         )
 
     async def generate(
         self,
         subject: str,
         topic: str,
-        difficulty: str = "intermediate",
-        learning_mode: str = "default",
         context: Optional[str] = None,
     ) -> AsyncGenerator[Any, None]:
         """Generate the section content."""
@@ -119,7 +115,7 @@ class TeachingAgent(ABC):
             try:
                 provider = await self._get_provider(model_id)
 
-                prompt = self._build_prompt(subject, topic, difficulty, learning_mode)
+                prompt = self._build_prompt(subject, topic)
                 if context:
                     prompt += f"\n\nAdditional Context:\n{context}"
 

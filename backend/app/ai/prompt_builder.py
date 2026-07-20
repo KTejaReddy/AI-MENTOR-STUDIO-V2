@@ -19,7 +19,7 @@ RULES:
 
 OUTPUT JSON STRUCTURE:
 {
-  "metadata": { "title", "subject", "topic", "difficulty", "learningMode", "estimatedReadingTime", "prerequisites_list": ["..."], "learningObjectives": ["..."], "tags": ["..."] },
+  "metadata": { "title", "subject", "topic", "estimatedReadingTime", "prerequisites_list": ["..."], "learningObjectives": ["..."], "tags": ["..."] },
   "sections": {
     "introduction": { "type":"introduction", "title":"1. Introduction", "content":"300+ words context, motivation, roadmap" },
     "learningObjectives": { "type":"learningObjectives", "title":"2. Learning Objectives", "objectives": [{"objective":"...", "bloomsLevel":"..."}] },
@@ -41,7 +41,7 @@ OUTPUT JSON STRUCTURE:
     "complexityAnalysis": { "type":"complexityAnalysis", "title":"18. Complexity Analysis", "timeComplexity":{"bestCase":"...","averageCase":"...","worstCase":"..."}, "spaceComplexity":"...", "content":"150+ words" },
     "commonMistakes": { "type":"commonMistakes", "title":"19. Common Mistakes and Misconceptions", "mistakes": [{"mistake":"...","why":"...","correctApproach":"...","consequence":"..."}], "content":"6+ mistakes, 300+ words" },
     "bestPractices": { "type":"bestPractices", "title":"20. Best Practices", "practices": [{"practice":"...","explanation":"...","whyImportant":"..."}], "content":"5+ practices" },
-    "interviewQuestions": { "type":"interviewQuestions", "title":"21. Interview Questions", "questions": [{"question":"...","difficulty":"easy|medium|hard","answer":"...","tips":"...","followUp":"..."}], "content":"5+ questions, easy→hard" },
+    "interviewQuestions": { "type":"interviewQuestions", "title":"21. Interview Questions", "questions": [{"question":"...","answer":"...","tips":"...","followUp":"..."}], "content":"5+ questions, easy→hard" },
     "examQuestions": { "type":"examQuestions", "title":"22. Exam Questions", "theoryQuestions":[{"question":"...","expectedAnswer":"...","marks":"...","commonErrors":"..."}], "numericalQuestions":[{"question":"...","solution":"...","answer":"...","marks":"..."}], "content":"3 theory + 2 numerical" },
     "assignments": { "type":"assignments", "title":"23. Assignments", "assignments": [{"title":"...","objective":"...","instructions":"...","starterCode":"...","expectedOutput":"...","hints":["..."]}], "content":"3 progressive" },
     "miniProjects": { "type":"miniProjects", "title":"24. Mini Projects", "projects": [{"title":"...","description":"...","learningOutcomes":["..."],"techStack":["..."],"deliverables":["..."],"estimatedHours":"...","evaluationCriteria":["..."]}], "content":"2+ projects" },
@@ -58,8 +58,6 @@ class PromptBuilder:
         self,
         subject: str,
         topic: str,
-        difficulty: str = "intermediate",
-        learning_mode: str = "default",
         output_language: str = "english",
         context: Optional[str] = None,
         section_plan: Optional[List[str]] = None,

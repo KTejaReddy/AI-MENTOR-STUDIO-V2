@@ -294,7 +294,6 @@ async def generate_lesson_full(
     user_prompt = (
         f"Subject: {subject}\n"
         f"Topic: {topic}\n"
-        f"Difficulty: {difficulty}\n\n"
         f"Please write the complete lesson. Include exactly these sections with their exact headers:\n"
         f"{section_titles_str}\n\n"
         "Begin the lesson now."
@@ -746,19 +745,19 @@ async def generate_lesson_full(
                 content = accumulated_content[st]
                 if not content.strip():
                     logger.warning(f"Section {st} is empty, scheduling regeneration")
-                    async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id):
+                    async for event in _regenerate_section(provider, subject, topic, st, title, engine_id):
                         yield event
                         if event.get("type") == "section_done":
                             accumulated_content[st] = event["section_data"]["content"]
                     yield {"type": "ping", "timestamp": time.time()}
                     continue
                 
-                review_result = await reviewer_agent.review_section(st, content, subject, topic, difficulty, lesson_id=engine_id)
+                review_result = await reviewer_agent.review_section(st, content, subject, topic, lesson_id=engine_id)
                 yield {"type": "ping", "timestamp": time.time()}
                 
                 if not review_result.passed:
                     logger.warning(f"Section {st} failed semantic review, regenerating. Issues: {review_result.issues}")
-                    async for event in _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, review_result.issues):
+                    async for event in _regenerate_section(provider, subject, topic, st, title, engine_id, review_result.issues):
                         yield event
                         if event.get("type") == "section_done":
                             accumulated_content[st] = event["section_data"]["content"]
@@ -806,7 +805,7 @@ async def generate_lesson_full(
         "finish_reason": "stop"
     }
 
-async def _regenerate_section(provider, subject, topic, difficulty, st, title, engine_id, issues=None):
+async def _regenerate_section(provider, subject, topic, st, title, engine_id, issues=None):
     model_id = get_model_for_section(st, "default")
     yield {
         "type": "section_retry",
@@ -868,7 +867,7 @@ async def _regenerate_section(provider, subject, topic, difficulty, st, title, e
     in_think = False
     think_buffer = ""
     try:
-        async for event in stream_with_failover(provider, st, "default", _build_req):
+        async for event in stream_with_failover(provider, st, _build_req):
             if event.error == "FAILOVER_CLEAR":
                 # Clear what was generated so far
                 accumulated = ""

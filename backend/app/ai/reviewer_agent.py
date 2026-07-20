@@ -34,7 +34,6 @@ class ReviewerAgent:
         content: str,
         subject: str,
         topic: str,
-        difficulty: str = "intermediate",
         lesson_id: str = None,
     ) -> ReviewResult:
         if not self.provider:
@@ -90,7 +89,6 @@ class ReviewerAgent:
             response = await execute_with_failover(
                 provider=self.provider,
                 section_type="semanticReview",
-                learning_mode="default",
                 request_builder=_build_req
             )
             data = json.loads(response.content)

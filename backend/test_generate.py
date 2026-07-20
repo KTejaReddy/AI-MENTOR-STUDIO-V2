@@ -9,8 +9,6 @@ async def test():
         async for event in gateway.generate(
             subject="Python",
             topic="Variables",
-            difficulty="beginner",
-            learning_mode="default",
         ):
             print(f"Event: {event.get('type')}")
             if event.get('type') == 'error':
