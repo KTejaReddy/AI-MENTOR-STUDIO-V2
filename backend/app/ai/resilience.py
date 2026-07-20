@@ -11,11 +11,10 @@ logger = logging.getLogger(__name__)
 async def execute_with_failover(
     provider: AIProvider,
     section_type: str,
-    learning_mode: str,
     request_builder: Callable[[str], CompletionRequest]
 ) -> CompletionResponse:
     """Executes a complete() call with automatic failover across the ModelPool."""
-    fallback_chain = model_router.get_fallback_chain(section_type, learning_mode)
+    fallback_chain = model_router.get_fallback_chain(section_type)
     if not fallback_chain:
         fallback_chain = ["llama-3.3-70b-versatile"]
         
@@ -52,14 +51,13 @@ async def execute_with_failover(
 async def stream_with_failover(
     provider: AIProvider,
     section_type: str,
-    learning_mode: str,
     request_builder: Callable[[str], CompletionRequest]
 ) -> AsyncGenerator[StreamChunk, None]:
     """
     Executes a stream with automatic failover.
     If the stream fails mid-way, it yields a FAILOVER_CLEAR event and restarts with the next model.
     """
-    fallback_chain = model_router.get_fallback_chain(section_type, learning_mode)
+    fallback_chain = model_router.get_fallback_chain(section_type)
     if not fallback_chain:
         fallback_chain = ["llama-3.3-70b-versatile"]
         

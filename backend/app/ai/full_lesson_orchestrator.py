@@ -75,10 +75,8 @@ async def _generate_quiz_json(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str,
     needed_count: int = 10,
     existing_questions: List[Dict] = None,
-    learning_mode: str = "default",
     engine_id: str = None
 ) -> Dict:
     if existing_questions is None:
@@ -121,8 +119,7 @@ async def _generate_quiz_json(
                 "lesson_id": engine_id,
                 "section_name": "quiz",
                 "subject": subject,
-                "topic": topic,
-                "learning_mode": learning_mode
+                "topic": topic
             }
         )
         
@@ -130,7 +127,6 @@ async def _generate_quiz_json(
         response = await execute_with_failover(
             provider=provider,
             section_type="quiz",
-            learning_mode=learning_mode, # Make sure we pass this
             request_builder=_build_req
         )
         content = response.content
@@ -211,8 +207,6 @@ async def generate_lesson_full(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str = "intermediate",
-    learning_mode: str = "default",
     engine_id: str = "",
     planned_sections: Optional[List[str]] = None,
     source_material: str = "",
@@ -223,7 +217,7 @@ async def generate_lesson_full(
     logger.info(f"Full Lesson Orchestrator starting for {subject} / {topic}")
 
     # Step 1: Planner Agent decides sections
-    plan = planner_agent.plan(subject, topic, difficulty, learning_mode)
+    plan = planner_agent.plan(subject, topic)
     
     if planned_sections:
         active_sections = [(st, plan.section_titles.get(st, st.capitalize())) for st in planned_sections]
@@ -309,7 +303,7 @@ async def generate_lesson_full(
     if source_material:
         user_prompt += f"\n\nSource Material Context:\n{source_material}"
 
-    model_id = get_model_for_section("explanation", learning_mode)
+    model_id = get_model_for_section("explanation")
 
     # Let the provider handle key management and failover automatically.
     # We no longer explicitly acquire and lock a single key here.
@@ -330,8 +324,7 @@ async def generate_lesson_full(
                 "lesson_id": engine_id,
                 "section_name": "full_lesson",
                 "subject": subject,
-                "topic": topic,
-                "learning_mode": learning_mode
+                "topic": topic
             }
         )
 
@@ -408,7 +401,7 @@ async def generate_lesson_full(
             in_think = False
             think_buffer = ""
             first_st = active_sections_for_markdown[0][0] if active_sections_for_markdown else "overview"
-            async for event in stream_with_failover(provider, first_st, learning_mode, _build_req):
+            async for event in stream_with_failover(provider, first_st, _build_req):
                 if event.error == "FAILOVER_CLEAR":
                     yield {"_internal_error": True, "code": "FAILOVER_CLEAR", "stage": "llm_streaming", "details": "Failover clear"}
                     in_think = False
@@ -655,7 +648,7 @@ async def generate_lesson_full(
                     logger.info("ENTER_QUIZ_PIPELINE")
                     
                     # Step 1: Generate initial JSON quiz
-                    json_obj = await _generate_quiz_json(provider, subject, topic, difficulty, 10, [], learning_mode, engine_id)
+                    json_obj = await _generate_quiz_json(provider, subject, topic, 10, [], engine_id)
                     logger.info(f"RAW_JSON_QUIZ: {json.dumps(json_obj)}")
                     
                     quiz_issues, valid_json = validate_json_quiz(json_obj)
@@ -667,7 +660,7 @@ async def generate_lesson_full(
                         if needed > 0:
                             # Generate only missing questions
                             new_json_obj = await _generate_quiz_json(
-                                provider, subject, topic, difficulty, needed, valid_json.get("questions", []), learning_mode, engine_id
+                                provider, subject, topic, needed, valid_json.get("questions", []), engine_id
                             )
                             # Merge questions
                             if new_json_obj and isinstance(new_json_obj.get("questions"), list):
@@ -791,8 +784,6 @@ async def generate_lesson_full(
             "title": f"{subject} - {topic}",
             "subject": subject,
             "topic": topic,
-            "difficulty": difficulty,
-            "learning_mode": learning_mode,
             "total_generation_time": round(time.time() - start_time, 2),
         },
         "sections": {

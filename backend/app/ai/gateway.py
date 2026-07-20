@@ -40,7 +40,7 @@ class Gateway:
 
     def analyze_topic(self, subject: str, topic: str) -> Dict[str, Any]:
         analysis = topic_analyzer.analyze(subject, topic)
-        plan = planner_agent.plan(subject, topic, "intermediate", "default")
+        plan = planner_agent.plan(subject, topic)
         sections = plan.sections
         return {
             "category": analysis.category,
@@ -55,8 +55,8 @@ class Gateway:
             "sections_planned": sections if isinstance(sections, list) else [],
         }
 
-    def get_route(self, subject: str, learning_mode: str = "default", topic: str = ""):
-        model_id = model_router.route(subject, learning_mode, topic)
+    def get_route(self, subject: str, topic: str = ""):
+        model_id = model_router.route("planner")
         model_info = None
         for key, info in MODEL_REGISTRY.items():
             if info.id == model_id:
@@ -128,22 +128,20 @@ class Gateway:
         self,
         subject: str,
         topic: str,
-        difficulty: str = "intermediate",
-        learning_mode: str = "default",
         output_language: str = "english",
         context: Optional[str] = None,
         is_document: bool = False,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         provider = self._get_provider()
-        route_info = self.get_route(subject, learning_mode, topic)
+        route_info = self.get_route(subject, topic)
         model_id = route_info["model_id"]
 
         logger.info(
-            "Generation request: subject=%s topic=%s difficulty=%s mode=%s model=%s",
-            subject, topic, difficulty, learning_mode, model_id,
+            "Generation request: subject=%s topic=%s model=%s",
+            subject, topic, model_id,
         )
 
-        cached = lesson_cache.get(subject, topic, difficulty, learning_mode)
+        cached = lesson_cache.get(subject, topic, "intermediate", "default")
         if cached:
             logger.info("Cache hit for %s/%s", subject, topic)
             health_monitor.record_request(True, 0)
@@ -198,10 +196,10 @@ class Gateway:
         start_time = time.time()
 
         # Use multi-agent teaching orchestrator for all modes
-        logger.info("Teaching Orchestrator: generating %d sections for mode=%s", len(sections_planned), learning_mode)
+        logger.info("Teaching Orchestrator: generating %d sections", len(sections_planned))
         try:
             async for event in generate_lesson_v2(
-                provider, subject, topic, difficulty, learning_mode, active_stream.id, sections_planned, source_material=context, is_document=is_document
+                provider, subject, topic, active_stream.id, sections_planned, source_material=context, is_document=is_document
             ):
                 yielded_event = None
                 if event["type"] == "plan":
@@ -254,7 +252,7 @@ class Gateway:
                     yielded_event = event
                 elif event["type"] == "lesson":
                     lesson_data = event["data"]
-                    lesson_cache.set(subject, topic, difficulty, learning_mode, lesson_data)
+                    lesson_cache.set(subject, topic, "intermediate", "default", lesson_data)
                     mapped = self.map_lesson(lesson_data)
                     yielded_event = {
                         "type": "lesson",

@@ -725,8 +725,8 @@ _SECTION_FALLBACKS: Dict[str, str] = {
 }
 
 
-def _make_cache_key(subject: str, topic: str, difficulty: str, mode: str, section_type: str) -> str:
-    return f"{subject.lower()}|{topic.lower()}|{difficulty.lower()}|{mode.lower()}|{section_type}"
+def _make_cache_key(subject: str, topic: str, section_type: str) -> str:
+    return f"{subject.lower()}|{topic.lower()}|{section_type}"
 
 
 async def _generate_section(
@@ -734,8 +734,6 @@ async def _generate_section(
     section_type: str,
     subject: str,
     topic: str,
-    difficulty: str,
-    learning_mode: str,
 ) -> Tuple[str, Optional[Dict[str, Any]], Optional[str]]:
     """Generate a single section. Returns (section_type, section_data, error)."""
     desc = SECTION_DESCRIPTIONS.get(section_type, {})
@@ -936,8 +934,6 @@ async def generate_lesson(
     provider: AIProvider,
     subject: str,
     topic: str,
-    difficulty: str,
-    learning_mode: str,
     engine_id: str = "",
 ) -> AsyncGenerator[Dict[str, Any], None]:
     """Generate all 11 lesson sections in parallel. Yields each as it completes."""
@@ -955,7 +951,7 @@ async def generate_lesson(
     if settings.orchestrator_mode == "adaptive":
         from app.ai.adaptive_multi_model_orchestrator import adaptive_orchestrator
         logger.info("Using ADAPTIVE orchestrator mode.")
-        context = {"subject": subject, "topic": topic, "learning_mode": learning_mode}
+        context = {"subject": subject, "topic": topic}
         
         # Adaptive doesn't yield streams out of the box in our implementation yet, 
         # but we can yield a single done event or wrap it. For integration, we'll wait for it.
@@ -978,7 +974,7 @@ async def generate_lesson(
         shadow_task = None
         if random.randint(1, 100) <= settings.shadow_percentage:
             logger.info(f"Using LEGACY mode. Triggering ADAPTIVE in shadow mode ({settings.shadow_percentage}%).")
-            context = {"subject": subject, "topic": topic, "learning_mode": learning_mode}
+            context = {"subject": subject, "topic": topic}
             # Run shadow mode silently without blocking
             shadow_task = asyncio.create_task(adaptive_orchestrator.generate_lesson(topic, context))
             
@@ -997,7 +993,7 @@ async def generate_lesson(
                 await asyncio.sleep(2 * attempt)
 
             st, data, err = await _generate_section(
-                provider, section_type, subject, topic, difficulty, learning_mode,
+                provider, section_type, subject, topic,
             )
             if err is None:
                 content = data.get("content", "") if data else ""
@@ -1037,8 +1033,6 @@ async def generate_lesson(
             "title": f"{subject}: {topic}",
             "subject": subject,
             "topic": topic,
-            "difficulty": difficulty,
-            "learningMode": learning_mode,
             "estimatedReadingTime": max(15, len(results) * 8),
             "prerequisites_list": [],
             "learningObjectives": [],
