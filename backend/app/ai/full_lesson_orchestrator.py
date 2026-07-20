@@ -222,7 +222,8 @@ async def generate_lesson_full(
         "Always begin with graph TD or flowchart TD. Do not use HTML tags in node labels. "
         "Node labels containing special characters (like parentheses, brackets, colons) MUST be enclosed in double quotes (e.g., A[\"Label (Info)\"]). "
         "Do not write descriptions or explanations outside the diagram code fences. "
-        "Do not output markdown code blocks unless it is actual code or mermaid."
+        "Do not output markdown code blocks unless it is actual code or mermaid.\n"
+        "**Visualization sections MUST contain exactly one valid Mermaid diagram enclosed in a ```mermaid code block.**"
     )
     
     # Remove quiz from single-pass markdown generation
@@ -314,12 +315,16 @@ async def generate_lesson_full(
     
     async def _validate_and_yield_section_done(st: str, raw_content: str, model: str) -> AsyncGenerator[Dict[str, Any], None]:
         from app.ai.content_validator import validate_and_repair_section
+        from app.ai.health_monitor import health_monitor
         
         # Run validation and auto-repair
         validated, is_ok = validate_and_repair_section(st, raw_content)
         
         if not is_ok:
             logger.warning(f"Section {st} failed validation. Attempting single-section regeneration...")
+            if st == "visualization":
+                health_monitor.diagram_regenerated += 1
+                
             yield {
                 "type": "section_clear",
                 "section_type": st,
@@ -329,21 +334,37 @@ async def generate_lesson_full(
             # Run regeneration
             regen_content = ""
             async for event in _regenerate_section(provider, subject, topic, st, plan.section_titles.get(st, st.capitalize()), engine_id):
-                # Forward chunks in real-time, but do not yield section_done from _regenerate_section directly yet
+                # Forward chunks in real-time
                 if event.get("type") == "section_chunk":
                     regen_content += event.get("content", "")
                     yield event
                 elif event.get("type") == "section_done":
-                    # Capture content but don't forward section_done event yet
                     pass
                 else:
                     yield event
             
             # Validate the regenerated content
             validated, is_ok = validate_and_repair_section(st, regen_content)
-            # If still invalid, degrade gracefully to the best we have
+            # If still invalid, degrade gracefully to the best we have (or insert minimal fallback for visualization)
             if not is_ok:
-                logger.warning(f"Regenerated section {st} still failed validation. Degrading gracefully.")
+                logger.warning(f"Regenerated section {st} still failed validation.")
+                if st == "visualization":
+                    logger.warning("Generating and appending minimal valid fallback Mermaid diagram.")
+                    # Strip any broken tags and append clean minimal diagram
+                    clean_text = re.sub(r'```mermaid[\s\S]*?(```|$)', '', validated)
+                    fallback_diag = (
+                        f"\n\n### Diagram Visualization\n\n"
+                        f"```mermaid\n"
+                        f"graph TD\n"
+                        f"    A[\"{topic}\"] --> B[\"Core Concepts\"]\n"
+                        f"    A --> C[\"Key Components\"]\n"
+                        f"    B --> D[\"Practical Implementation\"]\n"
+                        f"    C --> D\n"
+                        f"```\n"
+                    )
+                    validated = clean_text.strip() + fallback_diag
+                    # Force validation to pass with fallback
+                    validated, is_ok = validate_and_repair_section(st, validated)
             
         accumulated_content[st] = validated
         yield {
@@ -797,6 +818,8 @@ async def _regenerate_section(provider, subject, topic, st, title, engine_id, is
         "Use valid Mermaid syntax (```mermaid) for any visual diagrams. Use $ for inline math and $$ for block math.\n"
         "Output ONLY the markdown content for this specific section, without the header."
     )
+    if st == "visualization":
+        prompt += "\n**Visualization sections MUST contain exactly one valid Mermaid diagram enclosed in a ```mermaid code block.**"
     
     if st == "quiz":
         prompt += (

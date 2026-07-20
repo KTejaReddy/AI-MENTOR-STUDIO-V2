@@ -165,24 +165,27 @@ def _fix_math_escapes(text: str) -> str:
 # 2. Mermaid Validation & Auto-Repair
 # =============================================================================
 
-def validate_and_repair_mermaid(text: str) -> Tuple[str, bool]:
+def validate_and_repair_mermaid(text: str) -> Tuple[str, bool, bool]:
     """
     Validates Mermaid syntax (starts with graph/flowchart, quotes label parameters, fix arrows).
-    Returns (repaired_text, is_valid).
+    Returns (repaired_text, is_valid, did_repair).
     """
     original = text
     parts = []
     last_end = 0
     is_valid = True
+    did_repair = False
 
     # Scan for mermaid code blocks
     for match in re.finditer(r"```mermaid\s*([\s\S]*?)\s*```", text, flags=re.DOTALL):
         parts.append(text[last_end:match.start()])
         block_content = match.group(1).strip()
         
-        repaired_block, block_ok = _repair_mermaid_block(block_content)
+        repaired_block, block_ok, block_repaired = _repair_mermaid_block(block_content)
         if not block_ok:
             is_valid = False
+        if block_repaired:
+            did_repair = True
             
         parts.append(f"```mermaid\n{repaired_block}\n```")
         last_end = match.end()
@@ -190,17 +193,18 @@ def validate_and_repair_mermaid(text: str) -> Tuple[str, bool]:
     parts.append(text[last_end:])
     repaired_text = "".join(parts)
     
-    if repaired_text != original:
+    if did_repair:
         logger.info(f"Mermaid auto-repaired. Length delta: {len(repaired_text) - len(original)}")
         
-    return repaired_text, is_valid
+    return repaired_text, is_valid, did_repair
 
 
-def _repair_mermaid_block(content: str) -> Tuple[str, bool]:
+def _repair_mermaid_block(content: str) -> Tuple[str, bool, bool]:
     """Repairs syntax inside a single Mermaid diagram block."""
     lines = content.split('\n')
     repaired_lines = []
     has_declaration = False
+    did_repair = False
     
     valid_declarations = (
         'graph ', 'flowchart ', 'sequenceDiagram', 'classDiagram', 
@@ -215,6 +219,7 @@ def _repair_mermaid_block(content: str) -> Tuple[str, bool]:
         if l_strip.startswith(valid_declarations):
             has_declaration = True
         
+        orig_clean = l_strip
         # Repair broken arrow notation (e.g., - ->, -- >, == >, <- -)
         l_strip = re.sub(r'-\s*->', '-->', l_strip)
         l_strip = re.sub(r'-\s*-\s*>', '-->', l_strip)
@@ -223,22 +228,24 @@ def _repair_mermaid_block(content: str) -> Tuple[str, bool]:
         l_strip = re.sub(r'=\s*=\s*>', '==>', l_strip)
         l_strip = re.sub(r'<\s*-\s*-', '<--', l_strip)
         
-        # Repair unquoted node labels with special characters (e.g. A[Label (Info)])
-        # Node shape delimiters in Mermaid: [], (), (()), {}, [[]], (()) etc.
-        # Check node declarations and wrap label in quotes if special characters exist and are not already quoted
+        # Repair unquoted node labels with special characters
         l_strip = _quote_mermaid_labels(l_strip)
         
         # Strip raw HTML tags (e.g. <div style="..."> but keep safe <br> and <br/>)
         l_strip = re.sub(r'<(?!br\s*/?>)[^>]+>', '', l_strip)
         
+        if l_strip != orig_clean:
+            did_repair = True
+            
         repaired_lines.append(l_strip)
 
     if not has_declaration:
         # Prepend default flowchart declaration if missing
         repaired_lines.insert(0, "graph TD")
+        did_repair = True
         logger.info("Prepend missing graph TD declaration to Mermaid block")
 
-    return '\n'.join(repaired_lines), True
+    return '\n'.join(repaired_lines), True, did_repair
 
 
 def _quote_mermaid_labels(line: str) -> str:
@@ -446,9 +453,17 @@ def validate_and_repair_section(section_type: str, content: str) -> Tuple[str, b
     if not content or not content.strip():
         return content, False
 
+    from app.ai.health_monitor import health_monitor
     is_valid = True
 
-    # 1. Quiz JSON validation & repair is handled separately via parse_and_validate_quiz_json.
+    # 1. Check if visualization section is missing Mermaid block
+    if section_type == "visualization":
+        if "```mermaid" not in content:
+            logger.warning("Visualization section is missing ```mermaid block.")
+            health_monitor.diagram_missing += 1
+            return content, False
+
+    # 2. Quiz JSON validation & repair is handled separately via parse_and_validate_quiz_json.
     # If the caller is passing a serialized quiz, we parse, validate, and convert it.
     if section_type == "quiz":
         # Check if content is raw JSON or already converted markdown
@@ -462,18 +477,25 @@ def validate_and_repair_section(section_type: str, content: str) -> Tuple[str, b
                 logger.warning(f"Quiz validation failed: {issues}")
                 return content, False
 
-    # 2. Standard Markdown sections:
+    # 3. Standard Markdown sections:
     # First, run LaTeX validations
     content, latex_ok = validate_and_repair_latex(content)
     if not latex_ok:
         is_valid = False
 
     # Next, run Mermaid diagram validations
-    content, mermaid_ok = validate_and_repair_mermaid(content)
+    content, mermaid_ok, did_repair = validate_and_repair_mermaid(content)
     if not mermaid_ok:
         is_valid = False
+    if did_repair:
+        health_monitor.diagram_repaired += 1
 
     # Finally, sanitize headings, bullets, code blocks, and HTML
     content = sanitize_markdown(content)
+
+    # Double check visualization section post-repair
+    if section_type == "visualization" and "```mermaid" not in content:
+        health_monitor.diagram_missing += 1
+        is_valid = False
 
     return content, is_valid

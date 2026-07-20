@@ -17,6 +17,9 @@ class HealthMonitor:
         self._failed_requests = 0
         self._last_request_time: Optional[float] = None
         self._response_times: list[float] = []
+        self.diagram_missing = 0
+        self.diagram_repaired = 0
+        self.diagram_regenerated = 0
 
     def record_request(self, success: bool, response_time_ms: float) -> None:
         self._total_requests += 1
@@ -84,6 +87,11 @@ class HealthMonitor:
                 "max_entries": cache_stats.get("max_entries", 500),
                 "ttl_seconds": cache_stats.get("ttl_seconds", 3600),
             },
+            "telemetry": {
+                "diagram_missing": self.diagram_missing,
+                "diagram_repaired": self.diagram_repaired,
+                "diagram_regenerated": self.diagram_regenerated,
+            }
         }
 
     def get_stats(self) -> Dict[str, Any]:
@@ -94,6 +102,11 @@ class HealthMonitor:
             "uptime_seconds": round(time.time() - self._start_time, 1),
             "keys": key_manager.health_summary(),
             "cache": lesson_cache.stats(),
+            "telemetry": {
+                "diagram_missing": self.diagram_missing,
+                "diagram_repaired": self.diagram_repaired,
+                "diagram_regenerated": self.diagram_regenerated,
+            }
         }
 
 
