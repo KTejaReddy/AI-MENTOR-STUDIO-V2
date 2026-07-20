@@ -11,7 +11,7 @@ import httpx
 from typing import List, AsyncGenerator, Optional, Dict, Any
 from datetime import datetime, timezone
 
-from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk, ClientRequestError
+from app.ai.base import AIProvider, CompletionRequest, CompletionResponse, StreamChunk, ClientRequestError, ContextLimitError
 from app.ai.key_manager import KeyManager, key_manager as default_key_manager
 from app.ai.telemetry import log_ai_request_analytics, count_tokens_tiktoken, count_prompt_tokens
 
@@ -286,6 +286,12 @@ class GroqProvider(AIProvider):
             except Exception:
                 pass
                 
+            if status == 413:
+                error_detail = f"ContextLimitError: Groq API error 413: {response_text[:500]}"
+                elapsed = time.time() - start_time
+                model_tracker.end_request(request.model, elapsed, 0)
+                raise ContextLimitError(error_detail) from e
+                
             if status in (429, 503):
                 quota_cooldown = _parse_groq_quota_error(response_text)
                 if quota_cooldown:
@@ -302,7 +308,6 @@ class GroqProvider(AIProvider):
                 client_error = True
             else:
                 error_detail = f"Groq API error {status}: {response_text[:500]}"
-            
             elapsed = time.time() - start_time
             model_tracker.end_request(request.model, elapsed, 0)
             
@@ -552,6 +557,9 @@ class GroqProvider(AIProvider):
                         pass
                         
                     error_detail = f"HTTP {status}: {response_text[:500]}"
+                    if status == 413:
+                        raise ContextLimitError(error_detail) from e
+                        
                     if status in (429, 503):
                         quota_cooldown = _parse_groq_quota_error(response_text)
                         if quota_cooldown:

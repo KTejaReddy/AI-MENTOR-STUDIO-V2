@@ -15,6 +15,11 @@ class ClientRequestError(RuntimeError):
     pass
 
 
+class ContextLimitError(RuntimeError):
+    """Raised when the API returns 413 or indicates context window exceeded."""
+    pass
+
+
 @dataclass
 class CompletionRequest:
     messages: List[Message]

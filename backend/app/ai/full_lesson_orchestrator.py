@@ -36,40 +36,15 @@ def sanitize_json(raw: str) -> str:
         content = match.group(0)
     return content
 
+
 def validate_json_quiz(json_obj: Dict) -> tuple[List[str], Dict]:
-    issues = []
-    questions = json_obj.get("questions", [])
-    if not isinstance(questions, list):
-        issues.append("JSON root must contain a 'questions' array.")
-        return issues, json_obj
-        
-    valid_questions = []
-    for q in questions:
-        q_issues = []
-        if not q.get("question"):
-            q_issues.append("Missing question text")
-        opts = q.get("options", {})
-        for opt in ['A', 'B', 'C', 'D']:
-            if not opts.get(opt):
-                q_issues.append(f"Missing Option {opt}")
-        if not q.get("correctAnswer"):
-            q_issues.append("Missing correctAnswer")
-        if not q.get("explanation"):
-            q_issues.append("Missing explanation")
-            
-        if not q_issues:
-            valid_questions.append(q)
-            
-    if len(valid_questions) > 10:
-        logger.info("QUIZ_TRIMMED_TO_10")
-        valid_questions = valid_questions[:10]
-        
-    json_obj["questions"] = valid_questions
-    
-    if len(valid_questions) < 10:
-        issues.append(f"Found {len(valid_questions)} questions instead of exactly 10.")
-        
-    return issues, json_obj
+    from app.ai.content_validator import parse_and_validate_quiz_json
+    # If the input is not a dict, return basic error
+    if not isinstance(json_obj, dict):
+        return ["Input is not a dictionary"], {}
+    parsed, issues = parse_and_validate_quiz_json(json.dumps(json_obj))
+    return issues, parsed or json_obj
+
 
 async def _generate_quiz_json(
     provider: AIProvider,
@@ -84,7 +59,7 @@ async def _generate_quiz_json(
         
     prompt = (
         f"You are a university professor creating a quiz for the topic '{topic}' in '{subject}'.\n"
-        "You MUST output ONLY valid JSON. Do not use markdown blocks. Do not add <think> tags.\n"
+        "Return ONLY JSON. Do NOT use markdown code blocks or fences. Do not add comments, thinking blocks, or trailing commas.\n"
         "Format EXACTLY like this:\n"
         '{\n'
         '  "questions": [\n'
@@ -103,6 +78,7 @@ async def _generate_quiz_json(
         '}\n'
         f"Generate EXACTLY {needed_count} new questions."
     )
+ 
     if existing_questions:
         prompt += f"\n\nDO NOT repeat these existing questions:\n{json.dumps(existing_questions, indent=2)}"
         
@@ -160,18 +136,14 @@ async def _generate_quiz_json(
         
         logger.info(f"RAW_JSON_QUIZ: {content}")
         
-        sanitized = sanitize_json(content)
-        logger.info(f"SANITIZED_JSON: {sanitized}")
-        
-        try:
-            json_obj = json.loads(sanitized)
-            return json_obj
-        except Exception as e:
-            logger.error(f"RAW_JSON_RESPONSE:\n{content}")
-            logger.error(f"SANITIZED_JSON:\n{sanitized}")
-            logger.error(f"JSON_PARSE_FAIL: {e}")
-            return {}
-            
+        from app.ai.content_validator import parse_and_validate_quiz_json
+        parsed, parse_issues = parse_and_validate_quiz_json(content)
+        if not parse_issues and parsed:
+            return parsed
+        else:
+            logger.error(f"Quiz JSON validation issues: {parse_issues}")
+            # Try to return parsed even if there were issues, or fallback
+            return parsed or {}            
     except Exception as e:
         logger.error(f"JSON quiz generation failed: {e}")
         return {}
@@ -243,8 +215,13 @@ async def generate_lesson_full(
         "- Examples: Provide at least three complex, worked-out examples.\n"
         "- Practice Problems: Provide multiple problems with increasing difficulty.\n"
         "- Summary: Provide a substantial, comprehensive summary.\n"
-        "Use valid Mermaid syntax (```mermaid) for any visual diagrams, charts, or graphs. "
-        "Use $ for inline math and $$ for block math. "
+        "MATH RULES: Always produce valid KaTeX-compatible LaTeX. Never escape backslashes unnecessarily. "
+        "Never emit malformed delimiters. Always enclose inline math in $ ... $ and block math in $$ ... $$ or \\[ ... \\]. "
+        "Inside matrix blocks (e.g. bmatrix, pmatrix), ensure row items are separated by & and rows are strictly terminated with \\\\.\n"
+        "MERMAID RULES: Use valid Mermaid syntax (```mermaid) for any visual diagrams, charts, or graphs. "
+        "Always begin with graph TD or flowchart TD. Do not use HTML tags in node labels. "
+        "Node labels containing special characters (like parentheses, brackets, colons) MUST be enclosed in double quotes (e.g., A[\"Label (Info)\"]). "
+        "Do not write descriptions or explanations outside the diagram code fences. "
         "Do not output markdown code blocks unless it is actual code or mermaid."
     )
     
@@ -335,45 +312,53 @@ async def generate_lesson_full(
     active_st = None
     in_code_block = False
     
-    async def validate_mermaid(content: str) -> str:
-        """Strip hopelessly invalid mermaid diagrams and regenerate them."""
-        parts = []
-        last_end = 0
-        for match in re.finditer(r"```mermaid\s+(.*?)```", content, flags=re.DOTALL):
-            parts.append(content[last_end:match.start()])
-            block = match.group(1)
-            # Basic validation: if there's raw HTML tags in nodes, it's likely invalid.
-            if "<" in block and ">" in block:
-                logger.warning("Stripped invalid mermaid diagram containing HTML tags. Regenerating...")
-                prompt = (
-                    "Regenerate ONLY the Mermaid diagram for this context. "
-                    "Use valid Mermaid syntax. DO NOT use HTML tags in node labels. Quote special characters.\n"
-                    f"Context: {topic}\n"
-                    f"Invalid diagram:\n```mermaid\n{block}\n```"
-                )
-                req = CompletionRequest(
-                    messages=[Message(role="user", content=prompt)],
-                    model=model_id,
-                    temperature=0.4,
-                    max_tokens=512,
-                )
-                try:
-                    # Quick synchronous-like request to regenerate diagram
-                    # Uses the same key as the stream since we use provider
-                    res = await provider.complete(req)
-                    new_block = res.choices[0].message.content if res.choices else ""
-                    if "```mermaid" not in new_block:
-                        new_block = f"```mermaid\n{new_block}\n```"
-                    parts.append(new_block)
-                except Exception as e:
-                    logger.error(f"Failed to regenerate mermaid: {e}")
-                    parts.append("\n*Diagram omitted due to invalid syntax*\n")
-            else:
-                parts.append(match.group(0))
-            last_end = match.end()
+    async def _validate_and_yield_section_done(st: str, raw_content: str, model: str) -> AsyncGenerator[Dict[str, Any], None]:
+        from app.ai.content_validator import validate_and_repair_section
+        
+        # Run validation and auto-repair
+        validated, is_ok = validate_and_repair_section(st, raw_content)
+        
+        if not is_ok:
+            logger.warning(f"Section {st} failed validation. Attempting single-section regeneration...")
+            yield {
+                "type": "section_clear",
+                "section_type": st,
+                "engine_id": engine_id
+            }
             
-        parts.append(content[last_end:])
-        return "".join(parts)
+            # Run regeneration
+            regen_content = ""
+            async for event in _regenerate_section(provider, subject, topic, st, plan.section_titles.get(st, st.capitalize()), engine_id):
+                # Forward chunks in real-time, but do not yield section_done from _regenerate_section directly yet
+                if event.get("type") == "section_chunk":
+                    regen_content += event.get("content", "")
+                    yield event
+                elif event.get("type") == "section_done":
+                    # Capture content but don't forward section_done event yet
+                    pass
+                else:
+                    yield event
+            
+            # Validate the regenerated content
+            validated, is_ok = validate_and_repair_section(st, regen_content)
+            # If still invalid, degrade gracefully to the best we have
+            if not is_ok:
+                logger.warning(f"Regenerated section {st} still failed validation. Degrading gracefully.")
+            
+        accumulated_content[st] = validated
+        yield {
+            "type": "section_done",
+            "section_type": st,
+            "section_data": {
+                "type": st,
+                "content": validated,
+            },
+            "status": "completed",
+            "engine_id": engine_id,
+            "elapsed": 0,
+            "model": model,
+        }
+
     
     # Notify that we are starting the overall generation
     # The frontend expects individual section statuses, so we will mark the first one as generating
@@ -572,20 +557,9 @@ async def generate_lesson_full(
                                     new_st = active_st if active_st else active_sections[0][0]
                                     
                             if active_st and new_st != active_st:
-                                validated_content = await validate_mermaid(accumulated_content[active_st])
-                                accumulated_content[active_st] = validated_content
-                                yield {
-                                    "type": "section_done",
-                                    "section_type": active_st,
-                                    "section_data": {
-                                        "type": active_st,
-                                        "content": validated_content,
-                                    },
-                                    "status": "completed",
-                                    "engine_id": engine_id,
-                                    "elapsed": 0,
-                                    "model": model_id,
-                                }
+                                async for event in _validate_and_yield_section_done(active_st, accumulated_content[active_st], model_id):
+                                    yield event
+
                             if new_st != active_st:
                                 active_st = new_st
                                 yield {
@@ -619,20 +593,8 @@ async def generate_lesson_full(
         }
         
     if active_st:
-        validated_content = await validate_mermaid(accumulated_content[active_st])
-        accumulated_content[active_st] = validated_content
-        yield {
-            "type": "section_done",
-            "section_type": active_st,
-            "section_data": {
-                "type": active_st,
-                "content": validated_content,
-            },
-            "status": "completed",
-            "engine_id": engine_id,
-            "elapsed": 0,
-            "model": model_id,
-        }
+        async for event in _validate_and_yield_section_done(active_st, accumulated_content[active_st], model_id):
+            yield event
 
     # Step 3: Semantic Review and Regeneration
     # ONLY proceed if the full lesson stream completed successfully.
@@ -930,15 +892,20 @@ async def _regenerate_section(provider, subject, topic, st, title, engine_id, is
     except Exception as e:
         logger.error(f"Regeneration failed: {e}")
         # Could yield an error here, but we will let the existing flow end gracefully
+        
+    from app.ai.content_validator import validate_and_repair_section
+    validated, _ = validate_and_repair_section(st, accumulated)
+    
     yield {
         "type": "section_done",
         "section_type": st,
         "section_data": {
             "type": st,
-            "content": accumulated,
+            "content": validated,
         },
         "status": "completed",
         "engine_id": engine_id,
         "elapsed": 0,
         "model": model_id,
     }
+
