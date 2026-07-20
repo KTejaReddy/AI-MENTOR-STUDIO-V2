@@ -719,10 +719,35 @@ async def generate_lesson_full(
                     logger.info(f"QUIZ_SENT_TO_FRONTEND:\n{content}")
                     logger.info("LEAVING_QUIZ_PIPELINE")
                     continue
-                except Exception:
+                except Exception as e:
                     logger.exception("QUIZ_PIPELINE_FATAL_ERROR")
-                    raise
-                    
+                    # Yield a graceful fallback instead of crashing the orchestrator
+                    fallback_content = "## 5. Quiz\n\n*The quiz section is currently unavailable due to a generation error.*"
+                    accumulated_content[st] = fallback_content
+                    yield {
+                        "type": "section_clear",
+                        "section_type": st,
+                        "engine_id": engine_id
+                    }
+                    yield {
+                        "type": "section_chunk",
+                        "section_type": st,
+                        "content": fallback_content,
+                        "engine_id": engine_id
+                    }
+                    yield {
+                        "type": "section_done",
+                        "section_type": st,
+                        "section_data": {
+                            "type": st,
+                            "content": fallback_content,
+                        },
+                        "status": "completed",
+                        "engine_id": engine_id,
+                        "elapsed": 0,
+                        "model": "fallback",
+                    }
+                    continue
             # Graceful reviewer degradation: if anything fails, just keep the section.
             try:
                 content = accumulated_content[st]

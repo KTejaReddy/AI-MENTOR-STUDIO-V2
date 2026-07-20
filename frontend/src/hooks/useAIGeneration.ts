@@ -396,7 +396,10 @@ export function useAIGeneration(activeTab?: any) {
 
           case 'error':
             isGenerationActiveRef.current = false
-            if (playTimerRef.current) clearInterval(playTimerRef.current)
+            if (playTimerRef.current) {
+              cancelAnimationFrame(playTimerRef.current)
+              playTimerRef.current = null
+            }
             setResult((prev) => ({
               ...prev, status: 'error', error: event.content,
               errorCode: event.code, errorStage: event.stage
@@ -405,7 +408,10 @@ export function useAIGeneration(activeTab?: any) {
 
           case 'cancelled':
             isGenerationActiveRef.current = false
-            if (playTimerRef.current) clearInterval(playTimerRef.current)
+            if (playTimerRef.current) {
+              cancelAnimationFrame(playTimerRef.current)
+              playTimerRef.current = null
+            }
             setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled' }))
             break
         }
@@ -420,7 +426,10 @@ export function useAIGeneration(activeTab?: any) {
         return
       }
       isGenerationActiveRef.current = false
-      if (playTimerRef.current) clearInterval(playTimerRef.current)
+      if (playTimerRef.current) {
+        cancelAnimationFrame(playTimerRef.current)
+        playTimerRef.current = null
+      }
       if (err.name === 'AbortError' || err.message === 'Request was cancelled') {
         console.warn('[SSE_DISCONNECT] Generation aborted by user or tab switch.')
         setResult((prev) => ({ ...prev, status: 'cancelled', error: 'Generation was cancelled.' }))
@@ -441,7 +450,7 @@ export function useAIGeneration(activeTab?: any) {
     isGenerationActiveRef.current = false
     abortRef.current?.abort()
     if (playTimerRef.current) {
-      clearInterval(playTimerRef.current)
+      cancelAnimationFrame(playTimerRef.current)
       playTimerRef.current = null
     }
     setResult((prev) => ({ ...prev, status: 'cancelled' }))
@@ -451,7 +460,7 @@ export function useAIGeneration(activeTab?: any) {
     isGenerationActiveRef.current = false
     abortRef.current?.abort()
     if (playTimerRef.current) {
-      clearInterval(playTimerRef.current)
+      cancelAnimationFrame(playTimerRef.current)
       playTimerRef.current = null
     }
     rawSectionsBuffer.current = {}
