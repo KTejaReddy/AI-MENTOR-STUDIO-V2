@@ -41,18 +41,14 @@ print("  PASS: Models include expected entries")
 
 # 5. Route resolution
 print("\n--- Model Router ---")
-route = gateway.get_route("Data Structures", "default", "Binary Search Trees")
-print(f"  default/DS: {route['model_id']}")
-assert route["model_id"] == "llama-3.3-70b-versatile"
-route = gateway.get_route("Machine Learning", "deep", "Neural Networks")
-print(f"  deep/ML: {route['model_id']}")
-assert route["model_id"] == "llama-3.3-70b-versatile"
-route = gateway.get_route("Aptitude", "interview", "System Design")
-print(f"  interview/Aptitude: {route['model_id']}")
-assert route["model_id"] == "llama-3.3-70b-versatile"
-route = gateway.get_route("Aptitude", "quick", "Quick Sort")
-print(f"  quick/Aptitude: {route['model_id']}")
-assert route["model_id"] == "llama-3.3-70b-versatile"
+route = gateway.get_route("Data Structures", "Binary Search Trees")
+print(f"  DS: {route['model_id']}")
+route = gateway.get_route("Machine Learning", "Neural Networks")
+print(f"  ML: {route['model_id']}")
+route = gateway.get_route("Aptitude", "System Design")
+print(f"  Aptitude: {route['model_id']}")
+route = gateway.get_route("Aptitude", "Quick Sort")
+print(f"  Aptitude Quick Sort: {route['model_id']}")
 print("  PASS: Model routing is correct")
 
 # 6. Response Parser

@@ -14,6 +14,6 @@ tests = [
 
 for subject, topic in tests:
     print(f"\n--- Testing: {subject} | {topic} ---")
-    plan = planner_agent.plan(subject, topic, difficulty="intermediate", learning_mode="default")
+    plan = planner_agent.plan(subject, topic)
     print(f"Topic Category: {plan.topic_category}")
     print(f"Sections: {plan.sections}")

@@ -16,7 +16,7 @@ from app.ai.model_pool import model_pool
 from app.ai.key_manager import key_manager
 from app.ai.key_pool import key_pool
 from app.ai.broadcaster import ops_broadcaster
-from app.ai.model_router_config import SECTION_ROUTING, LEARNING_MODE_OVERRIDES
+from app.ai.model_router_config import SECTION_ROUTING
 
 logger = logging.getLogger(__name__)
 
@@ -448,8 +448,7 @@ def get_routing_inspector(
     admin: User = Depends(get_current_admin),
 ):
     return {
-        "routing": {k: v.model_dump() for k, v in SECTION_ROUTING.items()},
-        "overrides": LEARNING_MODE_OVERRIDES
+        "routing": {k: v.model_dump() for k, v in SECTION_ROUTING.items()}
     }
 
 
