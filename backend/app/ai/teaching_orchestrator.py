@@ -988,29 +988,12 @@ Output the exam as a structured JSON object exactly matching this format:
         "correct_answer": "A",
         "explanation": "Why A is correct and others are wrong."
       }}
-    ],
-    "short_answer": [
-      {{
-        "question": "Short answer question?",
-        "model_answer": "Key points...",
-        "marking_scheme": "Points..."
-      }}
-    ],
-    "long_answer": [
-      {{
-        "question": "Complex synthesis problem...",
-        "expected_approach": "Steps...",
-        "model_answer": "Complete answer...",
-        "rubric": "Criteria..."
-      }}
     ]
   }}
 }}
 
 Requirements:
-- Exactly 25 Multiple Choice Questions (mcq)
-- Exactly 10 Short Answer Questions (short_answer)
-- Exactly 5 Long Answer Questions (long_answer)
+- Exactly 15 Multiple Choice Questions (mcq).
 - Ensure the JSON is completely valid, with escaped quotes where necessary.
 - NO markdown formatting outside the JSON block. Do not add ```json...``` around the output, just the raw JSON object.
 - The JSON object MUST have a top-level "content" key as shown above."""

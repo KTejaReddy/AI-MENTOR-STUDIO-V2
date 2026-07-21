@@ -153,6 +153,9 @@ class TeachingAgent(ABC):
                             "section_type": self.section_type,
                             "content": event.content,
                         }
+                    
+                    if event.finish_reason == "length":
+                        raise RuntimeError("TokenLimitError: Model output truncated due to max_tokens limit before completion.")
 
                 if not accumulated.strip():
                     raise RuntimeError("Empty response from model")
@@ -549,7 +552,7 @@ class QuizAgent(TeachingAgent):
         score = 1.0
         
         mcq_count = content.count("**Correct Answer:")
-        if mcq_count < 20:
+        if mcq_count < 15:
             score *= 0.5
             logger.warning(f"QuizAgent: Insufficient MCQs found ({mcq_count})")
             
