@@ -157,6 +157,8 @@ class TeachingAgent(ABC):
                 if not accumulated.strip():
                     raise RuntimeError("Empty response from model")
 
+                self.current_model = model_id
+
                 # Parse response
                 content = self._parse_response(accumulated)
                 if not content or len(content) < self.config.min_content_length:
@@ -530,7 +532,17 @@ class QuizAgent(TeachingAgent):
                 exception_caught = type(e).__name__
 
         detected_format = "json" if cleaned.startswith("{") else "mixed/unknown"
-        logger.warning(f"QuizAgent: All parser branches failed. Detected format: {detected_format}. Exception: {exception_caught}. Returning raw response.")
+        model_name = getattr(self, "current_model", "unknown")
+        logger.error(
+            f"QuizAgent Parser Diagnostic Dump\n"
+            f"Model: {model_name}\n"
+            f"Detected Format: {detected_format}\n"
+            f"Parser Branch: Fallback (All branches failed)\n"
+            f"Exception: {exception_caught}\n"
+            f"=== EXACT RAW MODEL OUTPUT START ===\n"
+            f"{raw}\n"
+            f"=== EXACT RAW MODEL OUTPUT END ==="
+        )
         return raw
 
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
