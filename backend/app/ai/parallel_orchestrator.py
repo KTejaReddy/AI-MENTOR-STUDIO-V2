@@ -41,7 +41,7 @@ AGENT_CLASSES = {
     "caseStudy":          CaseStudyAgent,
     "codeExamples":       CodeExamplesAgent,
     "formulaExplanation": FormulaExplanationAgent,
-    "diagrams":           DiagramsAgent,
+    "visualization":      DiagramsAgent,
     "commonMistakes":     MistakesAgent,
     "interviewQuestions": InterviewAgent,
     "quiz":               QuizAgent,

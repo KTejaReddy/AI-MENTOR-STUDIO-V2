@@ -445,7 +445,7 @@ class QuizAgent(TeachingAgent):
         return "quiz"
 
     def _parse_response(self, raw: str) -> str:
-        """Parse and ensure the output is JSON."""
+        """Parse JSON and format into Markdown expected by frontend."""
         raw = raw.strip()
         if raw.startswith("```json"):
             raw = raw[7:]
@@ -457,33 +457,35 @@ class QuizAgent(TeachingAgent):
         
         try:
             data = json.loads(raw)
-            # If the model wrapped it in "content", extract it, but keep it as JSON string
             if isinstance(data, dict) and "content" in data:
-                return json.dumps(data["content"])
-            return json.dumps(data)
+                data = data["content"]
+            
+            md_output = ""
+            mcqs = data.get("mcq", [])
+            for i, q in enumerate(mcqs, 1):
+                md_output += f"{i}. {q.get('question', '')}\n"
+                opts = q.get("options", {})
+                if isinstance(opts, dict):
+                    for k, v in opts.items():
+                        md_output += f"{k}) {v}\n"
+                elif isinstance(opts, list):
+                    for j, v in enumerate(opts):
+                        md_output += f"{chr(65 + j)}) {v}\n"
+                md_output += f"**Correct Answer: {q.get('correct_answer', '')}**\n"
+                md_output += f"**Explanation:** {q.get('explanation', '')}\n\n"
+            
+            return md_output.strip() if md_output else raw
         except json.JSONDecodeError:
             return raw
 
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
         score = 1.0
         
-        try:
-            data = json.loads(content)
+        mcq_count = content.count("**Correct Answer:")
+        if mcq_count < 20:
+            score *= 0.5
+            logger.warning(f"QuizAgent: Insufficient MCQs found ({mcq_count})")
             
-            if "mcq" not in data or len(data.get("mcq", [])) < 20:
-                score *= 0.5
-                logger.warning(f"QuizAgent: Insufficient MCQs found")
-                
-            if "short_answer" not in data or len(data.get("short_answer", [])) < 8:
-                score *= 0.7
-                
-            if "long_answer" not in data or len(data.get("long_answer", [])) < 4:
-                score *= 0.7
-                
-        except json.JSONDecodeError:
-            score *= 0.1
-            logger.warning(f"QuizAgent: Invalid JSON output")
-
         return score
 
 
@@ -661,7 +663,7 @@ class FormulaExplanationAgent(TeachingAgent):
 
 class DiagramsAgent(TeachingAgent):
     @property
-    def section_type(self) -> str: return "diagrams"
+    def section_type(self) -> str: return "visualization"
 
 class MiniProjectAgent(TeachingAgent):
     @property

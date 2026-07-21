@@ -62,6 +62,14 @@ class EditorAgent:
             "Start directly with the first section."
         )
 
+        # Bypass LLM Editor if payload is too massive to avoid 413 Entity Too Large error
+        if len(sections_str) > 25000:
+            logger.warning(f"Editor Agent bypassed: combined sections exceed 25,000 characters ({len(sections_str)}). Falling back to simple merge.")
+            merged = []
+            for sec in sections:
+                merged.append(f"## {sec.get('title', sec.get('type'))}\n\n{sec.get('content', '')}")
+            return "\n\n".join(merged)
+
         def _build_req(mid: str) -> CompletionRequest:
             return CompletionRequest(
                 messages=[

@@ -51,7 +51,7 @@ AGENT_CLASSES = {
     "caseStudy": CaseStudyAgent,
     "codeExamples": CodeExamplesAgent,
     "formulaExplanation": FormulaExplanationAgent,
-    "diagrams": DiagramsAgent,
+    "visualization": DiagramsAgent,
     "commonMistakes": MistakesAgent,
     "interviewQuestions": InterviewAgent,
     "quiz": QuizAgent,
@@ -383,8 +383,8 @@ def _build_agent_config(section_type: str, model_id: str, subject: str = "") -> 
             temperature=routing.temperature if routing else 0.6,
             min_content_length=200,
         ),
-        "diagrams": AgentConfig(
-            section_type="diagrams",
+        "visualization": AgentConfig(
+            section_type="visualization",
             system_prompt=_get_diagrams_system_prompt(subject),
             prompt_template=_get_diagrams_prompt_template(subject),
             model_id=model_id,
