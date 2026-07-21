@@ -142,6 +142,28 @@ MODEL_REGISTRY: Dict[str, ModelConfig] = {
 }
 
 # =============================================================================
+# MODEL SPECIALIZATION MATRIX
+# =============================================================================
+MODEL_SPECIALIZATION: Dict[str, List[str]] = {
+    "overview": ["llama-3.1-8b-instant", "groq/compound-mini", "allam-2-7b"],
+    "learningObjectives": ["llama-3.1-8b-instant", "groq/compound-mini", "allam-2-7b"],
+    "keyConcepts": ["llama-3.1-8b-instant", "groq/compound-mini", "allam-2-7b"],
+    "explanation": ["groq/compound", "qwen/qwen3.6-27b", "openai/gpt-oss-120b"],
+    "formulaExplanation": ["openai/gpt-oss-120b", "llama-3.3-70b-versatile", "qwen/qwen3.6-27b"],
+    "mathematicalDerivation": ["llama-3.3-70b-versatile", "openai/gpt-oss-120b", "qwen/qwen3.6-27b"],
+    "examples": ["groq/compound", "openai/gpt-oss-120b", "llama-3.3-70b-versatile"],
+    "codeExamples": ["qwen/qwen3.6-27b", "groq/compound", "openai/gpt-oss-20b"],
+    "visualization": ["qwen/qwen3.6-27b", "llama-3.3-70b-versatile", "groq/compound"],
+    "applications": ["groq/compound", "openai/gpt-oss-20b", "llama-3.1-8b-instant"],
+    "caseStudy": ["openai/gpt-oss-20b", "groq/compound", "qwen/qwen3.6-27b"],
+    "assignment": ["llama-3.1-8b-instant", "groq/compound-mini", "allam-2-7b"],
+    "quiz": ["allam-2-7b", "openai/gpt-oss-20b", "groq/compound-mini"],
+    "summary": ["groq/compound-mini", "llama-3.1-8b-instant", "groq/compound"],
+    "reviewer": ["openai/gpt-oss-safeguard-20b", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
+    "prompt_injection": ["meta-llama/llama-prompt-guard-2-86m", "meta-llama/llama-prompt-guard-2-22m"],
+}
+
+# =============================================================================
 # SECTION ROUTING TABLE — Capability Matching
 # =============================================================================
 SECTION_ROUTING: Dict[str, SectionRoutingConfig] = {
@@ -179,18 +201,18 @@ SECTION_ROUTING: Dict[str, SectionRoutingConfig] = {
     "regeneration": SectionRoutingConfig(section_type="regeneration", required_capabilities=["deep_reasoning", "general_reasoning"]),
 }
 
-# Execution wave groups for parallel orchestration
-# All independent sections are moved to Wave 1 to maximize concurrency and throughput.
+# =============================================================================
+# WAVE EXECUTION GROUPS
+# =============================================================================
 EXECUTION_WAVES = [
-    [
-        "overview", "introduction", "explanation", "keyConcepts", "working",
-        "algorithm", "pseudocode", "codeExamples", "complexity", "formulaExplanation",
-        "mathematicalDerivation", "realWorldExample", "applications", "advantages",
-        "disadvantages", "comparison", "visualization", "diagramDescription",
-        "flowchartDescription", "commonMistakes", "interviewQuestions", "quiz",
-        "caseStudy", "analogy", "assignment", "miniProject"
-    ],
-    ["summary", "revisionNotes", "cheatSheet"],  # Wave 2: Dependencies on core content
+    # Wave 1: Foundation
+    ["overview", "learningObjectives", "keyConcepts", "formulaExplanation", "applications"],
+    # Wave 2: Core explanation & examples
+    ["explanation", "examples", "codeExamples", "visualization"],
+    # Wave 3: Case studies, Assignments, Quizzes
+    ["caseStudy", "assignment", "quiz"],
+    # Wave 4: Summary & Synthesis
+    ["summary"]
 ]
 
 def get_model_config(model_id: str) -> Optional[ModelConfig]:

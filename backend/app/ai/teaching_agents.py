@@ -13,7 +13,7 @@ from typing import Dict, Any, Optional, List, AsyncGenerator
 
 from app.ai.base import AIProvider, CompletionRequest, Message
 from app.ai.model_router_config import get_section_config, SectionRoutingConfig
-from app.ai.model_router import get_model_for_section
+from app.ai.model_router import model_router, get_model_for_section
 from app.ai.key_manager import key_manager, KeyManager, ApiKey as MgrApiKey
 
 logger = logging.getLogger(__name__)
@@ -99,15 +99,19 @@ class TeachingAgent(ABC):
         subject: str,
         topic: str,
         context: Optional[str] = None,
+        blueprint: Optional[Dict[str, Any]] = None,
+        previous_summaries: Optional[str] = None,
+        engine_id: str = "",
     ) -> AsyncGenerator[Any, None]:
         """Generate the section content."""
         self.status = AgentStatus.GENERATING
         start_time = time.time()
         retries = 0
 
-        model_id = self.config.model_id
+        # Select the best model dynamically using the updated ModelRouter with quotas and specialization
+        model_id = get_model_for_section(self.section_type, difficulty=context.get("complexity", "moderate") if isinstance(context, dict) else "intermediate", engine_id=engine_id)
         routing_config = get_section_config(self.section_type)
-        fallback_queue = list(routing_config.fallback_models) if routing_config and routing_config.fallback_models else []
+        fallback_queue = model_router.get_fallback_chain(self.section_type)
         if model_id in fallback_queue:
             fallback_queue.remove(model_id)
 
@@ -115,8 +119,14 @@ class TeachingAgent(ABC):
             try:
                 provider = await self._get_provider(model_id)
 
-                prompt = self._build_prompt(subject, topic)
-                if context:
+                prompt = ""
+                if blueprint:
+                    prompt += f"LESSON BLUEPRINT (Use the exact terminology, notation, variables, style, and tone defined below):\n{json.dumps(blueprint, indent=2)}\n\n"
+                if previous_summaries:
+                    prompt += f"PREVIOUS SECTION SUMMARY (Context of what was generated in previous sections. Do NOT repeat or overlap with this content):\n{previous_summaries}\n\n"
+
+                prompt += self._build_prompt(subject, topic)
+                if context and isinstance(context, str):
                     prompt += f"\n\nAdditional Context:\n{context}"
 
                 messages = [

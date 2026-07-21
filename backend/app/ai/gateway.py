@@ -19,7 +19,7 @@ from app.ai.cache import lesson_cache
 from app.ai.topic_analyzer import topic_analyzer
 from app.ai.content_mapper import content_mapper
 from app.ai.planner_agent import planner_agent
-from app.ai.full_lesson_orchestrator import generate_lesson_full as generate_lesson_v2
+from app.ai.parallel_orchestrator import generate_lesson_parallel as generate_lesson_v2
 
 logger = logging.getLogger(__name__)
 

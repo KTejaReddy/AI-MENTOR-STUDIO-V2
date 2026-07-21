@@ -82,3 +82,63 @@ def log_ai_request_analytics(data: dict):
         t = threading.Thread(target=save_analytics_sync, args=(data,))
         t.daemon = True
         t.start()
+
+def save_section_telemetry_db(data: dict):
+    """Saves section-level telemetry to the SQLite database."""
+    from app.db.session import SessionLocal
+    from app.models.ai_request_analytics import AiRequestAnalytics
+    db = SessionLocal()
+    try:
+        record = AiRequestAnalytics(
+            lesson_id=data.get("lesson_id"),
+            section_name=data.get("section"),
+            subject=data.get("subject"),
+            topic=data.get("topic"),
+            model_used=data.get("selected_model"),
+            api_key_identifier=data.get("api_key_used"),
+            latency_ms=(data.get("latency") or 0.0) * 1000.0,
+            prompt_tokens=data.get("prompt_tokens", 0),
+            completion_tokens=data.get("completion_tokens", 0),
+            total_tokens=data.get("total_tokens", 0),
+            retry_count=data.get("retries", 0),
+            fallback_used=data.get("fallback_count", 0) > 0,
+            success=data.get("success", True),
+            quality_score=data.get("quality_score", 1.0)
+        )
+        db.add(record)
+        db.commit()
+    except Exception as e:
+        logger.error(f"Error saving section telemetry to DB: {e}")
+    finally:
+        db.close()
+
+def log_section_telemetry(data: dict):
+    """Logs section-level telemetry to JSONL and SQLite DB."""
+    import os
+    import json
+    try:
+        log_dir = "backend/logs"
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, "section_telemetry.jsonl")
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write(json.dumps(data) + "\n")
+    except Exception as e:
+        logger.error(f"Error saving section telemetry JSONL: {e}")
+
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(asyncio.to_thread(save_section_telemetry_db, data))
+    except RuntimeError:
+        import threading
+        t = threading.Thread(target=save_section_telemetry_db, args=(data,))
+        t.daemon = True
+        t.start()
+
+    # Trigger threshold alerts
+    try:
+        from app.ai.alerts import check_and_trigger_alerts
+        check_and_trigger_alerts(data)
+    except Exception as e:
+        logger.error(f"Error checking alerts: {e}")
+
+
