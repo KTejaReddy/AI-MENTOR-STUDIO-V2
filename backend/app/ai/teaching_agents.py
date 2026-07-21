@@ -446,37 +446,92 @@ class QuizAgent(TeachingAgent):
 
     def _parse_response(self, raw: str) -> str:
         """Parse JSON and format into Markdown expected by frontend."""
-        raw = raw.strip()
-        if raw.startswith("```json"):
-            raw = raw[7:]
-        if raw.startswith("```"):
-            raw = raw[3:]
-        if raw.endswith("```"):
-            raw = raw[:-3]
-        raw = raw.strip()
+        import re
         
-        try:
-            data = json.loads(raw)
-            if isinstance(data, dict) and "content" in data:
-                data = data["content"]
+        cleaned = raw.strip()
+        if cleaned.startswith("```json"):
+            cleaned = cleaned[7:]
+        if cleaned.startswith("```"):
+            cleaned = cleaned[3:]
+        if cleaned.endswith("```"):
+            cleaned = cleaned[:-3]
+        cleaned = cleaned.strip()
+        
+        # If it's already markdown, return it
+        if "**Correct Answer:" in cleaned and not cleaned.startswith("{"):
+            logger.info("QuizAgent: Parser branch 'markdown' succeeded. Returning parsed markdown.")
+            return cleaned
             
-            md_output = ""
+        def _build_md(data: dict) -> str:
+            md = ""
             mcqs = data.get("mcq", [])
+            if not mcqs and "questions" in data:
+                mcqs = data.get("questions", [])
+                
             for i, q in enumerate(mcqs, 1):
-                md_output += f"{i}. {q.get('question', '')}\n"
+                md += f"{i}. {q.get('question', '')}\n"
                 opts = q.get("options", {})
                 if isinstance(opts, dict):
                     for k, v in opts.items():
-                        md_output += f"{k}) {v}\n"
+                        md += f"{k}) {v}\n"
                 elif isinstance(opts, list):
                     for j, v in enumerate(opts):
-                        md_output += f"{chr(65 + j)}) {v}\n"
-                md_output += f"**Correct Answer: {q.get('correct_answer', '')}**\n"
-                md_output += f"**Explanation:** {q.get('explanation', '')}\n\n"
+                        md += f"{chr(65 + j)}) {v}\n"
+                ans = q.get('correct_answer', q.get('correctAnswer', ''))
+                md += f"**Correct Answer: {ans}**\n"
+                md += f"**Explanation:** {q.get('explanation', '')}\n\n"
+            return md.strip()
+
+        exception_caught = None
+
+        try:
+            data = json.loads(cleaned)
+            branch = "json"
+            if isinstance(data, dict) and "content" in data:
+                if isinstance(data["content"], str):
+                    try:
+                        data = json.loads(data["content"])
+                        branch = "stringified json"
+                    except Exception as inner_e:
+                        exception_caught = type(inner_e).__name__
+                elif isinstance(data["content"], dict):
+                    data = data["content"]
             
-            return md_output.strip() if md_output else raw
-        except json.JSONDecodeError:
-            return raw
+            md_output = _build_md(data)
+            if md_output:
+                logger.info(f"QuizAgent: Parser branch '{branch}' succeeded. Returning constructed markdown.")
+                return md_output
+        except Exception as e:
+            exception_caught = type(e).__name__
+
+        # Regex fallback for mixed/malformed
+        match = re.search(r'```json\s*(\{.*?\})\s*```', raw, re.DOTALL)
+        if not match:
+            match = re.search(r'(\{.*"mcq".*?\})', raw, re.DOTALL)
+            
+        if match:
+            try:
+                data = json.loads(match.group(1))
+                branch = "regex fallback"
+                if isinstance(data, dict) and "content" in data:
+                    if isinstance(data["content"], str):
+                        try:
+                            data = json.loads(data["content"])
+                            branch = "regex stringified json"
+                        except Exception as inner_e:
+                            exception_caught = type(inner_e).__name__
+                    elif isinstance(data["content"], dict):
+                        data = data["content"]
+                md_output = _build_md(data)
+                if md_output:
+                    logger.info(f"QuizAgent: Parser branch '{branch}' succeeded. Returning constructed markdown.")
+                    return md_output
+            except Exception as e:
+                exception_caught = type(e).__name__
+
+        detected_format = "json" if cleaned.startswith("{") else "mixed/unknown"
+        logger.warning(f"QuizAgent: All parser branches failed. Detected format: {detected_format}. Exception: {exception_caught}. Returning raw response.")
+        return raw
 
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
         score = 1.0
