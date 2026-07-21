@@ -164,6 +164,8 @@ class TeachingAgent(ABC):
 
                 # Quality checks
                 quality_score = await self._run_quality_checks(content, subject, topic)
+                if quality_score < 0.5:
+                    raise RuntimeError(f"Validation failed: Quality score too low ({quality_score})")
 
                 latency = time.time() - start_time
                 self._release_key(model_id, True, latency)
@@ -442,30 +444,45 @@ class QuizAgent(TeachingAgent):
     def section_type(self) -> str:
         return "quiz"
 
+    def _parse_response(self, raw: str) -> str:
+        """Parse and ensure the output is JSON."""
+        raw = raw.strip()
+        if raw.startswith("```json"):
+            raw = raw[7:]
+        if raw.startswith("```"):
+            raw = raw[3:]
+        if raw.endswith("```"):
+            raw = raw[:-3]
+        raw = raw.strip()
+        
+        try:
+            data = json.loads(raw)
+            # If the model wrapped it in "content", extract it, but keep it as JSON string
+            if isinstance(data, dict) and "content" in data:
+                return json.dumps(data["content"])
+            return json.dumps(data)
+        except json.JSONDecodeError:
+            return raw
+
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
         score = 1.0
-
-        # Check question counts
-        mcq_count = content.count("**Correct Answer:")
-        if mcq_count < 20:
-            score *= 0.6
-            logger.warning(f"QuizAgent: Only {mcq_count} MCQs found")
-
-        short_count = content.lower().count("short answer")
-        if short_count < 8:
-            score *= 0.7
-
-        long_count = content.lower().count("long answer")
-        if long_count < 4:
-            score *= 0.7
-
-        # Must have explanations for all
-        if "**Why others are wrong:**" not in content and "why others are wrong" not in content.lower():
-            score *= 0.7
-
-        # Word count
-        if len(content.split()) < 3000:
-            score *= 0.6
+        
+        try:
+            data = json.loads(content)
+            
+            if "mcq" not in data or len(data.get("mcq", [])) < 20:
+                score *= 0.5
+                logger.warning(f"QuizAgent: Insufficient MCQs found")
+                
+            if "short_answer" not in data or len(data.get("short_answer", [])) < 8:
+                score *= 0.7
+                
+            if "long_answer" not in data or len(data.get("long_answer", [])) < 4:
+                score *= 0.7
+                
+        except json.JSONDecodeError:
+            score *= 0.1
+            logger.warning(f"QuizAgent: Invalid JSON output")
 
         return score
 
@@ -621,6 +638,22 @@ class ImportantDefinitionsAgent(TeachingAgent):
 class CodeExamplesAgent(TeachingAgent):
     @property
     def section_type(self) -> str: return "codeExamples"
+
+    async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
+        score = 1.0
+        
+        if subject.lower() == "mathematics":
+            # Assert no programming code in math codeExamples
+            if "```python" in content.lower() or "```java" in content.lower() or "```cpp" in content.lower():
+                score *= 0.1
+                logger.warning(f"CodeExamplesAgent: Programming code generated for Mathematics")
+        else:
+            # For non-math, expect code blocks
+            if "```" not in content:
+                score *= 0.5
+                logger.warning(f"CodeExamplesAgent: Missing code blocks for {subject}")
+                
+        return score
 
 class FormulaExplanationAgent(TeachingAgent):
     @property

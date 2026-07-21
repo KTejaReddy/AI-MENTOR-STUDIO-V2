@@ -30,11 +30,10 @@ SUBJECT_TEMPLATES = {
         ("explanation", "2. Theory & Concepts"),
         ("formulaExplanation", "3. Important Formulae"),
         ("mathematicalDerivation", "4. Theorems & Proofs"),
-        ("codeExamples", "5. Solved Problems"),
-        ("assignment", "6. Practice Problems"),
-        ("visualization", "7. Graphs"),
-        ("quiz", "8. Quiz"),
-        ("summary", "9. Summary")
+        ("assignment", "5. Practice Problems"),
+        ("visualization", "6. Graphs"),
+        ("quiz", "7. Quiz"),
+        ("summary", "8. Summary")
     ],
     "electronics": [
         ("overview", "1. Overview"),

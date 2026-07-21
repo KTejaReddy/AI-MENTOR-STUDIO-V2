@@ -165,7 +165,7 @@ async def generate_lesson_parallel(
             
             # Setup configuration
             from app.ai.teaching_orchestrator import _build_agent_config
-            agent_config = _build_agent_config(sec_type, model_id)
+            agent_config = _build_agent_config(sec_type, model_id, subject=subject)
             agent = cls(agent_config, key_manager)
 
             try:

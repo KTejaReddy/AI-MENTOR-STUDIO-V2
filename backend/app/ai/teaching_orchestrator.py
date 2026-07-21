@@ -294,7 +294,7 @@ async def generate_lesson_sequential(
     )
 
 
-def _build_agent_config(section_type: str, model_id: str) -> AgentConfig:
+def _build_agent_config(section_type: str, model_id: str, subject: str = "") -> AgentConfig:
     """Build configuration for a specific agent."""
     from app.ai.model_router_config import get_section_config
 
@@ -367,8 +367,8 @@ def _build_agent_config(section_type: str, model_id: str) -> AgentConfig:
         ),
         "codeExamples": AgentConfig(
             section_type="codeExamples",
-            system_prompt=_get_code_examples_system_prompt(),
-            prompt_template=_get_code_examples_prompt_template(),
+            system_prompt=_get_code_examples_system_prompt(subject),
+            prompt_template=_get_code_examples_prompt_template(subject),
             model_id=model_id,
             max_tokens=routing.max_tokens if routing else 8192,
             temperature=routing.temperature if routing else 0.65,
@@ -385,8 +385,8 @@ def _build_agent_config(section_type: str, model_id: str) -> AgentConfig:
         ),
         "diagrams": AgentConfig(
             section_type="diagrams",
-            system_prompt=_get_diagrams_system_prompt(),
-            prompt_template=_get_diagrams_prompt_template(),
+            system_prompt=_get_diagrams_system_prompt(subject),
+            prompt_template=_get_diagrams_prompt_template(subject),
             model_id=model_id,
             max_tokens=routing.max_tokens if routing else 8192,
             temperature=routing.temperature if routing else 0.7,
@@ -394,8 +394,8 @@ def _build_agent_config(section_type: str, model_id: str) -> AgentConfig:
         ),
         "quiz": AgentConfig(
             section_type="quiz",
-            system_prompt=_get_quiz_system_prompt(),
-            prompt_template=_get_quiz_prompt_template(),
+            system_prompt=_get_quiz_system_prompt(subject),
+            prompt_template=_get_quiz_prompt_template(subject),
             model_id=model_id,
             max_tokens=routing.max_tokens if routing else 8192,
             temperature=routing.temperature if routing else 0.6,
@@ -587,13 +587,34 @@ Requirements:
 OUTPUT: Pure Markdown. Start immediately with the definitions."""
 
 
-def _get_code_examples_system_prompt() -> str:
+def _get_code_examples_system_prompt(subject: str = "") -> str:
+    if subject.lower() == "mathematics":
+        return """You are a mathematics professor providing solved mathematical problems.
+Do NOT write programming code unless explicitly requested. Provide step-by-step mathematical solutions using LaTeX.
+Explain the mathematical steps and derivation clearly. No emojis."""
     return """You are a senior developer writing a technical tutorial with runnable code examples.
 Every code snippet must be syntactically correct, include necessary imports, and be copy-paste runnable.
 Explain what each example demonstrates and what the expected output is. No emojis."""
 
 
-def _get_code_examples_prompt_template() -> str:
+def _get_code_examples_prompt_template(subject: str = "") -> str:
+    if subject.lower() == "mathematics":
+        return """Provide 3-8 complete, step-by-step solved problems demonstrating "{topic}" in {subject}.
+
+Each problem structure:
+### Problem N: [Descriptive Title]
+**Concept Demonstrated:** What this problem teaches.
+**Problem Statement:**
+[Clear problem statement using LaTeX for math]
+**Step-by-Step Solution:**
+[Show the mathematical steps to solve the problem]
+**Key Takeaway:** One sentence summarizing the learning point.
+
+Requirements:
+- Problems should progress from simple to advanced
+- Use LaTeX for mathematical notation ($ for inline, $$ for block)
+- No programming code unless explicitly requested in the topic
+- Pure Markdown. Start immediately with the problems."""
     return """Provide 3-8 complete, runnable code examples demonstrating "{topic}" in {subject}.
 
 Each example structure:
@@ -656,8 +677,14 @@ Requirements:
 - Pure Markdown. Start immediately with the formulas."""
 
 
-def _get_diagrams_system_prompt() -> str:
-    return """You are a technical architect creating visual diagrams to explain concepts.
+def _get_diagrams_system_prompt(subject: str = "") -> str:
+    subject_instruction = "creating visual diagrams to explain concepts."
+    if subject.lower() == "mathematics":
+        subject_instruction = "creating visual mathematical diagrams (e.g. geometric illustrations, matrix transformations, coordinate systems, graphs)."
+    elif subject.lower() == "dbms":
+        subject_instruction = "creating Entity-Relationship (ER) diagrams and database schemas."
+    
+    return f"""You are a technical architect {subject_instruction}
 Use Mermaid.js syntax for ALL diagrams. Every diagram must be syntactically valid Mermaid.
 Explain what each diagram shows. No emojis.
 
@@ -682,17 +709,10 @@ stateDiagram-v2 specific rules (MUST follow):
 - WRONG: `note "Matrix must be square"`"""
 
 
-def _get_diagrams_prompt_template() -> str:
+def _get_diagrams_prompt_template(subject: str = "") -> str:
     return """Create 3-7 Mermaid diagrams that visually explain "{topic}" in {subject}.
 
-Include at least 3 different diagram types from:
-1. **Architecture Diagram** (graph LR/TD) — Show how components relate
-2. **Flowchart** (graph TD) — Show a process or algorithm flow
-3. **Sequence Diagram** (sequenceDiagram) — Show interaction between components
-4. **Class Diagram** (classDiagram) — Show data structures and relationships
-5. **State Diagram** (stateDiagram-v2) — Show states and transitions
-6. **Mindmap** (mindmap) — Show concept hierarchy
-7. **Timeline** (timeline) — Show progression or history
+Include at least 3 different diagrams using appropriate Mermaid types (e.g. graph TD, flowchart, stateDiagram-v2, classDiagram for ER diagrams, etc.).
 
 Each diagram:
 ```mermaid
@@ -703,7 +723,7 @@ Each diagram:
 
 Requirements:
 - Every diagram MUST use valid Mermaid.js syntax.
-- Minimum 3 diagrams, using at least 3 different diagram types.
+- Minimum 3 diagrams.
 - Test your Mermaid syntax mentally — no syntax errors.
 - CRITICAL: `|label|` must be followed immediately by the destination node ID, never by `>`.
   CORRECT: `A -->|Addition| B`   WRONG: `A -->|Addition|> B`
@@ -944,28 +964,56 @@ Minimum 2000 words + code.
 OUTPUT: Pure Markdown ONLY. NO JSON. Start immediately with the examples."""
 
 
-def _get_quiz_system_prompt() -> str:
+def _get_quiz_system_prompt(subject: str = "") -> str:
     return """You are a professor designing a comprehensive final exam.
-Test from basic recall to deep synthesis. Every answer teaches as it assesses."""
+Test from basic recall to deep synthesis. Every answer teaches as it assesses.
+CRITICAL INSTRUCTION: You MUST return the output as structured JSON. Do NOT return markdown. Only return a valid JSON object."""
 
 
-def _get_quiz_prompt_template() -> str:
+def _get_quiz_prompt_template(subject: str = "") -> str:
     return """Create a comprehensive exam on {topic} in {subject}.
+Output the exam as a structured JSON object exactly matching this format:
 
-## Section A: Multiple Choice (25 questions)
-Each: Question → A/B/C/D → **Correct Answer: [X] — [full explanation]** → **Why others wrong:** brief for each
-Range: Easy (1-5), Medium (6-15), Hard (16-20), Trick (21-25)
+{
+  "content": {
+    "mcq": [
+      {
+        "question": "Question text here?",
+        "options": {
+          "A": "Option A text",
+          "B": "Option B text",
+          "C": "Option C text",
+          "D": "Option D text"
+        },
+        "correct_answer": "A",
+        "explanation": "Why A is correct and others are wrong."
+      }
+    ],
+    "short_answer": [
+      {
+        "question": "Short answer question?",
+        "model_answer": "Key points...",
+        "marking_scheme": "Points..."
+      }
+    ],
+    "long_answer": [
+      {
+        "question": "Complex synthesis problem...",
+        "expected_approach": "Steps...",
+        "model_answer": "Complete answer...",
+        "rubric": "Criteria..."
+      }
+    ]
+  }
+}
 
-## Section B: Short Answer (10 questions)
-Each: Question → **Model Answer:** key points → **Marking Scheme:** points
-
-## Section C: Long Answer (5 questions)
-Each: Complex synthesis problem → **Expected Approach:** steps → **Complete Model Answer:** 3-5 paragraphs → **Rubric:** criteria
-
-All answers in markdown. LaTeX for formulas. Code blocks for snippets.
-Minimum 3000 words.
-
-OUTPUT: Pure Markdown ONLY. NO JSON. Start immediately with the quiz."""
+Requirements:
+- Exactly 25 Multiple Choice Questions (mcq)
+- Exactly 10 Short Answer Questions (short_answer)
+- Exactly 5 Long Answer Questions (long_answer)
+- Ensure the JSON is completely valid, with escaped quotes where necessary.
+- NO markdown formatting outside the JSON block. Do not add ```json...``` around the output, just the raw JSON object.
+- The JSON object MUST have a top-level "content" key as shown above."""
 
 
 def _get_assignment_system_prompt() -> str:
