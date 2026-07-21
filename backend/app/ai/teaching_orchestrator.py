@@ -974,38 +974,38 @@ def _get_quiz_prompt_template(subject: str = "") -> str:
     return """Create a comprehensive exam on {topic} in {subject}.
 Output the exam as a structured JSON object exactly matching this format:
 
-{
-  "content": {
+{{
+  "content": {{
     "mcq": [
-      {
+      {{
         "question": "Question text here?",
-        "options": {
+        "options": {{
           "A": "Option A text",
           "B": "Option B text",
           "C": "Option C text",
           "D": "Option D text"
-        },
+        }},
         "correct_answer": "A",
         "explanation": "Why A is correct and others are wrong."
-      }
+      }}
     ],
     "short_answer": [
-      {
+      {{
         "question": "Short answer question?",
         "model_answer": "Key points...",
         "marking_scheme": "Points..."
-      }
+      }}
     ],
     "long_answer": [
-      {
+      {{
         "question": "Complex synthesis problem...",
         "expected_approach": "Steps...",
         "model_answer": "Complete answer...",
         "rubric": "Criteria..."
-      }
+      }}
     ]
-  }
-}
+  }}
+}}
 
 Requirements:
 - Exactly 25 Multiple Choice Questions (mcq)

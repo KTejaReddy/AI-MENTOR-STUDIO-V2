@@ -22,7 +22,7 @@ from app.ai.teaching_agents import (
     AnalogyAgent, ExamplesAgent, CaseStudyAgent, CodeExamplesAgent,
     FormulaExplanationAgent, DiagramsAgent, MistakesAgent, InterviewAgent,
     QuizAgent, AssignmentAgent, ProjectsAgent, CheatSheetAgent,
-    RevisionNotesAgent, SummaryAgent, GenericSectionAgent, AgentConfig, GenerationResult,
+    RevisionNotesAgent, SummaryAgent, GenericSectionAgent, AgentConfig, GenerationResult, AgentStatus
 )
 from app.ai.planner_agent import planner_agent
 from app.ai.blueprint_generator import generate_blueprint
@@ -188,6 +188,9 @@ async def generate_lesson_parallel(
 
                 if not result:
                     raise RuntimeError("No generation result yielded")
+
+                if result.status != AgentStatus.COMPLETED:
+                    raise RuntimeError(f"Agent failed to generate valid content: {result.error}")
 
                 content = _sanitize_content(result.content)
                 

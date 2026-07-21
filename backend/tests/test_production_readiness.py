@@ -169,7 +169,7 @@ async def test_failure_injection_429():
         difficulty="intermediate",
         engine_id="test_429_001"
     ):
-        if event["type"] == "section_done" and not event["section_data"].get("content"):
+        if event["type"] == "section_done" and event.get("status") == "failed":
             failed_sections += 1
             
     # Reset agent provider
