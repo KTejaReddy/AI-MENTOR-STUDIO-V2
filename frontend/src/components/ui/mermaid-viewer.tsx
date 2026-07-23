@@ -256,38 +256,38 @@ export const MermaidViewer = memo(function MermaidViewer({
         )}
       >
         {renderState === 'error' ? (
-          <div className="flex flex-col items-center justify-center py-10 px-6 text-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
-              <GitBranch className="w-7 h-7 text-accent-light" />
+          <div className="flex flex-col items-center justify-center py-6 px-4 text-center gap-3 bg-surface-50">
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-1">
+                <GitBranch className="w-5 h-5 text-accent-light" />
+              </div>
+              <p className="text-xs font-semibold text-text-primary">{title || 'Diagram'}</p>
+              <p className="text-[11px] text-text-tertiary">
+                Preview not available. Showing raw format.
+              </p>
             </div>
-            <p className="text-xs font-semibold text-text-primary">{title || 'Diagram'}</p>
-            <p className="text-xs text-text-tertiary max-w-xs leading-relaxed">
-              This diagram could not be rendered automatically.
-              <br />
-              Use the refresh button to retry.
-            </p>
-            {errorMsg && errorMsg !== 'null' && errorMsg !== 'undefined' && (
-              <p className="text-xs text-text-tertiary/60 max-w-xs leading-relaxed font-mono">{errorMsg}</p>
-            )}
-            {errorSourcesRef.current && (
-              <details className="w-full max-w-md text-left mt-1">
-                <summary className="text-xs text-accent cursor-pointer font-medium">Show debug info</summary>
-                <div className="mt-2 space-y-1">
-                  <p className="text-xs font-semibold text-text-tertiary/70">Parser error:</p>
-                  <pre className="text-[8px] text-red-400/80 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-20 overflow-auto">{errorMsg}</pre>
-                  <p className="text-xs font-semibold text-text-tertiary/70">Original Mermaid:</p>
-                  <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSourcesRef.current.original}</pre>
-                  <p className="text-xs font-semibold text-text-tertiary/70">Repaired Mermaid:</p>
-                  <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSourcesRef.current.repaired}</pre>
-                </div>
+            
+            <div className="w-full text-left bg-surface-200/50 rounded-lg border border-border p-3 overflow-x-auto relative group">
+              <button 
+                onClick={() => navigator.clipboard.writeText(errorSourcesRef.current?.original || diagram)}
+                className="absolute top-2 right-2 p-1.5 rounded bg-surface-300 text-text-secondary opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Copy code"
+              >
+                <Download className="w-3.5 h-3.5" />
+              </button>
+              <pre className="text-xs font-mono text-text-secondary whitespace-pre">
+                {errorSourcesRef.current?.original || diagram}
+              </pre>
+            </div>
+            
+            {process.env.NODE_ENV === 'development' && errorMsg && (
+              <details className="w-full text-left mt-2">
+                <summary className="text-[10px] text-red-400 cursor-pointer font-medium">Dev Only: Parser Error</summary>
+                <pre className="mt-2 text-[10px] text-red-400/80 font-mono whitespace-pre-wrap bg-red-500/10 p-2 rounded max-h-32 overflow-auto">
+                  {errorMsg}
+                </pre>
               </details>
             )}
-            <button
-              onClick={() => render(diagram, true)}
-              className="mt-1 px-3 py-1.5 rounded-lg bg-accent/10 border border-accent/20 text-xs text-accent-light font-semibold hover:bg-accent/20 transition-colors"
-            >
-              Retry Render
-            </button>
           </div>
         ) : (
           <div

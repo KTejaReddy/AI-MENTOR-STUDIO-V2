@@ -43,6 +43,28 @@ export function AppShell() {
     navigate('/learn', { state: { openGenerate: true } })
   }, [navigate])
 
+  // Handle Mobile hardware back button for chat drawer
+  useEffect(() => {
+    if (chatOpen) {
+      window.history.pushState({ chatOpen: true }, '')
+    } else {
+      // If we are setting chatOpen to false, and the state exists, we pop it manually (cleanup)
+      if (window.history.state?.chatOpen) {
+        window.history.back()
+      }
+    }
+  }, [chatOpen])
+
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (chatOpen && !e.state?.chatOpen) {
+        setChatOpen(false)
+      }
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [chatOpen])
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
@@ -62,7 +84,7 @@ export function AppShell() {
   }, [handleNewLesson])
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-surface flex flex-col relative z-0">
+    <div className="h-[100dvh] w-screen overflow-hidden bg-surface flex flex-col relative z-0">
       <BackgroundEffects />
 
       <TopNavbar
@@ -114,15 +136,26 @@ export function AppShell() {
 
       <AnimatePresence>
         {chatOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 360, opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="shrink-0 border-t border-border overflow-hidden z-30"
-          >
-            <AICompanion />
-          </motion.div>
+          <>
+            {/* Mobile backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setChatOpen(false)}
+              className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+            />
+            {/* Chat Container */}
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+              className="fixed md:static inset-x-0 bottom-0 top-[20%] md:top-auto md:bottom-auto md:h-[360px] md:shrink-0 border-t border-border overflow-hidden z-50 md:z-30 rounded-t-2xl md:rounded-none shadow-2xl md:shadow-none flex flex-col bg-surface"
+            >
+              <AICompanion />
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -131,3 +164,4 @@ export function AppShell() {
     </div>
   )
 }
+

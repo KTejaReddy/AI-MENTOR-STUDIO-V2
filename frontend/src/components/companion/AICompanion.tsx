@@ -168,7 +168,7 @@ export const AICompanion = memo(function AICompanion() {
         </div>
       )}
 
-      <div className="px-4 py-3 border-t border-border shrink-0">
+      <div className="px-4 py-3 border-t border-border shrink-0 pb-[calc(env(safe-area-inset-bottom,0.5rem)+0.75rem)]">
         <div className="relative flex items-end gap-2">
           <div className="flex items-center gap-1 absolute left-2 bottom-2.5 z-10">
             <IconButton label="Attach file" size="sm">
