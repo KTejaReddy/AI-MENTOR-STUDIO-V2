@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { authApi } from '@/lib/api/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Eye, EyeOff, AlertCircle, Mail, Lock, ArrowRight } from 'lucide-react'
-import logoSrc from '@/assets/branding/arkore-logo.png'
+import { AppIcon } from '@/components/ui/AppIcon'
 
 const PARTICLES = 30
 
@@ -131,8 +131,8 @@ export function Login() {
       >
         <div className="glass-card rounded-2xl p-8">
           <div className="mb-8 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent-muted/20">
-              <img src={logoSrc} alt="ARKORE LOGICS Logo" className="w-6 h-6 object-contain" />
+            <div className="mx-auto mb-4 flex justify-center">
+              <AppIcon className="h-12 w-12" />
             </div>
             <h1 className="text-2xl font-bold text-text-primary tracking-wide">Mentor AI Studio</h1>
             <p className="mt-1 text-xs font-bold text-text-tertiary uppercase tracking-wider">by ARKORE LOGICS</p>
