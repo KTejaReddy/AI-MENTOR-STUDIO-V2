@@ -269,7 +269,8 @@ export function Settings() {
                 <>
                   <div className="mb-6">
                     <h1 className="text-xl font-bold text-text-primary mb-1">About</h1>
-                    <p className="text-sm text-text-tertiary">Mentor AI Studio information</p>
+                    <p className="text-sm text-text-tertiary font-bold mt-1">Developed by</p>
+                    <p className="text-xs text-text-secondary uppercase tracking-widest font-bold">ARKORE LOGICS</p>
                   </div>
                   <SettingsSection title="Application" description="Version and details">
                     <SettingsRow label="Version"><Badge variant="accent">2.0.0</Badge></SettingsRow>

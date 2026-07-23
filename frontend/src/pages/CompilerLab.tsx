@@ -11,13 +11,13 @@ import { CustomSelect } from '@/components/ui/select'
 import { fetchWithAuth } from '@/lib/api/client'
 
 const LANGUAGES = [
-  { id: 'python', label: 'Python (3.10)', version: '3.10.0', defaultCode: 'print("Hello Mentor AI Studio!")' },
-  { id: 'javascript', label: 'Node.js', version: '18.15.0', defaultCode: 'console.log("Hello Mentor AI Studio!");' },
-  { id: 'c', label: 'C (GCC)', version: '10.2.0', defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello Mentor AI Studio!\\n");\n    return 0;\n}' },
-  { id: 'cpp', label: 'C++ (GCC)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello Mentor AI Studio!" << std::endl;\n    return 0;\n}' },
-  { id: 'java', label: 'Java', version: '15.0.2', defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello Mentor AI Studio!");\n    }\n}' },
-  { id: 'sql', label: 'SQL (SQLite)', version: '3', defaultCode: 'CREATE TABLE test (id INTEGER, name TEXT);\nINSERT INTO test VALUES (1, "Mentor AI Studio");\nSELECT * FROM test;' },
-  { id: 'html', label: 'HTML/CSS/JS Preview', version: '5', defaultCode: '<!DOCTYPE html>\n<html>\n<head>\n<style>\n  h1 { color: #14b8a6; font-family: sans-serif; }\n</style>\n</head>\n<body>\n  <h1>Hello Mentor AI Studio!</h1>\n</body>\n</html>' },
+  { id: 'python', label: 'Python (3.10)', version: '3.10.0', defaultCode: 'print("Hello, World!")' },
+  { id: 'javascript', label: 'Node.js', version: '18.15.0', defaultCode: 'console.log("Hello, World!");' },
+  { id: 'c', label: 'C (GCC)', version: '10.2.0', defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}' },
+  { id: 'cpp', label: 'C++ (GCC)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}' },
+  { id: 'java', label: 'Java', version: '15.0.2', defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}' },
+  { id: 'sql', label: 'SQL (SQLite)', version: '3', defaultCode: 'CREATE TABLE test (id INTEGER, name TEXT);\nINSERT INTO test VALUES (1, "Hello, World!");\nSELECT * FROM test;' },
+  { id: 'html', label: 'HTML/CSS/JS Preview', version: '5', defaultCode: '<!DOCTYPE html>\n<html>\n<head>\n<style>\n  h1 { color: #14b8a6; font-family: sans-serif; }\n</style>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n</body>\n</html>' },
 ]
 
 const EXECUTION_TIMEOUT_MS = 10000

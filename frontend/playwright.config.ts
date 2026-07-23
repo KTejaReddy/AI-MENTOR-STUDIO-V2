@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Enterprise Playwright Configuration for Mentor AI Studio V2
+ * Enterprise Playwright Configuration for ARKORE LOGICS
  */
 export default defineConfig({
   testDir: './e2e/tests',

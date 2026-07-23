@@ -25,7 +25,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useLocalStorage<AppNotification[]>('mentor-notifications', [
     {
       id: 'welcome-1',
-      title: 'Welcome to Mentor AI Studio 2.0',
+      title: 'Welcome to Mentor AI Studio',
       message: 'Explore the new AI document tutor, compiler lab, and optimized lesson generation pipeline.',
       timestamp: Date.now(),
       read: false

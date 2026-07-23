@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { IconButton } from '@/components/ui/icon-button'
 import { Tooltip } from '@/components/ui/tooltip'
 import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import { BrandLogo } from '@/components/ui/BrandLogo'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { useAuth } from '@/contexts/AuthContext'
@@ -77,13 +78,8 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
           <Menu className="w-[18px] h-[18px]" />
         </IconButton>
 
-        <NavLink to="/" className="flex items-center gap-2 mr-5 group">
-          <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent-muted/20 group-hover:bg-accent-muted/30 group-hover:shadow-glow-sm transition-all duration-300">
-            <Sparkles className="w-[15px] h-[15px] text-[#00f2fe]" />
-          </div>
-          <span className="text-sm font-bold text-text-primary tracking-tight hidden sm:inline group-hover:text-[#00f2fe] transition-colors">
-            Mentor AI
-          </span>
+        <NavLink to="/" className="mr-5">
+          <BrandLogo />
         </NavLink>
 
         <nav className="hidden md:flex items-center gap-1 overflow-x-auto no-scrollbar mask-edges flex-1 min-w-0">
