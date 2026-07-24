@@ -182,7 +182,7 @@ export const GenerationPanel = memo(function GenerationPanel({
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
-              placeholder="e.g. Binary Search Trees, Merge Sort, Deadlock"
+              placeholder="Enter lesson topic"
               className={cn(
                 'w-full px-3 py-2 min-h-[48px] rounded-xl border text-[15px] outline-none transition-all',
                 'bg-[#18181B] text-white placeholder:text-[#9CA3AF] caret-blue-400',
