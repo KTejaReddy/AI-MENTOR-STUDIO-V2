@@ -55,13 +55,32 @@ def save_analytics_sync(data: dict):
 
     db = SessionLocal()
     try:
-        # Ensure UTC timezone awareness/naive database consistency
-        if "start_time" in data and isinstance(data["start_time"], datetime) and data["start_time"].tzinfo is not None:
-            data["start_time"] = data["start_time"].astimezone(timezone.utc).replace(tzinfo=None)
-        if "end_time" in data and isinstance(data["end_time"], datetime) and data["end_time"].tzinfo is not None:
-            data["end_time"] = data["end_time"].astimezone(timezone.utc).replace(tzinfo=None)
-        if "request_timestamp" in data and isinstance(data["request_timestamp"], datetime) and data["request_timestamp"].tzinfo is not None:
-            data["request_timestamp"] = data["request_timestamp"].astimezone(timezone.utc).replace(tzinfo=None)
+        now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+        
+        # Ensure UTC timezone awareness/naive database consistency and defaults
+        if "start_time" in data:
+            if isinstance(data["start_time"], datetime):
+                data["start_time"] = data["start_time"].astimezone(timezone.utc).replace(tzinfo=None) if data["start_time"].tzinfo else data["start_time"]
+            else:
+                data["start_time"] = now_utc
+        else:
+            data["start_time"] = now_utc
+            
+        if "end_time" in data:
+            if isinstance(data["end_time"], datetime):
+                data["end_time"] = data["end_time"].astimezone(timezone.utc).replace(tzinfo=None) if data["end_time"].tzinfo else data["end_time"]
+            else:
+                data["end_time"] = now_utc
+        else:
+            data["end_time"] = now_utc
+            
+        if "request_timestamp" in data:
+            if isinstance(data["request_timestamp"], datetime):
+                data["request_timestamp"] = data["request_timestamp"].astimezone(timezone.utc).replace(tzinfo=None) if data["request_timestamp"].tzinfo else data["request_timestamp"]
+            else:
+                data["request_timestamp"] = now_utc
+        else:
+            data["request_timestamp"] = now_utc
 
         record = AiRequestAnalytics(**data)
         db.add(record)

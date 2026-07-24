@@ -512,6 +512,16 @@ class ExplanationAgent(TeachingAgent):
         Generate one chunk with a full per-model, per-key failover loop.
         Returns the raw markdown.  Raises RuntimeError only when all models fail.
         """
+        is_no_code = any(s in subject.lower() for s in ["mathematics", "math", "physics", "chemistry"])
+        if is_no_code:
+            sections_str = sections_str.replace("copy-paste-runnable example. Show exact expected output", "step-by-step mathematical or physical derivation example. Show exact working")
+            sections_str = sections_str.replace("line of code", "step of working")
+            sections_str = sections_str.replace("MEMORY VISUALIZATION", "CONCEPTUAL VISUALIZATION")
+            sections_str = sections_str.replace("EXECUTION TRACE", "DERIVATION TRACE")
+            sections_str = sections_str.replace("DEBUGGING TIPS", "VERIFICATION TIPS")
+            sections_str = sections_str.replace("TIME COMPLEXITY", "THEORETICAL LIMITS")
+            sections_str = sections_str.replace("SPACE COMPLEXITY", "PHYSICAL/COMPUTATIONAL LIMITS")
+
         fallback_queue = list(self._CHUNK_FALLBACK_MODELS)
         chunk_attempt = 0
 
@@ -565,10 +575,23 @@ class ExplanationAgent(TeachingAgent):
                 )
 
                 full_prompt = "\n\n".join(parts)
+                
+                # Estimate prompt size to avoid 413 Request Entity Too Large
+                estimated_prompt_tokens = len(full_prompt) // 4
+                requested_max_tokens = 6144
+                # Most standard models have 8192 context. If prompt + requested > 8192, we must reduce requested tokens or skip.
+                if estimated_prompt_tokens + requested_max_tokens > 8192:
+                    available_tokens = 8192 - estimated_prompt_tokens - 100 # 100 buffer
+                    if available_tokens < 2000:
+                        logger.warning(f"[AGENT:explanation/{chunk_name}] model={model_id!r} skipped. Estimated prompt {estimated_prompt_tokens} leaves too few tokens for generation to prevent 413.")
+                        key_manager.release_key(key, success=True)
+                        self._acquired_key = None
+                        continue
+                    requested_max_tokens = available_tokens
 
                 logger.info(
                     f"[AGENT:explanation/{chunk_name}] Attempt {chunk_attempt}/{len(fallback_queue)} | "
-                    f"model={model_id!r} prompt_chars={len(full_prompt)}"
+                    f"model={model_id!r} prompt_chars={len(full_prompt)} requested_tokens={requested_max_tokens}"
                 )
 
                 from app.ai.teaching_orchestrator import _get_explanation_system_prompt
@@ -579,7 +602,7 @@ class ExplanationAgent(TeachingAgent):
                     ],
                     model=model_id,
                     temperature=self.config.temperature,
-                    max_tokens=6144,  # Per-chunk budget — safe for all registered models
+                    max_tokens=requested_max_tokens,
                     stream=False,
                 )
 
@@ -593,6 +616,14 @@ class ExplanationAgent(TeachingAgent):
                 if not text or len(text) < 100:
                     logger.warning(
                         f"[AGENT:explanation/{chunk_name}] model={model_id!r} too short ({len(text)} chars). Next."
+                    )
+                    continue
+                    
+                # Chunk-level subject code rules validation
+                from app.ai.content_validator import validate_subject_code_rules
+                if not validate_subject_code_rules(text, subject, topic):
+                    logger.warning(
+                        f"[AGENT:explanation/{chunk_name}] model={model_id!r} failed subject code rules (generated code for non-code subject). Next."
                     )
                     continue
 

@@ -61,16 +61,23 @@ function repairStateDiagramNotes(code: string): string {
 function repairMermaid(code: string): string {
   const lines = code.split('\n')
   const repaired = lines.map((line) => {
-    let s = line.trimEnd()
+    let s = line.trim() // Aggressive trim for Mermaid blocks
     s = s.replace(/<\/?(?:think|integer|string|object|array|json)\b[^>]*>/gi, '')
     s = s.replace(/^```(?:mermaid)?\s*/i, '').replace(/\s*```$/, '')
     s = s.replace(/--(?![>-])/g, '-->')
     s = s.replace(/\|>/g, '|')
     s = s.replace(/(-[-=]|>|={2,}|-\.->)\s+\|/g, (m) => m.replace(/\s+\|/, '|'))
+    
+    // Unescape markdown and KaTeX artifacts often injected inside mermaid
     s = s.replace(/\\([`*_{}[\]()#+\-.!])/g, '$1')
+    s = s.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    s = s.replace(/\\\( /g, '(').replace(/ \\\)/g, ')')
+    s = s.replace(/\\\[ /g, '[').replace(/ \\\]/g, ']')
+
+    // Quote labels containing parentheses, brackets or special characters
     s = s.replace(/(\w+)\[([^\]"]*[(){}:|][^\]"]*)\]\s*/g, (_m, id, label) => `${id}["${label.replace(/"/g, "'")}"] `)
     return s
-  }).join('\n')
+  }).join('\n').trim()
   return repairStateDiagramNotes(repaired)
 }
 
