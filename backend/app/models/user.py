@@ -29,7 +29,7 @@ class User(Base):
 
     sessions = relationship("AuthSession", back_populates="user", cascade="all, delete")
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete")
-    bookmarks = relationship("Bookmark", back_populates="user", cascade="all, delete-orphan")
+
     history_entries = relationship("HistoryEntry", back_populates="user", cascade="all, delete-orphan")
     notes = relationship("Note", back_populates="user", cascade="all, delete-orphan")
     settings = relationship("Setting", back_populates="user", cascade="all, delete-orphan")
