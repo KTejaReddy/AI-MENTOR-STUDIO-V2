@@ -22,7 +22,7 @@ export function AppIcon({ className, iconClassName }: AppIconProps) {
         src={arkoreLogo}
         alt="ARKORE LOGICS"
         className={cn(
-          "w-auto h-auto max-w-[70%] max-h-[70%] object-contain",
+          "w-auto h-auto max-w-[135%] max-h-[135%] object-contain",
           iconClassName
         )}
       />
