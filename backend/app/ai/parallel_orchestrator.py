@@ -129,201 +129,156 @@ async def generate_lesson_parallel(
     # 2. Generate unified Lesson Blueprint
     blueprint = await generate_blueprint(provider, subject, topic, difficulty, engine_id)
 
-    # 3. Categorize active sections into the four waves
-    wave_sections: List[List[Tuple[str, str]]] = [[] for _ in range(4)]
-    for sec_type, title in active_sections:
-        assigned = False
-        for idx, wave_types in enumerate(EXECUTION_WAVES):
-            if sec_type in wave_types:
-                wave_sections[idx].append((sec_type, title))
-                assigned = True
-                break
-        if not assigned:
-            # Default to Wave 2 if not categorized
-            wave_sections[1].append((sec_type, title))
-
-    # 4. Generate waves sequentially, but sections inside each wave in parallel
+    # 3 & 4. Generate sequentially
     generated_results: Dict[str, Dict[str, Any]] = {}
     accumulated_summaries = ""
-    concurrency_semaphore = asyncio.Semaphore(4)  # Limit concurrent calls to keep keys healthy
+    
+    for sec_type, title in active_sections:
+        logger.info(f"Starting sequential generation for section: {sec_type}")
+        
+        # Emit section starting events
+        for ev in ["section_queued", "section_running", "section_status", "section_started"]:
+            yield {
+                "type": ev,
+                "section_type": sec_type,
+                "engine_id": engine_id,
+                "title": title if ev in ["section_running", "section_status", "section_started"] else None,
+                **({"status": "generating"} if ev == "section_status" else {})
+            }
 
-    async def _run_single_agent(sec_type: str, title: str, queue: asyncio.Queue):
-        async with concurrency_semaphore:
-            # Emit section starting events
-            for ev in ["section_queued", "section_running", "section_status", "section_started"]:
-                await queue.put({
-                    "type": ev,
-                    "section_type": sec_type,
-                    "engine_id": engine_id,
-                    "title": title if ev in ["section_running", "section_status", "section_started"] else None,
-                    **({"status": "generating"} if ev == "section_status" else {})
-                })
+        cls = AGENT_CLASSES.get(sec_type, GenericSectionAgent)
+        model_id = get_model_for_section(sec_type, difficulty=difficulty)
+        
+        from app.ai.teaching_orchestrator import _build_agent_config
+        agent_config = _build_agent_config(sec_type, model_id, subject=subject)
+        agent = cls(agent_config, key_manager)
 
-            cls = AGENT_CLASSES.get(sec_type, GenericSectionAgent)
-            # Route model dynamically
-            model_id = get_model_for_section(sec_type, difficulty=difficulty)
+        try:
+            result: Optional[GenerationResult] = None
+            async for item in agent.generate(
+                subject=subject,
+                topic=topic,
+                context=source_material if source_material else None,
+                blueprint=blueprint,
+                previous_summaries=accumulated_summaries,
+                engine_id=engine_id
+            ):
+                if isinstance(item, dict) and item.get("type") in ["section_chunk", "section_clear", "section_retry", "section_fallback"]:
+                    item["engine_id"] = engine_id
+                    if "content" in item:
+                        item["content"] = _sanitize_content(item["content"])
+                    yield item
+                elif hasattr(item, "status"):
+                    result = item
+
+            if not result:
+                raise RuntimeError("No generation result yielded")
+
+            if result.status != AgentStatus.COMPLETED:
+                raise RuntimeError(f"Agent failed to generate valid content: {getattr(result, 'error', 'Unknown Error')}")
+
+            content = _sanitize_content(result.content)
             
-            # Setup configuration
-            from app.ai.teaching_orchestrator import _build_agent_config
-            agent_config = _build_agent_config(sec_type, model_id, subject=subject)
-            agent = cls(agent_config, key_manager)
+            # Telemetry logging for success
+            import uuid
+            from app.ai.telemetry import log_section_telemetry
+            from app.ai.model_router import model_router
+            prompt_tokens = result.metadata.get("prompt_tokens") if result.metadata else 100
+            if prompt_tokens is None:
+                prompt_tokens = 100
+            routing_details = model_router._last_decisions.get((engine_id, sec_type), {})
+            log_section_telemetry({
+                "timestamp": time.time(),
+                "request_id": f"req_{uuid.uuid4().hex[:12]}",
+                "lesson_id": engine_id,
+                "subject": subject,
+                "topic": topic,
+                "section": sec_type,
+                "selected_model": result.model_used,
+                "api_key_used": agent._acquired_key.key[:12] if agent._acquired_key else "unknown",
+                "candidate_models": routing_details.get("candidate_models", []),
+                "routing_score": routing_details.get("routing_score", 0.0),
+                "reason_for_model_selection": routing_details.get("reason", "Unknown"),
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": result.tokens_used or len(content) // 4,
+                "total_tokens": prompt_tokens + (result.tokens_used or len(content) // 4),
+                "latency": result.latency,
+                "retries": result.retries,
+                "fallback_count": result.retries,
+                "validation_failures": 0,
+                "editor_time": 0.0,
+                "reviewer_time": 0.0,
+                "success": True
+            })
 
-            try:
-                result: Optional[GenerationResult] = None
-                async for item in agent.generate(
-                    subject=subject,
-                    topic=topic,
-                    context=source_material if source_material else None,
-                    blueprint=blueprint,
-                    previous_summaries=accumulated_summaries,
-                    engine_id=engine_id
-                ):
-                    if isinstance(item, dict) and item.get("type") in ["section_chunk", "section_clear"]:
-                        item["engine_id"] = engine_id
-                        if "content" in item:
-                            item["content"] = _sanitize_content(item["content"])
-                        await queue.put(item)
-                    elif hasattr(item, "status"):
-                        result = item
+            sdata = {
+                "type": sec_type,
+                "title": title,
+                "content": content,
+                "metadata": result.metadata
+            }
+            generated_results[sec_type] = sdata
 
-                if not result:
-                    raise RuntimeError("No generation result yielded")
+            yield {
+                "type": "section_done",
+                "section_type": sec_type,
+                "section_data": sdata,
+                "status": "completed",
+                "engine_id": engine_id,
+                "elapsed": round(time.time() - start_time, 2),
+                "model": result.model_used
+            }
+            
+            # Simple header extraction to feed context forward without LLM summary cost per section
+            headers = [line.strip() for line in content.split('\n') if line.strip().startswith('#') or line.strip().startswith('**')]
+            if headers:
+                accumulated_summaries += f"\nSection {sec_type} covered:\n" + "\n".join(headers[:10]) + "\n"
 
-                if result.status != AgentStatus.COMPLETED:
-                    raise RuntimeError(f"Agent failed to generate valid content: {result.error}")
+        except Exception as e:
+            logger.error(f"Agent {sec_type} failed in sequential execution: {e}")
+            
+            # Telemetry logging for failure
+            import uuid
+            from app.ai.telemetry import log_section_telemetry
+            from app.ai.model_router import model_router
+            routing_details = model_router._last_decisions.get((engine_id, sec_type), {})
+            log_section_telemetry({
+                "timestamp": time.time(),
+                "request_id": f"req_{uuid.uuid4().hex[:12]}",
+                "lesson_id": engine_id,
+                "subject": subject,
+                "topic": topic,
+                "section": sec_type,
+                "selected_model": "unknown",
+                "api_key_used": "unknown",
+                "candidate_models": routing_details.get("candidate_models", []),
+                "routing_score": routing_details.get("routing_score", 0.0),
+                "reason_for_model_selection": f"Generation failure: {str(e)}",
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+                "latency": round(time.time() - start_time, 2),
+                "retries": 3,
+                "fallback_count": len(model_router.get_fallback_chain(sec_type)),
+                "validation_failures": 1,
+                "editor_time": 0.0,
+                "reviewer_time": 0.0,
+                "success": False
+            })
 
-                content = _sanitize_content(result.content)
-                
-                # Telemetry logging for success
-                import uuid
-                from app.ai.telemetry import log_section_telemetry
-                from app.ai.model_router import model_router
-                prompt_tokens = result.metadata.get("prompt_tokens") if result.metadata else 100
-                if prompt_tokens is None:
-                    prompt_tokens = 100
-                routing_details = model_router._last_decisions.get((engine_id, sec_type), {})
-                log_section_telemetry({
-                    "timestamp": time.time(),
-                    "request_id": f"req_{uuid.uuid4().hex[:12]}",
-                    "lesson_id": engine_id,
-                    "subject": subject,
-                    "topic": topic,
-                    "section": sec_type,
-                    "selected_model": result.model_used,
-                    "api_key_used": agent._acquired_key.key[:12] if agent._acquired_key else "unknown",
-                    "candidate_models": routing_details.get("candidate_models", []),
-                    "routing_score": routing_details.get("routing_score", 0.0),
-                    "reason_for_model_selection": routing_details.get("reason", "Unknown"),
-                    "prompt_tokens": prompt_tokens,
-                    "completion_tokens": result.tokens_used or len(content) // 4,
-                    "total_tokens": prompt_tokens + (result.tokens_used or len(content) // 4),
-                    "latency": result.latency,
-                    "retries": result.retries,
-                    "fallback_count": result.retries,
-                    "validation_failures": 0,
-                    "editor_time": 0.0,
-                    "reviewer_time": 0.0,
-                    "success": True
-                })
-
-                await queue.put({
-                    "type": "section_done",
-                    "section_type": sec_type,
-                    "section_data": {
-                        "type": sec_type,
-                        "title": title,
-                        "content": content,
-                        "metadata": result.metadata
-                    },
-                    "status": "completed",
-                    "engine_id": engine_id,
-                    "elapsed": round(time.time() - start_time, 2),
-                    "model": result.model_used
-                })
-
-            except Exception as e:
-                logger.error(f"Agent {sec_type} failed in parallel wave: {e}")
-                
-                # Telemetry logging for failure
-                import uuid
-                from app.ai.telemetry import log_section_telemetry
-                from app.ai.model_router import model_router
-                routing_details = model_router._last_decisions.get((engine_id, sec_type), {})
-                log_section_telemetry({
-                    "timestamp": time.time(),
-                    "request_id": f"req_{uuid.uuid4().hex[:12]}",
-                    "lesson_id": engine_id,
-                    "subject": subject,
-                    "topic": topic,
-                    "section": sec_type,
-                    "selected_model": "unknown",
-                    "api_key_used": "unknown",
-                    "candidate_models": routing_details.get("candidate_models", []),
-                    "routing_score": routing_details.get("routing_score", 0.0),
-                    "reason_for_model_selection": f"Generation failure: {str(e)}",
-                    "prompt_tokens": 0,
-                    "completion_tokens": 0,
-                    "total_tokens": 0,
-                    "latency": round(time.time() - start_time, 2),
-                    "retries": 3,
-                    "fallback_count": len(model_router.get_fallback_chain(sec_type)),
-                    "validation_failures": 1,
-                    "editor_time": 0.0,
-                    "reviewer_time": 0.0,
-                    "success": False
-                })
-
-                await queue.put({
-                    "type": "section_done",
-                    "section_type": sec_type,
-                    "section_data": {
-                        "type": sec_type,
-                        "title": title,
-                        "content": f"\n\n*This section couldn't be generated. Please regenerate this section.*"
-                    },
-                    "status": "failed",
-                    "engine_id": engine_id,
-                    "elapsed": round(time.time() - start_time, 2),
-                    "model": "unknown"
-                })
-            finally:
-                await queue.put(None)
-
-    for wave_idx, sections in enumerate(wave_sections):
-        if not sections:
-            continue
-        
-        logger.info(f"Starting Wave {wave_idx + 1} sections: {[s[0] for s in sections]}")
-        queues = [asyncio.Queue() for _ in sections]
-        tasks = []
-        
-        # Start all tasks in the wave concurrently
-        for idx, (sec_type, title) in enumerate(sections):
-            tasks.append(asyncio.create_task(_run_single_agent(sec_type, title, queues[idx])))
-
-        # Consume queues sequentially to maintain order and stream updates
-        wave_data = []
-        for idx, (sec_type, title) in enumerate(sections):
-            q = queues[idx]
-            while True:
-                item = await q.get()
-                if item is None:
-                    break
-                
-                # Check for section_done to store content
-                if item.get("type") == "section_done":
-                    sdata = item.get("section_data", {})
-                    generated_results[sec_type] = sdata
-                    wave_data.append(sdata)
-                
-                yield item
-
-        # Wait for all background tasks of this wave to clean up
-        await asyncio.gather(*tasks, return_exceptions=True)
-
-        # Generate wave summary and feed forward to next waves
-        summary = await generate_wave_summary(provider, wave_data, engine_id=engine_id)
-        accumulated_summaries += f"\nSummary of Wave {wave_idx + 1}:\n{summary}\n"
+            yield {
+                "type": "section_done",
+                "section_type": sec_type,
+                "section_data": {
+                    "type": sec_type,
+                    "title": title,
+                    "content": f"\n\n*This section couldn't be generated. Please regenerate this section.*"
+                },
+                "status": "failed",
+                "engine_id": engine_id,
+                "elapsed": round(time.time() - start_time, 2),
+                "model": "unknown"
+            }
 
     # 5. Editor Agent: Post-processing to merge, polish, fix transitions, preserve Mermaid/KaTeX
     sections_list = []

@@ -86,7 +86,7 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
-    if (!ref.current || !chart) return
+    if (!ref.current || !chart || !chart.trim()) return
     setFailed(false)
     const container = ref.current
     container.innerHTML = ''
@@ -102,6 +102,12 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
           container.innerHTML = svg
           const svgEl = container.querySelector('svg')
           if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto' }
+          
+          // Check if mermaid injected a syntax error SVG without throwing
+          if (svgEl && svgEl.innerHTML.includes('Syntax error')) {
+             setFailed(true)
+             return
+          }
         }
       } catch (e) {
         if (!isRetry) await tryRender(repairMermaid(code), true)
@@ -111,7 +117,7 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
     tryRender(chart, false)
   }, [chart])
 
-  if (failed) return null
+  if (failed || !chart || !chart.trim()) return null
   return (
     <div className="my-10 flex justify-center p-6 bg-[#0B0F19] border border-white/5 rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)]">
       <div ref={ref} className="w-full" />

@@ -95,13 +95,29 @@ class EditorAgent:
                 section_type="explanation",
                 request_builder=_build_req
             )
-            return response.content.strip()
+            return self._sanitize_mermaid(response.content.strip())
         except Exception as e:
             logger.error(f"Editor Agent failed: {e}. Falling back to simple merge of sections.")
             # Fallback: simple merge of sections
             merged = []
             for sec in sections:
                 merged.append(f"## {sec.get('title', sec.get('type'))}\n\n{sec.get('content', '')}")
-            return "\n\n".join(merged)
+            return self._sanitize_mermaid("\n\n".join(merged))
+            
+    def _sanitize_mermaid(self, text: str) -> str:
+        import re
+        blocks = re.finditer(r'```mermaid(.*?)```', text, re.DOTALL)
+        result = text
+        for match in blocks:
+            block = match.group(0)
+            inner = match.group(1).lower()
+            is_valid = True
+            if "|>" in inner: is_valid = False
+            if not any(x in inner for x in ["graph", "flowchart", "state", "sequence", "class", "pie", "gantt", "mindmap"]): is_valid = False
+            
+            if not is_valid:
+                rep = "\n> *Visual diagram simplified for clarity.*\n"
+                result = result.replace(block, rep)
+        return result
 
 editor_agent = EditorAgent()

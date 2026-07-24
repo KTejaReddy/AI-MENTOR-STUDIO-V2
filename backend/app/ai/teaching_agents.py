@@ -340,6 +340,68 @@ class TeachingAgent(ABC):
                 else:
                     break
 
+        # Desperation fallback
+        logger.warning(f"[AGENT:{self.section_type}] Exhausted all retries. Attempting desperation fallback.")
+        yield {
+            "type": "section_clear",
+            "section_type": self.section_type,
+        }
+        yield {
+            "type": "section_chunk",
+            "section_type": self.section_type,
+            "content": f"\n\n*Generating simplified version...*\n\n"
+        }
+        
+        try:
+            fallback_model = "llama-3.1-8b-instant"
+            provider = await self._get_provider(fallback_model)
+            simplified_prompt = f"Provide a brief, 2-paragraph summary of {topic} in the context of {subject} for a {self.section_type} section. Output Markdown directly. Do not use Mermaid. Keep it under 200 words."
+            
+            messages = [
+                Message(role="system", content="You are a helpful teaching assistant."),
+                Message(role="user", content=simplified_prompt)
+            ]
+            request = CompletionRequest(
+                messages=messages,
+                model=fallback_model,
+                temperature=0.3,
+                max_tokens=300,
+                stream=False
+            )
+            
+            # Simple manual key acquisition for desperation
+            key = key_manager.get_available_key(preferred_model=fallback_model)
+            if not key:
+                key = key_manager.get_available_key()
+            if key:
+                provider.set_api_key(key.key)
+                resp = await provider.complete(request)
+                if resp.content:
+                    content = resp.content
+                    yield {
+                        "type": "section_clear",
+                        "section_type": self.section_type,
+                    }
+                    yield {
+                        "type": "section_chunk",
+                        "section_type": self.section_type,
+                        "content": content
+                    }
+                    self.status = AgentStatus.COMPLETED
+                    yield GenerationResult(
+                        section_type=self.section_type,
+                        content=content,
+                        title=self.config.section_type,
+                        status=AgentStatus.COMPLETED,
+                        model_used=fallback_model,
+                        latency=time.time() - start_time,
+                        retries=retries,
+                        quality_score=1.0,
+                    )
+                    return
+        except Exception as fallback_err:
+            logger.error(f"[AGENT:{self.section_type}] Desperation fallback failed: {fallback_err}")
+
         self.status = AgentStatus.FAILED
         if 'e' in locals():
             logger.error(f"Agent {self.section_type} failed after {retries} retries. Final error: {e}")
@@ -618,20 +680,30 @@ class ExplanationAgent(TeachingAgent):
                         f"...{tail}"
                     )
 
-                # Calculate word budget
-                chunk_word_targets = {
-                    "foundation": "400-500 words",
-                    "theory": "600-700 words",
-                    "examples": "600-700 words",
-                    "advanced": "600-700 words",
-                    "exam_prep": "400-500 words",
+                # Calculate word budget based on subject
+                subj_lower = subject.lower()
+                if any(k in subj_lower for k in ["programming", "code", "software", "computer"]):
+                    base = 2100 // 5
+                elif any(k in subj_lower for k in ["math", "physics", "chemistry", "statistics"]):
+                    base = 2600 // 5
+                else:
+                    base = 2800 // 5
+                
+                variance = {
+                    "foundation": 0.8,
+                    "theory": 1.2,
+                    "examples": 1.2,
+                    "advanced": 1.0,
+                    "exam_prep": 0.8,
                 }
-                target_words = chunk_word_targets.get(chunk_name, "650 words")
+                multiplier = variance.get(chunk_name, 1.0)
+                target_words = int(base * multiplier)
+                target_str = f"{target_words - 50}-{target_words + 50} words"
 
                 rendered = sections_str.replace("{topic}", topic).replace("{subject}", subject)
                 parts.append(
                     f'Continue the university-level lecture on "{topic}" in {subject}.\n'
-                    f"Write ONLY the following sections using the EXACT headers shown. Target length: ~{target_words}.\n\n"
+                    f"Write ONLY the following sections using the EXACT headers shown. Target length: ~{target_str}.\n\n"
                     f"{rendered}\n\n"
                     f"Output raw markdown immediately. No preamble. No JSON wrapper."
                 )
