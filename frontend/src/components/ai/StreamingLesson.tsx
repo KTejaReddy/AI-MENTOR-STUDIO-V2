@@ -170,14 +170,14 @@ export const StreamingLesson = memo(function StreamingLesson({
   const safeAccumulatedContent = accumulatedContent
 
   return (
-    <div className="flex flex-col w-full min-h-full bg-surface-50 text-text-primary">
+    <div className="flex flex-col w-full min-h-full bg-[#02040A] text-white">
       {isGenerating && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="sticky top-0 z-30 bg-surface-50/95 backdrop-blur-md border-b border-border shadow-sm"
+          className="sticky top-0 z-30 bg-[#060814]/95 backdrop-blur-md border-b border-white/5 shadow-sm"
         >
-          <div className="h-1 w-full bg-surface-200">
+          <div className="h-1 w-full bg-white/5">
             <motion.div
               className="h-full bg-accent"
               initial={{ width: 0 }}

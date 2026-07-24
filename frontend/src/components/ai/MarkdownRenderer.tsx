@@ -1,81 +1,51 @@
-import { memo, useEffect, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState, ReactNode } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import rehypeKatex from 'rehype-katex'
-
 import mermaid from 'mermaid'
-import { ReactNode } from 'react'
 import 'katex/dist/katex.min.css'
+import { AlertTriangle, Lightbulb, Info, CheckCircle2, ChevronRight, Hash, Quote } from 'lucide-react'
 
 mermaid.initialize({ startOnLoad: false })
 
-
-const lightThemeVariables = {
-  primaryColor: '#FFFFFF',
-  primaryTextColor: '#111827',
-  textColor: '#111827',
-  lineColor: '#6B7280',
-  mainBkg: '#FFFFFF',
-  primaryBorderColor: '#00C2FF',
-  secondaryBorderColor: '#9CA3AF',
-  tertiaryBorderColor: '#D1D5DB',
-  clusterBkg: '#F3F4F6',
-  clusterBorder: '#D1D5DB',
-  edgeLabelBackground: '#FFFFFF',
-  fontSize: '12px',
-}
-
 const darkThemeVariables = {
-  primaryColor: '#080812',
-  primaryTextColor: '#f8fafc',
-  textColor: '#f8fafc',
-  lineColor: '#94a3b8',
-  mainBkg: '#080812',
-  primaryBorderColor: '#00f2fe',
+  primaryColor: '#0F172A',
+  primaryTextColor: '#F8FAFC',
+  textColor: '#F8FAFC',
+  lineColor: '#64748B',
+  mainBkg: '#020617',
+  primaryBorderColor: '#38BDF8',
   secondaryBorderColor: '#475569',
-  tertiaryBorderColor: '#334155',
-  clusterBkg: '#101224',
-  clusterBorder: '#1c2040',
-  edgeLabelBackground: '#080812',
-  fontSize: '12px',
+  tertiaryBorderColor: '#1E293B',
+  clusterBkg: '#0F172A',
+  clusterBorder: '#1E293B',
+  edgeLabelBackground: '#020617',
+  fontSize: '14px',
 }
 
 function initMermaidTheme() {
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark')
   mermaid.initialize({
     startOnLoad: false,
     securityLevel: 'loose',
     theme: 'base',
-    themeVariables: isDark ? darkThemeVariables : lightThemeVariables,
+    themeVariables: darkThemeVariables,
     flowchart: { useMaxWidth: true, htmlLabels: true },
     sequence: { useMaxWidth: true },
     gantt: { useMaxWidth: true },
   })
 }
 
-/** Fix invalid `note "text"` in stateDiagram-v2 by converting to proper `note right of` syntax. */
 function repairStateDiagramNotes(code: string): string {
   const trimmed = code.trim()
   if (!/^stateDiagram-v2/i.test(trimmed)) return code
-
   const lines = trimmed.split('\n')
-
-  // Find the first declared state name
   let firstState: string | null = null
   for (const line of lines) {
-    const m = line.match(/state\s+"[^"]*"\s+as\s+(\w+)/)
+    const m = line.match(/state\s+"[^"]*"\s+as\s+(\w+)/) || line.match(/^\s*(\w+)\s*:/)
     if (m) { firstState = m[1]; break }
   }
-  if (!firstState) {
-    for (const line of lines) {
-      const m = line.match(/^\s*(\w+)\s*:/)
-      if (m) { firstState = m[1]; break }
-    }
-  }
   if (!firstState) return code
-
-  // Replace standalone `note "text"` with multi-line proper syntax
   let modified = false
   const result = lines.flatMap((line) => {
     const noteMatch = line.match(/^\s*note\s+"([^"]*)"\s*$/)
@@ -85,65 +55,39 @@ function repairStateDiagramNotes(code: string): string {
     }
     return [line]
   })
-
   return modified ? result.join('\n') : code
 }
 
-/** Repair common Mermaid syntax issues before rendering.
- *  Processes each line independently to never merge or break lines. */
 function repairMermaid(code: string): string {
   const lines = code.split('\n')
   const repaired = lines.map((line) => {
     let s = line.trimEnd()
-    // Remove XML/think tags that leak from AI models
     s = s.replace(/<\/?(?:think|integer|string|object|array|json)\b[^>]*>/gi, '')
-    // Remove backtick fences
     s = s.replace(/^```(?:mermaid)?\s*/i, '').replace(/\s*```$/, '')
-    // Fix arrows: -- without > → -->
     s = s.replace(/--(?![>-])/g, '-->')
-    // CRITICAL: |label|> → |label| (invalid Mermaid syntax)
     s = s.replace(/\|>/g, '|')
-    // Normalize arrow-label spacing: --> |label| → -->|label|
     s = s.replace(/(-[-=]|>|={2,}|-\.->)\s+\|/g, (m) => m.replace(/\s+\|/, '|'))
-    // Remove markdown escaping inside mermaid blocks
     s = s.replace(/\\([`*_{}[\]()#+\-.!])/g, '$1')
-    // Quote node labels containing special chars (parens, colons, brackets)
     s = s.replace(/(\w+)\[([^\]"]*[(){}:|][^\]"]*)\]\s*/g, (_m, id, label) => `${id}["${label.replace(/"/g, "'")}"] `)
     return s
   }).join('\n')
-
-  // Post-processing: fix stateDiagram-v2 invalid notes
   return repairStateDiagramNotes(repaired)
 }
 
 const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
-  const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [errorSources, setErrorSources] = useState<{ original: string; repaired: string } | null>(null)
 
   useEffect(() => {
     if (!ref.current || !chart) return
     setFailed(false)
-    setErrorMsg(null)
-    setErrorSources(null)
     const container = ref.current
     container.innerHTML = ''
-
-    const originalCode = chart
     const tryRender = async (code: string, isRetry: boolean) => {
       initMermaidTheme()
       const id = `md-mermaid-${Math.random().toString(36).slice(2, 9)}`
       if (isRetry) {
-        try {
-          await mermaid.parse(code)
-        } catch (e) {
-          const msg = e instanceof Error ? e.message : String(e)
-          setErrorSources({ original: originalCode, repaired: code })
-          setErrorMsg(msg)
-          setFailed(true)
-          return
-        }
+        try { await mermaid.parse(code) } catch (e) { setFailed(true); return }
       }
       try {
         const { svg } = await mermaid.render(id, code)
@@ -153,76 +97,52 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
           if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto' }
         }
       } catch (e) {
-        if (!isRetry) {
-          await tryRender(repairMermaid(code), true)
-        } else {
-          const msg = e instanceof Error ? e.message : String(e)
-          setErrorSources({ original: originalCode, repaired: code })
-          setErrorMsg(msg)
-          setFailed(true)
-        }
+        if (!isRetry) await tryRender(repairMermaid(code), true)
+        else setFailed(true)
       }
     }
-
     tryRender(chart, false)
   }, [chart])
 
-  if (failed) {
-    return (
-      <div className="my-6 flex flex-col items-center justify-center py-8 px-4 rounded-xl border border-border bg-surface-100 text-center gap-2">
-        <svg className="w-8 h-8 text-accent-light opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-            d="M7.5 3.75H6A2.25 2.25 0 003.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0120.25 6v1.5m0 9V18A2.25 2.25 0 0118 20.25h-1.5m-9 0H6A2.25 2.25 0 013.75 18v-1.5M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <p className="text-xs text-text-tertiary">Diagram could not be rendered</p>
-        {errorMsg && errorMsg !== 'null' && errorMsg !== 'undefined' && (
-          <p className="text-xs text-text-tertiary/60 max-w-xs leading-relaxed font-mono">{errorMsg}</p>
-        )}
-        {errorSources && (
-          <details className="w-full max-w-md text-left mt-1">
-            <summary className="text-xs text-accent cursor-pointer font-medium">Show debug info</summary>
-            <div className="mt-2 space-y-1">
-              <p className="text-xs font-semibold text-text-tertiary/70">Parser error:</p>
-              <pre className="text-[8px] text-red-400/80 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-20 overflow-auto">{errorMsg}</pre>
-              <p className="text-xs font-semibold text-text-tertiary/70">Original Mermaid:</p>
-              <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSources.original}</pre>
-              <p className="text-xs font-semibold text-text-tertiary/70">Repaired Mermaid:</p>
-              <pre className="text-[8px] text-text-tertiary/60 font-mono whitespace-pre-wrap bg-surface-200/50 p-2 rounded max-h-24 overflow-auto">{errorSources.repaired}</pre>
-            </div>
-          </details>
-        )}
-      </div>
-    )
-  }
-
-  return <div ref={ref} className="my-6 flex justify-center" />
+  if (failed) return null
+  return (
+    <div className="my-10 flex justify-center p-6 bg-[#0B0F19] border border-white/5 rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+      <div ref={ref} className="w-full" />
+    </div>
+  )
 })
 
 function CodeBlock({ className, children, sectionColor, ...props }: { className?: string; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLPreElement>) {
   const lang = className?.replace('language-', '') || ''
   const code = String(children).replace(/\n$/, '')
+  if (lang === 'mermaid') return <MermaidBlock chart={code} />
 
-  if (lang === 'mermaid') {
-    return <MermaidBlock chart={String(children).replace(/\n$/, '')} />
-  }
-
+  const color = sectionColor || '#38BDF8'
+  
   return (
-    <div className="rounded-xl border overflow-hidden my-6 group" style={{ borderColor: sectionColor ? `${sectionColor}40` : 'var(--border)' }}>
-      {lang && (
-        <div className="flex items-center justify-between px-4 py-2 bg-surface-100/50 backdrop-blur-sm border-b" style={{ borderColor: sectionColor ? `${sectionColor}20` : 'var(--border)' }}>
-          <span className="text-[10px] font-mono uppercase tracking-widest font-bold" style={{ color: sectionColor || 'var(--text-tertiary)' }}>{lang}</span>
-          <button
-            onClick={() => navigator.clipboard.writeText(code)}
-            className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
-            style={{ color: sectionColor || 'var(--text-secondary)' }}
-          >
-            Copy
-          </button>
+    <div className="rounded-2xl overflow-hidden my-8 group relative bg-[#020617] border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.7)]" 
+         style={{ boxShadow: `0 20px 40px -15px ${color}30, inset 0 1px 1px rgba(255,255,255,0.1)` }}>
+      
+      {/* MacOS style window header */}
+      <div className="flex items-center justify-between px-4 py-3 bg-white/[0.02] border-b border-white/5">
+        <div className="flex gap-2 items-center">
+          <div className="flex gap-1.5 mr-2">
+            <div className="w-3 h-3 rounded-full bg-red-500/80" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+            <div className="w-3 h-3 rounded-full bg-green-500/80" />
+          </div>
+          {lang && <span className="text-[11px] font-mono uppercase tracking-[0.2em] font-bold text-[#94A3B8]">{lang}</span>}
         </div>
-      )}
-      <pre className="p-5 overflow-x-auto bg-surface-50 relative" {...props}>
-        <div className="absolute inset-0 opacity-5" style={{ backgroundColor: sectionColor || 'transparent' }} />
-        <code className="relative text-[13px] leading-[1.7] md:text-xs font-mono text-white md:leading-relaxed whitespace-pre">
+        <button
+          onClick={() => navigator.clipboard.writeText(code)}
+          className="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/15 transition-colors text-white/50 hover:text-white"
+        >
+          Copy
+        </button>
+      </div>
+      
+      <pre className="p-6 overflow-x-auto relative" {...props}>
+        <code className="relative text-[13.5px] font-mono text-[#F8FAFC] leading-[1.8] whitespace-pre">
           {children}
         </code>
       </pre>
@@ -231,13 +151,15 @@ function CodeBlock({ className, children, sectionColor, ...props }: { className?
 }
 
 function InlineCode({ children, sectionColor, ...props }: { children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLElement>) {
+  const color = sectionColor || '#38BDF8'
   return (
     <code 
-      className="px-1.5 py-0.5 rounded text-[13px] md:text-xs font-mono border" 
+      className="px-1.5 py-0.5 mx-0.5 rounded-md text-[13.5px] font-mono whitespace-nowrap shadow-sm" 
       style={{ 
-        color: sectionColor || 'var(--accent-light)', 
-        backgroundColor: sectionColor ? `${sectionColor}15` : 'rgba(255,255,255,0.05)',
-        borderColor: sectionColor ? `${sectionColor}30` : 'var(--border)'
+        color: '#F8FAFC', 
+        backgroundColor: `${color}15`,
+        borderColor: `${color}30`,
+        borderWidth: '1px'
       }}
       {...props}
     >
@@ -247,94 +169,91 @@ function InlineCode({ children, sectionColor, ...props }: { children?: ReactNode
 }
 
 function Paragraph({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className="text-lg leading-[1.85] text-text-secondary mb-6 font-normal last:mb-0" {...props}>{children}</p>
+  const childStr = extractText(children)
+  if (childStr.trim().startsWith('Fact:') || childStr.trim().startsWith('Concept:')) {
+    return (
+      <div className="my-6 p-5 rounded-2xl bg-white/[0.02] border border-white/10 flex gap-4 items-start shadow-lg">
+        <div className="mt-1"><Lightbulb className="w-5 h-5 text-amber-400" /></div>
+        <p className="text-[17px] leading-[1.9] text-[#E2E8F0]" {...props}>{children}</p>
+      </div>
+    )
+  }
+  return <p className="text-[17px] leading-[1.9] text-[#CBD5E1] mb-6 font-normal tracking-wide" {...props}>{children}</p>
 }
 
 function Heading({ level, children, sectionColor, ...props }: { level: number; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLHeadingElement>) {
-  const sizes: Record<number, string> = {
-    1: 'text-4xl md:text-5xl font-black text-text-primary mt-16 mb-8 pb-4 tracking-tight border-b border-border/50',
-    2: 'text-2xl md:text-3xl font-bold text-text-primary mt-12 mb-6 pb-2 tracking-tight border-b border-border/30',
-    3: 'text-xl md:text-2xl font-bold text-text-primary mt-10 mb-4 tracking-tight',
-    4: 'text-lg md:text-xl font-bold text-text-primary mt-8 mb-4',
-    5: 'text-base md:text-lg font-bold text-text-primary mt-6 mb-3',
-    6: 'text-sm font-bold text-text-tertiary mt-6 mb-3 uppercase tracking-widest',
-  }
-  const Tag = `h${level}` as keyof React.JSX.IntrinsicElements as any
-  
-  return (
-    <Tag 
-      className={sizes[level] || sizes[3]} 
-      {...props}
-    >
-      {level <= 2 && sectionColor ? (
-        <span className="flex items-center gap-3">
-          <span className="w-1.5 h-8 rounded-sm" style={{ backgroundColor: sectionColor }} />
-          {children}
-        </span>
-      ) : (
-        children
-      )}
-    </Tag>
-  )
-}
+  const color = sectionColor || '#38BDF8'
+  const Tag = `h${level}` as any
 
-function Table({ children, ...props }: { children?: ReactNode } & React.TableHTMLAttributes<HTMLTableElement>) {
-  return (
-    <div className="overflow-x-auto my-6 md:my-4 rounded-lg border border-border">
-      <table className="w-full text-[13px] md:text-xs border-collapse" {...props}>
+  if (level === 1 || level === 2) {
+    return (
+      <div className="mt-16 mb-8">
+        <Tag className="text-3xl md:text-[40px] font-extrabold tracking-tight text-white flex items-center gap-4 mb-4" {...props}>
+          <span className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 shrink-0 shadow-inner">
+            <Hash className="w-5 h-5" style={{ color }} />
+          </span>
+          <span className="drop-shadow-lg">{children}</span>
+        </Tag>
+        <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden relative">
+          <div className="absolute left-0 top-0 bottom-0 w-32 rounded-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />
+        </div>
+      </div>
+    )
+  }
+
+  if (level === 3) {
+    return (
+      <Tag className="text-xl md:text-[22px] font-bold text-[#F8FAFC] mt-12 mb-5 flex items-center gap-3 tracking-tight" {...props}>
+        <div className="w-1.5 h-6 rounded-full" style={{ backgroundColor: color, boxShadow: `0 0 10px ${color}` }} />
         {children}
-      </table>
-    </div>
-  )
-}
-
-function TableHeader({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead className="bg-surface-200" {...props}>{children}</thead>
-}
-
-function TableRow({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLTableRowElement>) {
-  return <tr className="border-b border-border last:border-b-0 hover:bg-surface-100/50" {...props}>{children}</tr>
-}
-
-function TableBody({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <tbody {...props}>{children}</tbody>
-}
-
-function TableCell({ isHeader, children, ...props }: { isHeader?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLTableCellElement>) {
-  const base = 'px-4 py-3 md:py-2.5 text-left leading-[1.7] md:leading-relaxed'
-  if (isHeader) {
-    return <th className={`${base} text-[13px] md:text-xs font-semibold text-text-primary uppercase tracking-wider`} {...props}>{children}</th>
+      </Tag>
+    )
   }
-  return <td className={`${base} text-[14px] md:text-xs text-text-secondary`} {...props}>{children}</td>
+
+  return <Tag className="text-lg md:text-[19px] font-bold text-[#F8FAFC] mt-8 mb-4 tracking-wide" {...props}>{children}</Tag>
 }
 
 function BlockQuote({ children, sectionColor, ...props }: { children?: ReactNode; sectionColor?: string } & React.BlockquoteHTMLAttributes<HTMLElement>) {
-  const childStr = extractText(children)
-  let borderColor = sectionColor || 'var(--border)'
-  let bgColor = sectionColor ? `${sectionColor}15` : 'var(--surface-100)'
-
-  if (childStr.includes('⚠️') || childStr.includes('Warning') || childStr.includes('warn')) {
-    borderColor = '#f59e0b'
-    bgColor = 'rgba(245, 158, 11, 0.1)'
-  } else if (childStr.includes('✅') || childStr.includes('Best Practice') || childStr.includes('Tip') || childStr.includes('💡')) {
-    borderColor = '#10b981'
-    bgColor = 'rgba(16, 185, 129, 0.1)'
-  } else if (childStr.includes('❌') || childStr.includes('Mistake') || childStr.includes('error')) {
-    borderColor = '#ef4444'
-    bgColor = 'rgba(239, 68, 68, 0.1)'
-  } else if (childStr.includes('📝') || childStr.includes('Note') || childStr.includes('info')) {
-    borderColor = '#3b82f6'
-    bgColor = 'rgba(59, 130, 246, 0.1)'
+  const childStr = extractText(children).toLowerCase()
+  let type = 'quote'
+  let color = sectionColor || '#38BDF8'
+  let Icon = Quote
+  
+  if (childStr.includes('warning') || childStr.includes('mistake') || childStr.includes('caution')) {
+    type = 'warning'
+    color = '#F43F5E'
+    Icon = AlertTriangle
+  } else if (childStr.includes('tip') || childStr.includes('best practice')) {
+    type = 'success'
+    color = '#10B981'
+    Icon = CheckCircle2
+  } else if (childStr.includes('note') || childStr.includes('important')) {
+    type = 'info'
+    color = '#38BDF8'
+    Icon = Info
+  } else if (childStr.includes('example')) {
+    type = 'example'
+    color = '#A855F7'
+    Icon = Lightbulb
   }
 
   return (
     <div 
-      className="border-l-[4px] rounded-r-lg px-6 py-5 my-8" 
-      style={{ backgroundColor: bgColor, borderColor }} 
+      className="my-8 relative rounded-[24px] overflow-hidden group shadow-2xl"
+      style={{ backgroundColor: `${color}05`, border: `1px solid ${color}20` }}
       {...props}
     >
-      <div className="text-lg leading-[1.85] text-text-secondary font-normal prose-sm max-w-none [&>*:last-child]:mb-0">
-        {children}
+      <div className="absolute top-0 left-0 bottom-0 w-1" style={{ backgroundColor: color }} />
+      <div className="absolute top-0 right-0 p-32 opacity-[0.03] pointer-events-none transform translate-x-1/4 -translate-y-1/4 group-hover:scale-110 transition-transform duration-700">
+        <Icon className="w-full h-full" style={{ color }} />
+      </div>
+      <div className="p-8 relative z-10 flex gap-6 items-start">
+        <div className="shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center border shadow-inner" style={{ backgroundColor: `${color}15`, borderColor: `${color}30` }}>
+          <Icon className="w-6 h-6" style={{ color }} />
+        </div>
+        <div className="flex-1 text-[17px] leading-[1.8] text-[#CBD5E1] font-medium [&>*:last-child]:mb-0 pt-1">
+          {children}
+        </div>
       </div>
     </div>
   )
@@ -344,89 +263,54 @@ function extractText(node: React.ReactNode): string {
   if (typeof node === 'string') return node
   if (typeof node === 'number') return String(node)
   if (Array.isArray(node)) return node.map(extractText).join('')
-  if (node && typeof node === 'object' && 'props' in node) {
-    return extractText((node as any).props.children)
-  }
+  if (node && typeof node === 'object' && 'props' in node) return extractText((node as any).props.children)
   return ''
 }
 
 function List({ ordered, children, ...props }: { ordered?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLOListElement | HTMLUListElement>) {
   if (ordered) {
-    return <ol {...props} className="space-y-3 mb-8 list-decimal list-outside ml-6 text-lg leading-[1.85] text-text-secondary">{children}</ol>
+    return <ol {...props} className="space-y-4 mb-8 list-none text-[17px] leading-[1.8] text-[#CBD5E1] counter-reset-list">{children}</ol>
   }
-  return <ul {...props} className="space-y-3 mb-8 list-disc list-outside ml-6 text-lg leading-[1.85] text-text-secondary">{children}</ul>
+  return <ul {...props} className="space-y-3 mb-8 list-none text-[17px] leading-[1.8] text-[#CBD5E1]">{children}</ul>
 }
 
 function ListItem({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLLIElement>) {
-  return <li className="text-lg leading-[1.85] text-text-secondary" {...props}>{children}</li>
-}
-
-function TaskListItem({ checked, sectionColor, children, ...props }: { checked: boolean; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLLIElement>) {
+  // We use a custom bullet for ul, and ordered list uses a CSS counter approach if needed, 
+  // but for simplicity we'll just style all list items with a custom check/arrow graphic.
   return (
-    <li {...props} className="flex items-start gap-3 text-lg leading-[1.85] text-text-secondary mb-3">
-      <span 
-        className="mt-1.5 w-5 h-5 rounded border flex items-center justify-center shrink-0"
-        style={{ 
-          backgroundColor: checked ? (sectionColor || 'var(--accent)') : 'transparent',
-          borderColor: checked ? (sectionColor || 'var(--accent)') : 'var(--border)'
-        }}
-      >
-        {checked && (
-          <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        )}
+    <li className="flex items-start gap-4 relative group" {...props}>
+      <span className="mt-1.5 shrink-0 flex items-center justify-center w-5 h-5 rounded-full bg-white/5 border border-white/10 group-hover:border-indigo-500/50 transition-colors">
+        <ChevronRight className="w-3 h-3 text-[#94A3B8] group-hover:text-indigo-400 transition-colors" />
       </span>
-      {children}
+      <div className="flex-1 pt-0.5">{children}</div>
     </li>
   )
 }
 
-function Link({ href, children, sectionColor, ...props }: { href?: string; children?: ReactNode; sectionColor?: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+function Table({ children, ...props }: { children?: ReactNode } & React.TableHTMLAttributes<HTMLTableElement>) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer"
-      className="font-semibold underline underline-offset-4 hover:opacity-80 transition-opacity" 
-      style={{ color: sectionColor || 'var(--accent)', textDecorationColor: sectionColor ? `${sectionColor}40` : 'var(--border)' }}
-      {...props}>
-      {children}
-    </a>
-  )
-}
-
-function Image({ src, alt, ...props }: { src?: string; alt?: string } & React.ImgHTMLAttributes<HTMLImageElement>) {
-  return (
-    <div className="my-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative group">
-      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-      <img src={src} alt={alt || ''} className="w-full max-w-full" loading="lazy" {...props} />
-      {alt && <p className="px-4 py-2.5 text-xs text-white/50 text-center bg-surface-100/50 backdrop-blur-md uppercase tracking-widest font-bold">{alt}</p>}
+    <div className="overflow-x-auto my-8 rounded-[20px] border border-white/10 bg-[#060814] shadow-xl">
+      <table className="w-full text-[15px] border-collapse" {...props}>{children}</table>
     </div>
   )
 }
 
-function HorizontalRule({ ...props }: React.HTMLAttributes<HTMLHRElement>) {
-  return <hr className="my-8 border-border/50" {...props} />
+function TableHeader({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLTableSectionElement>) {
+  return <thead className="bg-[#0F172A] border-b border-white/10" {...props}>{children}</thead>
 }
 
-function Strong({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
-  return <strong className="font-semibold text-text-primary" {...props}>{children}</strong>
+function TableRow({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLTableRowElement>) {
+  return <tr className="border-b border-white/5 last:border-b-0 hover:bg-white/[0.02] transition-colors" {...props}>{children}</tr>
 }
 
-function Emphasis({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
-  return <em className="italic text-text-secondary" {...props}>{children}</em>
+function TableCell({ isHeader, children, ...props }: { isHeader?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLTableCellElement>) {
+  const base = 'px-6 py-4 text-left leading-[1.7]'
+  if (isHeader) return <th className={`${base} text-[13px] font-bold text-[#F8FAFC] uppercase tracking-widest`} {...props}>{children}</th>
+  return <td className={`${base} text-[#CBD5E1] font-medium`} {...props}>{children}</td>
 }
 
-function Strikethrough({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
-  return <span className="line-through text-text-tertiary" {...props}>{children}</span>
-}
-
-interface MarkdownRendererProps {
-  content?: string
-  sectionColor?: string
-}
-
-export const MarkdownRenderer = memo(function MarkdownRenderer({ content, sectionColor }: MarkdownRendererProps) {
+export const MarkdownRenderer = memo(function MarkdownRenderer({ content, sectionColor }: { content?: string; sectionColor?: string }) {
   if (!content || !content.trim()) return null
-
   return (
     <div className="prose-custom max-w-none">
       <ReactMarkdown
@@ -443,25 +327,25 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({ content, sectio
           ul: ({ children }: any) => <List>{children}</List>,
           ol: ({ children }: any) => <List ordered>{children}</List>,
           li: ListItem,
-          code: ({ className, children }: { className?: string; children?: ReactNode }) => {
-            if (className) return <CodeBlock className={className} sectionColor={sectionColor}>{children}</CodeBlock>
-            return <InlineCode sectionColor={sectionColor}>{children}</InlineCode>
-          },
-          pre: ({ children, ...props }: { children?: ReactNode } & any) => <div {...props}>{children}</div>,
+          code: ({ className, children }: any) => className ? <CodeBlock className={className} sectionColor={sectionColor}>{children}</CodeBlock> : <InlineCode sectionColor={sectionColor}>{children}</InlineCode>,
           blockquote: ({ children, ...props }: any) => <BlockQuote sectionColor={sectionColor} {...props}>{children}</BlockQuote>,
           table: Table,
           thead: TableHeader,
-          tbody: TableBody,
+          tbody: ({ children }: any) => <tbody>{children}</tbody>,
           tr: TableRow,
-          th: ({ children, ...props }: { children?: ReactNode } & any) => <TableCell isHeader={true} {...props}>{children}</TableCell>,
-          td: ({ children, ...props }: { children?: ReactNode } & any) => <TableCell isHeader={false} {...props}>{children}</TableCell>,
-          a: ({ children, href, ...props }: any) => <Link href={href} sectionColor={sectionColor} {...props}>{children}</Link>,
-          img: Image,
-          hr: HorizontalRule,
-          strong: Strong,
-          em: Emphasis,
-          del: Strikethrough,
-          input: ({ checked, ...props }: { checked?: boolean } & any) => <TaskListItem checked={!!checked} sectionColor={sectionColor} {...props} />,
+          th: ({ children }: any) => <TableCell isHeader>{children}</TableCell>,
+          td: ({ children }: any) => <TableCell isHeader={false}>{children}</TableCell>,
+          a: ({ children, href }: any) => <a href={href} target="_blank" rel="noopener noreferrer" className="font-bold underline underline-offset-4 decoration-2 decoration-indigo-500/30 hover:decoration-indigo-400 text-indigo-400 hover:text-indigo-300 transition-colors">{children}</a>,
+          img: ({ src, alt }: any) => (
+            <div className="my-10 rounded-[24px] overflow-hidden border border-white/10 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.8)] relative group">
+              <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <img src={src} alt={alt || ''} className="w-full h-auto object-cover" loading="lazy" />
+              {alt && <p className="px-5 py-3 text-[11px] text-[#94A3B8] text-center bg-[#020617] uppercase tracking-[0.15em] font-bold border-t border-white/5">{alt}</p>}
+            </div>
+          ),
+          hr: () => <hr className="my-12 border-white/10" />,
+          strong: ({ children }: any) => <strong className="font-bold text-[#F8FAFC]">{children}</strong>,
+          em: ({ children }: any) => <em className="italic text-[#94A3B8]">{children}</em>,
         }}
       >
         {content}

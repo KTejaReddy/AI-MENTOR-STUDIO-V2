@@ -157,7 +157,7 @@ export function Learn() {
   }
 
   return (
-    <div className="h-full flex overflow-hidden bg-surface-50 relative">
+    <div className="h-full flex overflow-hidden bg-[#02040A] relative">
       <div className="h-full flex-shrink-0 w-[68px] md:w-56 lg:w-64 transition-all duration-300 z-20 relative">
         {sidebarVisible && activeTab && (
           <LeftSidebar
