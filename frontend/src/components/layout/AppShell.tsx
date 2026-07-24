@@ -3,7 +3,6 @@ import { useLocation, useNavigate, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TopNavbar } from './TopNavbar'
 import { MobileDrawer } from './MobileDrawer'
-import { GlobalSidebar } from './GlobalSidebar'
 import { AICompanion } from '@/components/companion/AICompanion'
 import { Toaster } from '@/components/ui/toaster'
 import { GlobalCommandPalette } from '@/components/layout/GlobalCommandPalette'
@@ -33,14 +32,11 @@ const pageVariants = {
 }
 
 export function AppShell() {
-  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== 'undefined' ? window.innerWidth >= 768 : true)
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
   const outlet = useOutlet()
-  const isLearnPage = location.pathname === '/learn'
-  const isHomePage = location.pathname === '/'
-  const showSidebar = !isLearnPage && !isHomePage && sidebarOpen
 
   const handleNewLesson = useCallback(() => {
     navigate('/learn', { state: { openGenerate: true } })
@@ -91,21 +87,18 @@ export function AppShell() {
       <BackgroundEffects />
 
       <TopNavbar
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+        onToggleSidebar={() => setMobileDrawerOpen(!mobileDrawerOpen)}
         onToggleChat={() => setChatOpen(!chatOpen)}
         chatOpen={chatOpen}
         onNewLesson={handleNewLesson}
       />
 
       <MobileDrawer
-        isOpen={sidebarOpen && window.innerWidth < 768}
-        onClose={() => setSidebarOpen(false)}
+        isOpen={mobileDrawerOpen}
+        onClose={() => setMobileDrawerOpen(false)}
       />
 
-      <div className="flex-1 flex overflow-hidden min-h-0 relative z-10 p-0 md:p-3 md:pt-2 gap-0 md:gap-3">
-        {showSidebar && (
-          <GlobalSidebar />
-        )}
+      <div className="flex-1 flex overflow-hidden min-h-0 relative z-10 p-0 md:p-3 md:pt-2">
 
         <main className="flex-1 overflow-hidden rounded-none md:rounded-[var(--radius-xl)] bg-surface-50 border-0 md:border border-border shadow-lg relative z-10 flex flex-col">
           <AnimatePresence mode="wait">
