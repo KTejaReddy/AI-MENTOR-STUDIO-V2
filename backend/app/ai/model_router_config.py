@@ -168,11 +168,12 @@ MODEL_SPECIALIZATION: Dict[str, List[str]] = {
 # =============================================================================
 SECTION_ROUTING: Dict[str, SectionRoutingConfig] = {
     "planner": SectionRoutingConfig(section_type="planner", required_capabilities=["deep_reasoning", "general_reasoning"]),
-    "overview": SectionRoutingConfig(section_type="overview", required_capabilities=["structured_generation"]),
-    "introduction": SectionRoutingConfig(section_type="introduction", required_capabilities=["structured_generation", "lightweight_reasoning"]),
-    "explanation": SectionRoutingConfig(section_type="explanation", required_capabilities=["deep_reasoning", "general_reasoning"]),
-    "keyConcepts": SectionRoutingConfig(section_type="keyConcepts", required_capabilities=["concise_generation", "lightweight_reasoning"]),
-    "working": SectionRoutingConfig(section_type="working", required_capabilities=["deep_reasoning", "general_reasoning"]),
+    "overview": SectionRoutingConfig(section_type="overview", required_capabilities=["structured_generation"], max_tokens=4096),
+    "introduction": SectionRoutingConfig(section_type="introduction", required_capabilities=["structured_generation", "lightweight_reasoning"], max_tokens=4096),
+    # explanation needs 3000+ words → must give the model full token budget
+    "explanation": SectionRoutingConfig(section_type="explanation", required_capabilities=["deep_reasoning", "general_reasoning"], max_tokens=16384),
+    "keyConcepts": SectionRoutingConfig(section_type="keyConcepts", required_capabilities=["concise_generation", "lightweight_reasoning"], max_tokens=4096),
+    "working": SectionRoutingConfig(section_type="working", required_capabilities=["deep_reasoning", "general_reasoning"], max_tokens=8192),
     "algorithm": SectionRoutingConfig(section_type="algorithm", required_capabilities=["code_generation"]),
     "pseudocode": SectionRoutingConfig(section_type="pseudocode", required_capabilities=["code_generation"]),
     "codeExamples": SectionRoutingConfig(section_type="codeExamples", required_capabilities=["code_generation"]),

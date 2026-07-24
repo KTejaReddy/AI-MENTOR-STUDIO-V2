@@ -107,6 +107,7 @@ class TeachingAgent(ABC):
         self.status = AgentStatus.GENERATING
         start_time = time.time()
         retries = 0
+        _last_failure_reason = "Unknown"
 
         # Select the best model dynamically using the updated ModelRouter with quotas and specialization
         model_id = get_model_for_section(self.section_type, difficulty=context.get("complexity", "moderate") if isinstance(context, dict) else "intermediate", engine_id=engine_id)
@@ -115,7 +116,13 @@ class TeachingAgent(ABC):
         if model_id in fallback_queue:
             fallback_queue.remove(model_id)
 
+        logger.info(
+            f"[AGENT:{self.section_type}] START | subject={subject!r} topic={topic!r} "
+            f"model={model_id!r} max_tokens={self.config.max_tokens} temperature={self.config.temperature}"
+        )
+
         while retries <= self.config.max_retries:
+            attempt_start = time.time()
             try:
                 provider = await self._get_provider(model_id)
 
@@ -128,6 +135,12 @@ class TeachingAgent(ABC):
                 prompt += self._build_prompt(subject, topic)
                 if context and isinstance(context, str):
                     prompt += f"\n\nAdditional Context:\n{context}"
+
+                # STAGE 1: Log prompt being sent
+                logger.info(
+                    f"[AGENT:{self.section_type}] STAGE-1 PROMPT | attempt={retries+1} "
+                    f"prompt_chars={len(prompt)} prompt_preview={prompt[:300]!r}"
+                )
 
                 messages = [
                     Message(role="system", content=self.config.system_prompt),
@@ -143,6 +156,7 @@ class TeachingAgent(ABC):
                 )
 
                 accumulated = ""
+                finish_reason = None
                 async for event in provider.complete_stream(request):
                     if event.error:
                         raise RuntimeError(event.error)
@@ -153,27 +167,73 @@ class TeachingAgent(ABC):
                             "section_type": self.section_type,
                             "content": event.content,
                         }
-                    
+                    if event.finish_reason:
+                        finish_reason = event.finish_reason
                     if event.finish_reason == "length":
-                        raise RuntimeError("TokenLimitError: Model output truncated due to max_tokens limit before completion.")
+                        _last_failure_reason = (
+                            f"TokenLimitError: Model output truncated at max_tokens={self.config.max_tokens}. "
+                            f"Accumulated {len(accumulated)} chars so far."
+                        )
+                        logger.error(f"[AGENT:{self.section_type}] STAGE-2 RAW | {_last_failure_reason}")
+                        raise RuntimeError(_last_failure_reason)
+
+                # STAGE 2: Log raw model output
+                logger.info(
+                    f"[AGENT:{self.section_type}] STAGE-2 RAW | attempt={retries+1} "
+                    f"raw_chars={len(accumulated)} finish_reason={finish_reason!r} "
+                    f"raw_preview={accumulated[:500]!r}"
+                )
 
                 if not accumulated.strip():
-                    raise RuntimeError("Empty response from model")
+                    _last_failure_reason = "Empty response from model (0 chars returned)"
+                    logger.error(f"[AGENT:{self.section_type}] {_last_failure_reason}")
+                    raise RuntimeError(_last_failure_reason)
 
                 self.current_model = model_id
 
-                # Parse response
-                content = self._parse_response(accumulated)
-                if not content or len(content) < self.config.min_content_length:
-                    raise RuntimeError(f"Content too short ({len(content) if content else 0} chars)")
+                # STAGE 3: Parse response
+                try:
+                    content = self._parse_response(accumulated)
+                except ValueError as parse_err:
+                    _last_failure_reason = f"ParseError: {parse_err}"
+                    logger.error(f"[AGENT:{self.section_type}] STAGE-3 PARSE FAILED | {_last_failure_reason}")
+                    raise RuntimeError(_last_failure_reason)
 
-                # Quality checks
+                logger.info(
+                    f"[AGENT:{self.section_type}] STAGE-3 PARSED | content_chars={len(content) if content else 0} "
+                    f"content_preview={content[:300]!r if content else 'None'}"
+                )
+
+                if not content or len(content) < self.config.min_content_length:
+                    _last_failure_reason = (
+                        f"ContentTooShort: got {len(content) if content else 0} chars, "
+                        f"min required={self.config.min_content_length}"
+                    )
+                    logger.error(f"[AGENT:{self.section_type}] STAGE-3 PARSE | {_last_failure_reason}")
+                    raise RuntimeError(_last_failure_reason)
+
+                # STAGE 4: Quality validation
                 quality_score = await self._run_quality_checks(content, subject, topic)
+                logger.info(
+                    f"[AGENT:{self.section_type}] STAGE-4 VALIDATION | quality_score={quality_score:.3f} "
+                    f"threshold=0.5"
+                )
+
                 if quality_score < 0.5:
-                    raise RuntimeError(f"Validation failed: Quality score too low ({quality_score})")
+                    _last_failure_reason = (
+                        f"ValidationFailed: quality_score={quality_score:.3f} < 0.5. "
+                        f"See STAGE-4 warnings above for specific failing checks."
+                    )
+                    logger.error(f"[AGENT:{self.section_type}] STAGE-4 VALIDATION FAILED | {_last_failure_reason}")
+                    raise RuntimeError(_last_failure_reason)
 
                 latency = time.time() - start_time
                 self._release_key(model_id, True, latency)
+
+                logger.info(
+                    f"[AGENT:{self.section_type}] SUCCESS | latency={latency:.2f}s retries={retries} "
+                    f"model={model_id!r} quality_score={quality_score:.3f}"
+                )
 
                 self.status = AgentStatus.COMPLETED
                 yield GenerationResult(
@@ -190,6 +250,7 @@ class TeachingAgent(ABC):
 
             except Exception as e:
                 is_timeout = isinstance(e, asyncio.TimeoutError) or "timeout" in str(e).lower()
+                attempt_latency = round(time.time() - attempt_start, 2)
                 
                 # If timeout and we are at max_retries, allow exactly 1 more retry
                 if is_timeout and retries == self.config.max_retries:
@@ -197,7 +258,11 @@ class TeachingAgent(ABC):
                     
                 retries += 1
                 self._release_key(model_id, False, 0.0, str(e))
-                logger.warning(f"Agent {self.section_type} attempt {retries} failed: {e}")
+                logger.warning(
+                    f"[AGENT:{self.section_type}] STAGE-6 RETRY | attempt={retries} "
+                    f"failure_reason={_last_failure_reason!r} exception={str(e)!r} "
+                    f"attempt_latency={attempt_latency}s is_timeout={is_timeout}"
+                )
                 if retries <= self.config.max_retries:
                     yield {
                         "type": "section_clear",
@@ -207,7 +272,7 @@ class TeachingAgent(ABC):
                     # Try fallback model
                     if fallback_queue:
                         fallback = fallback_queue.pop(0)
-                        logger.info(f"Trying fallback model {fallback} for {self.section_type}")
+                        logger.info(f"[AGENT:{self.section_type}] Trying fallback model {fallback!r}")
                         model_id = fallback
                         yield {
                             "type": "section_fallback",
@@ -254,22 +319,23 @@ class TeachingAgent(ABC):
     async def _run_quality_checks(self, content: str, subject: str, topic: str) -> float:
         """Run quality checks and return score 0-1."""
         score = 1.0
+        checks_log = []
 
         # Check 1: Minimum length
         min_len = self.config.min_content_length
         if len(content) < min_len:
             score *= 0.5
-            logger.warning(f"{self.section_type}: Content too short ({len(content)} < {min_len})")
+            checks_log.append(f"ContentTooShort: {len(content)} < {min_len}")
 
         # Check 2: Has markdown structure
         if "##" not in content and "|" not in content and "```" not in content:
             score *= 0.8
-            logger.warning(f"{self.section_type}: Missing markdown structure")
+            checks_log.append("MissingMarkdownStructure: no ##, |, or ```")
 
         # Check 3: No JSON leakage
         if content.strip().startswith("{") and '"content"' in content[:200]:
             score *= 0.3
-            logger.warning(f"{self.section_type}: JSON leakage detected")
+            checks_log.append("JSONLeakage: content starts with { and contains '\"content\"'")
 
         # Check 4: No generic AI phrases
         ai_phrases = [
@@ -279,17 +345,30 @@ class TeachingAgent(ABC):
         for phrase in ai_phrases:
             if phrase.lower() in content.lower():
                 score *= 0.9
+                checks_log.append(f"AIPhrase: '{phrase}' found")
 
         # Section-specific checks
-        score *= await self._section_specific_checks(content, subject, topic)
+        section_score = await self._section_specific_checks(content, subject, topic)
+        if section_score < 1.0:
+            checks_log.append(f"SectionSpecificCheck: multiplier={section_score:.3f}")
+        score *= section_score
 
         # Validation layer: Subject-aware code rules
         from app.ai.content_validator import validate_subject_code_rules
         if not validate_subject_code_rules(content, subject, topic):
-            logger.warning(f"{self.section_type}: Subject code rules violation")
+            checks_log.append(f"SubjectCodeViolation: programming code found in non-code subject '{subject}'")
             score *= 0.1  # Severely penalize to trigger retry
 
-        return max(0.0, min(1.0, score))
+        final_score = max(0.0, min(1.0, score))
+        if checks_log:
+            logger.warning(
+                f"[AGENT:{self.section_type}] STAGE-4 VALIDATION DETAIL | "
+                f"final_score={final_score:.3f} checks={checks_log}"
+            )
+        else:
+            logger.info(f"[AGENT:{self.section_type}] STAGE-4 VALIDATION DETAIL | All checks passed. score={final_score:.3f}")
+
+        return final_score
 
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
         """Section-specific quality checks. Subclasses override this."""
@@ -334,8 +413,9 @@ class ExplanationAgent(TeachingAgent):
 
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
         score = 1.0
+        checks_log = []
 
-        # Must have all 30 section markers
+        # Must have 30 section markers
         section_markers = [
             "BEAUTIFUL TITLE", "INTRODUCTION", "LEARNING OBJECTIVES",
             "WHY THIS TOPIC EXISTS", "INTUITION", "REAL-LIFE ANALOGY",
@@ -351,25 +431,35 @@ class ExplanationAgent(TeachingAgent):
         found = sum(1 for m in section_markers if m.upper() in content.upper())
         if found < 25:
             score *= 0.6
-            logger.warning(f"ExplanationAgent: Only {found}/30 sections found")
+            checks_log.append(f"MissingSections: {found}/30 found")
 
-        # Word count
+        # Subject-aware length requirements
         words = len(content.split())
-        if words < 2500:
+        min_words = 2000 if "programming" in subject.lower() or "math" in subject.lower() else 1500
+        if words < min_words:
             score *= 0.5
-            logger.warning(f"ExplanationAgent: Only {words} words (min 2500)")
+            checks_log.append(f"ContentTooShort: {words} words < {min_words} for {subject}")
 
-        # Must have code blocks
-        if "```" not in content:
-            score *= 0.7
+        # Must have code blocks — only required for programming/CS subjects
+        is_no_code_subject = any(s in subject.lower() for s in ["mathematics", "math", "physics", "chemistry"])
+        if not is_no_code_subject and "```" not in content:
+            score *= 0.5
+            checks_log.append(f"MissingCodeBlocks: no ``` in content for subject={subject!r}")
 
-        # Must have mermaid
-        if "mermaid" not in content.lower():
+        # Mermaid diagrams are optional for math/physics/chemistry (can use LaTeX instead)
+        if not is_no_code_subject and "mermaid" not in content.lower():
             score *= 0.8
+            checks_log.append(f"MissingMermaidDiagram for subject={subject!r}")
 
-        # Must have LaTeX
-        if "$" not in content:
-            score *= 0.9
+        # LaTeX is required for math/physics subjects, and recommended for all
+        if is_no_code_subject and "$" not in content:
+            score *= 0.7
+            checks_log.append(f"MissingLaTeXNotation for math/physics subject={subject!r}")
+
+        if checks_log:
+            logger.warning(f"[AGENT:explanation] SectionSpecificChecks FAILED: {checks_log}")
+        else:
+            logger.info(f"[AGENT:explanation] SectionSpecificChecks PASSED: {found}/30 markers, {words} words")
 
         return score
 
