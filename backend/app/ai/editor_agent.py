@@ -44,13 +44,41 @@ class EditorAgent:
         # Select best editor model (usually gpt-oss-120b or llama-3.3-70b)
         model_id = model_router.route("explanation", subject=subject, topic=topic)
         
-        # Format sections for the editor prompt
+        import re
+        mermaid_blocks = {}
+        mermaid_recovery_map = {}
+        placeholder_idx = 1
+
+        # Format sections for the editor prompt & extract Mermaid blocks
         sections_str = ""
         for sec in sections:
+            sec_title = sec.get('title', sec.get('type'))
+            content = sec.get('content', '')
+            
+            def repl(match):
+                nonlocal placeholder_idx
+                placeholder = f"MERMAID_BLOCK_{placeholder_idx:04d}"
+                mermaid_blocks[placeholder] = match.group(0)
+                
+                # Find nearest header before this block for auto-recovery placement
+                start_pos = match.start()
+                text_before = content[:start_pos]
+                header_match = list(re.finditer(r'^#{1,6}\s+(.*)$', text_before, re.MULTILINE))
+                if header_match:
+                    nearest_header = header_match[-1].group(1).strip()
+                else:
+                    nearest_header = sec_title
+                    
+                mermaid_recovery_map[placeholder] = nearest_header
+                placeholder_idx += 1
+                return f"\n\n{placeholder}\n\n"
+                
+            content = re.sub(r'```mermaid[\s\S]*?```', repl, content, flags=re.IGNORECASE)
+
             sections_str += f"\n=========================================================\n"
-            sections_str += f"SECTION: {sec.get('title', sec.get('type'))}\n"
+            sections_str += f"SECTION: {sec_title}\n"
             sections_str += f"=========================================================\n"
-            sections_str += f"{sec.get('content', '')}\n"
+            sections_str += f"{content}\n"
 
         prompt = (
             f"Subject: {subject}\n"
@@ -62,13 +90,59 @@ class EditorAgent:
             "Start directly with the first section."
         )
 
-        # Bypass LLM Editor if payload is too massive to avoid 413 Entity Too Large error
+        def restore_mermaids(text: str) -> str:
+            restored = 0
+            missing = 0
+            recovered = 0
+            
+            for placeholder, block in mermaid_blocks.items():
+                if placeholder in text:
+                    text = text.replace(placeholder, block)
+                    restored += 1
+                else:
+                    missing += 1
+                    nearest_header = mermaid_recovery_map[placeholder]
+                    clean_header = re.sub(r'^\d+[\.\-\)]\s*', '', nearest_header)
+                    clean_header = re.escape(clean_header)
+                    
+                    pattern = re.compile(rf"^#{{1,6}}\s+.*{clean_header}", re.IGNORECASE | re.MULTILINE)
+                    match = pattern.search(text)
+                    if match:
+                        next_heading = text.find("\n#", match.end())
+                        if next_heading != -1:
+                            text = text[:next_heading] + f"\n\n{block}\n\n" + text[next_heading:]
+                        else:
+                            text += f"\n\n{block}\n\n"
+                    else:
+                        # Fallback: just append to the end
+                        text += f"\n\n{block}\n\n"
+                    recovered += 1
+
+            total_before = len(mermaid_blocks)
+            
+            logger.info(f"Mermaid blocks before editor: {total_before}")
+            logger.info(f"Mermaid blocks after editor: {restored}")
+            logger.info(f"Restored: {restored}")
+            logger.info(f"Recovered: {recovered}")
+            logger.info(f"Missing: {missing}")
+            
+            if total_before != restored:
+                logger.warning(f"Editor LLM dropped {missing} Mermaid blocks! Auto-recovered {recovered}.")
+            
+            return text
+
+        # Bypass LLM Editor if payload is too massive
         if len(sections_str) > 25000:
             logger.warning(f"Editor Agent bypassed: combined sections exceed 25,000 characters ({len(sections_str)}). Falling back to simple merge.")
             merged = []
             for sec in sections:
                 merged.append(f"## {sec.get('title', sec.get('type'))}\n\n{sec.get('content', '')}")
-            return "\n\n".join(merged)
+            # The simple merge uses the original sections without placeholders since we didn't update sections array
+            # However, `sections_str` HAS placeholders. Let's just use `sections_str` directly or restore on sections_str
+            return restore_mermaids("\n\n".join([
+                f"## {sec.get('title', sec.get('type'))}\n\n{re.sub(r'```mermaid[\s\S]*?```', repl, sec.get('content', ''), flags=re.IGNORECASE)}"
+                for sec in sections
+            ]))
 
         def _build_req(mid: str) -> CompletionRequest:
             return CompletionRequest(
@@ -95,19 +169,13 @@ class EditorAgent:
                 section_type="explanation",
                 request_builder=_build_req
             )
-            return self._sanitize_mermaid(response.content.strip())
+            return restore_mermaids(response.content.strip())
         except Exception as e:
             logger.error(f"Editor Agent failed: {e}. Falling back to simple merge of sections.")
-            # Fallback: simple merge of sections
-            merged = []
-            for sec in sections:
-                merged.append(f"## {sec.get('title', sec.get('type'))}\n\n{sec.get('content', '')}")
-            return self._sanitize_mermaid("\n\n".join(merged))
-            
-    def _sanitize_mermaid(self, text: str) -> str:
-        # We now allow ALL Mermaid blocks to pass through regardless of syntax errors.
-        # The frontend MarkdownRenderer has been updated to display the raw source 
-        # code of any Mermaid diagrams that fail to parse, instead of hiding them.
-        return text
+            # Fallback: simple merge using the parsed content with placeholders
+            return restore_mermaids("\n\n".join([
+                f"## {sec.get('title', sec.get('type'))}\n\n{re.sub(r'```mermaid[\s\S]*?```', repl, sec.get('content', ''), flags=re.IGNORECASE)}"
+                for sec in sections
+            ]))
 
 editor_agent = EditorAgent()
