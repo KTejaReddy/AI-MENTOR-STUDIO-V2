@@ -69,7 +69,7 @@ export function Home() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(to_bottom,black_30%,transparent_100%)]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-32 pt-16 flex flex-col gap-24">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-16 pt-12 flex flex-col gap-16 min-h-[calc(100vh-80px)] justify-center">
 
         {/* ─── VARIANT A: AI TUTOR (Angled Left Edge) ─── */}
         <div className="relative w-full group cursor-pointer shadow-2xl" onClick={() => navigate('/learn', { state: { openGenerate: true } })}>
@@ -213,120 +213,7 @@ export function Home() {
 
         </div>
 
-        {/* ─── VARIANT F: CONTINUE LEARNING (Offset Asymmetric Container) ─── */}
-        <section className="relative z-20">
-          <div className="flex items-center gap-4 mb-8">
-            <h2 className="text-2xl font-black text-white">Continue Learning</h2>
-            <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
-          </div>
-          
-          <div 
-            className="w-full relative bg-[#060814]/90 backdrop-blur-md p-10 md:p-16 flex flex-col md:flex-row gap-10 items-center shadow-xl"
-            style={{ clipPath: 'polygon(0 40px, 100% 0, calc(100% - 40px) 100%, 40px 100%)' }}
-          >
-            <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-r from-indigo-500/10 to-transparent pointer-events-none" />
-            
-            <div className="flex-1 relative z-10 pl-8">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-indigo-400 mb-3">Active Lesson</div>
-              <h3 className="text-3xl md:text-4xl font-bold text-white mb-4">Advanced Distributed Systems</h3>
-              <p className="text-[#94A3B8] text-sm md:text-base leading-relaxed mb-8 max-w-lg">
-                You were studying the CAP Theorem and Paxos consensus algorithms. Ready to dive back into the derivation?
-              </p>
-              
-              <div className="flex items-center gap-3 w-full max-w-md mb-8">
-                <div className="flex-1 h-2 bg-white/5 rounded-none overflow-hidden border border-white/10">
-                   <div className="h-full bg-indigo-500 w-[60%] shadow-[0_0_15px_rgba(99,102,241,0.8)]" />
-                </div>
-                <span className="text-xs font-mono font-bold text-indigo-400">60%</span>
-              </div>
 
-              <button className="px-8 py-4 bg-white text-black font-bold rounded-none hover:bg-indigo-50 transition-colors flex items-center gap-2 text-sm shadow-[4px_4px_0_rgba(99,102,241,0.5)]">
-                Resume Lesson <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-            
-            <div className="shrink-0 w-40 h-40 bg-[#02040A] border border-indigo-500/40 flex items-center justify-center relative shadow-[0_0_50px_rgba(99,102,241,0.2)] z-10 rotate-3">
-               <Activity className="w-16 h-16 text-indigo-400" />
-               <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-15px] border border-indigo-500/30 border-dashed" />
-            </div>
-          </div>
-        </section>
-
-        {/* ─── VARIANT H: RECENT LESSONS (Floating Split Panel) ─── */}
-        <section className="relative z-20">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-2xl font-black text-white">Recent Lessons</h2>
-            <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
-          </div>
-
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Split Panel Sidebar (Variant H) */}
-            <div className="w-full md:w-1/3 bg-[#0a0a14] border border-fuchsia-500/20 p-8 flex flex-col justify-between min-h-[400px]" style={{ clipPath: 'polygon(0 0, 100% 20px, 100% calc(100% - 20px), 0 100%)' }}>
-               <div>
-                 <div className="text-[10px] font-bold uppercase tracking-widest mb-4 text-fuchsia-400">Featured</div>
-                 <h3 className="text-2xl font-bold text-white leading-tight mb-4">Understanding Quantum Entanglement</h3>
-                 <p className="text-[#94A3B8] text-sm">Deep dive into Bell's inequality and quantum superposition mechanics.</p>
-               </div>
-               <button className="mt-8 text-fuchsia-400 text-sm font-bold tracking-widest uppercase flex items-center gap-2 hover:text-fuchsia-300">
-                  Review <ChevronRight className="w-4 h-4" />
-               </button>
-            </div>
-            
-            {/* Split Panel Body */}
-            <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-               {[
-                 { title: "Implementing Paxos in Rust", category: "Computer Science", color: "text-emerald-400", bg: "bg-emerald-950/20", border: "border-emerald-500/20" },
-                 { title: "Navier-Stokes Equations", category: "Fluid Dynamics", color: "text-cyan-400", bg: "bg-cyan-950/20", border: "border-cyan-500/20" },
-                 { title: "Thermodynamics Laws", category: "Physics", color: "text-orange-400", bg: "bg-orange-950/20", border: "border-orange-500/20" },
-                 { title: "Graph Theory Algorithms", category: "Mathematics", color: "text-blue-400", bg: "bg-blue-950/20", border: "border-blue-500/20" }
-               ].map((item, i) => (
-                 <div key={i} className={`p-6 border ${item.border} ${item.bg} hover:bg-white/[0.02] transition-colors cursor-pointer flex flex-col justify-between`} style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
-                   <div className={`text-[10px] font-bold uppercase tracking-widest mb-3 ${item.color}`}>{item.category}</div>
-                   <h4 className="text-lg font-bold text-white">{item.title}</h4>
-                 </div>
-               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── VARIANT G: EXPLORE SUBJECTS (Blueprint Frame) ─── */}
-        <section className="relative z-20">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-2xl font-black text-white">Explore Subjects</h2>
-            <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-6 relative">
-            {/* SVG Blueprint Frame */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30" preserveAspectRatio="none">
-               <rect x="10" y="10" width="calc(100% - 20px)" height="calc(100% - 20px)" fill="none" stroke="white" strokeWidth="1" strokeDasharray="4 4" />
-               <line x1="0" y1="10" x2="20" y2="10" stroke="white" strokeWidth="2" />
-               <line x1="10" y1="0" x2="10" y2="20" stroke="white" strokeWidth="2" />
-               <line x1="calc(100% - 20px)" y1="10" x2="100%" y2="10" stroke="white" strokeWidth="2" />
-               <line x1="calc(100% - 10px)" y1="0" x2="calc(100% - 10px)" y2="20" stroke="white" strokeWidth="2" />
-               <line x1="0" y1="calc(100% - 10px)" x2="20" y2="calc(100% - 10px)" stroke="white" strokeWidth="2" />
-               <line x1="10" y1="calc(100% - 20px)" x2="10" y2="100%" stroke="white" strokeWidth="2" />
-               <line x1="calc(100% - 20px)" y1="calc(100% - 10px)" x2="100%" y2="calc(100% - 10px)" stroke="white" strokeWidth="2" />
-               <line x1="calc(100% - 10px)" y1="calc(100% - 20px)" x2="calc(100% - 10px)" y2="100%" stroke="white" strokeWidth="2" />
-            </svg>
-
-            {[
-              { name: 'Computer Science', icon: Code2, color: 'text-emerald-400' },
-              { name: 'Mathematics', icon: Globe, color: 'text-blue-400' },
-              { name: 'Physics', icon: Database, color: 'text-fuchsia-400' },
-              { name: 'Engineering', icon: Cpu, color: 'text-amber-400' },
-              { name: 'AI / ML', icon: Brain, color: 'text-purple-400' },
-              { name: 'Networking', icon: Network, color: 'text-cyan-400' },
-              { name: 'Literature', icon: Book, color: 'text-rose-400' },
-              { name: 'History', icon: Clock, color: 'text-orange-400' },
-            ].map((subject) => (
-              <div key={subject.name} className="flex flex-col items-center justify-center gap-4 p-8 bg-[#0a0a14]/50 border border-white/5 hover:border-white/20 cursor-pointer transition-all group backdrop-blur-sm" style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
-                <subject.icon className={`w-8 h-8 ${subject.color} group-hover:scale-110 transition-transform`} />
-                <span className="font-bold text-sm text-[#F8FAFC] group-hover:text-white transition-colors">{subject.name}</span>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* ─── SECTION 6: ABOUT FOOTER ─── */}
         <footer className="mt-8 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-[#94A3B8] text-sm">
