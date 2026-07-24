@@ -7,7 +7,7 @@ export const NotesModule = React.memo(function NotesModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full col-span-12 md:col-span-6 h-[350px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer overflow-hidden border border-amber-900/30 shadow-xl" onClick={() => navigate('/notes')}>
+    <div className="relative w-full col-span-12 md:col-span-6 h-[300px] md:h-[350px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer overflow-hidden border border-amber-900/30 shadow-xl p-6 md:p-0" onClick={() => navigate('/notes')}>
       
       {/* Background Corkboard/Grid effect constrained to this module area */}
       <div className="absolute inset-0 bg-[#1c1917] pointer-events-none z-0 overflow-hidden border-y border-amber-900/20">
@@ -15,13 +15,13 @@ export const NotesModule = React.memo(function NotesModule() {
       </div>
 
       {/* Left Text Content */}
-      <div className="flex-1 max-w-md pl-6 md:pl-12 z-20">
+      <div className="relative flex-1 max-w-md pl-0 md:pl-12 z-20 flex flex-col items-center text-center md:items-start md:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-900/30 border border-amber-500/30 text-amber-400 font-mono text-[10px] uppercase mb-6 rounded-sm">
           <PenTool className="w-3 h-3" />
           Engineering Notebook
         </div>
-        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Digital Pad</h2>
-        <p className="text-[#94A3B8] text-xs leading-relaxed mb-4">
+        <h2 className="text-[32px] md:text-4xl font-black text-[#F8FAFC] mb-2 leading-tight">Digital Pad</h2>
+        <p className="text-[#94A3B8] text-sm leading-relaxed mb-6">
           Jot down logic, sketch architectural diagrams, and connect your freeform thoughts in an unstructured creative environment.
         </p>
         <button className="flex items-center gap-2 text-amber-400 font-bold hover:text-amber-300 transition-colors uppercase tracking-widest text-sm">
@@ -30,7 +30,7 @@ export const NotesModule = React.memo(function NotesModule() {
       </div>
 
       {/* Right Visual: Messy Desk & Sticky Notes */}
-      <div className="relative flex-1 w-full h-[350px] z-10 flex items-center justify-center scale-[0.65] origin-right">
+      <div className="relative hidden md:flex flex-1 w-full h-[350px] z-10 items-center justify-center scale-[0.65] origin-right">
          
          {/* Main Grid Paper Pad */}
          <div className="absolute w-[350px] h-[450px] bg-[#fffbeb] shadow-[20px_20px_60px_rgba(0,0,0,0.8)] rotate-2 group-hover:rotate-1 transition-transform duration-700">

@@ -15,8 +15,8 @@ export const CompilerModule = React.memo(function CompilerModule() {
           <Terminal className="w-3 h-3" />
           Execution Environment
         </div>
-        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Compiler Lab</h2>
-        <p className="text-[#94A3B8] text-xs leading-relaxed mb-4">
+        <h2 className="text-[32px] md:text-4xl font-black text-[#F8FAFC] mb-2 leading-tight">Compiler Lab</h2>
+        <p className="text-[#94A3B8] text-sm leading-relaxed mb-6">
           Write, debug, and test code instantly with an embedded AI orchestrator monitoring your logic paths.
         </p>
         <button className="flex items-center gap-2 text-emerald-400 font-bold hover:text-emerald-300 transition-colors uppercase tracking-widest text-sm">
@@ -25,7 +25,7 @@ export const CompilerModule = React.memo(function CompilerModule() {
       </div>
 
       {/* Right Visual: Floating VS Code IDE */}
-      <div className="relative flex-1 w-full max-w-sm pr-2 z-10 scale-[0.85] origin-right">
+      <div className="relative hidden md:flex flex-1 w-full max-w-sm pr-2 z-10 scale-[0.85] origin-right">
          <div className="w-full bg-[#1E1E1E] rounded-xl overflow-hidden border border-white/10 shadow-2xl flex flex-col h-[350px]">
            {/* Window Header */}
            <div className="h-10 bg-[#323233] border-b border-[#1e1e1e] flex items-center px-4 justify-between">

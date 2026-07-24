@@ -7,25 +7,25 @@ export const HistoryModule = React.memo(function HistoryModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full col-span-12 md:col-span-6 h-[350px] flex flex-col items-center justify-center my-0 group cursor-pointer overflow-hidden border border-rose-900/30 shadow-xl" onClick={() => navigate('/history')}>
+    <div className="relative w-full col-span-12 md:col-span-6 h-[300px] md:h-[350px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#0A0A0A] border border-white/5 shadow-xl overflow-hidden p-6 md:p-0" onClick={() => navigate('/history')}>
       
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-rose-950/10 pointer-events-none z-0" />
 
-      {/* Top Text Content - Centered */}
-      <div className="relative z-20 text-center max-w-2xl px-6 mb-16">
+      {/* Left Text Content */}
+      <div className="relative flex-1 max-w-md pl-0 md:pl-12 z-20 flex flex-col items-center text-center md:items-start md:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-900/30 border border-rose-500/30 text-rose-400 font-mono text-[10px] uppercase mb-6 rounded-full">
           <Activity className="w-3 h-3" />
           Activity Tracker
         </div>
-        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Timeline</h2>
-        <p className="text-[#94A3B8] text-xs leading-relaxed">
-          Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically across your learning orbit.
+        <h2 className="text-[32px] md:text-4xl font-black text-[#F8FAFC] mb-2 leading-tight">Neural History</h2>
+        <p className="text-[#94A3B8] text-sm leading-relaxed mb-6">
+          Track your skill progression over time. View deep analytics on problem-solving speed, accuracy, and knowledge retention.
         </p>
       </div>
 
-      {/* Massive Horizontal Timeline / Orbit Visualization */}
-      <div className="relative w-full flex-1 z-10 flex items-center justify-center scale-75">
+      {/* Right Visual: Graph and Analytics */}
+      <div className="relative hidden md:flex flex-1 w-full h-[350px] z-10 items-center justify-center scale-90 origin-right">
          
          {/* The Main Axis (Horizontal glowing line) */}
          <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_20px_#f43f5e] opacity-50" />
