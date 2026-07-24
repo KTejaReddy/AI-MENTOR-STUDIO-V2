@@ -10,10 +10,10 @@ export function AppIcon({ className, iconClassName }: AppIconProps) {
   return (
     <div 
       className={cn(
-        "flex shrink-0 items-center justify-center rounded-xl",
-        "bg-black/5 dark:bg-white/10",
-        "border border-black/10 dark:border-white/10",
-        "shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.12)]",
+        "flex shrink-0 items-center justify-center rounded-xl transition-colors",
+        "bg-black/5 dark:bg-white/90",
+        "border border-black/10 dark:border-white",
+        "shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]",
         "backdrop-blur-md",
         className
       )}
