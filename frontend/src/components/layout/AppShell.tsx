@@ -81,8 +81,10 @@ export function AppShell() {
     }
   }, [handleNewLesson])
 
+  const isHome = location.pathname === '/'
+
   return (
-    <div className="h-[100dvh] w-screen overflow-hidden bg-surface flex flex-col relative z-0">
+    <div className={`w-screen bg-surface flex flex-col relative z-0 ${isHome ? 'min-h-screen' : 'h-[100dvh] overflow-hidden'}`}>
       <BackgroundEffects />
 
       <TopNavbar
@@ -97,9 +99,9 @@ export function AppShell() {
         onClose={() => setMobileDrawerOpen(false)}
       />
 
-      <div className="flex-1 flex overflow-hidden min-h-0 relative z-10 p-0 md:p-3 md:pt-2">
+      <div className={`flex-1 flex min-h-0 relative z-10 p-0 md:p-3 md:pt-2 ${!isHome && 'overflow-hidden'}`}>
 
-        <main className="flex-1 overflow-hidden rounded-none md:rounded-[var(--radius-xl)] bg-surface-50 border-0 md:border border-border shadow-lg relative z-10 flex flex-col">
+        <main className={`flex-1 bg-surface-50 relative z-10 flex flex-col ${isHome ? 'overflow-visible' : 'overflow-hidden rounded-none md:rounded-[var(--radius-xl)] border-0 md:border border-border shadow-lg'}`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -107,7 +109,7 @@ export function AppShell() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="h-full w-full overflow-hidden"
+              className={`w-full ${!isHome ? 'h-full overflow-hidden' : ''}`}
             >
               <ErrorBoundary>
                 {outlet}

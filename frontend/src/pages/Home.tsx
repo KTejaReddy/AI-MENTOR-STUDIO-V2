@@ -2,24 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Brain, Code2, BookOpen, Edit3, Clock, Play, Terminal, Layers, ChevronRight, Activity, Globe, Database, Cpu, Network, Book } from 'lucide-react'
 
-// --- Unique Custom Shapes via CSS Clip Path and Tricks ---
-
-// 1. AI Tutor: Cut Corners Hero Card
-const HeroCardStyle = {
-  clipPath: 'polygon(40px 0, 100% 0, 100% calc(100% - 60px), calc(100% - 60px) 100%, 0 100%, 0 40px)',
-}
-
-// 2. Compiler: Diagonal Top Edge Card
-const CompilerCardStyle = {
-  clipPath: 'polygon(0 40px, 100% 0, 100% 100%, 0 100%)',
-}
-
-// 3. History: Leaf Curved Card (CSS Border Radius trick instead of clip-path for curves)
-const HistoryCardStyle = {
-  borderRadius: '0 60px 0 60px',
-}
-
-// --- Inner Artwork SVGs ---
+// --- SVGs ---
 const NeuralNetwork = () => (
   <svg viewBox="0 0 800 800" className="w-full h-full text-indigo-500/20 pointer-events-none" fill="none" stroke="currentColor">
     <motion.path 
@@ -42,8 +25,8 @@ const FloatingTerminal = () => (
   <motion.div 
     animate={{ y: [-5, 5, -5] }}
     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-    className="w-[90%] md:w-[500px] h-[300px] bg-[#022C22]/80 backdrop-blur-md border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative"
-    style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }} // Micro cut corners
+    className="w-[90%] md:w-[500px] h-[300px] bg-[#022C22]/80 backdrop-blur-md border-t-2 border-emerald-500/50 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative"
+    style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
   >
     <div className="h-8 bg-black/40 border-b border-emerald-500/20 flex items-center px-4 gap-1.5">
       <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
@@ -76,13 +59,11 @@ const WindingTimeline = () => (
   </svg>
 )
 
-// --- Shared Magazine Thumbnail ---
 function MagazineThumbnail({ title, category, colorClass, gradientClass, heightClass = 'h-[250px]' }: { title: string, category: string, colorClass: string, gradientClass: string, heightClass?: string }) {
   return (
-    <div className={`relative w-full ${heightClass} rounded-2xl overflow-hidden group cursor-pointer border border-white/10`}>
+    <div className={`relative w-full ${heightClass} rounded-[2rem] overflow-hidden group cursor-pointer border border-white/5`}>
       <div className={`absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-500 ${gradientClass}`} />
       <div className="absolute inset-0 bg-[#02040A]/60 group-hover:bg-[#02040A]/40 transition-colors duration-500" />
-      
       <div className="absolute bottom-0 left-0 p-6 z-20 w-full">
         <div className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${colorClass}`}>{category}</div>
         <h3 className="text-xl font-bold text-white leading-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/50 transition-all">{title}</h3>
@@ -95,7 +76,7 @@ export function Home() {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-[#02040A] text-white overflow-x-hidden relative font-sans selection:bg-indigo-500/30 min-h-screen">
+    <div className="bg-[#02040A] text-white overflow-x-hidden relative font-sans selection:bg-indigo-500/30">
       
       {/* GLOBAL AMBIENT NOISE */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -103,18 +84,21 @@ export function Home() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(to_bottom,black_30%,transparent_100%)]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-32 pt-16 flex flex-col gap-16">
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-32 pt-16 flex flex-col gap-24">
 
         {/* ─── SECTION 1: AI TUTOR HERO CARD (Cut Corners) ─── */}
         <div className="relative w-full group cursor-pointer shadow-2xl" onClick={() => navigate('/learn', { state: { openGenerate: true } })}>
-           {/* Glow behind the card */}
            <div className="absolute inset-0 bg-indigo-500/20 blur-[100px] z-0" />
            
            <div 
-             className="relative z-10 w-full bg-[#060814]/90 backdrop-blur-xl border border-indigo-500/30 overflow-hidden flex flex-col md:flex-row items-center justify-between p-10 md:p-16 min-h-[50vh]"
-             style={HeroCardStyle}
+             className="relative z-10 w-full bg-[#060814]/90 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between p-10 md:p-16 min-h-[50vh]"
+             style={{ 
+                clipPath: 'polygon(60px 0, 100% 0, 100% calc(100% - 60px), calc(100% - 60px) 100%, 0 100%, 0 60px)',
+                boxShadow: 'inset 0 0 0 1px rgba(99,102,241,0.3)' 
+             }}
            >
-             {/* Abstract Neural background inside card */}
+             <div className="absolute inset-0 border-2 border-indigo-500/50 pointer-events-none" style={{ clipPath: 'polygon(60px 0, 100% 0, 100% calc(100% - 60px), calc(100% - 60px) 100%, 0 100%, 0 60px)' }} />
+
              <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none opacity-40">
                 <NeuralNetwork />
              </div>
@@ -142,124 +126,135 @@ export function Home() {
                </button>
              </div>
            </div>
-           
-           {/* Card Border highlight overlay (since clip-path hides standard borders, we use a trick or keep it simple) */}
-           <div className="absolute inset-0 border-2 border-indigo-500/50 pointer-events-none z-20" style={HeroCardStyle} />
         </div>
 
         {/* ─── SECTION 2: FEATURE EXPERIENCES (The Card Family) ─── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 relative z-20">
            
-           {/* COMPILER CARD (Diagonal Split) */}
-           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/compiler-lab')}>
+           {/* COMPILER CARD (Massive Diagonal Split) */}
+           <div className="relative group cursor-pointer shadow-xl h-[500px]" onClick={() => navigate('/compiler-lab')}>
               <div 
                 className="absolute inset-0 bg-[#022C22]/80 backdrop-blur-md overflow-hidden flex flex-col justify-end p-10"
-                style={CompilerCardStyle}
+                style={{ clipPath: 'polygon(0 80px, 100% 0, 100% 100%, 0 100%)' }}
               >
-                 <div className="absolute top-0 right-0 w-[80%] h-full pointer-events-none opacity-30 flex items-start justify-end p-8">
+                 <div className="absolute inset-0 border-t-2 border-emerald-500/40 pointer-events-none" />
+
+                 <div className="absolute top-0 right-0 w-[80%] h-full pointer-events-none opacity-30 flex items-start justify-end p-8 mt-12">
                     <FloatingTerminal />
                  </div>
                  
                  <div className="relative z-10 max-w-sm mt-auto">
-                    <div className="w-12 h-12 rounded-lg bg-[#064E3B] border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400">
-                      <Terminal className="w-6 h-6" />
+                    <div className="w-16 h-16 bg-[#064E3B] border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400"
+                         style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
+                      <Terminal className="w-8 h-8" />
                     </div>
-                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Compiler Lab</h2>
-                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Write, debug, and test code instantly with embedded AI tracking.</p>
+                    <h2 className="text-4xl font-black text-[#F8FAFC] mb-3">Compiler Lab</h2>
+                    <p className="text-[#94A3B8] text-base leading-relaxed mb-4">Write, debug, and test code instantly with embedded AI tracking.</p>
                  </div>
               </div>
-              <div className="absolute inset-0 border border-emerald-500/40 pointer-events-none z-20" style={CompilerCardStyle} />
            </div>
 
-           {/* DOC TUTOR CARD (Folded Paper Style) */}
-           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/document-tutor')}>
-              {/* Main Paper Layer */}
-              <div className="absolute inset-0 bg-[#083344]/80 backdrop-blur-md border border-cyan-500/40 overflow-hidden flex flex-col p-10 z-10"
-                   style={{ clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 0 100%)' }}>
+           {/* DOC TUTOR CARD (Folded Paper Layered Card) */}
+           <div className="relative group cursor-pointer shadow-xl h-[500px]" onClick={() => navigate('/document-tutor')}>
+              {/* Main Paper Layer (Cut top right corner for the fold) */}
+              <div className="absolute inset-0 bg-[#083344]/90 backdrop-blur-md border border-cyan-500/40 overflow-hidden flex flex-col p-10 z-10"
+                   style={{ clipPath: 'polygon(0 0, calc(100% - 60px) 0, 100% 60px, 100% 100%, 0 100%)' }}>
                  
-                 <div className="absolute right-[-10%] bottom-[-10%] w-[300px] h-[300px] pointer-events-none opacity-40">
-                    {/* Abstract overlapping papers */}
+                 <div className="absolute right-[-10%] bottom-[-10%] w-[350px] h-[350px] pointer-events-none opacity-40">
                     <div className="absolute inset-10 bg-cyan-900/50 border border-cyan-400/30 rotate-12" />
                     <div className="absolute inset-10 bg-cyan-950/80 border border-cyan-400/50 -rotate-6" />
                     <div className="absolute inset-14 bg-transparent border-2 border-dashed border-cyan-300/30 rotate-3 flex items-center justify-center">
-                       <BookOpen className="w-12 h-12 text-cyan-500/30" />
+                       <BookOpen className="w-16 h-16 text-cyan-500/30" />
                     </div>
                  </div>
 
                  <div className="relative z-10 max-w-sm">
-                    <div className="w-12 h-12 rounded-lg bg-[#083344] border border-cyan-500/30 flex items-center justify-center mb-6 text-cyan-400">
-                      <BookOpen className="w-6 h-6" />
+                    <div className="w-16 h-16 bg-[#083344] border border-cyan-500/30 flex items-center justify-center mb-6 text-cyan-400"
+                         style={{ clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)' }}>
+                      <BookOpen className="w-8 h-8" />
                     </div>
-                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Doc Tutor</h2>
-                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Extract deep insights from PDFs and instantly map them into dynamic knowledge graphs.</p>
+                    <h2 className="text-4xl font-black text-[#F8FAFC] mb-3">Doc Tutor</h2>
+                    <p className="text-[#94A3B8] text-base leading-relaxed mb-4">Extract deep insights from PDFs and instantly map them into dynamic knowledge graphs.</p>
                  </div>
               </div>
               
-              {/* Folded Corner Element */}
-              <div className="absolute top-0 right-0 w-[40px] h-[40px] bg-cyan-800/80 border-b border-l border-cyan-400/50 z-20 shadow-[-5px_5px_10px_rgba(0,0,0,0.5)]"
-                   style={{ clipPath: 'polygon(100% 0, 0 100%, 100% 100%)' }} />
+              {/* Folded Corner Element (The actual fold) */}
+              <div className="absolute top-0 right-0 w-[60px] h-[60px] bg-cyan-300/20 border-b border-l border-cyan-300/50 backdrop-blur-xl z-20 shadow-[-10px_10px_20px_rgba(0,0,0,0.5)] flex items-end justify-start p-2"
+                   style={{ clipPath: 'polygon(100% 0, 0 100%, 100% 100%)' }}>
+                  <div className="w-2 h-2 rounded-full bg-cyan-400/50" />
+              </div>
            </div>
 
            {/* NOTES CARD (Notebook Stacked Layers) */}
-           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/notes')}>
-              {/* Bottom Layer */}
-              <div className="absolute top-4 left-4 right-[-4px] bottom-[-4px] bg-[#291002] border border-amber-900/50 rounded-xl z-0" />
-              {/* Middle Layer */}
-              <div className="absolute top-2 left-2 right-[-2px] bottom-[-2px] bg-[#3B1703] border border-amber-700/50 rounded-xl z-0" />
+           <div className="relative group cursor-pointer shadow-xl h-[500px]" onClick={() => navigate('/notes')}>
+              {/* Page Stack Layers */}
+              <div className="absolute top-6 left-6 right-[-6px] bottom-[-6px] bg-[#291002] border border-amber-900/50 rounded-sm z-0" />
+              <div className="absolute top-3 left-3 right-[-3px] bottom-[-3px] bg-[#3B1703] border border-amber-700/50 rounded-sm z-0" />
               
-              {/* Top Layer */}
-              <div className="absolute inset-0 bg-[#451A03]/90 backdrop-blur-md border-2 border-amber-500/40 rounded-xl overflow-hidden flex flex-col p-10 z-10">
+              {/* Top Page Layer */}
+              <div className="absolute inset-0 bg-[#451A03]/90 backdrop-blur-md border-2 border-amber-500/40 rounded-sm overflow-hidden flex flex-col p-10 z-10">
                  
-                 {/* Binding lines */}
-                 <div className="absolute left-6 top-0 bottom-0 w-1 bg-amber-900/50 border-r border-amber-500/20" />
+                 {/* Notebook Binding Spine */}
+                 <div className="absolute left-0 top-0 bottom-0 w-8 bg-amber-950/80 border-r-2 border-amber-500/20 flex flex-col items-center justify-evenly py-4">
+                    {[1,2,3,4,5,6,7,8,9,10].map(i => (
+                      <div key={i} className="w-4 h-2 bg-black rounded-full shadow-[inset_0_1px_3px_rgba(0,0,0,0.8)]" />
+                    ))}
+                 </div>
                  
-                 <div className="absolute right-10 bottom-10 w-[200px] h-[150px] bg-yellow-600/20 border border-yellow-500/30 rotate-6 shadow-lg pointer-events-none flex items-center justify-center">
-                    <Edit3 className="w-10 h-10 text-yellow-500/20" />
+                 <div className="absolute right-10 bottom-10 w-[250px] h-[200px] bg-yellow-600/10 border border-yellow-500/30 rotate-6 shadow-lg pointer-events-none flex items-center justify-center">
+                    <Edit3 className="w-16 h-16 text-yellow-500/20" />
+                    {/* Handwritten accent lines */}
+                    <svg className="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 100 100" preserveAspectRatio="none">
+                       <path d="M10,20 Q40,15 90,25 M15,40 Q50,45 85,35 M20,60 Q60,55 80,65" stroke="currentColor" fill="none" strokeWidth="2" strokeLinecap="round" className="text-yellow-400" />
+                    </svg>
                  </div>
 
-                 <div className="relative z-10 max-w-sm pl-8">
-                    <div className="w-12 h-12 rounded-lg bg-[#78350F] border border-amber-500/30 flex items-center justify-center mb-6 text-amber-400">
-                      <Edit3 className="w-6 h-6" />
+                 <div className="relative z-10 max-w-sm pl-12">
+                    <div className="w-16 h-16 bg-[#78350F] border border-amber-500/30 flex items-center justify-center mb-6 text-amber-400 rounded-sm">
+                      <Edit3 className="w-8 h-8" />
                     </div>
-                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Digital Pad</h2>
-                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Jot down logic, architectural diagrams, and freeform text seamlessly.</p>
+                    <h2 className="text-4xl font-black text-[#F8FAFC] mb-3">Digital Pad</h2>
+                    <p className="text-[#94A3B8] text-base leading-relaxed mb-4">Jot down logic, architectural diagrams, and freeform text seamlessly.</p>
                  </div>
               </div>
            </div>
 
-           {/* HISTORY CARD (Timeline Leaf Curve) */}
-           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/history')}>
+           {/* HISTORY CARD (Timeline Curved Edge) */}
+           <div className="relative group cursor-pointer shadow-xl h-[500px]" onClick={() => navigate('/history')}>
               <div 
-                className="absolute inset-0 bg-[#4C0519]/80 backdrop-blur-md border border-rose-500/40 overflow-hidden flex flex-col justify-end p-10 z-10"
-                style={HistoryCardStyle}
+                className="absolute inset-0 bg-[#4C0519]/90 backdrop-blur-md border border-rose-500/40 overflow-hidden flex flex-col justify-end p-10 z-10"
+                style={{ borderRadius: '0 100px 0 100px' }} // Leaf curve
               >
-                 <div className="absolute right-0 top-[20%] w-[60%] h-[100px] pointer-events-none opacity-50">
+                 <div className="absolute right-0 top-[10%] w-[80%] h-[200px] pointer-events-none opacity-50">
                     <WindingTimeline />
                  </div>
 
                  <div className="relative z-10 max-w-sm mt-auto">
-                    <div className="w-12 h-12 rounded-lg bg-[#881337] border border-rose-500/30 flex items-center justify-center mb-6 text-rose-400">
-                      <Clock className="w-6 h-6" />
+                    <div className="w-16 h-16 bg-[#881337] border border-rose-500/30 flex items-center justify-center mb-6 text-rose-400 rounded-full">
+                      <Clock className="w-8 h-8" />
                     </div>
-                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Timeline</h2>
-                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically.</p>
+                    <h2 className="text-4xl font-black text-[#F8FAFC] mb-3">Timeline</h2>
+                    <p className="text-[#94A3B8] text-base leading-relaxed mb-4">Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically.</p>
                  </div>
               </div>
            </div>
 
         </div>
 
-        {/* ─── SECTION 3: CONTINUE LEARNING (Tech Panel Style) ─── */}
-        <section className="relative z-20 mt-8">
+        {/* ─── SECTION 3: CONTINUE LEARNING (Hexagonal Tech Panel) ─── */}
+        <section className="relative z-20">
           <div className="flex items-center gap-4 mb-8">
             <h2 className="text-2xl font-black text-white">Continue Learning</h2>
             <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
           </div>
           
           <div 
-            className="w-full relative bg-[#060814]/80 backdrop-blur-md border border-white/20 p-10 flex flex-col md:flex-row gap-10 items-center overflow-hidden"
-            style={{ clipPath: 'polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px))' }} // Hexagonal panel cut
+            className="w-full relative bg-[#060814]/80 backdrop-blur-md p-10 flex flex-col md:flex-row gap-10 items-center overflow-hidden shadow-xl"
+            style={{ 
+               clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px))'
+            }}
           >
+            <div className="absolute inset-0 border-2 border-white/20 pointer-events-none" style={{ clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 40px 100%, 0 calc(100% - 40px))' }} />
             <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-r from-indigo-500/10 to-transparent pointer-events-none" />
             
             <div className="flex-1 relative z-10">
@@ -334,7 +329,7 @@ export function Home() {
               { name: 'Literature', icon: Book, color: 'text-rose-400', bg: 'bg-rose-950/40' },
               { name: 'History', icon: Clock, color: 'text-orange-400', bg: 'bg-orange-950/40' },
             ].map((subject) => (
-              <div key={subject.name} className="flex items-center gap-4 p-4 rounded-2xl border border-white/5 hover:bg-white/[0.02] cursor-pointer transition-colors group">
+              <div key={subject.name} className="flex items-center gap-4 p-4 rounded-[2rem] border border-white/5 hover:bg-white/[0.02] cursor-pointer transition-colors group">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${subject.bg} border border-white/5 group-hover:scale-110 transition-transform`}>
                    <subject.icon className={`w-5 h-5 ${subject.color}`} />
                 </div>
