@@ -93,17 +93,18 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
     const tryRender = async (code: string, isRetry: boolean) => {
       initMermaidTheme()
       const id = `md-mermaid-${Math.random().toString(36).slice(2, 9)}`
-      if (isRetry) {
-        try { await mermaid.parse(code) } catch (e) { setFailed(true); return }
-      }
+      
       try {
+        // ALWAYS pre-parse. If invalid, this throws immediately before ever touching the DOM.
+        await mermaid.parse(code)
+        
         const { svg } = await mermaid.render(id, code)
         if (container) {
           container.innerHTML = svg
           const svgEl = container.querySelector('svg')
           if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto' }
           
-          // Check if mermaid injected a syntax error SVG without throwing
+          // Secondary fallback check just in case mermaid.render injects an error without throwing
           if (svgEl && (
               svgEl.innerHTML.includes('Syntax error') || 
               svgEl.classList.contains('error-icon') || 
@@ -123,7 +124,15 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
     tryRender(chart, false)
   }, [chart])
 
-  if (failed || !chart || !chart.trim()) return null
+  if (!chart || !chart.trim()) return null
+  if (failed) {
+    return (
+      <div className="my-6 border-l-4 border-blue-500/30 bg-[#0B0F19] px-4 py-3 rounded-r-xl">
+        <p className="text-sm italic text-slate-400">Visual diagram omitted for clarity.</p>
+      </div>
+    )
+  }
+  
   return (
     <div className="my-10 flex justify-center p-6 bg-[#0B0F19] border border-white/5 rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)]">
       <div ref={ref} className="w-full" />

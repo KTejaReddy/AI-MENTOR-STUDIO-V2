@@ -565,69 +565,140 @@ class ExplanationAgent(TeachingAgent):
         "llama-3.1-8b-instant",
     ]
 
-    # (chunk_name, [section_numbers], sections_description_template)
-    _CHUNK_DEFINITIONS: List[tuple] = [
-        (
-            "foundation",
-            [1, 2, 3, 4, 5, 6],
-            (
-                "1. BEAUTIFUL TITLE — A creative, technically precise title and subtitle.\n"
-                "2. INTRODUCTION — High-engagement academic introduction framing the relevance of \"{topic}\".\n"
-                "3. LEARNING OBJECTIVES — 4-6 measurable objectives using Bloom's Taxonomy verbs (Analyze, Design, Evaluate, etc.).\n"
-                "4. WHY THIS TOPIC EXISTS — The exact historical and practical engineering problem that led to \"{topic}\". Explain what fails if we do not use it.\n"
-                "5. INTUITION — The core concept in plain, jargon-free visual language. Conclude with: \"Here is the single most important idea: ...\"\n"
-                "6. REAL-LIFE ANALOGY — A detailed analogy from a non-computing domain. Include a mapping table and explain where the analogy breaks."
-            ),
-        ),
-        (
-            "theory",
-            [7, 8, 9, 10, 11, 12],
-            (
-                "7. FORMAL DEFINITION — Rigorous engineering definition with LaTeX mathematics. Define every symbol.\n"
-                "8. MENTAL MODEL — \"Here is how you should picture {topic} in your mind...\" — build a persistent mental abstraction.\n"
-                "9. HOW IT WORKS INTERNALLY — CPU cycles, memory management (stack vs heap), register usage, thread safety, compiler optimization, or OS kernel interaction.\n"
-                "10. VISUAL DIAGRAM — A detailed, clean, valid Mermaid.js graph or architecture diagram.\n"
-                "11. FLOWCHART — A clean, valid Mermaid.js flowchart showing exact procedural logic or data flow.\n"
-                "12. SYNTAX — Detailed syntax breakdown. Include a table comparing syntax variations."
-            ),
-        ),
-        (
-            "examples",
-            [13, 14, 15, 16],
-            (
-                "13. STEP-BY-STEP EXAMPLE — A complete, real-world, copy-paste-runnable example. Show exact expected output.\n"
-                "14. DRY RUN — A state-tracing table: step | line of code | variable values | condition | system state.\n"
-                "15. MEMORY VISUALIZATION — Table: memory addresses, variable names, pointers, values, before/after.\n"
-                "16. EXECUTION TRACE — Call stack, stack frames, heap references, or register transitions as code runs."
-            ),
-        ),
-        (
-            "advanced",
-            [17, 18, 19, 20, 21, 22, 23, 24],
-            (
-                "17. COMMON VARIATIONS — Markdown table: Variation | Syntax | When to Use | Pros | Cons.\n"
-                "18. ADVANCED CONCEPTS — Edge cases, race conditions, compiler flags, performance tuning, hardware considerations.\n"
-                "19. BEST PRACTICES — Format: > **\u2705 Best Practice:** ...\n"
-                "20. COMMON MISTAKES — Format: > **\u274c Common Mistake:** ... and how to fix it.\n"
-                "21. DEBUGGING TIPS — Diagnostic techniques, tools (gdb, valgrind, tcpdump, watchpoints), log patterns.\n"
-                "22. TIME COMPLEXITY — Formal Big-O / Big-Theta / Big-Omega analysis with LaTeX proofs.\n"
-                "23. SPACE COMPLEXITY — Rigorous analysis: heap allocation, recursion stack frames, auxiliary memory.\n"
-                "24. REAL-WORLD APPLICATIONS — Table: Domain | Real Company | Use Case | Why \"{topic}\" is indispensable."
-            ),
-        ),
-        (
-            "exam_prep",
-            [25, 26, 27, 28, 29, 30],
-            (
-                "25. INTERVIEW PERSPECTIVE — High-frequency interview questions, technical vocabulary, architectural trade-offs, traps.\n"
-                "26. EXAM PERSPECTIVE — University exam questions, grading criteria, what graders look for.\n"
-                "27. SUMMARY — Bulleted summary of 5-7 items, each 2-3 sentences.\n"
-                "28. KEY TAKEAWAYS — 5 precise, high-impact golden rules.\n"
-                "29. REVISION NOTES — Mnemonic devices, quick reference lists, cheat sheet tables.\n"
-                "30. TRANSITION — A natural bridge to the next logical concept in the curriculum."
-            ),
-        ),
-    ]
+    def _get_chunk_definitions(self, subject: str) -> List[tuple]:
+        subj_lower = subject.lower()
+        if any(k in subj_lower for k in ["mathematics", "math", "physics", "chemistry"]):
+            return [
+                ("foundation", [1, 2, 3], (
+                    "1. TITLE & INTRODUCTION — A technically precise title. High-engagement academic introduction.\n"
+                    "2. WHY THIS EXISTS — The exact historical and practical problem that led to \"{topic}\".\n"
+                    "3. INTUITION & MENTAL MODEL — The core concept in plain visual language. How to picture it."
+                )),
+                ("theory", [4, 5], (
+                    "4. FORMAL DEFINITION — Rigorous engineering definition with LaTeX mathematics. Define every symbol.\n"
+                    "5. FORMULA EXPLANATION — Break down the core formulas component by component."
+                )),
+                ("examples", [6, 7], (
+                    "6. STEP-BY-STEP DERIVATION — Step-by-step mathematical or physical derivation. Show exact working.\n"
+                    "7. SOLVED NUMERICAL EXAMPLE — A complete, real-world numerical example."
+                )),
+                ("advanced", [8, 9, 10], (
+                    "8. ENGINEERING APPLICATIONS — Real-world engineering use cases.\n"
+                    "9. COMMON MISTAKES — Format: > **\u274c Common Mistake:** ... and how to fix it.\n"
+                    "10. INTERVIEW & EXAM PERSPECTIVE — University exam questions, grading criteria, and traps."
+                )),
+                ("summary", [11, 12], (
+                    "11. SUMMARY & REVISION — Bulleted summary of 5-7 items with key rules.\n"
+                    "12. TRANSITION — A natural bridge to the next logical concept in the curriculum."
+                ))
+            ]
+        elif any(k in subj_lower for k in ["database", "sql"]):
+            return [
+                ("foundation", [1, 2, 3], (
+                    "1. TITLE & INTRODUCTION — A technically precise title and introduction.\n"
+                    "2. WHY THIS EXISTS — The data management problem that led to \"{topic}\".\n"
+                    "3. INTUITION — The core concept in plain language."
+                )),
+                ("theory", [4, 5, 6], (
+                    "4. FORMAL DEFINITION — Rigorous technical definition.\n"
+                    "5. ER DIAGRAM / ARCHITECTURE — A clean, valid Mermaid.js diagram.\n"
+                    "6. SQL SYNTAX — Detailed syntax breakdown with variations."
+                )),
+                ("examples", [7, 8, 9], (
+                    "7. STEP-BY-STEP EXAMPLE — A complete, copy-paste-runnable SQL example.\n"
+                    "8. TRANSACTIONS & LOCKING — Concurrency and ACID considerations.\n"
+                    "9. QUERY EXECUTION PLAN — How the database engine executes this operation."
+                )),
+                ("advanced", [10, 11, 12], (
+                    "10. PERFORMANCE & INDEXING — How to optimize this operation.\n"
+                    "11. COMMON MISTAKES — Format: > **\u274c Common Mistake:** ... and how to fix it.\n"
+                    "12. INTERVIEW PERSPECTIVE — High-frequency interview questions and trade-offs."
+                )),
+                ("summary", [13, 14], (
+                    "13. SUMMARY & REVISION — Bulleted summary of 5-7 items.\n"
+                    "14. TRANSITION — Bridge to the next concept."
+                ))
+            ]
+        elif any(k in subj_lower for k in ["network"]):
+            return [
+                ("foundation", [1, 2, 3], (
+                    "1. TITLE & INTRODUCTION — A technically precise title and introduction.\n"
+                    "2. WHY THIS EXISTS — The networking problem that led to \"{topic}\".\n"
+                    "3. INTUITION — The core concept in plain language."
+                )),
+                ("theory", [4, 5, 6], (
+                    "4. FORMAL DEFINITION — Rigorous technical definition.\n"
+                    "5. PROTOCOL DIAGRAM — A clean, valid Mermaid.js sequence diagram (e.g. TCP handshake).\n"
+                    "6. PACKET FLOW — Step-by-step trace of how the packet traverses the network."
+                )),
+                ("examples", [7, 8], (
+                    "7. REAL-WORLD SCENARIO — A complete, real-world network trace example.\n"
+                    "8. TCP/IP STACK — How this topic interacts with the OSI/TCP-IP model."
+                )),
+                ("advanced", [9, 10, 11], (
+                    "9. SECURITY & FIREWALLS — Security implications and firewall rules.\n"
+                    "10. COMMON MISTAKES & DEBUGGING — Using tools like tcpdump/wireshark.\n"
+                    "11. INTERVIEW PERSPECTIVE — High-frequency interview questions and trade-offs."
+                )),
+                ("summary", [12, 13], (
+                    "12. SUMMARY & REVISION — Bulleted summary of 5-7 items.\n"
+                    "13. TRANSITION — Bridge to the next concept."
+                ))
+            ]
+        elif any(k in subj_lower for k in ["programming", "code", "software", "computer"]):
+            return [
+                ("foundation", [1, 2, 3], (
+                    "1. TITLE & INTRODUCTION — A technically precise title and introduction.\n"
+                    "2. WHY THIS EXISTS — The practical engineering problem that led to \"{topic}\".\n"
+                    "3. INTUITION — The core concept in plain, jargon-free language."
+                )),
+                ("theory", [4, 5, 6], (
+                    "4. FORMAL DEFINITION — Rigorous engineering definition.\n"
+                    "5. SYNTAX & VARIATIONS — Detailed syntax breakdown with a comparison table.\n"
+                    "6. HOW IT WORKS INTERNALLY — CPU cycles, compiler behavior, or thread safety."
+                )),
+                ("examples", [7, 8, 9], (
+                    "7. STEP-BY-STEP EXAMPLE — A complete, real-world, copy-paste-runnable example.\n"
+                    "8. MEMORY VISUALIZATION — Table/Explanation: memory addresses, pointers, values.\n"
+                    "9. EXECUTION TRACE — Call stack, stack frames, or register transitions."
+                )),
+                ("advanced", [10, 11, 12, 13], (
+                    "10. COMPLEXITY ANALYSIS — Time and Space complexity formal analysis.\n"
+                    "11. BEST PRACTICES — Format: > **\u2705 Best Practice:** ...\n"
+                    "12. COMMON MISTAKES — Format: > **\u274c Common Mistake:** ... and how to fix it.\n"
+                    "13. INTERVIEW PERSPECTIVE — High-frequency interview questions and traps."
+                )),
+                ("summary", [14, 15], (
+                    "14. SUMMARY & REVISION — Bulleted summary of 5-7 items.\n"
+                    "15. TRANSITION — A natural bridge to the next logical concept."
+                ))
+            ]
+        else:
+            return [
+                ("foundation", [1, 2, 3], (
+                    "1. TITLE & INTRODUCTION — A technically precise title and introduction.\n"
+                    "2. WHY THIS EXISTS — The practical engineering problem that led to \"{topic}\".\n"
+                    "3. INTUITION — The core concept in plain, jargon-free language."
+                )),
+                ("theory", [4, 5, 6], (
+                    "4. FORMAL DEFINITION — Rigorous engineering definition.\n"
+                    "5. MENTAL MODEL — \"Here is how you should picture {topic} in your mind...\"\n"
+                    "6. VISUAL DIAGRAM — A detailed, clean, valid Mermaid.js diagram."
+                )),
+                ("examples", [7, 8], (
+                    "7. STEP-BY-STEP EXAMPLE — A complete, real-world, descriptive example.\n"
+                    "8. REAL-WORLD APPLICATIONS — Table: Domain | Real Company | Use Case."
+                )),
+                ("advanced", [9, 10, 11], (
+                    "9. BEST PRACTICES — Format: > **\u2705 Best Practice:** ...\n"
+                    "10. COMMON MISTAKES — Format: > **\u274c Common Mistake:** ... and how to fix it.\n"
+                    "11. INTERVIEW PERSPECTIVE — High-frequency interview questions and traps."
+                )),
+                ("summary", [12, 13], (
+                    "12. SUMMARY & REVISION — Bulleted summary of 5-7 items.\n"
+                    "13. TRANSITION — A natural bridge to the next logical concept."
+                ))
+            ]
 
     async def _generate_chunk(
         self,
@@ -699,12 +770,13 @@ class ExplanationAgent(TeachingAgent):
 
                 # Calculate word budget based on subject
                 subj_lower = subject.lower()
+                num_chunks = len(self._get_chunk_definitions(subject))
                 if any(k in subj_lower for k in ["programming", "code", "software", "computer"]):
-                    base = 2100 // 5
+                    base = 2000 // num_chunks
                 elif any(k in subj_lower for k in ["math", "physics", "chemistry", "statistics"]):
-                    base = 2600 // 5
+                    base = 1650 // num_chunks
                 else:
-                    base = 2800 // 5
+                    base = 2200 // num_chunks
                 
                 variance = {
                     "foundation": 0.8,
@@ -712,6 +784,7 @@ class ExplanationAgent(TeachingAgent):
                     "examples": 1.2,
                     "advanced": 1.0,
                     "exam_prep": 0.8,
+                    "summary": 0.8,
                 }
                 multiplier = variance.get(chunk_name, 1.0)
                 target_words = int(base * multiplier)
@@ -721,6 +794,9 @@ class ExplanationAgent(TeachingAgent):
                 parts.append(
                     f'Continue the university-level lecture on "{topic}" in {subject}.\n'
                     f"Write ONLY the following sections using the EXACT headers shown. Target length: ~{target_str}.\n\n"
+                    f"CRITICAL CONSTRAINT: Focus on highly concise, punchy explanations. Never explain the same concept twice. "
+                    f"Merge Introduction and Intuition if they overlap. Merge Summary and Revision when possible. "
+                    f"Keep important definitions, formulas, and examples, but compress narrative paragraphs efficiently.\n\n"
                     f"{rendered}\n\n"
                     f"Output raw markdown immediately. No preamble. No JSON wrapper."
                 )
@@ -820,14 +896,14 @@ class ExplanationAgent(TeachingAgent):
 
         logger.info(
             f"[AGENT:explanation] CHUNKED START | subject={subject!r} topic={topic!r} "
-            f"chunks={len(self._CHUNK_DEFINITIONS)} models_per_chunk={len(self._CHUNK_FALLBACK_MODELS)}"
+            f"chunks={len(self._get_chunk_definitions(subject))} models_per_chunk={len(self._CHUNK_FALLBACK_MODELS)}"
         )
 
         assembled: List[str] = []
 
-        for idx, (chunk_name, section_nums, sections_str) in enumerate(self._CHUNK_DEFINITIONS):
+        for idx, (chunk_name, section_nums, sections_str) in enumerate(self._get_chunk_definitions(subject)):
             logger.info(
-                f"[AGENT:explanation] CHUNK {idx+1}/{len(self._CHUNK_DEFINITIONS)} | "
+                f"[AGENT:explanation] CHUNK {idx+1}/{len(self._get_chunk_definitions(subject))} | "
                 f"name={chunk_name!r} sections={section_nums}"
             )
 
