@@ -279,7 +279,7 @@ async def generate_lesson_parallel(
                     "section_data": {
                         "type": sec_type,
                         "title": title,
-                        "content": f"\n\n*This section failed generation due to an API error: {str(e)}*"
+                        "content": f"\n\n*This section couldn't be generated. Please regenerate this section.*"
                     },
                     "status": "failed",
                     "engine_id": engine_id,

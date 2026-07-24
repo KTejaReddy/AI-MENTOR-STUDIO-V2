@@ -156,17 +156,60 @@ class TeachingAgent(ABC):
                 )
 
                 accumulated = ""
+                unyielded_buffer = ""
                 finish_reason = None
+                is_in_mermaid = False
+                
                 async for event in provider.complete_stream(request):
                     if event.error:
                         raise RuntimeError(event.error)
                     if event.content:
                         accumulated += event.content
-                        yield {
-                            "type": "section_chunk",
-                            "section_type": self.section_type,
-                            "content": event.content,
-                        }
+                        unyielded_buffer += event.content
+                        
+                        # Determine if we are currently inside a mermaid block
+                        code_blocks = accumulated.count("```")
+                        currently_in_mermaid = False
+                        if code_blocks % 2 != 0:
+                            last_start = accumulated.rfind("```")
+                            if accumulated[last_start:last_start+15].lower().startswith("```mermaid"):
+                                currently_in_mermaid = True
+                        
+                        if currently_in_mermaid:
+                            is_in_mermaid = True
+                            continue  # Buffer it
+                            
+                        if is_in_mermaid and not currently_in_mermaid:
+                            # We just closed a mermaid block.
+                            is_in_mermaid = False
+                            
+                            # Validate the block inside unyielded_buffer
+                            block_start = unyielded_buffer.lower().rfind("```mermaid")
+                            block_end = unyielded_buffer.rfind("```")
+                            if block_start != -1 and block_end != -1 and block_end > block_start:
+                                block = unyielded_buffer[block_start:block_end+3]
+                                is_valid = True
+                                if "|>" in block: is_valid = False
+                                if not any(x in block.lower() for x in ["graph", "flowchart", "state", "sequence", "class", "pie", "gantt", "mindmap"]): is_valid = False
+                                
+                                if not is_valid:
+                                    rep = "\n> *Visual diagram simplified for clarity.*\n"
+                                    unyielded_buffer = unyielded_buffer[:block_start] + rep + unyielded_buffer[block_end+3:]
+                                    
+                                    # Also fix accumulated
+                                    a_start = accumulated.lower().rfind("```mermaid")
+                                    a_end = accumulated.rfind("```")
+                                    accumulated = accumulated[:a_start] + rep + accumulated[a_end+3:]
+
+                        # Yield whatever is in the buffer
+                        if unyielded_buffer:
+                            yield {
+                                "type": "section_chunk",
+                                "section_type": self.section_type,
+                                "content": unyielded_buffer,
+                            }
+                            unyielded_buffer = ""
+                            
                     if event.finish_reason:
                         finish_reason = event.finish_reason
                     if event.finish_reason == "length":
@@ -268,6 +311,11 @@ class TeachingAgent(ABC):
                         "type": "section_clear",
                         "section_type": self.section_type,
                     }
+                    yield {
+                        "type": "section_chunk",
+                        "section_type": self.section_type,
+                        "content": f"\n\n*Retrying this section...*\n\n"
+                    }
                     await asyncio.sleep(2 * retries)
                     # Try fallback model
                     if fallback_queue:
@@ -285,6 +333,10 @@ class TeachingAgent(ABC):
                             "section_type": self.section_type,
                             "attempt": retries
                         }
+                    yield {
+                        "type": "section_clear",
+                        "section_type": self.section_type,
+                    }
                 else:
                     break
 
@@ -566,10 +618,20 @@ class ExplanationAgent(TeachingAgent):
                         f"...{tail}"
                     )
 
+                # Calculate word budget
+                chunk_word_targets = {
+                    "foundation": "400-500 words",
+                    "theory": "600-700 words",
+                    "examples": "600-700 words",
+                    "advanced": "600-700 words",
+                    "exam_prep": "400-500 words",
+                }
+                target_words = chunk_word_targets.get(chunk_name, "650 words")
+
                 rendered = sections_str.replace("{topic}", topic).replace("{subject}", subject)
                 parts.append(
                     f'Continue the university-level lecture on "{topic}" in {subject}.\n'
-                    f"Write ONLY the following sections using the EXACT headers shown. Full depth, no placeholders.\n\n"
+                    f"Write ONLY the following sections using the EXACT headers shown. Target length: ~{target_words}.\n\n"
                     f"{rendered}\n\n"
                     f"Output raw markdown immediately. No preamble. No JSON wrapper."
                 )
@@ -680,7 +742,16 @@ class ExplanationAgent(TeachingAgent):
                 f"name={chunk_name!r} sections={section_nums}"
             )
 
-            prior = "\n\n".join(assembled) if assembled else ""
+            # Extract headers from assembled text to act as summarized prior context
+            prior_summary = ""
+            if assembled:
+                headers = []
+                for chunk in assembled:
+                    for line in chunk.split('\n'):
+                        if line.strip().startswith('#') or line.strip().startswith('**'):
+                            headers.append(line.strip())
+                if headers:
+                    prior_summary = "Previously generated concepts (do not repeat these):\n" + "\n".join(headers[:30])
 
             try:
                 chunk_text = await self._generate_chunk(
@@ -689,7 +760,7 @@ class ExplanationAgent(TeachingAgent):
                     subject=subject,
                     topic=topic,
                     blueprint=blueprint,
-                    previous_content=prior,
+                    previous_content=prior_summary,
                     engine_id=engine_id,
                 )
             except RuntimeError as exc:
