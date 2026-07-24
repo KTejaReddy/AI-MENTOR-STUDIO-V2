@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles, Menu, MessageSquare, Home, GraduationCap, History,
-  Bookmark, StickyNote, Info, FileText,
+  StickyNote, Info, FileText,
   Code2, Bell, Trash2, Plus, User, LogOut, LogIn, Shield,
 } from 'lucide-react'
 
@@ -27,7 +27,6 @@ const navItems = [
   { to: '/document-tutor', icon: FileText, label: 'Doc Tutor', colorVar: '--color-ai' },
   { to: '/compiler-lab', icon: Code2, label: 'Compiler', colorVar: '--color-compiler' },
   { to: '/history', icon: History, label: 'History', colorVar: '--color-practice' },
-  { to: '/bookmarks', icon: Bookmark, label: 'Bookmarks', colorVar: '--color-bookmarks' },
   { to: '/notes', icon: StickyNote, label: 'Notes', colorVar: '--color-notes' },
 ]
 
@@ -115,19 +114,6 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             </NavLink>
           ))}
         </nav>
-        {/* Premium Search Placeholder */}
-        {!isHomePage && (
-          <div className="hidden lg:flex items-center ml-2 relative group">
-             <div className="w-48 h-8 rounded-full bg-white/5 border border-white/10 flex items-center px-3 gap-2 cursor-pointer transition-all hover:bg-white/10 hover:w-56 group-hover:border-white/20">
-               <Code2 className="w-3.5 h-3.5 text-text-tertiary group-hover:text-text-secondary" />
-               <span className="text-xs text-text-tertiary group-hover:text-text-secondary">Search everywhere...</span>
-               <div className="ml-auto flex items-center gap-0.5">
-                 <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">⌘</span>
-                 <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">K</span>
-               </div>
-             </div>
-          </div>
-        )}
       </div>
 
       <div className="flex items-center gap-1 md:gap-2 shrink-0">

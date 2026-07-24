@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { InteractiveKnowledgeGraph } from '@/components/ui/InteractiveKnowledgeGraph'
-import { Brain, Code2, FileText, Bookmark, Edit3, Clock, Sparkles, Play, Cpu, Network } from 'lucide-react'
+import { Brain, Code2, FileText, Edit3, Clock, Sparkles, Play, Cpu, Network } from 'lucide-react'
 import { useRef } from 'react'
 
 export function Home() {
@@ -132,21 +132,6 @@ export function Home() {
             </div>
           </motion.div>
 
-          {/* BOOKMARKS */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "0px" }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            onClick={() => navigate('/bookmarks')}
-            className="md:col-span-4 relative cursor-pointer group p-8 overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 hover:border-rose-500/50 transition-colors shadow-lg hover:shadow-rose-900/20 text-center flex flex-col items-center justify-center min-h-[280px]"
-          >
-            <div className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4 text-rose-400 group-hover:bg-rose-500/20 transition-colors">
-              <Bookmark className="w-6 h-6" />
-            </div>
-            <h3 className="text-xl font-bold text-white mb-2">Bookmarks</h3>
-            <p className="text-sm text-slate-400 font-medium">Saved derivations & resources</p>
-          </motion.div>
 
           {/* NOTES */}
           <motion.div 
@@ -155,7 +140,7 @@ export function Home() {
             viewport={{ once: true, margin: "0px" }}
             transition={{ duration: 0.5, delay: 0.4 }}
             onClick={() => navigate('/notes')}
-            className="md:col-span-4 relative cursor-pointer group p-8 overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition-colors shadow-lg hover:shadow-amber-900/20 text-center flex flex-col items-center justify-center min-h-[280px]"
+            className="md:col-span-6 relative cursor-pointer group p-8 overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition-colors shadow-lg hover:shadow-amber-900/20 text-center flex flex-col items-center justify-center min-h-[280px]"
           >
             <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4 text-amber-400 group-hover:bg-amber-500/20 transition-colors">
               <Edit3 className="w-6 h-6" />
@@ -171,7 +156,7 @@ export function Home() {
             viewport={{ once: true, margin: "0px" }}
             transition={{ duration: 0.5, delay: 0.5 }}
             onClick={() => navigate('/history')}
-            className="md:col-span-4 relative cursor-pointer group p-8 overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-colors shadow-lg hover:shadow-indigo-900/20 text-center flex flex-col items-center justify-center min-h-[280px]"
+            className="md:col-span-6 relative cursor-pointer group p-8 overflow-hidden rounded-3xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-colors shadow-lg hover:shadow-indigo-900/20 text-center flex flex-col items-center justify-center min-h-[280px]"
           >
             <div className="w-12 h-12 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4 text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
               <Clock className="w-6 h-6" />

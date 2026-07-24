@@ -5,7 +5,6 @@ import { TopNavbar } from './TopNavbar'
 import { MobileDrawer } from './MobileDrawer'
 import { AICompanion } from '@/components/companion/AICompanion'
 import { Toaster } from '@/components/ui/toaster'
-import { GlobalCommandPalette } from '@/components/layout/GlobalCommandPalette'
 import { BackgroundEffects } from '@/components/effects/BackgroundEffects'
 import { ErrorBoundary } from '@/components/layout/ErrorBoundary'
 
@@ -143,7 +142,6 @@ export function AppShell() {
         )}
       </AnimatePresence>
 
-      <GlobalCommandPalette />
       <Toaster />
     </div>
   )

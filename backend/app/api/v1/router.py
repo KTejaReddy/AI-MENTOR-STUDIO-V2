@@ -1,11 +1,11 @@
 from fastapi import APIRouter
-from app.api.v1.endpoints import health, history, bookmarks, notes, settings, ai, api_keys, curriculum, document, compiler, auth, ops
+from app.api.v1.endpoints import health, history, notes, settings, ai, api_keys, curriculum, document, compiler, auth, ops
 
 router = APIRouter(prefix="/api/v1")
 router.include_router(auth.router, prefix="/auth", tags=["auth"])
 router.include_router(health.router, tags=["health"])
 router.include_router(history.router, prefix="/history", tags=["history"])
-router.include_router(bookmarks.router, prefix="/bookmarks", tags=["bookmarks"])
+
 router.include_router(notes.router, prefix="/notes", tags=["notes"])
 router.include_router(api_keys.router, prefix="/settings", tags=["settings"])
 router.include_router(settings.router, prefix="/settings", tags=["settings"])

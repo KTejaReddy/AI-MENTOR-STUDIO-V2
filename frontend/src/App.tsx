@@ -8,7 +8,6 @@ import { NotificationProvider } from '@/contexts/NotificationContext'
 import { Home } from '@/pages/Home'
 import { Learn } from '@/pages/Learn'
 import { History } from '@/pages/History'
-import { Bookmarks } from '@/pages/Bookmarks'
 import { Notes } from '@/pages/Notes'
 import { About } from '@/pages/About'
 import { DocumentTutor } from '@/pages/DocumentTutor'
@@ -42,7 +41,6 @@ export default function App() {
                 <Route path="/" element={<AppProvider><Home /></AppProvider>} />
                 <Route path="/learn" element={<Learn />} />
                 <Route path="/history" element={<History />} />
-                <Route path="/bookmarks" element={<Bookmarks />} />
                 <Route path="/notes" element={<Notes />} />
                 <Route path="/document-tutor" element={<DocumentTutor />} />
                 <Route path="/compiler-lab" element={<CompilerLab />} />

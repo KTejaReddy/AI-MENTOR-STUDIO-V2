@@ -6,7 +6,7 @@ from app.core.dependencies import get_current_user
 from app.models.user import User
 
 from app.curriculum.registry import curriculum_registry
-from app.curriculum.search import search_curriculum, autocomplete
+from app.curriculum.search import autocomplete
 from app.curriculum.schemas import Branch, Subject, SearchResult, CurriculumStats
 
 logger = logging.getLogger(__name__)
@@ -49,12 +49,6 @@ async def get_subject(subject_id: str):
     }
 
 
-@router.get("/search")
-async def search(
-    query: str = Query(..., min_length=1, description="Search query")
-):
-    """Full-text search across subjects and branches."""
-    return search_curriculum(query)
 
 
 @router.get("/autocomplete")

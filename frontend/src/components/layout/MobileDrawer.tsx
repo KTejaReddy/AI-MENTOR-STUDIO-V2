@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { cn } from '@/lib/utils'
 import {
-  Home, GraduationCap, FileText, Code2, History, Bookmark,
+  Home, GraduationCap, FileText, Code2, History,
   StickyNote, Info, LogOut, Bell, X, User
 } from 'lucide-react'
 
@@ -19,7 +19,6 @@ const navItems = [
   { to: '/document-tutor', icon: FileText, label: 'Doc Tutor' },
   { to: '/compiler-lab', icon: Code2, label: 'Compiler' },
   { to: '/history', icon: History, label: 'History' },
-  { to: '/bookmarks', icon: Bookmark, label: 'Bookmarks' },
   { to: '/notes', icon: StickyNote, label: 'Notes' },
 ]
 
