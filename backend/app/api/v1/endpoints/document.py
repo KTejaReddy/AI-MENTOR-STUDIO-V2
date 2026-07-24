@@ -7,9 +7,18 @@ import asyncio
 from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Depends, Request
 from fastapi.responses import StreamingResponse
 
-import fitz  # PyMuPDF
-import docx
-import pptx
+# Lazy loaded document libraries
+_doc_libs_cache = None
+
+def get_document_libraries():
+    global _doc_libs_cache
+    if _doc_libs_cache is None:
+        import fitz  # PyMuPDF
+        import docx
+        import pptx
+        _doc_libs_cache = (fitz, docx, pptx)
+    return _doc_libs_cache
+
 from sse_starlette.sse import EventSourceResponse
 from app.core.rate_limit import limiter
 from app.core.dependencies import get_current_user
@@ -48,6 +57,7 @@ def extract_text(file_path: str, filename: str) -> str:
     ext = filename.split('.')[-1].lower()
     text = ""
     try:
+        fitz, docx, pptx = get_document_libraries()
         if ext == "pdf":
             doc = fitz.open(file_path)
             for page in doc:
