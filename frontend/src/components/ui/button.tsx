@@ -35,13 +35,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled || loading}
         onClick={handleClick}
         className={cn(
-          'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 disabled:pointer-events-none active:scale-[0.97] relative overflow-hidden select-none',
+          'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] relative select-none',
           {
-            'bg-gradient-to-br from-accent to-accent-dark text-white shadow-glow-accent hover:shadow-glow-accent-lg hover:brightness-110 hover:scale-[1.02] focus-visible:ring-accent/40': variant === 'primary',
-            'bg-surface-200 text-text-secondary border border-border hover:border-border-light hover:text-text-primary hover:bg-surface-250 hover:shadow-sm hover:scale-[1.02] focus-visible:ring-accent/30': variant === 'secondary',
-            'text-text-tertiary hover:text-text-primary hover:bg-surface-150 focus-visible:ring-accent/30': variant === 'ghost',
-            'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20 hover:text-red-300 hover:scale-[1.02] focus-visible:ring-red-500/30': variant === 'danger',
-            'bg-accent/10 text-accent-light border border-accent/20 hover:bg-accent/15 hover:scale-[1.02] focus-visible:ring-accent/30': variant === 'accent',
+            'bg-text-primary text-surface hover:opacity-90': variant === 'primary',
+            'bg-surface-50 text-text-primary border border-border hover:bg-surface-100 hover:border-border-light': variant === 'secondary',
+            'text-text-secondary hover:text-text-primary hover:bg-surface-100': variant === 'ghost',
+            'bg-red-500/10 text-red-500 hover:bg-red-500/20': variant === 'danger',
+            'bg-surface-150 text-text-primary border border-border': variant === 'accent',
             'min-h-[48px] px-4 md:min-h-[32px] md:h-8 md:px-3 text-sm md:text-xs': size === 'sm',
             'min-h-[48px] px-6 md:min-h-[40px] md:h-10 md:px-4 text-base md:text-sm': size === 'default',
             'min-h-[56px] px-8 md:min-h-[48px] md:h-12 md:px-6 text-lg md:text-base': size === 'lg',

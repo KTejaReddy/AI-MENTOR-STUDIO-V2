@@ -72,7 +72,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   }
 
   return (
-    <header className="m-0 md:mx-3 md:mt-3 pt-[env(safe-area-inset-top)] md:pt-0 h-[calc(3.5rem+env(safe-area-inset-top))] md:h-14 shrink-0 glass rounded-none md:rounded-2xl flex items-center justify-between px-3 md:px-4 z-40 shadow-sm md:shadow-lg relative border-b md:border border-border">
+    <header className="m-0 md:mx-4 md:mt-4 pt-[env(safe-area-inset-top)] md:pt-0 h-[calc(3.5rem+env(safe-area-inset-top))] md:h-14 shrink-0 bg-surface-50 rounded-none md:rounded-xl flex items-center justify-between px-3 md:px-4 z-40 shadow-sm relative border-b md:border border-border">
       <div className="flex items-center gap-2">
         <IconButton label="Toggle sidebar" onClick={onToggleSidebar} className="hover:bg-surface-200/50 flex">
           <Menu className="w-[18px] h-[18px]" />
@@ -117,37 +117,22 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
 
       <div className="flex items-center gap-1 md:gap-2 shrink-0">
         <div className="md:hidden">
-          <motion.button
+          <button
             onClick={handleNewLesson}
-            whileTap={{ scale: 0.95 }}
-            className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r from-[#00f2fe] via-[#4facfe] to-[#8b5cf6] text-white shadow-lg shadow-accent/20"
+            className="flex items-center justify-center w-8 h-8 rounded-md bg-accent text-surface shadow-sm hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-          </motion.button>
+          </button>
         </div>
         <div className="hidden md:block">
           <Tooltip content="New Lesson (Ctrl+N)">
-            <motion.button
+            <button
               onClick={handleNewLesson}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              animate={{
-                boxShadow: [
-                  '0 0 12px rgba(0, 242, 254, 0.15)',
-                  '0 0 24px rgba(0, 242, 254, 0.35)',
-                  '0 0 12px rgba(0, 242, 254, 0.15)'
-                ]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-              className="flex items-center gap-1.5 px-4 py-1.75 rounded-full bg-gradient-to-r from-[#00f2fe] via-[#4facfe] to-[#8b5cf6] text-white text-xs font-bold border border-white/10 shadow-lg"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-accent text-surface text-xs font-medium shadow-sm hover:opacity-90 transition-opacity"
             >
               <Plus className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">New Lesson</span>
-            </motion.button>
+            </button>
           </Tooltip>
         </div>
 
@@ -238,7 +223,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             align="end"
             trigger={
               <button
-                className="flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-accent to-teal text-white text-xs font-bold shadow-md hover:shadow-glow-sm transition-all duration-300 focus:outline-none"
+                className="flex items-center justify-center w-10 h-10 md:w-8 md:h-8 rounded-full bg-accent text-surface text-xs font-medium shadow-sm hover:opacity-90 transition-opacity focus:outline-none"
                 title="Profile"
               >
                 {user.avatar_url ? (

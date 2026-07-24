@@ -1,0 +1,1346 @@
+<testsuites id="" name="" tests="40" failures="0" skipped="0" errors="40" time="115.64058800000001">
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="chromium" tests="5" failures="0" skipped="0" time="173.685" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="35.056">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--chromium\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--chromium\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [chromium] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--chromium\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="35.232">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--chromium\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--chromium\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [chromium] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--chromium\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="34.157">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--chromium\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--chromium\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [chromium] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--chromium\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="35.039">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--chromium\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--chromium\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [chromium] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--chromium\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="34.201">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--chromium\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--chromium\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--chromium\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [chromium] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--chromium\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="firefox" tests="5" failures="0" skipped="0" time="0.021" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--firefox\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe" type="Error">
+<![CDATA[  [firefox] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--firefox\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="0.005">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--firefox\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe" type="Error">
+<![CDATA[  [firefox] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--firefox\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--firefox\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe" type="Error">
+<![CDATA[  [firefox] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--firefox\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--firefox\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe" type="Error">
+<![CDATA[  [firefox] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--firefox\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--firefox\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe" type="Error">
+<![CDATA[  [firefox] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\firefox-1532\firefox\firefox.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--firefox\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="webkit" tests="5" failures="0" skipped="0" time="0.033" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--webkit\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [webkit] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--webkit\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="0.007">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--webkit\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [webkit] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--webkit\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="0.005">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--webkit\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [webkit] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--webkit\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="0.006">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--webkit\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [webkit] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--webkit\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="0.011">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--webkit\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [webkit] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--webkit\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="Microsoft Edge" tests="5" failures="0" skipped="0" time="172.753" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="33.529">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Microsoft Edge] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Microsoft-Edge\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="33.645">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Microsoft Edge] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Microsoft-Edge\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="33.228">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Microsoft Edge] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Microsoft-Edge\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="36.298">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Microsoft Edge] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Microsoft-Edge\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="36.053">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Microsoft-Edge\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Microsoft-Edge\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Microsoft-Edge\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Microsoft Edge] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Microsoft-Edge\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Microsoft-Edge\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Microsoft-Edge\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="Mobile Chrome" tests="5" failures="0" skipped="0" time="178.903" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="36.714">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Mobile Chrome] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Chrome\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="36.233">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Mobile Chrome] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Chrome\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="35.571">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Mobile Chrome] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Chrome\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="35.23">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Chrome\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Mobile Chrome] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Chrome\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Chrome\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="35.155">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Mobile-Chrome\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Mobile-Chrome\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Mobile Chrome] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Mobile-Chrome\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Mobile-Chrome\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="Mobile Safari" tests="5" failures="0" skipped="0" time="0.098" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="0.015">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Safari\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [Mobile Safari] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Mobile-Safari\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="0.068">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Safari\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [Mobile Safari] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Mobile-Safari\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="0.004">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Safari\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [Mobile Safari] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Mobile-Safari\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="0.006">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Safari\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [Mobile Safari] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Mobile-Safari\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="0.005">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Mobile-Safari\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [Mobile Safari] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Mobile-Safari\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="Galaxy S23" tests="5" failures="0" skipped="0" time="165.964" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="30.423">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Galaxy-S23\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Galaxy-S23\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Galaxy-S23\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Galaxy S23] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Galaxy-S23\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Galaxy-S23\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--Galaxy-S23\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="30.921">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Galaxy-S23\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Galaxy-S23\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Galaxy-S23\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Galaxy S23] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Galaxy-S23\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Galaxy-S23\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--Galaxy-S23\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="34.507">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Galaxy-S23\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Galaxy-S23\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Galaxy-S23\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Galaxy S23] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Galaxy-S23\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Galaxy-S23\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--Galaxy-S23\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="35.005">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Galaxy-S23\test-failed-1.png]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Galaxy-S23\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Galaxy-S23\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Galaxy S23] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Galaxy-S23\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Galaxy-S23\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--Galaxy-S23\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="35.108">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Galaxy-S23\video.webm]]
+
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Galaxy-S23\error-context.md]]
+]]>
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+<![CDATA[  [Galaxy S23] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.waitFor: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('main') to be visible
+
+
+       at ..\pages\BasePage.ts:16
+
+      14 |   async waitForHydration() {
+      15 |     // Wait for the app shell to be fully visible, implying hydration is likely complete
+    > 16 |     await this.page.locator('main').waitFor({ state: 'visible' });
+         |                                     ^
+      17 |   }
+      18 |
+      19 |   async checkA11y() {
+        at BasePage.waitForHydration (T:\ai mentor studio v2\frontend\e2e\pages\BasePage.ts:16:37)
+        at T:\ai mentor studio v2\frontend\e2e\tests\responsive.spec.ts:20:22
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Galaxy-S23\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--Galaxy-S23\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="responsive.spec.ts" timestamp="2026-07-23T14:46:53.449Z" hostname="iPad" tests="5" failures="0" skipped="0" time="0.056" errors="5">
+<testcase name="Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S)" classname="responsive.spec.ts" time="0.005">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--iPad\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [iPad] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 320x568 (Mobile S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-a10e3-Layout-at-320x568-Mobile-S--iPad\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L)" classname="responsive.spec.ts" time="0.01">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--iPad\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [iPad] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 480x800 (Mobile L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-17b2c-Layout-at-480x800-Mobile-L--iPad\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet)" classname="responsive.spec.ts" time="0.011">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--iPad\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [iPad] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 768x1024 (Tablet) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-26617--Layout-at-768x1024-Tablet--iPad\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S)" classname="responsive.spec.ts" time="0.011">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--iPad\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [iPad] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1024x768 (Desktop S) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-573bd-yout-at-1024x768-Desktop-S--iPad\error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L)" classname="responsive.spec.ts" time="0.019">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--iPad\error-context.md]]
+]]>
+</system-out>
+<error message="browserType.launch: Executable doesn&apos;t exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe" type="Error">
+<![CDATA[  [iPad] › responsive.spec.ts:14:5 › Responsive Layout Tests › Dashboard Layout at 1920x1080 (Desktop L) 
+
+    Error: browserType.launch: Executable doesn't exist at C:\Users\tejar\AppData\Local\ms-playwright\webkit-2311\Playwright.exe
+    ╔════════════════════════════════════════════════════════════╗
+    ║ Looks like Playwright was just installed or updated.       ║
+    ║ Please run the following command to download new browsers: ║
+    ║                                                            ║
+    ║     npx playwright install                                 ║
+    ║                                                            ║
+    ║ <3 Playwright Team                                         ║
+    ╚════════════════════════════════════════════════════════════╝
+
+    Error Context: ..\..\test-results\responsive-Responsive-Layo-1f958-out-at-1920x1080-Desktop-L--iPad\error-context.md
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>
