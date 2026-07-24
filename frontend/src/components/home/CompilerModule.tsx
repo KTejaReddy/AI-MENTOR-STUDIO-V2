@@ -7,10 +7,10 @@ export const CompilerModule = React.memo(function CompilerModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full col-span-12 md:col-span-7 h-[400px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#060814]/40 border border-emerald-500/10 p-6 shadow-xl" onClick={() => navigate('/compiler-lab')}>
+    <div className="relative w-full col-span-12 md:col-span-6 lg:col-span-7 h-[500px] md:h-[400px] flex flex-col md:flex-row items-center justify-between my-0 gap-6 group cursor-pointer bg-[#060814]/40 border border-emerald-500/10 p-6 md:p-0 overflow-hidden shadow-xl" onClick={() => navigate('/compiler-lab')}>
       
       {/* Left Text Content */}
-      <div className="flex-1 max-w-md pl-6 md:pl-12 z-20">
+      <div className="flex-1 max-w-sm pl-0 md:pl-12 z-20 flex flex-col items-center text-center md:items-start md:text-left mt-6 md:mt-0">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-900/30 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] uppercase mb-6 rounded-sm">
           <Terminal className="w-3 h-3" />
           Execution Environment
@@ -25,7 +25,7 @@ export const CompilerModule = React.memo(function CompilerModule() {
       </div>
 
       {/* Right Visual: Floating VS Code IDE */}
-      <div className="relative hidden md:flex flex-1 w-full max-w-sm pr-2 z-10 scale-[0.85] origin-right">
+      <div className="relative flex flex-1 w-full max-w-sm z-10 scale-[0.65] md:scale-[0.85] origin-top md:origin-right mt-4 md:mt-0 justify-center">
          <div className="w-full bg-[#1E1E1E] rounded-xl overflow-hidden border border-white/10 shadow-2xl flex flex-col h-[350px]">
            {/* Window Header */}
            <div className="h-10 bg-[#323233] border-b border-[#1e1e1e] flex items-center px-4 justify-between">

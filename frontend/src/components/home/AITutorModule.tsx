@@ -16,7 +16,7 @@ export const AITutorModule = React.memo(function AITutorModule() {
       <div className="relative z-10 flex flex-col md:flex-row items-center justify-center md:justify-between w-full max-w-5xl gap-6 md:gap-8 p-4">
         
         {/* Left Side: Animated Orb */}
-        <div className="relative hidden md:flex w-48 h-48 md:w-56 md:h-56 flex-shrink-0 items-center justify-center">
+        <div className="relative flex w-48 h-48 md:w-56 md:h-56 flex-shrink-0 items-center justify-center scale-75 md:scale-100">
           <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full text-indigo-500/30 group-hover:text-indigo-400/50 transition-colors duration-500 pointer-events-none">
             <motion.circle cx="100" cy="100" r="90" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="4 8" 
               animate={{ rotate: 360 }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} />

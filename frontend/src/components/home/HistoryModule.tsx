@@ -7,13 +7,13 @@ export const HistoryModule = React.memo(function HistoryModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full col-span-12 md:col-span-6 h-[300px] md:h-[350px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#0A0A0A] border border-white/5 shadow-xl overflow-hidden p-6 md:p-0" onClick={() => navigate('/history')}>
+    <div className="relative w-full col-span-12 md:col-span-6 h-[500px] md:h-[350px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#0A0A0A] border border-white/5 shadow-xl overflow-hidden p-6 md:p-0" onClick={() => navigate('/history')}>
       
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-rose-950/10 pointer-events-none z-0" />
 
       {/* Left Text Content */}
-      <div className="relative flex-1 max-w-md pl-0 md:pl-12 z-20 flex flex-col items-center text-center md:items-start md:text-left">
+      <div className="relative flex-1 max-w-md pl-0 md:pl-12 z-20 flex flex-col items-center text-center md:items-start md:text-left mt-6 md:mt-0">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-900/30 border border-rose-500/30 text-rose-400 font-mono text-[10px] uppercase mb-6 rounded-full">
           <Activity className="w-3 h-3" />
           Activity Tracker
@@ -25,7 +25,7 @@ export const HistoryModule = React.memo(function HistoryModule() {
       </div>
 
       {/* Right Visual: Graph and Analytics */}
-      <div className="relative hidden md:flex flex-1 w-full h-[350px] z-10 items-center justify-center scale-90 origin-right">
+      <div className="relative flex flex-1 w-full h-[350px] z-10 items-center justify-center scale-[0.6] md:scale-90 origin-top md:origin-right mt-4 md:mt-0">
          
          {/* The Main Axis (Horizontal glowing line) */}
          <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_20px_#f43f5e] opacity-50" />

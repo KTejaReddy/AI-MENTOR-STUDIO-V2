@@ -7,10 +7,10 @@ export const DocumentTutorModule = React.memo(function DocumentTutorModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full col-span-12 md:col-span-5 h-[350px] md:h-[400px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#060814]/40 border border-cyan-500/10 p-6 shadow-xl overflow-hidden" onClick={() => navigate('/document-tutor')}>
+    <div className="relative w-full col-span-12 md:col-span-5 h-[500px] md:h-[400px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#060814]/40 border border-cyan-500/10 p-6 md:p-0 overflow-hidden shadow-xl" onClick={() => navigate('/document-tutor')}>
       
-      {/* Right Text Content (Rendered on Left visually due to flex-row-reverse) */}
-      <div className="flex-1 max-w-md pr-0 md:pr-12 z-20 text-center md:text-right flex flex-col items-center md:items-end">
+      {/* Text Content */}
+      <div className="flex-1 max-w-md pr-0 md:pr-12 z-20 text-center md:text-right flex flex-col items-center md:items-end mt-6 md:mt-0">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-cyan-900/30 border border-cyan-500/30 text-cyan-400 font-mono text-[10px] uppercase mb-6 rounded-sm">
           <BookOpen className="w-3 h-3" />
           Document Analysis
@@ -24,8 +24,8 @@ export const DocumentTutorModule = React.memo(function DocumentTutorModule() {
         </button>
       </div>
 
-      {/* Left Visual: Stacked PDF Sheets & Knowledge Graph */}
-      <div className="relative hidden md:flex flex-1 w-full max-w-[250px] h-[300px] perspective-[1200px] z-10 items-center justify-center scale-75 origin-left">
+      {/* Visual: Stacked PDF Sheets & Knowledge Graph */}
+      <div className="relative flex flex-1 w-full max-w-[250px] z-10 items-center justify-center scale-[0.6] md:scale-75 origin-top md:origin-left mt-4 md:mt-0">
         
         {/* Knowledge Graph SVG Background */}
         <div className="absolute inset-0 opacity-40 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none z-0">
