@@ -68,7 +68,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   }
 
   return (
-    <header className="m-0 md:mx-4 md:mt-4 pt-[env(safe-area-inset-top)] md:pt-0 h-[calc(3.5rem+env(safe-area-inset-top))] md:h-14 shrink-0 bg-surface-50 rounded-none md:rounded-xl flex items-center justify-between px-3 md:px-4 z-40 shadow-sm relative border-b md:border border-border">
+    <header className="m-0 md:mx-6 md:mt-4 pt-[env(safe-area-inset-top)] md:pt-0 h-[calc(3.5rem+env(safe-area-inset-top))] md:h-14 shrink-0 bg-surface-50/70 backdrop-blur-xl rounded-none md:rounded-2xl flex items-center justify-between px-3 md:px-5 z-40 shadow-[0_8px_32px_rgba(0,0,0,0.4)] relative border-b md:border border-white/10 transition-all duration-300">
       <div className="flex items-center gap-2">
         <IconButton label="Toggle sidebar" onClick={onToggleSidebar} className="hover:bg-surface-200/50 flex">
           <Menu className="w-[18px] h-[18px]" />
@@ -90,7 +90,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               className={({ isActive }) =>
                 cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-10 shrink-0 group',
-                  !isActive && 'text-text-tertiary hover:text-text-primary'
+                  !isActive && 'text-text-tertiary hover:text-text-primary hover:bg-white/5'
                 )
               }
             >
@@ -104,8 +104,8 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
                   {isActive && (
                     <motion.div
                       layoutId="nav-pill"
-                      className="absolute inset-0 rounded-full border opacity-20 -z-10"
-                      style={{ backgroundColor: `var(${item.colorVar})`, borderColor: `var(${item.colorVar})` }}
+                      className="absolute inset-0 rounded-full -z-10 bg-white/10 shadow-[0_2px_10px_rgba(0,0,0,0.2)]"
+                      style={{ boxShadow: `0 0 15px -3px var(${item.colorVar})` }}
                       transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                     />
                   )}
@@ -114,6 +114,18 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             </NavLink>
           ))}
         </nav>
+        
+        {/* Premium Search Placeholder */}
+        <div className="hidden lg:flex items-center ml-2 relative group">
+           <div className="w-48 h-8 rounded-full bg-white/5 border border-white/10 flex items-center px-3 gap-2 cursor-pointer transition-all hover:bg-white/10 hover:w-56 group-hover:border-white/20">
+             <Code2 className="w-3.5 h-3.5 text-text-tertiary group-hover:text-text-secondary" />
+             <span className="text-xs text-text-tertiary group-hover:text-text-secondary">Search everywhere...</span>
+             <div className="ml-auto flex items-center gap-0.5">
+               <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">⌘</span>
+               <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">K</span>
+             </div>
+           </div>
+        </div>
       </div>
 
       <div className="flex items-center gap-1 md:gap-2 shrink-0">

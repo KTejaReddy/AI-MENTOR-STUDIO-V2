@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useOutlet } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { TopNavbar } from './TopNavbar'
 import { MobileDrawer } from './MobileDrawer'
+import { GlobalSidebar } from './GlobalSidebar'
 import { AICompanion } from '@/components/companion/AICompanion'
 import { Toaster } from '@/components/ui/toaster'
 import { GlobalCommandPalette } from '@/components/layout/GlobalCommandPalette'
@@ -101,19 +102,7 @@ export function AppShell() {
 
       <div className="flex-1 flex overflow-hidden min-h-0 relative z-10 p-0 md:p-3 md:pt-2 gap-0 md:gap-3">
         {!isLearnPage && sidebarOpen && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 240, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="shrink-0 overflow-hidden rounded-none md:rounded-[var(--radius-xl)] bg-surface-50 border-0 border-r md:border border-border flex flex-col p-4 shadow-lg hidden md:flex"
-          >
-            <div className="text-xs font-semibold text-text-tertiary mb-3 uppercase tracking-wider">Navigation</div>
-            <div className="flex-1 flex flex-col items-center justify-center text-center text-xs text-text-tertiary/75 p-2">
-              <span className="mb-2">Sidebar active</span>
-              <span className="text-xs">Navigate tabs from the premium header above.</span>
-            </div>
-          </motion.div>
+          <GlobalSidebar />
         )}
 
         <main className="flex-1 overflow-hidden rounded-none md:rounded-[var(--radius-xl)] bg-surface-50 border-0 md:border border-border shadow-lg relative z-10 flex flex-col">

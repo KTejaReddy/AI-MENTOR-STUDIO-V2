@@ -3,45 +3,44 @@ import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { SubjectCard } from '@/components/workspace/SubjectCard'
-import { ContinueLearning } from '@/components/dashboard/ContinueLearning'
 import { fetchBranches } from '@/lib/api/curriculum'
 import type { BranchSummary } from '@/lib/api/curriculum'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { useTabs } from '@/contexts/TabContext'
 import type { DashRecentTopic } from '@/types/workspace'
 import {
-  Sparkles, BookOpen, Clock, TrendingUp, Code2, Brain, Database,
+  Sparkles, Clock, Code2, Brain, Database, Flame, BookOpen,
   Network, Cpu, Shield, Search, BarChart3, GraduationCap, Layers, AlertCircle,
-  Settings, Zap, Truck, Dna, FileText, Bookmark, Edit3, ArrowRight
+  Settings, Zap, Truck, Dna, FileText, Bookmark, Edit3, ArrowRight, Play, Target
 } from 'lucide-react'
 
 const branchIcons: Record<string, ReactNode> = {
-  'computer-science-engineering': <Layers className="w-5 h-5 text-accent-light" />,
-  'ai-machine-learning': <Brain className="w-5 h-5 text-accent-light" />,
-  'data-science': <BarChart3 className="w-5 h-5 text-accent-light" />,
-  'cyber-security': <Shield className="w-5 h-5 text-accent-light" />,
-  'electronics-communication': <Cpu className="w-5 h-5 text-accent-light" />,
-  'mechanical-engineering': <Settings className="w-5 h-5 text-accent-light" />,
-  'civil-engineering': <Layers className="w-5 h-5 text-accent-light" />,
-  'information-technology': <Database className="w-5 h-5 text-accent-light" />,
-  'electrical-electronics': <Zap className="w-5 h-5 text-accent-light" />,
+  'computer-science-engineering': <Layers className="w-5 h-5 text-[var(--color-lessons)]" />,
+  'ai-machine-learning': <Brain className="w-5 h-5 text-[var(--color-ai)]" />,
+  'data-science': <BarChart3 className="w-5 h-5 text-[var(--color-analytics)]" />,
+  'cyber-security': <Shield className="w-5 h-5 text-[var(--color-practice)]" />,
+  'electronics-communication': <Cpu className="w-5 h-5 text-[var(--color-compiler)]" />,
+  'mechanical-engineering': <Settings className="w-5 h-5 text-[var(--color-settings)]" />,
+  'civil-engineering': <Layers className="w-5 h-5 text-[var(--color-lessons)]" />,
+  'information-technology': <Database className="w-5 h-5 text-[var(--color-history)]" />,
+  'electrical-electronics': <Zap className="w-5 h-5 text-[var(--color-notes)]" />,
   'automobile-engineering': <Truck className="w-5 h-5 text-accent-light" />,
-  'biotechnology': <Dna className="w-5 h-5 text-accent-light" />,
-  'robotics-automation': <Cpu className="w-5 h-5 text-accent-light" />,
-  'new-age-specializations': <Sparkles className="w-5 h-5 text-accent-light" />,
+  'biotechnology': <Dna className="w-5 h-5 text-[var(--color-bookmarks)]" />,
+  'robotics-automation': <Cpu className="w-5 h-5 text-[var(--color-ai)]" />,
+  'new-age-specializations': <Sparkles className="w-5 h-5 text-[var(--color-about-gold)]" />,
 }
 
 function SearchInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   return (
-    <div className="relative w-full lg:w-80">
-      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+    <div className="relative w-full lg:w-80 group">
+      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary group-focus-within:text-white transition-colors" />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search topics, subjects..."
         aria-label="Search branches"
-        className="input bg-white/3 border-white/5 pl-10 focus:border-[#00f2fe]/40 transition-all font-medium text-xs py-2"
+        className="w-full bg-surface-100/50 backdrop-blur-md border border-white/5 pl-10 pr-4 py-2.5 rounded-xl focus:border-white/20 transition-all font-medium text-xs text-white placeholder-white/30 shadow-inner"
       />
     </div>
   )
@@ -84,26 +83,36 @@ interface QuickActionProps {
   title: string
   description: string
   onClick: () => void
-  colorClass: string
+  colorVar: string
+  large?: boolean
 }
 
-function QuickActionCard({ icon, title, description, onClick, colorClass }: QuickActionProps) {
+function QuickActionCard({ icon, title, description, onClick, colorVar, large = false }: QuickActionProps) {
   return (
     <motion.button
-      whileHover={{ y: -6, scale: 1.02 }}
+      whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="card card-hover p-4 text-left w-full flex flex-col justify-between h-32"
+      className={`relative overflow-hidden card p-5 md:p-6 text-left w-full flex flex-col justify-between group border-white/5 hover:border-[var(${colorVar})]/30 transition-colors ${large ? 'col-span-2 md:col-span-2 row-span-2' : 'col-span-1'}`}
+      style={{ height: large ? '100%' : '140px' }}
     >
-      <div className="absolute inset-0 bg-surface-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-      <div className="flex items-center justify-between">
-        <div className={`p-2 rounded-lg bg-surface-100 transition-transform duration-300 shrink-0 ${colorClass}`}>
+      <div className="absolute inset-0 bg-gradient-to-br from-[var(--surface-100)] to-transparent opacity-50 pointer-events-none" />
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none" 
+        style={{ background: `linear-gradient(45deg, transparent, var(${colorVar}), transparent)` }} 
+      />
+      <div className="flex items-center justify-between relative z-10">
+        <div 
+          className={`w-10 h-10 md:w-12 md:h-12 rounded-2xl flex items-center justify-center border transition-all duration-300 shadow-lg`}
+          style={{ backgroundColor: `color-mix(in srgb, var(${colorVar}) 15%, transparent)`, borderColor: `color-mix(in srgb, var(${colorVar}) 30%, transparent)`, color: `var(${colorVar})` }}
+        >
           {icon}
         </div>
+        {large && <ArrowRight className="w-5 h-5 text-white/20 group-hover:text-white transition-colors" />}
       </div>
-      <div className="mt-2">
-        <h3 className="text-xs font-bold text-text-primary tracking-tight truncate group-hover:text-accent transition-colors">{title}</h3>
-        <p className="text-xs text-text-tertiary mt-0.5 line-clamp-2 leading-relaxed">{description}</p>
+      <div className="mt-auto relative z-10 pt-4">
+        <h3 className="text-sm font-bold text-white tracking-tight mb-1 group-hover:text-white transition-colors">{title}</h3>
+        <p className="text-xs text-white/50 line-clamp-2 leading-relaxed font-medium">{description}</p>
       </div>
     </motion.button>
   )
@@ -161,7 +170,6 @@ export function Home() {
   }
 
   const displayedBranches = showAll ? branches : branches.slice(0, 12)
-
   const filteredBranches = searchQuery
     ? displayedBranches.filter(b =>
         b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -171,248 +179,287 @@ export function Home() {
 
   const quickActions = [
     {
-      icon: <Sparkles className="w-4 h-4" />,
-      title: "New Lesson",
-      description: "Generate a custom AI learning path",
+      icon: <Sparkles className="w-5 h-5 md:w-6 md:h-6" />,
+      title: "Generate AI Lesson",
+      description: "Create a custom learning path with interactive quizzes and visual explanations.",
       onClick: () => navigate('/learn', { state: { openGenerate: true } }),
-      colorClass: "text-[var(--color-lessons)]"
+      colorVar: "--color-lessons",
+      large: true
     },
     {
-      icon: <FileText className="w-4 h-4" />,
-      title: "Explain Document",
-      description: "Upload PDFs & ask AI questions",
+      icon: <FileText className="w-4 h-4 md:w-5 md:h-5" />,
+      title: "Doc Tutor",
+      description: "Ask questions on your PDFs",
       onClick: () => navigate('/document-tutor'),
-      colorClass: "text-[var(--color-ai)]"
+      colorVar: "--color-ai"
     },
     {
-      icon: <Code2 className="w-4 h-4" />,
-      title: "Open Compiler",
-      description: "Practice coding in real-time",
+      icon: <Code2 className="w-4 h-4 md:w-5 md:h-5" />,
+      title: "Compiler Lab",
+      description: "Code in real-time",
       onClick: () => navigate('/compiler-lab'),
-      colorClass: "text-[var(--color-compiler)]"
+      colorVar: "--color-compiler"
     },
     {
-      icon: <Clock className="w-4 h-4" />,
-      title: "Resume Lesson",
-      description: "Continue where you left off",
-      onClick: handleContinueLast,
-      colorClass: "text-[var(--color-practice)]"
-    },
-    {
-      icon: <Bookmark className="w-4 h-4" />,
+      icon: <Bookmark className="w-4 h-4 md:w-5 md:h-5" />,
       title: "Bookmarks",
-      description: "Saved formulas, code & sections",
+      description: "Saved formulas & sections",
       onClick: () => navigate('/bookmarks'),
-      colorClass: "text-[var(--color-bookmarks)]"
+      colorVar: "--color-bookmarks"
     },
     {
-      icon: <Edit3 className="w-4 h-4" />,
+      icon: <Edit3 className="w-4 h-4 md:w-5 md:h-5" />,
       title: "Notes",
-      description: "Review your study notebook",
+      description: "Your study notebook",
       onClick: () => navigate('/notes'),
-      colorClass: "text-[var(--color-notes)]"
+      colorVar: "--color-notes"
     }
   ]
 
   return (
-    <div className="h-full overflow-y-auto scrollbar-thin">
-      <div className="max-w-6xl mx-auto p-6 lg:p-8">
+    <div className="h-full overflow-y-auto scrollbar-none relative">
+      {/* Background Radial Glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[var(--color-lessons)]/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+
+      <div className="max-w-6xl mx-auto p-4 md:p-8 lg:p-10 space-y-12">
+        {/* Premium Hero Section */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6"
         >
-          {/* Welcome Header */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
-            <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-text-primary mb-1 tracking-tight">
-                Welcome back
-              </h1>
-              <p className="text-sm text-text-tertiary">
-                Continue your learning journey
-              </p>
+          <div className="space-y-4 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold tracking-wider uppercase text-white/70">
+              <Flame className="w-3.5 h-3.5 text-[var(--color-practice)]" />
+              14 Day Streak
             </div>
-            <SearchInput value={searchQuery} onChange={setSearchQuery} />
+            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight leading-[1.1]">
+              What would you like to <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-lessons)] to-[var(--color-ai)]">learn today?</span>
+            </h1>
+            <p className="text-base text-white/50 max-w-xl font-medium leading-relaxed">
+              Your personalized AI Mentor Studio. Continue your lessons, explore new engineering branches, or practice coding.
+            </p>
           </div>
+          <SearchInput value={searchQuery} onChange={setSearchQuery} />
+        </motion.div>
 
-          {/* Quick Actions */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8 interactive-group">
-            {quickActions.map((action, i) => (
-              <motion.div
-                key={action.title}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <QuickActionCard {...action} />
-              </motion.div>
-            ))}
-          </div>
+        {/* Asymmetric Quick Actions */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        >
+          {quickActions.map((action, i) => (
+            <QuickActionCard key={action.title} {...action} />
+          ))}
+        </motion.div>
 
-          {/* Expanded Continue Learning Hero Card */}
+        {/* Centerpiece: Continue Learning Hero */}
+        {recentTopics.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="w-full mb-8"
+            transition={{ delay: 0.2, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="card p-8 md:p-10 relative overflow-hidden group flex flex-col md:flex-row items-center justify-between gap-6 border-[var(--color-lessons)]/20">
-              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-lessons)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10 text-center md:text-left flex-1">
-                <div className="w-16 h-16 rounded-2xl bg-surface-100 border border-border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300">
-                  <Sparkles className="w-8 h-8 text-[var(--color-lessons)]" />
+            <h2 className="text-sm font-bold text-white/80 uppercase tracking-widest mb-6 flex items-center gap-2">
+              <Target className="w-4 h-4 text-[var(--color-practice)]" /> Jump Back In
+            </h2>
+            
+            {/* The primary most recent topic */}
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-surface-100 shadow-2xl p-6 md:p-10 flex flex-col md:flex-row items-center gap-8 md:gap-12 group">
+              {/* Background abstract mesh */}
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-lessons)]/20 via-[var(--color-ai)]/10 to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--color-lessons)]/20 rounded-full blur-[80px] pointer-events-none -mr-20 -mt-20 group-hover:scale-150 transition-transform duration-1000" />
+              
+              <div className="relative z-10 flex-1 space-y-4 text-center md:text-left">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[var(--color-lessons)]/10 text-[var(--color-lessons)] text-[10px] font-bold uppercase tracking-wider border border-[var(--color-lessons)]/20">
+                  <Clock className="w-3 h-3" /> Last opened {formatRelativeTime(recentTopics[0].timestamp)}
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-2 group-hover:text-[#00C2FF] transition-colors">Continue Learning</h2>
-                  <p className="text-sm text-text-secondary max-w-xl mb-4 md:mb-0 leading-relaxed">
-                    Unlock your potential with custom-tailored AI lectures. Select a branch below or generate an automated lesson.
-                  </p>
+                
+                <h3 className="text-2xl md:text-4xl font-bold text-white leading-tight">
+                  {recentTopics[0].topic}
+                </h3>
+                
+                <p className="text-sm md:text-base text-white/50 font-medium">
+                  {recentTopics[0].subject}
+                </p>
+                
+                <div className="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
+                  <Button onClick={handleContinueLast} className="bg-[var(--color-lessons)] hover:bg-[var(--color-lessons)]/80 text-white rounded-full px-8 py-6 shadow-[0_0_20px_rgba(var(--color-lessons-rgb),0.4)] hover:shadow-[0_0_30px_rgba(var(--color-lessons-rgb),0.6)] transition-all font-bold text-sm flex items-center gap-2">
+                    <Play className="w-4 h-4 fill-current" />
+                    Continue Lesson
+                  </Button>
+                  <span className="text-xs font-bold text-white/40">Est. 15 mins remaining</span>
                 </div>
               </div>
-              <div className="relative z-10 shrink-0">
-                <Button variant="primary" size="lg" onClick={() => navigate('/learn')} className="font-semibold shadow-glow-accent px-6 py-3 rounded-xl flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5" />
-                  Start Learning
-                </Button>
+              
+              {/* Beautiful Progress Ring Mockup */}
+              <div className="relative z-10 shrink-0 w-48 h-48 md:w-56 md:h-56">
+                <svg className="w-full h-full transform -rotate-90 drop-shadow-2xl" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" className="text-white/5" />
+                  <circle 
+                    cx="50" cy="50" r="45" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="8" 
+                    strokeLinecap="round"
+                    strokeDasharray="283"
+                    strokeDashoffset={283 - (283 * (recentTopics[0].total > 0 ? (recentTopics[0].completed / recentTopics[0].total) : 0))}
+                    className="text-[var(--color-lessons)] drop-shadow-[0_0_10px_rgba(var(--color-lessons-rgb),0.8)] transition-all duration-1000 ease-out" 
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                  <span className="text-3xl font-black text-white">
+                    {recentTopics[0].total > 0 ? Math.round((recentTopics[0].completed / recentTopics[0].total) * 100) : 0}%
+                  </span>
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-1">Completed</span>
+                </div>
               </div>
             </div>
           </motion.div>
+        )}
 
-          {/* Recent Lessons Grid */}
-          {recentTopics.length > 0 && (
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-text-primary">Recent Lessons</h2>
-                <button onClick={() => navigate('/history')} className="text-xs text-accent-light hover:text-accent transition-colors flex items-center gap-1 font-medium">
-                  View History <ArrowRight className="w-3 h-3" />
-                </button>
-              </div>
+        {/* Other Recent Lessons Grid */}
+        {recentTopics.length > 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-sm font-bold text-white/80 uppercase tracking-widest">Recent Activity</h2>
+              <button onClick={() => navigate('/history')} className="text-xs text-[var(--color-history)] hover:text-white transition-colors flex items-center gap-1 font-bold">
+                View All <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 interactive-group">
-                {recentTopics.slice(0, 3).map((topic, i) => {
-                  const progressPercent = topic.total > 0 ? Math.round((topic.completed / topic.total) * 100) : 0
-                  const branch = getBranchForSubject(topic.subject)
-                  return (
-                    <motion.div
-                      key={`${topic.topic}-${i}`}
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.15 + i * 0.05 }}
-                      whileHover={{ y: -6, scale: 1.02 }}
-                      onClick={() => handleLessonOpen(topic)}
-                      className="card card-hover p-5 flex flex-col justify-between h-40 group"
-                    >
-                      <div>
-                        <span className="text-xs uppercase tracking-wider font-mono text-accent font-bold mb-1 block">
-                          {branch}
-                        </span>
-                        <h3 className="text-xs font-bold text-text-primary group-hover:text-accent transition-colors truncate mb-1">
-                          {topic.topic}
-                        </h3>
-                        <p className="text-xs text-text-tertiary truncate mb-3">
-                          {topic.subject}
-                        </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {recentTopics.slice(1, 4).map((topic, i) => {
+                const progressPercent = topic.total > 0 ? Math.round((topic.completed / topic.total) * 100) : 0
+                return (
+                  <motion.div
+                    key={`${topic.topic}-${i}`}
+                    whileHover={{ y: -6, scale: 1.02 }}
+                    onClick={() => handleLessonOpen(topic)}
+                    className="card bg-surface-100 border-white/5 hover:border-[var(--color-history)]/30 p-5 flex flex-col gap-4 cursor-pointer group rounded-2xl shadow-lg relative overflow-hidden"
+                  >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-history)]/5 rounded-full blur-2xl group-hover:bg-[var(--color-history)]/15 transition-colors -mr-10 -mt-10 pointer-events-none" />
+                    
+                    <div className="flex items-start justify-between relative z-10">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--color-history)]/10 border border-[var(--color-history)]/20 flex items-center justify-center text-[var(--color-history)] shadow-inner">
+                        <BookOpen className="w-5 h-5" />
                       </div>
+                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-white/60 group-hover:text-white transition-colors">
+                        {topic.difficulty || 'beginner'}
+                      </span>
+                    </div>
 
-                      <div>
-                        <div className="flex items-center justify-between text-xs text-text-tertiary mb-1.5 font-medium">
-                          <span>Progress</span>
-                          <span>{progressPercent}% ({topic.completed}/{topic.total})</span>
-                        </div>
-                        <div className="w-full h-1 bg-surface-200 rounded-full overflow-hidden mb-2">
-                          <div 
-                            className="h-full bg-[var(--color-lessons)] rounded-full transition-all duration-500"
-                            style={{ width: `${progressPercent}%` }}
-                          />
-                        </div>
-                        <span className="text-xs text-text-tertiary/75 flex items-center gap-1">
-                          <Clock className="w-2.5 h-2.5" /> Opened {formatRelativeTime(topic.timestamp)}
-                        </span>
+                    <div className="relative z-10">
+                      <h3 className="text-sm font-bold text-white group-hover:text-[var(--color-history)] transition-colors truncate mb-1">
+                        {topic.topic}
+                      </h3>
+                      <p className="text-xs text-white/40 truncate">
+                        {topic.subject}
+                      </p>
+                    </div>
+
+                    <div className="mt-auto pt-2 relative z-10">
+                      <div className="flex items-center justify-between text-[10px] text-white/50 mb-2 font-bold">
+                        <span>Progress</span>
+                        <span>{progressPercent}%</span>
                       </div>
-                    </motion.div>
-                  )
-                })}
-              </div>
+                      <div className="w-full h-1.5 bg-surface-200 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-[var(--color-history)] rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(var(--color-history-rgb),0.5)]"
+                          style={{ width: `${progressPercent}%` }}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Engineering Branches Catalog */}
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="pt-8 border-t border-white/5"
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-sm font-bold text-white/80 uppercase tracking-widest flex items-center gap-2">
+              <Layers className="w-4 h-4 text-[var(--color-lessons)]" /> Engineering Branches
+            </h2>
+            {!loading && !fetchError && branches.length > 12 && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="text-xs text-white/50 hover:text-white transition-colors font-bold flex items-center gap-1"
+              >
+                {showAll ? 'Collapse' : `View All (${branches.length})`}
+              </button>
+            )}
+          </div>
+
+          {loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-32 rounded-2xl bg-surface-100 border border-white/5 animate-pulse" />
+              ))}
             </div>
           )}
 
-          {/* Grid Layout: Branches and Sidebar */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-semibold text-text-primary">Engineering Branches</h2>
-                {!loading && !fetchError && branches.length > 12 && (
-                  <button
-                    onClick={() => setShowAll(!showAll)}
-                    className="text-xs text-accent-light hover:text-accent transition-colors font-medium"
-                  >
-                    {showAll ? 'Show less' : `View all (${branches.length})`}
-                  </button>
+          {fetchError && (
+            <div className="flex flex-col items-center justify-center py-12 text-center bg-surface-100 rounded-2xl border border-white/5">
+              <AlertCircle className="w-10 h-10 text-red-500 mb-4" />
+              <p className="text-sm text-white font-bold mb-1">Failed to load branches</p>
+              <p className="text-xs text-white/50 max-w-sm">{fetchError}</p>
+            </div>
+          )}
+
+          {!loading && !fetchError && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={searchQuery || 'all'}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+              >
+                {filteredBranches.length === 0 ? (
+                  <div className="col-span-full flex flex-col items-center justify-center py-16 text-center bg-surface-100 rounded-2xl border border-white/5">
+                    <Search className="w-10 h-10 text-white/20 mb-4" />
+                    <p className="text-sm text-white font-bold mb-1">No branches found</p>
+                    <p className="text-xs text-white/40">Try a different search term</p>
+                  </div>
+                ) : (
+                  filteredBranches.map((branch, i) => (
+                    <motion.div
+                      key={branch.branch_id}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.05 + (i % 12) * 0.03 }}
+                      layout
+                    >
+                      <SubjectCard
+                        className="h-full rounded-2xl shadow-lg border-white/5 hover:border-[var(--color-lessons)]/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)] transition-all bg-surface-100"
+                        icon={branchIcons[branch.branch_id] || <GraduationCap className="w-5 h-5 text-white" />}
+                        title={branch.name}
+                        description={branch.description}
+                        topicCount={branch.subject_count}
+                        difficulty={branch.subject_count > 20 ? 'advanced' as const : branch.subject_count > 10 ? 'intermediate' as const : 'beginner' as const}
+                        onClick={() => navigate('/learn')}
+                      />
+                    </motion.div>
+                  ))
                 )}
-              </div>
-
-              {loading && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="h-28 rounded-xl bg-surface-100 border border-border animate-pulse" />
-                  ))}
-                </div>
-              )}
-
-              {fetchError && (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <AlertCircle className="w-8 h-8 text-red-400 mb-3" />
-                  <p className="text-sm text-text-primary font-medium mb-1">Failed to load branches</p>
-                  <p className="text-xs text-text-tertiary max-w-sm">{fetchError}</p>
-                </div>
-              )}
-
-              {!loading && !fetchError && (
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={searchQuery || 'all'}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-4 interactive-group"
-                  >
-                    {filteredBranches.length === 0 ? (
-                      <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
-                        <Search className="w-8 h-8 text-text-tertiary/50 mb-3" />
-                        <p className="text-sm text-text-primary font-medium mb-1">No branches found</p>
-                        <p className="text-xs text-text-tertiary">Try a different search term</p>
-                      </div>
-                    ) : (
-                      filteredBranches.map((branch, i) => (
-                        <motion.div
-                          key={branch.branch_id}
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.05 + (i % 12) * 0.03 }}
-                          layout
-                        >
-                          <SubjectCard
-                            className="interactive-item"
-                            icon={branchIcons[branch.branch_id] || <GraduationCap className="w-5 h-5 text-accent-light" />}
-                            title={branch.name}
-                            description={branch.description}
-                            topicCount={branch.subject_count}
-                            difficulty={branch.subject_count > 20 ? 'advanced' as const : branch.subject_count > 10 ? 'intermediate' as const : 'beginner' as const}
-                            onClick={() => navigate('/learn')}
-                          />
-                        </motion.div>
-                      ))
-                    )}
-                  </motion.div>
-                </AnimatePresence>
-              )}
-            </div>
-
-            {/* Sidebar Column */}
-            <div className="lg:col-span-1 space-y-6">
-              <ContinueLearning />
-            </div>
-          </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </motion.div>
       </div>
     </div>

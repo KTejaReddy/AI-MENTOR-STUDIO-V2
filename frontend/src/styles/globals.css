@@ -3,64 +3,76 @@
 @tailwind utilities;
 
 :root {
-  /* Layered Dark Surfaces */
-  --surface: #0e0e11;
-  --surface-50: #121216;
-  --surface-100: #16161a;
-  --surface-150: #19191d;
-  --surface-200: #1c1c21;
-  --surface-250: #202025;
-  --surface-300: #24242b;
-  --surface-400: #2d2d35;
+  /* Layered Dark Surfaces - Premium Deep */
+  --surface: #000000;
+  --surface-50: #0a0a0a;
+  --surface-100: #121212;
+  --surface-150: #171717;
+  --surface-200: #1e1e1e;
+  --surface-250: #262626;
+  --surface-300: #2d2d2d;
+  --surface-400: #3f3f3f;
   
   /* Borders - Soft Elevation */
-  --border: rgba(255, 255, 255, 0.06);
-  --border-light: rgba(255, 255, 255, 0.1);
-  --border-lighter: rgba(255, 255, 255, 0.14);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-light: rgba(255, 255, 255, 0.12);
+  --border-lighter: rgba(255, 255, 255, 0.2);
   
   /* Typography Hierarchy */
-  --text-primary: #f2f2f2;
-  --text-secondary: #a1a1aa;
-  --text-tertiary: #71717a;
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-tertiary: rgba(255, 255, 255, 0.5);
   
   /* Muted Text */
-  --muted: #71717a;
-  --muted-light: #a1a1aa;
-  --muted-dark: #3f3f46;
+  --muted: rgba(255, 255, 255, 0.5);
+  --muted-light: rgba(255, 255, 255, 0.7);
+  --muted-dark: rgba(255, 255, 255, 0.3);
   
   /* General Accent (Fallback) */
-  --accent: #f2f2f2;
+  --accent: #ffffff;
   --accent-light: #ffffff;
-  --accent-dark: #d4d4d8;
+  --accent-dark: #a3a3a3;
   --accent-muted: rgba(255, 255, 255, 0.08);
 
-  /* Multi-Accent Semantic Colors */
-  --color-ai: #818cf8;       /* Indigo */
-  --color-lessons: #3b82f6;  /* Royal Blue */
-  --color-compiler: #10b981; /* Emerald */
-  --color-notes: #f59e0b;    /* Amber */
-  --color-bookmarks: #f43f5e;/* Rose */
-  --color-analytics: #06b6d4;/* Cyan */
-  --color-practice: #f97316; /* Orange */
-  --color-settings: #64748b; /* Slate */
-  --color-about-gold: #fbbf24;
-  --color-about-navy: #1e3a8a;
+  /* Multi-Accent Semantic Colors - Premium Handcrafted System */
+  --color-ai: #8B5CF6;       /* Purple */
+  --color-lessons: #3B82F6;  /* Royal Blue */
+  --color-compiler: #10B981; /* Emerald */
+  --color-bookmarks: #F43F5E;/* Rose */
+  --color-notes: #F59E0B;    /* Amber */
+  --color-history: #06B6D4;  /* Cyan */
+  --color-analytics: #FB923C;/* Orange */
+  --color-settings: #64748B; /* Slate */
+  --color-about-gold: #FBBF24;
+  --color-about-navy: #1E3A8A;
   
+  /* RGB versions for alphas */
+  --color-ai-rgb: 139, 92, 246;
+  --color-lessons-rgb: 59, 130, 246;
+  --color-compiler-rgb: 16, 185, 129;
+  --color-bookmarks-rgb: 244, 63, 94;
+  --color-notes-rgb: 245, 158, 11;
+  --color-history-rgb: 6, 182, 212;
+  --color-analytics-rgb: 251, 146, 60;
+  --color-settings-rgb: 100, 116, 139;
+
   /* Standard status mappings */
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
 
   /* Radius System */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
   
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+  /* Premium Shadows & Glows */
+  --shadow-sm: 0 2px 8px -2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-md: 0 8px 24px -4px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-lg: 0 16px 40px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-glow: 0 0 20px -5px rgba(255, 255, 255, 0.1);
 }
 
 @layer base {
