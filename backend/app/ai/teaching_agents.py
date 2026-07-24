@@ -201,14 +201,9 @@ class TeachingAgent(ABC):
                                     if not any(x in block.lower() for x in ["graph", "flowchart", "state", "sequence", "class", "pie", "gantt", "mindmap"]): is_valid = False
                                     
                                     if not is_valid:
-                                        rep = "\n> *Visual diagram simplified for clarity.*\n"
-                                        unyielded_buffer = unyielded_buffer[:block_start] + rep + unyielded_buffer[block_end+3:]
-                                        
-                                        # Also fix accumulated
-                                        a_start = accumulated.lower().rfind("```mermaid")
-                                        a_end = accumulated.rfind("```")
-                                        if a_start != -1 and a_end != -1 and a_end > a_start:
-                                            accumulated = accumulated[:a_start] + rep + accumulated[a_end+3:]
+                                        # Let it pass through. The frontend MarkdownRenderer will 
+                                        # display the raw source code if it fails to render.
+                                        pass
                                     else:
                                         # Save the repaired block back
                                         unyielded_buffer = unyielded_buffer[:block_start] + block + unyielded_buffer[block_end+3:]
@@ -902,54 +897,38 @@ class ExplanationAgent(TeachingAgent):
         )
 
         assembled: List[str] = []
-
+        tasks = []
+        # Launch all chunks concurrently to drastically reduce latency and distribute API keys
         for idx, (chunk_name, section_nums, sections_str) in enumerate(self._get_chunk_definitions(subject)):
             logger.info(
-                f"[AGENT:explanation] CHUNK {idx+1}/{len(self._get_chunk_definitions(subject))} | "
+                f"[AGENT:explanation] LAUNCHING CONCURRENT CHUNK {idx+1}/{len(self._get_chunk_definitions(subject))} | "
                 f"name={chunk_name!r} sections={section_nums}"
             )
-
-            # Extract headers from assembled text to act as summarized prior context
-            prior_summary = ""
-            if assembled:
-                headers = []
-                for chunk in assembled:
-                    for line in chunk.split('\n'):
-                        if line.strip().startswith('#') or line.strip().startswith('**'):
-                            headers.append(line.strip())
-                if headers:
-                    prior_summary = "Previously generated concepts (do not repeat these):\n" + "\n".join(headers[:30])
-
-            try:
-                chunk_text = await self._generate_chunk(
+            task = asyncio.create_task(
+                self._generate_chunk(
                     chunk_name=chunk_name,
                     sections_str=sections_str,
                     subject=subject,
                     topic=topic,
                     blueprint=blueprint,
-                    previous_content=prior_summary,
+                    previous_content="",  # Remove blocking dependency so they can run concurrently
                     engine_id=engine_id,
                 )
+            )
+            tasks.append((idx, chunk_name, task))
+
+        # Await them in order to guarantee the frontend receives them in reading order
+        for idx, chunk_name, task in tasks:
+            try:
+                chunk_text = await task
             except RuntimeError as exc:
-                logger.error(
-                    f"[AGENT:explanation] CHUNK {idx+1} '{chunk_name}' ALL FALLBACKS EXHAUSTED | {exc}"
-                )
-                self.status = AgentStatus.FAILED
-                yield GenerationResult(
-                    section_type=self.section_type,
-                    content="",
-                    title=self.config.section_type,
-                    status=AgentStatus.FAILED,
-                    model_used="chunked",
-                    latency=time.time() - t_start,
-                    retries=idx,
-                    error="We couldn't generate this section. Please regenerate.",
-                )
-                return
-
+                logger.error(f"[AGENT:explanation] CHUNK {idx+1} '{chunk_name}' ALL FALLBACKS EXHAUSTED | {exc}")
+                # Don't fail the entire lesson because one chunk failed. Replace with error message.
+                chunk_text = f"\n\n*Error: The {chunk_name} section could not be generated.*\n\n"
+                
             assembled.append(chunk_text)
-
-            # Stream this chunk to the frontend as soon as it is ready
+            
+            # Immediately yield the chunk text to the frontend so it streams part by part
             yield {
                 "type": "section_chunk",
                 "section_type": self.section_type,

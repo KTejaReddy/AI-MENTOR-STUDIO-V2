@@ -105,19 +105,9 @@ class EditorAgent:
             return self._sanitize_mermaid("\n\n".join(merged))
             
     def _sanitize_mermaid(self, text: str) -> str:
-        import re
-        blocks = re.finditer(r'```mermaid(.*?)```', text, re.DOTALL)
-        result = text
-        for match in blocks:
-            block = match.group(0)
-            inner = match.group(1).lower()
-            is_valid = True
-            if "|>" in inner: is_valid = False
-            if not any(x in inner for x in ["graph", "flowchart", "state", "sequence", "class", "pie", "gantt", "mindmap"]): is_valid = False
-            
-            if not is_valid:
-                rep = "\n> *Visual diagram simplified for clarity.*\n"
-                result = result.replace(block, rep)
-        return result
+        # We now allow ALL Mermaid blocks to pass through regardless of syntax errors.
+        # The frontend MarkdownRenderer has been updated to display the raw source 
+        # code of any Mermaid diagrams that fail to parse, instead of hiding them.
+        return text
 
 editor_agent = EditorAgent()

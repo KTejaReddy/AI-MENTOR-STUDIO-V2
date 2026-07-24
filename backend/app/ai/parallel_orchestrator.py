@@ -129,22 +129,20 @@ async def generate_lesson_parallel(
     # 2. Generate unified Lesson Blueprint
     blueprint = await generate_blueprint(provider, subject, topic, difficulty, engine_id)
 
-    # 3 & 4. Generate sequentially
+    # 3 & 4. Generate concurrently
     generated_results: Dict[str, Dict[str, Any]] = {}
-    accumulated_summaries = ""
+    queue = asyncio.Queue()
     
-    for sec_type, title in active_sections:
-        logger.info(f"Starting sequential generation for section: {sec_type}")
-        
-        # Emit section starting events
+    async def run_section(sec_type: str, title: str):
+        # Emit section starting events to queue
         for ev in ["section_queued", "section_running", "section_status", "section_started"]:
-            yield {
+            await queue.put({
                 "type": ev,
                 "section_type": sec_type,
                 "engine_id": engine_id,
                 "title": title if ev in ["section_running", "section_status", "section_started"] else None,
                 **({"status": "generating"} if ev == "section_status" else {})
-            }
+            })
 
         cls = AGENT_CLASSES.get(sec_type, GenericSectionAgent)
         model_id = get_model_for_section(sec_type, difficulty=difficulty)
@@ -160,14 +158,14 @@ async def generate_lesson_parallel(
                 topic=topic,
                 context=source_material if source_material else None,
                 blueprint=blueprint,
-                previous_summaries=accumulated_summaries,
+                previous_summaries="",  # Sections generate concurrently, no forward-feeding dependencies
                 engine_id=engine_id
             ):
                 if isinstance(item, dict) and item.get("type") in ["section_chunk", "section_clear", "section_retry", "section_fallback"]:
                     item["engine_id"] = engine_id
                     if "content" in item:
                         item["content"] = _sanitize_content(item["content"])
-                    yield item
+                    await queue.put(item)
                 elif hasattr(item, "status"):
                     result = item
 
@@ -184,8 +182,7 @@ async def generate_lesson_parallel(
             from app.ai.telemetry import log_section_telemetry
             from app.ai.model_router import model_router
             prompt_tokens = result.metadata.get("prompt_tokens") if result.metadata else 100
-            if prompt_tokens is None:
-                prompt_tokens = 100
+            if prompt_tokens is None: prompt_tokens = 100
             routing_details = model_router._last_decisions.get((engine_id, sec_type), {})
             log_section_telemetry({
                 "timestamp": time.time(),
@@ -217,9 +214,8 @@ async def generate_lesson_parallel(
                 "content": content,
                 "metadata": result.metadata
             }
-            generated_results[sec_type] = sdata
-
-            yield {
+            
+            await queue.put({
                 "type": "section_done",
                 "section_type": sec_type,
                 "section_data": sdata,
@@ -227,15 +223,16 @@ async def generate_lesson_parallel(
                 "engine_id": engine_id,
                 "elapsed": round(time.time() - start_time, 2),
                 "model": result.model_used
-            }
-            
-            # Simple header extraction to feed context forward without LLM summary cost per section
-            headers = [line.strip() for line in content.split('\n') if line.strip().startswith('#') or line.strip().startswith('**')]
-            if headers:
-                accumulated_summaries += f"\nSection {sec_type} covered:\n" + "\n".join(headers[:10]) + "\n"
+            })
+
+            await queue.put({
+                "type": "__internal_done__",
+                "sec_type": sec_type,
+                "sdata": sdata
+            })
 
         except Exception as e:
-            logger.error(f"Agent {sec_type} failed in sequential execution: {e}")
+            logger.error(f"Agent {sec_type} failed in concurrent execution: {e}")
             
             # Telemetry logging for failure
             import uuid
@@ -266,19 +263,40 @@ async def generate_lesson_parallel(
                 "success": False
             })
 
-            yield {
+            sdata = {
+                "type": sec_type,
+                "title": title,
+                "content": f"\n\n*This section couldn't be generated. Please regenerate this section.*"
+            }
+            await queue.put({
                 "type": "section_done",
                 "section_type": sec_type,
-                "section_data": {
-                    "type": sec_type,
-                    "title": title,
-                    "content": f"\n\n*This section couldn't be generated. Please regenerate this section.*"
-                },
+                "section_data": sdata,
                 "status": "failed",
                 "engine_id": engine_id,
                 "elapsed": round(time.time() - start_time, 2),
                 "model": "unknown"
-            }
+            })
+            await queue.put({
+                "type": "__internal_done__",
+                "sec_type": sec_type,
+                "sdata": sdata
+            })
+
+    tasks = []
+    for sec_type, title in active_sections:
+        logger.info(f"Starting concurrent generation for section: {sec_type}")
+        tasks.append(asyncio.create_task(run_section(sec_type, title)))
+
+    completed_sections = 0
+    while completed_sections < len(tasks):
+        item = await queue.get()
+        if item.get("type") == "__internal_done__":
+            completed_sections += 1
+            if item.get("sdata"):
+                generated_results[item["sec_type"]] = item["sdata"]
+        else:
+            yield item
 
     # 5. Editor Agent: Post-processing to merge, polish, fix transitions, preserve Mermaid/KaTeX
     sections_list = []
