@@ -169,37 +169,54 @@ class TeachingAgent(ABC):
                         
                         # Determine if we are currently inside a mermaid block
                         code_blocks = accumulated.count("```")
-                        currently_in_mermaid = False
-                        if code_blocks % 2 != 0:
-                            last_start = accumulated.rfind("```")
-                            if accumulated[last_start:last_start+15].lower().startswith("```mermaid"):
-                                currently_in_mermaid = True
+                        is_currently_in_code = (code_blocks % 2 != 0)
                         
-                        if currently_in_mermaid:
-                            is_in_mermaid = True
-                            continue  # Buffer it
-                            
-                        if is_in_mermaid and not currently_in_mermaid:
-                            # We just closed a mermaid block.
-                            is_in_mermaid = False
-                            
-                            # Validate the block inside unyielded_buffer
-                            block_start = unyielded_buffer.lower().rfind("```mermaid")
-                            block_end = unyielded_buffer.rfind("```")
-                            if block_start != -1 and block_end != -1 and block_end > block_start:
-                                block = unyielded_buffer[block_start:block_end+3]
-                                is_valid = True
-                                if "|>" in block: is_valid = False
-                                if not any(x in block.lower() for x in ["graph", "flowchart", "state", "sequence", "class", "pie", "gantt", "mindmap"]): is_valid = False
+                        if is_currently_in_code:
+                            last_start = accumulated.rfind("```")
+                            prefix = accumulated[last_start:last_start+15].lower()
+                            # Buffer if it starts with ```m or if it could become ```mermaid
+                            # This catches ```, ```m, ```me, preventing partial mermaid streaming
+                            if "```mermaid".startswith(prefix) or prefix.startswith("```mermaid"):
+                                is_in_mermaid = True
+                                continue
+                            else:
+                                is_in_mermaid = False
+                        else:
+                            if is_in_mermaid:
+                                # We just closed a mermaid block.
+                                is_in_mermaid = False
                                 
-                                if not is_valid:
-                                    rep = "\n> *Visual diagram simplified for clarity.*\n"
-                                    unyielded_buffer = unyielded_buffer[:block_start] + rep + unyielded_buffer[block_end+3:]
+                                # Validate the block inside unyielded_buffer
+                                block_start = unyielded_buffer.lower().rfind("```mermaid")
+                                block_end = unyielded_buffer.rfind("```")
+                                if block_start != -1 and block_end != -1 and block_end > block_start:
+                                    block = unyielded_buffer[block_start:block_end+3]
+                                    is_valid = True
                                     
-                                    # Also fix accumulated
-                                    a_start = accumulated.lower().rfind("```mermaid")
-                                    a_end = accumulated.rfind("```")
-                                    accumulated = accumulated[:a_start] + rep + accumulated[a_end+3:]
+                                    # Basic Mermaid repairs
+                                    block = block.replace("&#", "")
+                                    block = block.replace("-->>", "-->")  # Fix common flowchart arrow error
+                                    
+                                    if "|>" in block: is_valid = False
+                                    if not any(x in block.lower() for x in ["graph", "flowchart", "state", "sequence", "class", "pie", "gantt", "mindmap"]): is_valid = False
+                                    
+                                    if not is_valid:
+                                        rep = "\n> *Visual diagram simplified for clarity.*\n"
+                                        unyielded_buffer = unyielded_buffer[:block_start] + rep + unyielded_buffer[block_end+3:]
+                                        
+                                        # Also fix accumulated
+                                        a_start = accumulated.lower().rfind("```mermaid")
+                                        a_end = accumulated.rfind("```")
+                                        if a_start != -1 and a_end != -1 and a_end > a_start:
+                                            accumulated = accumulated[:a_start] + rep + accumulated[a_end+3:]
+                                    else:
+                                        # Save the repaired block back
+                                        unyielded_buffer = unyielded_buffer[:block_start] + block + unyielded_buffer[block_end+3:]
+                                        
+                                        a_start = accumulated.lower().rfind("```mermaid")
+                                        a_end = accumulated.rfind("```")
+                                        if a_start != -1 and a_end != -1 and a_end > a_start:
+                                            accumulated = accumulated[:a_start] + block + accumulated[a_end+3:]
 
                         # Yield whatever is in the buffer
                         if unyielded_buffer:

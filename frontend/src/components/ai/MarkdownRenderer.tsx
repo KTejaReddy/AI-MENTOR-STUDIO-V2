@@ -104,7 +104,13 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
           if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto' }
           
           // Check if mermaid injected a syntax error SVG without throwing
-          if (svgEl && svgEl.innerHTML.includes('Syntax error')) {
+          if (svgEl && (
+              svgEl.innerHTML.includes('Syntax error') || 
+              svgEl.classList.contains('error-icon') || 
+              svgEl.id === 'error' ||
+              svgEl.querySelector('.error-icon') ||
+              svgEl.innerHTML.includes('error-text')
+          )) {
              setFailed(true)
              return
           }
@@ -128,7 +134,10 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
 function CodeBlock({ className, children, sectionColor, ...props }: { className?: string; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLPreElement>) {
   const lang = className?.replace('language-', '') || ''
   const code = String(children).replace(/\n$/, '')
-  if (lang === 'mermaid') return <MermaidBlock chart={code} />
+  if (lang === 'mermaid') {
+    if (!code || !code.trim()) return null
+    return <MermaidBlock chart={code} />
+  }
 
   const color = sectionColor || '#38BDF8'
   
