@@ -9,14 +9,6 @@ import {
   GitCompare, Globe, Trash2, Mic, Paperclip, Loader2, AlertCircle, RefreshCw, Square
 } from 'lucide-react'
 
-const suggestions = [
-  { icon: Lightbulb, label: 'Explain Like I\'m 10', prompt: 'Explain this like I\'m 10 years old' },
-  { icon: FileText, label: 'Summarize', prompt: 'Summarize the key points' },
-  { icon: Search, label: 'Find Mistakes', prompt: 'Find common mistakes in' },
-  { icon: GitCompare, label: 'Compare', prompt: 'Compare and contrast' },
-  { icon: Code2, label: 'Give Example', prompt: 'Give me a concrete example of' },
-  { icon: Globe, label: 'Real World', prompt: 'What are real-world applications of' },
-]
 
 const ChatMessage = memo(function ChatMessage({ msg }: { msg: any }) {
   return (
@@ -31,10 +23,10 @@ const ChatMessage = memo(function ChatMessage({ msg }: { msg: any }) {
         </div>
       )}
       <div className={cn(
-        'max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed overflow-hidden',
+        'max-w-[85%] rounded-[18px] px-4 py-3 text-sm leading-relaxed overflow-hidden shadow-sm',
         msg.role === 'user'
-          ? 'bg-accent/15 text-text-primary rounded-tr-sm'
-          : 'bg-surface-100 border border-border text-text-secondary rounded-tl-sm prose-sm dark:prose-invert prose-p:leading-normal prose-pre:my-2 prose-pre:bg-surface-200'
+          ? 'bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/10 text-white rounded-tr-sm'
+          : 'bg-[#18181B] border border-white/5 text-slate-200 rounded-tl-sm prose-sm dark:prose-invert prose-p:leading-normal prose-pre:my-2 prose-pre:bg-black/50'
       )}>
         {msg.role === 'user' ? (
           msg.content
@@ -108,8 +100,7 @@ export const AICompanion = memo(function AICompanion() {
           <div className="w-6 h-6 rounded-md bg-accent/15 flex items-center justify-center shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-accent-light" />
           </div>
-          <span className="text-xs font-semibold text-text-primary">AI Assistant</span>
-          <span className="text-xs text-text-tertiary hidden sm:inline">Groq · Llama 3.3 70B</span>
+          <span className="text-xs font-semibold text-text-primary tracking-wide uppercase">AI Assistant</span>
         </div>
         <div className="flex items-center gap-1 ml-auto">
           {messages.length > 0 && (
@@ -122,13 +113,13 @@ export const AICompanion = memo(function AICompanion() {
 
       <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3 scrollbar-thin">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center py-8">
-            <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center mb-3">
-              <Sparkles className="w-5 h-5 text-accent-light" />
+          <div className="flex flex-col items-center justify-center h-full text-center py-12 px-4 max-w-sm mx-auto">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-purple-500/20 to-blue-500/20 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(168,85,247,0.1)] border border-white/5">
+              <Sparkles className="w-7 h-7 text-purple-400" />
             </div>
-            <p className="text-sm font-medium text-text-primary mb-1">Ask me anything</p>
-            <p className="text-xs text-text-tertiary max-w-xs">
-              I can help explain concepts, review code, debug issues, or answer questions about this topic
+            <p className="text-xl font-bold text-white mb-3 tracking-tight">Ask me anything</p>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              I can explain concepts, solve problems, review code, generate quizzes, and answer questions related to this lesson.
             </p>
           </div>
         )}
@@ -154,50 +145,30 @@ export const AICompanion = memo(function AICompanion() {
         </AnimatePresence>
       </div>
 
-      {messages.length === 0 && (
-        <div className="px-4 pb-2 shrink-0">
-          <div className="flex flex-wrap gap-1.5">
-            {suggestions.map((s) => (
-              <button key={s.label} onClick={() => handleSuggestion(s.prompt)}
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary hover:bg-surface-150 transition-all"
-              >
-                <s.icon className="w-3 h-3" /> {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="px-4 py-3 border-t border-border shrink-0 pb-[calc(env(safe-area-inset-bottom,0.5rem)+0.75rem)]">
-        <div className="relative flex items-end gap-2">
-          <div className="flex items-center gap-1 absolute left-2 bottom-2.5 z-10">
-            <IconButton label="Attach file" size="sm">
-              <Paperclip className="w-3.5 h-3.5" />
-            </IconButton>
-            <IconButton label="Voice input" size="sm">
-              <Mic className="w-3.5 h-3.5" />
-            </IconButton>
-          </div>
+      <div className="px-6 py-4 border-t border-white/5 shrink-0 bg-surface-50/95 pb-[calc(env(safe-area-inset-bottom,1rem)+1rem)]">
+        <div className="relative flex items-center gap-3 max-w-4xl mx-auto w-full">
           <textarea
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={status === 'thinking' || status === 'streaming' ? "AI is typing..." : "Ask a question..."}
+            placeholder={status === 'thinking' || status === 'streaming' ? "AI is typing..." : "Ask anything about this lesson..."}
             disabled={status === 'thinking' || status === 'streaming'}
             rows={1}
-            className="flex-1 bg-surface-150 border border-border rounded-xl pl-16 pr-10 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent/30 focus:border-accent/30 resize-none transition-all max-h-24 disabled:opacity-50"
-            style={{ minHeight: 40 }}
+            className="flex-1 bg-[#121214] border border-[rgba(255,255,255,0.08)] rounded-2xl pl-5 pr-14 py-4 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 focus:shadow-[0_0_15px_rgba(168,85,247,0.15)] resize-none transition-all disabled:opacity-50 h-[56px] min-h-[56px] leading-[22px]"
           />
           {status === 'thinking' || status === 'streaming' ? (
-            <IconButton label="Stop generating" onClick={stop}
-              className="absolute right-2 bottom-2 text-red-400 hover:text-red-300 hover:bg-red-500/10">
-              <Square className="w-[14px] h-[14px] fill-current" />
-            </IconButton>
+            <button onClick={stop} className="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition-colors">
+              <Square className="w-3.5 h-3.5 fill-current" />
+            </button>
           ) : (
-            <IconButton label="Send message" variant="primary" onClick={handleSend} disabled={!input.trim()} className="absolute right-2 bottom-2">
-              <Send className="w-[18px] h-[18px]" />
-            </IconButton>
+            <button 
+              onClick={handleSend} 
+              disabled={!input.trim()} 
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white flex items-center justify-center transition-all disabled:opacity-50 disabled:grayscale-[50%] hover:shadow-[0_0_20px_rgba(168,85,247,0.6)] disabled:hover:shadow-none"
+            >
+              <Send className="w-4 h-4 ml-0.5" />
+            </button>
           )}
         </div>
       </div>
