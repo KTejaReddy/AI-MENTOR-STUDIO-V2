@@ -28,15 +28,13 @@ const getSectionIcon = (key: string) => {
 // Map section to its unique color token
 const getSectionColor = (key: string) => {
   const colorMap: Record<string, string> = {
-    overview: 'var(--color-lessons)',
-    explanation: 'var(--color-ai)',
-    keyConcepts: 'var(--color-ai)',
-    formulaExplanation: 'var(--color-history)',
-    derivation: 'var(--color-analytics)',
-    assignment: 'var(--color-bookmarks)',
-    visualization: 'var(--color-compiler)',
-    diagrams: 'var(--color-compiler)',
-    quiz: 'var(--color-notes)',
+    overview: '#3b82f6', // Blue
+    explanation: '#64748b', // Slate
+    formula: '#a855f7', // Purple
+    derivation: '#f97316', // Orange
+    visualization: '#10b981', // Emerald
+    quiz: '#eab308', // Yellow
+    assignment: '#ef4444', // Red
     summary: '#ec4899', // Pink
   }
   return colorMap[key] || 'var(--text-secondary)'

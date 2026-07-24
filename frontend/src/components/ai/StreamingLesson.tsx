@@ -170,24 +170,24 @@ export const StreamingLesson = memo(function StreamingLesson({
   const safeAccumulatedContent = accumulatedContent
 
   return (
-    <div className="flex flex-col w-full min-h-full">
+    <div className="flex flex-col w-full min-h-full bg-surface-50 text-text-primary">
       {isGenerating && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="sticky top-0 z-30 bg-surface/95 max-md:bg-surface-150/95 backdrop-blur-xl max-md:backdrop-blur-none border-b border-border shadow-sm"
+          className="sticky top-0 z-30 bg-surface-50/95 backdrop-blur-md border-b border-border shadow-sm"
         >
-          <div className="h-1 w-full bg-surface-300">
+          <div className="h-1 w-full bg-surface-200">
             <motion.div
-              className="h-full bg-gradient-to-r from-accent via-emerald-400 to-accent shadow-[0_0_10px_rgba(0,194,255,0.4)]"
+              className="h-full bg-accent"
               initial={{ width: 0 }}
               animate={{ width: `${pct}%` }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             />
           </div>
-          <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-3 gap-2">
+          <div className="flex flex-col md:flex-row md:items-center justify-between px-6 py-3 gap-2 max-w-4xl mx-auto w-full">
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-bold text-[#00C2FF] animate-pulse tracking-wide uppercase">
+              <span className="text-xs font-bold text-accent animate-pulse tracking-wide uppercase">
                 Generating lesson...
               </span>
               <div className="flex items-center gap-2 text-xs font-semibold text-text-primary">
@@ -201,7 +201,7 @@ export const StreamingLesson = memo(function StreamingLesson({
                   const prevLabel = prevSection ? (lesson?.sections?.[prevSection]?.title || getSectionLabel(prevSection)) : ''
                   return (
                     <>
-                      {prevLabel && <span className="text-text-tertiary font-medium line-through decoration-emerald-400/50">{prevLabel} ✓</span>}
+                      {prevLabel && <span className="text-text-tertiary font-medium line-through decoration-text-tertiary/50">{prevLabel} ✓</span>}
                       {currentGeneratingLabel ? (
                         <span className="text-accent font-bold flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
@@ -221,11 +221,6 @@ export const StreamingLesson = memo(function StreamingLesson({
                 <Clock className="w-3.5 h-3.5 text-accent animate-pulse" />
                 <span>~{estimatedTimeRemaining}s remaining</span>
               </div>
-              <div className="flex gap-2">
-                {metrics?.plannerTime && <span className="text-xs">Planner: {metrics.plannerTime}s</span>}
-                {metrics?.regeneratedSections ? <span className="text-xs text-amber-400/80">Retries: {metrics.regeneratedSections}</span> : null}
-                {metrics?.failedSections ? <span className="text-xs text-red-400/80">Failed: {metrics.failedSections}</span> : null}
-              </div>
             </div>
           </div>
         </motion.div>
@@ -233,118 +228,84 @@ export const StreamingLesson = memo(function StreamingLesson({
 
       {/* Lesson header: Topic / Subject / Difficulty / Time */}
       {tabInfo && (isDone || isGenerating) && (
-        <div className="px-4 md:px-10 lg:px-16 pt-4 pb-2 md:pt-6 md:pb-2 flex flex-col gap-4 md:gap-8">
-          <div className="max-w-3xl mx-auto w-full">
-            <div className="flex items-start gap-4 mb-1">
-              <div className="w-10 h-10 rounded-xl bg-accent/15 items-center justify-center shrink-0 border border-accent/20 hidden md:flex">
-                <GraduationCap className="w-5 h-5 text-accent-light" />
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-[22px] md:text-[32px] font-bold text-text-primary leading-tight">
-                  {tabInfo.topic}
-                </h1>
-                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                  {tabInfo.subject && (
-                    <span className="text-xs text-text-secondary font-medium">
-                      {tabInfo.subject}
-                    </span>
-                  )}
-
-                  {tabInfo.generationTime != null && (
-                    <span className="text-xs text-text-tertiary items-center gap-1 hidden md:flex">
-                      <Clock className="w-3 h-3" />
-                      Generated in {tabInfo.generationTime.toFixed(1)}s
-                    </span>
-                  )}
-                </div>
-              </div>
+        <div className="px-6 md:px-12 lg:px-20 pt-8 pb-4 md:pt-12 md:pb-6 flex flex-col gap-4">
+          <div className="max-w-4xl mx-auto w-full border-b border-border/50 pb-6">
+            <h1 className="text-3xl md:text-5xl font-black text-text-primary tracking-tight leading-tight">
+              {tabInfo.topic}
+            </h1>
+            <div className="flex items-center gap-4 mt-4 flex-wrap">
+              {tabInfo.subject && (
+                <span className="text-sm text-text-secondary font-medium">
+                  {tabInfo.subject}
+                </span>
+              )}
+              {tabInfo.generationTime != null && (
+                <span className="text-sm text-text-tertiary flex items-center gap-1.5">
+                  <Clock className="w-4 h-4" />
+                  Generated in {tabInfo.generationTime.toFixed(1)}s
+                </span>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      <div ref={scrollContainerRef} className="flex-1 px-4 py-6 md:p-10 lg:px-16 overflow-y-auto">
-        <div className="max-w-3xl mx-auto w-full">
+      <div ref={scrollContainerRef} className="flex-1 px-6 md:px-12 lg:px-20 py-8 md:py-12 overflow-y-auto">
+        <div className="max-w-4xl mx-auto w-full">
           <AnimatePresence mode="wait">
             {activeSectionId ? (
               <motion.div
                 key={activeSectionId}
-                initial={{ opacity: 0, y: 24, scale: 0.98, rotateX: 3 }}
-                animate={{ opacity: 1, y: 0, scale: 1, rotateX: 0 }}
-                exit={{ opacity: 0, y: -20, scale: 0.98, rotateX: -3 }}
-                transition={{ type: 'spring', stiffness: 130, damping: 17 }}
-                style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
               >
-                <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6 pb-3 md:pb-4 border-b border-border">
-                  {(() => { const ActiveIcon = getSectionIcon(activeSectionId); return <ActiveIcon className="w-5 h-5 md:w-6 md:h-6 text-accent-light max-md:hidden" /> })()}
-                  <h1 className="text-[20px] md:text-[28px] font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h1>
-                  <div className="ml-auto flex gap-2">
-                    {currentSectionStatus === 'generating' && (
-                      <span className="px-2.5 py-1 rounded-full bg-accent/10 text-accent-light text-xs font-semibold border border-accent/20 flex items-center gap-1.5">
-                        <Loader2 className="w-3 h-3 animate-spin" /> Generating
-                      </span>
-                    )}
-                    {currentSectionStatus === 'completed' && (
-                      <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20 flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3 h-3" /> Completed
-                      </span>
-                    )}
-                    {currentSectionStatus === 'queued' && (
-                      <span className="px-2.5 py-1 rounded-full bg-surface-200 text-text-tertiary text-xs font-semibold border border-border flex items-center gap-1.5">
-                        <Clock className="w-3 h-3" /> Queued
-                      </span>
-                    )}
-                  </div>
+                <div className="flex items-center gap-3 mb-8">
+                  {(() => { 
+                    const ActiveIcon = getSectionIcon(activeSectionId)
+                    const colorMap: Record<string, string> = {
+                      overview: '#3b82f6', explanation: '#64748b', formula: '#a855f7',
+                      derivation: '#f97316', visualization: '#10b981', quiz: '#eab308',
+                      assignment: '#ef4444', summary: '#ec4899',
+                    }
+                    const activeColor = colorMap[activeSectionId] || 'var(--text-tertiary)'
+                    return <ActiveIcon className="w-6 h-6 md:w-8 md:h-8" style={{ color: activeColor }} /> 
+                  })()}
+                  <h2 className="text-2xl md:text-4xl font-bold text-text-primary">{lesson?.sections?.[activeSectionId]?.title || getSectionLabel(activeSectionId)}</h2>
                 </div>
 
                 {currentSectionStatus === 'waiting' && !currentSectionContent ? (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="flex flex-col items-center justify-center py-10 md:py-20 text-center"
+                    className="flex flex-col items-center justify-center py-20 text-center"
                   >
-                    <div className="empty-state-icon max-md:hidden">
-                      <Loader2 className="w-6 h-6 text-text-tertiary animate-spin" />
-                    </div>
-                    <p className="text-sm text-text-secondary font-medium">Waiting to generate...</p>
-                    <p className="text-xs text-text-tertiary mt-1">This section will stream in shortly.</p>
+                    <Loader2 className="w-8 h-8 text-text-tertiary animate-spin mb-4" />
+                    <p className="text-base text-text-secondary font-medium">Waiting to generate...</p>
+                    <p className="text-sm text-text-tertiary mt-2">This section will stream in shortly.</p>
                   </motion.div>
                 ) : (
-                  <motion.div
-                    className={cn(
-                      "relative transition-all duration-500 rounded-2xl p-5 border border-transparent",
-                      (currentSectionStatus === 'generating' || currentSectionStatus === 'retrying') &&
-                        "bg-[#00f2fe]/3 border-[#00f2fe]/10 shadow-[0_0_24px_rgba(0,242,254,0.05)]"
-                    )}
-                  >
-                    {/* Energy Sweep Scanline */}
-                    {(currentSectionStatus === 'generating' || currentSectionStatus === 'retrying') && (
-                      <motion.div
-                        className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#00f2fe] to-transparent opacity-50 z-20 max-md:hidden"
-                        animate={{ top: ['0%', '100%'] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                      />
-                    )}
-
+                  <div className="relative">
                     {(currentSectionStatus === 'generating' || currentSectionStatus === 'retrying') && !currentSectionContent ? (
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="flex items-center gap-2.5 py-6 text-text-tertiary justify-center"
+                        className="flex items-center gap-3 py-10 text-text-tertiary"
                       >
-                        <Loader2 className="w-4 h-4 animate-spin text-[#00f2fe]" />
-                        <span className="text-xs font-semibold uppercase tracking-wider text-[#00f2fe]/80 animate-pulse">AI is building knowledge...</span>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <span className="text-sm font-medium">AI is generating content...</span>
                       </motion.div>
                     ) : null}
 
                     <AnimatePresence mode="wait">
                       <motion.div
-                        initial={{ opacity: 0, filter: 'blur(8px)', y: 8 }}
-                        animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                        initial={{ opacity: 0, filter: 'blur(4px)' }}
+                        animate={{ opacity: 1, filter: 'blur(0px)' }}
+                        transition={{ duration: 0.4 }}
                       >
                         {showTyping && (currentSectionStatus === 'generating' || currentSectionStatus === 'retrying') && currentSectionContent ? (
-                          <div className="relative leading-relaxed">
+                          <div className="relative">
                             {activeSectionId === 'quiz' ? (
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} isGenerating />
                             ) : (
@@ -353,26 +314,19 @@ export const StreamingLesson = memo(function StreamingLesson({
                                   content={currentSectionContent || safeAccumulatedContent} 
                                   sectionColor={(() => {
                                     const colorMap: Record<string, string> = {
-                                      overview: '#3B82F6',
-                                      explanation: '#8B5CF6',
-                                      keyConcepts: '#8B5CF6',
-                                      formulaExplanation: '#06B6D4',
-                                      derivation: '#FB923C',
-                                      assignment: '#F43F5E',
-                                      visualization: '#10B981',
-                                      diagrams: '#10B981',
-                                      quiz: '#F59E0B',
-                                      summary: '#ec4899',
+                                      overview: '#3b82f6', explanation: '#64748b', formula: '#a855f7',
+                                      derivation: '#f97316', visualization: '#10b981', quiz: '#eab308',
+                                      assignment: '#ef4444', summary: '#ec4899',
                                     };
-                                    return colorMap[activeSectionId || ''] || 'var(--text-secondary)'
+                                    return colorMap[activeSectionId || ''] || undefined
                                   })()}
                                 />
                               </MarkdownErrorBoundary>
                             )}
-                            <span className="inline-block w-2.5 h-4 bg-gradient-to-t from-[#00f2fe] to-[#8b5cf6] animate-pulse ml-1 align-middle rounded-sm shadow-[0_0_8px_rgba(0,242,254,0.8)]" />
+                            <span className="inline-block w-2 h-4 bg-text-primary animate-pulse ml-1 align-middle rounded-sm" />
                           </div>
                         ) : (
-                          <div className="leading-relaxed">
+                          <div>
                             {activeSectionId === 'quiz' ? (
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} />
                             ) : (
@@ -381,18 +335,11 @@ export const StreamingLesson = memo(function StreamingLesson({
                                   content={currentSectionContent || safeAccumulatedContent} 
                                   sectionColor={(() => {
                                     const colorMap: Record<string, string> = {
-                                      overview: '#3B82F6',
-                                      explanation: '#8B5CF6',
-                                      keyConcepts: '#8B5CF6',
-                                      formulaExplanation: '#06B6D4',
-                                      derivation: '#FB923C',
-                                      assignment: '#F43F5E',
-                                      visualization: '#10B981',
-                                      diagrams: '#10B981',
-                                      quiz: '#F59E0B',
-                                      summary: '#ec4899',
+                                      overview: '#3b82f6', explanation: '#64748b', formula: '#a855f7',
+                                      derivation: '#f97316', visualization: '#10b981', quiz: '#eab308',
+                                      assignment: '#ef4444', summary: '#ec4899',
                                     };
-                                    return colorMap[activeSectionId || ''] || 'var(--text-secondary)'
+                                    return colorMap[activeSectionId || ''] || undefined
                                   })()}
                                 />
                               </MarkdownErrorBoundary>
@@ -401,19 +348,17 @@ export const StreamingLesson = memo(function StreamingLesson({
                         )}
                       </motion.div>
                     </AnimatePresence>
-                  </motion.div>
+                  </div>
                 )}
               </motion.div>
             ) : (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center h-full py-20"
+                className="flex flex-col items-center justify-center h-full py-32"
               >
-                <div className="empty-state-icon">
-                  <BookOpen className="w-6 h-6 text-text-tertiary" />
-                </div>
-                <p className="text-sm text-text-secondary">Select a section to view its content.</p>
+                <BookOpen className="w-12 h-12 text-text-tertiary/50 mb-6" />
+                <p className="text-lg text-text-secondary font-medium">Select a section to begin reading.</p>
               </motion.div>
             )}
           </AnimatePresence>

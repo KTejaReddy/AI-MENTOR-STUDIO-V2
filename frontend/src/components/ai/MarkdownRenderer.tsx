@@ -247,29 +247,28 @@ function InlineCode({ children, sectionColor, ...props }: { children?: ReactNode
 }
 
 function Paragraph({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className="text-[15px] leading-[1.8] md:text-sm text-white/70 md:leading-[1.8] mb-6 md:mb-5 font-medium last:mb-0" {...props}>{children}</p>
+  return <p className="text-lg leading-[1.85] text-text-secondary mb-6 font-normal last:mb-0" {...props}>{children}</p>
 }
 
 function Heading({ level, children, sectionColor, ...props }: { level: number; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLHeadingElement>) {
   const sizes: Record<number, string> = {
-    1: 'text-3xl md:text-4xl font-black text-white mt-12 mb-8 pb-4 border-b',
-    2: 'text-2xl md:text-2xl font-bold text-white mt-10 mb-6 pb-3 border-b',
-    3: 'text-xl md:text-xl font-bold text-white mt-8 mb-4',
-    4: 'text-lg md:text-lg font-bold text-white mt-6 mb-3',
-    5: 'text-base md:text-base font-bold text-white mt-5 mb-2',
-    6: 'text-xs font-bold text-white/50 mt-4 mb-2 uppercase tracking-widest',
+    1: 'text-4xl md:text-5xl font-black text-text-primary mt-16 mb-8 pb-4 tracking-tight border-b border-border/50',
+    2: 'text-2xl md:text-3xl font-bold text-text-primary mt-12 mb-6 pb-2 tracking-tight border-b border-border/30',
+    3: 'text-xl md:text-2xl font-bold text-text-primary mt-10 mb-4 tracking-tight',
+    4: 'text-lg md:text-xl font-bold text-text-primary mt-8 mb-4',
+    5: 'text-base md:text-lg font-bold text-text-primary mt-6 mb-3',
+    6: 'text-sm font-bold text-text-tertiary mt-6 mb-3 uppercase tracking-widest',
   }
   const Tag = `h${level}` as keyof React.JSX.IntrinsicElements as any
   
   return (
     <Tag 
       className={sizes[level] || sizes[3]} 
-      style={level <= 2 ? { borderColor: sectionColor ? `${sectionColor}30` : 'var(--border)' } : undefined}
       {...props}
     >
       {level <= 2 && sectionColor ? (
         <span className="flex items-center gap-3">
-          <span className="w-1.5 h-6 rounded-full" style={{ backgroundColor: sectionColor }} />
+          <span className="w-1.5 h-8 rounded-sm" style={{ backgroundColor: sectionColor }} />
           {children}
         </span>
       ) : (
@@ -312,35 +311,29 @@ function TableCell({ isHeader, children, ...props }: { isHeader?: boolean; child
 function BlockQuote({ children, sectionColor, ...props }: { children?: ReactNode; sectionColor?: string } & React.BlockquoteHTMLAttributes<HTMLElement>) {
   const childStr = extractText(children)
   let borderColor = sectionColor || 'var(--border)'
-  let bgColor = sectionColor ? `${sectionColor}10` : 'var(--surface-100)'
-  let icon = '💡'
+  let bgColor = sectionColor ? `${sectionColor}15` : 'var(--surface-100)'
 
   if (childStr.includes('⚠️') || childStr.includes('Warning') || childStr.includes('warn')) {
     borderColor = '#f59e0b'
     bgColor = 'rgba(245, 158, 11, 0.1)'
-    icon = '⚠️'
   } else if (childStr.includes('✅') || childStr.includes('Best Practice') || childStr.includes('Tip') || childStr.includes('💡')) {
     borderColor = '#10b981'
     bgColor = 'rgba(16, 185, 129, 0.1)'
-    icon = '✅'
   } else if (childStr.includes('❌') || childStr.includes('Mistake') || childStr.includes('error')) {
     borderColor = '#ef4444'
     bgColor = 'rgba(239, 68, 68, 0.1)'
-    icon = '❌'
   } else if (childStr.includes('📝') || childStr.includes('Note') || childStr.includes('info')) {
     borderColor = '#3b82f6'
     bgColor = 'rgba(59, 130, 246, 0.1)'
-    icon = '📝'
   }
 
   return (
     <div 
-      className="border-l-[6px] rounded-r-2xl px-6 py-5 my-8 relative overflow-hidden group" 
+      className="border-l-[4px] rounded-r-lg px-6 py-5 my-8" 
       style={{ backgroundColor: bgColor, borderColor }} 
       {...props}
     >
-      <div className="absolute inset-0 bg-noise opacity-50 mix-blend-overlay pointer-events-none" />
-      <div className="relative z-10 text-[15px] leading-[1.8] md:text-sm text-white/80 md:leading-[1.8] font-medium prose-sm max-w-none [&>*:last-child]:mb-0">
+      <div className="text-lg leading-[1.85] text-text-secondary font-normal prose-sm max-w-none [&>*:last-child]:mb-0">
         {children}
       </div>
     </div>
@@ -359,27 +352,27 @@ function extractText(node: React.ReactNode): string {
 
 function List({ ordered, children, ...props }: { ordered?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLOListElement | HTMLUListElement>) {
   if (ordered) {
-    return <ol {...props} className="space-y-3 md:space-y-2.5 mb-8 md:mb-6 list-decimal list-outside ml-6 font-medium text-white/70">{children}</ol>
+    return <ol {...props} className="space-y-3 mb-8 list-decimal list-outside ml-6 text-lg leading-[1.85] text-text-secondary">{children}</ol>
   }
-  return <ul {...props} className="space-y-3 md:space-y-2.5 mb-8 md:mb-6 list-disc list-outside ml-6 font-medium text-white/70">{children}</ul>
+  return <ul {...props} className="space-y-3 mb-8 list-disc list-outside ml-6 text-lg leading-[1.85] text-text-secondary">{children}</ul>
 }
 
 function ListItem({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLLIElement>) {
-  return <li className="text-[15px] leading-[1.8] md:text-sm text-white/80 md:leading-[1.8]" {...props}>{children}</li>
+  return <li className="text-lg leading-[1.85] text-text-secondary" {...props}>{children}</li>
 }
 
 function TaskListItem({ checked, sectionColor, children, ...props }: { checked: boolean; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLLIElement>) {
   return (
-    <li {...props} className="flex items-start gap-3 text-[15px] leading-[1.8] md:text-sm text-white/80 md:leading-[1.8] mb-3">
+    <li {...props} className="flex items-start gap-3 text-lg leading-[1.85] text-text-secondary mb-3">
       <span 
-        className="mt-1 w-5 h-5 rounded border flex items-center justify-center shrink-0 transition-colors"
+        className="mt-1.5 w-5 h-5 rounded border flex items-center justify-center shrink-0"
         style={{ 
           backgroundColor: checked ? (sectionColor || 'var(--accent)') : 'transparent',
-          borderColor: checked ? (sectionColor || 'var(--accent)') : 'rgba(255,255,255,0.2)'
+          borderColor: checked ? (sectionColor || 'var(--accent)') : 'var(--border)'
         }}
       >
         {checked && (
-          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         )}
@@ -392,8 +385,8 @@ function TaskListItem({ checked, sectionColor, children, ...props }: { checked: 
 function Link({ href, children, sectionColor, ...props }: { href?: string; children?: ReactNode; sectionColor?: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer"
-      className="font-bold underline underline-offset-4 transition-all hover:opacity-80" 
-      style={{ color: sectionColor || 'var(--accent-light)', textDecorationColor: sectionColor ? `${sectionColor}60` : 'rgba(255,255,255,0.3)' }}
+      className="font-semibold underline underline-offset-4 hover:opacity-80 transition-opacity" 
+      style={{ color: sectionColor || 'var(--accent)', textDecorationColor: sectionColor ? `${sectionColor}40` : 'var(--border)' }}
       {...props}>
       {children}
     </a>
