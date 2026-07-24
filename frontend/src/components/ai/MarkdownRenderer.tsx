@@ -198,7 +198,7 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   return <div ref={ref} className="my-6 flex justify-center" />
 })
 
-function CodeBlock({ className, children, ...props }: { className?: string; children?: ReactNode } & React.HTMLAttributes<HTMLPreElement>) {
+function CodeBlock({ className, children, sectionColor, ...props }: { className?: string; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLPreElement>) {
   const lang = className?.replace('language-', '') || ''
   const code = String(children).replace(/\n$/, '')
 
@@ -207,20 +207,22 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
   }
 
   return (
-    <div className="rounded-lg border border-border overflow-hidden my-4">
+    <div className="rounded-xl border overflow-hidden my-6 group" style={{ borderColor: sectionColor ? `${sectionColor}40` : 'var(--border)' }}>
       {lang && (
-        <div className="flex items-center justify-between px-4 py-1.5 bg-surface-200 border-b border-border">
-          <span className="text-xs font-mono text-text-tertiary uppercase tracking-wider">{lang}</span>
+        <div className="flex items-center justify-between px-4 py-2 bg-surface-100/50 backdrop-blur-sm border-b" style={{ borderColor: sectionColor ? `${sectionColor}20` : 'var(--border)' }}>
+          <span className="text-[10px] font-mono uppercase tracking-widest font-bold" style={{ color: sectionColor || 'var(--text-tertiary)' }}>{lang}</span>
           <button
             onClick={() => navigator.clipboard.writeText(code)}
-            className="text-xs px-2 py-0.5 rounded bg-surface-300 hover:bg-surface-400 text-text-tertiary hover:text-text-primary transition-colors"
+            className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded bg-white/5 hover:bg-white/10 transition-colors"
+            style={{ color: sectionColor || 'var(--text-secondary)' }}
           >
             Copy
           </button>
         </div>
       )}
-      <pre className="p-4 overflow-x-auto bg-surface-50" {...props}>
-        <code className="text-[13px] leading-[1.7] md:text-xs font-mono text-text-secondary md:leading-relaxed whitespace-pre">
+      <pre className="p-5 overflow-x-auto bg-surface-50 relative" {...props}>
+        <div className="absolute inset-0 opacity-5" style={{ backgroundColor: sectionColor || 'transparent' }} />
+        <code className="relative text-[13px] leading-[1.7] md:text-xs font-mono text-white md:leading-relaxed whitespace-pre">
           {children}
         </code>
       </pre>
@@ -228,29 +230,53 @@ function CodeBlock({ className, children, ...props }: { className?: string; chil
   )
 }
 
-function InlineCode({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLElement>) {
+function InlineCode({ children, sectionColor, ...props }: { children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <code className="px-1.5 py-0.5 rounded bg-accent/10 text-[13px] md:text-xs font-mono text-accent-light border border-accent/20" {...props}>
+    <code 
+      className="px-1.5 py-0.5 rounded text-[13px] md:text-xs font-mono border" 
+      style={{ 
+        color: sectionColor || 'var(--accent-light)', 
+        backgroundColor: sectionColor ? `${sectionColor}15` : 'rgba(255,255,255,0.05)',
+        borderColor: sectionColor ? `${sectionColor}30` : 'var(--border)'
+      }}
+      {...props}
+    >
       {children}
     </code>
   )
 }
 
 function Paragraph({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className="text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed mb-6 md:mb-4 last:mb-0" {...props}>{children}</p>
+  return <p className="text-[15px] leading-[1.8] md:text-sm text-white/70 md:leading-[1.8] mb-6 md:mb-5 font-medium last:mb-0" {...props}>{children}</p>
 }
 
-function Heading({ level, children, ...props }: { level: number; children?: ReactNode } & React.HTMLAttributes<HTMLHeadingElement>) {
+function Heading({ level, children, sectionColor, ...props }: { level: number; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLHeadingElement>) {
   const sizes: Record<number, string> = {
-    1: 'text-2xl md:text-xl font-bold text-text-primary mt-10 mb-6 md:mt-8 md:mb-4 pb-2 border-b border-border/50',
-    2: 'text-xl md:text-lg font-semibold text-text-primary mt-8 mb-5 md:mt-7 md:mb-3 pb-1.5 border-b border-border/30',
-    3: 'text-lg md:text-base font-semibold text-text-primary mt-7 mb-4 md:mt-6 md:mb-2',
-    4: 'text-base md:text-sm font-medium text-text-primary mt-6 mb-3 md:mt-5 md:mb-2',
-    5: 'text-sm md:text-xs font-medium text-text-primary mt-5 mb-2 md:mt-4 md:mb-1',
-    6: 'text-[13px] md:text-xs font-medium text-text-tertiary mt-4 mb-2 md:mt-3 md:mb-1 uppercase tracking-wider',
+    1: 'text-3xl md:text-4xl font-black text-white mt-12 mb-8 pb-4 border-b',
+    2: 'text-2xl md:text-2xl font-bold text-white mt-10 mb-6 pb-3 border-b',
+    3: 'text-xl md:text-xl font-bold text-white mt-8 mb-4',
+    4: 'text-lg md:text-lg font-bold text-white mt-6 mb-3',
+    5: 'text-base md:text-base font-bold text-white mt-5 mb-2',
+    6: 'text-xs font-bold text-white/50 mt-4 mb-2 uppercase tracking-widest',
   }
   const Tag = `h${level}` as keyof React.JSX.IntrinsicElements as any
-  return <Tag className={sizes[level] || sizes[3]} {...props}>{children}</Tag>
+  
+  return (
+    <Tag 
+      className={sizes[level] || sizes[3]} 
+      style={level <= 2 ? { borderColor: sectionColor ? `${sectionColor}30` : 'var(--border)' } : undefined}
+      {...props}
+    >
+      {level <= 2 && sectionColor ? (
+        <span className="flex items-center gap-3">
+          <span className="w-1.5 h-6 rounded-full" style={{ backgroundColor: sectionColor }} />
+          {children}
+        </span>
+      ) : (
+        children
+      )}
+    </Tag>
+  )
 }
 
 function Table({ children, ...props }: { children?: ReactNode } & React.TableHTMLAttributes<HTMLTableElement>) {
@@ -283,33 +309,38 @@ function TableCell({ isHeader, children, ...props }: { isHeader?: boolean; child
   return <td className={`${base} text-[14px] md:text-xs text-text-secondary`} {...props}>{children}</td>
 }
 
-function BlockQuote({ children, ...props }: { children?: ReactNode } & React.BlockquoteHTMLAttributes<HTMLElement>) {
+function BlockQuote({ children, sectionColor, ...props }: { children?: ReactNode; sectionColor?: string } & React.BlockquoteHTMLAttributes<HTMLElement>) {
   const childStr = extractText(children)
-  let borderColor = 'border-l-accent/40'
-  let bgColor = 'bg-accent/5'
+  let borderColor = sectionColor || 'var(--border)'
+  let bgColor = sectionColor ? `${sectionColor}10` : 'var(--surface-100)'
   let icon = '💡'
 
   if (childStr.includes('⚠️') || childStr.includes('Warning') || childStr.includes('warn')) {
-    borderColor = 'border-l-amber-500/50'
-    bgColor = 'bg-amber-500/8'
+    borderColor = '#f59e0b'
+    bgColor = 'rgba(245, 158, 11, 0.1)'
     icon = '⚠️'
   } else if (childStr.includes('✅') || childStr.includes('Best Practice') || childStr.includes('Tip') || childStr.includes('💡')) {
-    borderColor = 'border-l-emerald-500/50'
-    bgColor = 'bg-emerald-500/8'
+    borderColor = '#10b981'
+    bgColor = 'rgba(16, 185, 129, 0.1)'
     icon = '✅'
   } else if (childStr.includes('❌') || childStr.includes('Mistake') || childStr.includes('error')) {
-    borderColor = 'border-l-red-500/50'
-    bgColor = 'bg-red-500/8'
+    borderColor = '#ef4444'
+    bgColor = 'rgba(239, 68, 68, 0.1)'
     icon = '❌'
   } else if (childStr.includes('📝') || childStr.includes('Note') || childStr.includes('info')) {
-    borderColor = 'border-l-blue-500/50'
-    bgColor = 'bg-blue-500/8'
+    borderColor = '#3b82f6'
+    bgColor = 'rgba(59, 130, 246, 0.1)'
     icon = '📝'
   }
 
   return (
-    <div className={`${bgColor} ${borderColor} border-l-4 rounded-r-lg px-5 py-4 my-6 md:px-4 md:py-3 md:my-4`} {...props}>
-      <div className="text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed prose-sm max-w-none [&>*:last-child]:mb-0">
+    <div 
+      className="border-l-[6px] rounded-r-2xl px-6 py-5 my-8 relative overflow-hidden group" 
+      style={{ backgroundColor: bgColor, borderColor }} 
+      {...props}
+    >
+      <div className="absolute inset-0 bg-noise opacity-50 mix-blend-overlay pointer-events-none" />
+      <div className="relative z-10 text-[15px] leading-[1.8] md:text-sm text-white/80 md:leading-[1.8] font-medium prose-sm max-w-none [&>*:last-child]:mb-0">
         {children}
       </div>
     </div>
@@ -328,23 +359,27 @@ function extractText(node: React.ReactNode): string {
 
 function List({ ordered, children, ...props }: { ordered?: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLOListElement | HTMLUListElement>) {
   if (ordered) {
-    return <ol {...props} className="space-y-2 md:space-y-1.5 mb-6 md:mb-4 list-decimal list-outside ml-4">{children}</ol>
+    return <ol {...props} className="space-y-3 md:space-y-2.5 mb-8 md:mb-6 list-decimal list-outside ml-6 font-medium text-white/70">{children}</ol>
   }
-  return <ul {...props} className="space-y-2 md:space-y-1.5 mb-6 md:mb-4 list-disc list-outside ml-4">{children}</ul>
+  return <ul {...props} className="space-y-3 md:space-y-2.5 mb-8 md:mb-6 list-disc list-outside ml-6 font-medium text-white/70">{children}</ul>
 }
 
 function ListItem({ children, ...props }: { children?: ReactNode } & React.HTMLAttributes<HTMLLIElement>) {
-  return <li className="text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed" {...props}>{children}</li>
+  return <li className="text-[15px] leading-[1.8] md:text-sm text-white/80 md:leading-[1.8]" {...props}>{children}</li>
 }
 
-function TaskListItem({ checked, children, ...props }: { checked: boolean; children?: ReactNode } & React.HTMLAttributes<HTMLLIElement>) {
+function TaskListItem({ checked, sectionColor, children, ...props }: { checked: boolean; children?: ReactNode; sectionColor?: string } & React.HTMLAttributes<HTMLLIElement>) {
   return (
-    <li {...props} className="flex items-start gap-2 text-[14.5px] leading-[1.75] md:text-xs text-text-secondary md:leading-relaxed mb-2 md:mb-1.5">
-      <span className={`mt-[4px] md:mt-0.5 w-4 h-4 md:w-3.5 md:h-3.5 rounded border flex items-center justify-center shrink-0 ${
-        checked ? 'bg-accent border-accent' : 'border-text-tertiary'
-      }`}>
+    <li {...props} className="flex items-start gap-3 text-[15px] leading-[1.8] md:text-sm text-white/80 md:leading-[1.8] mb-3">
+      <span 
+        className="mt-1 w-5 h-5 rounded border flex items-center justify-center shrink-0 transition-colors"
+        style={{ 
+          backgroundColor: checked ? (sectionColor || 'var(--accent)') : 'transparent',
+          borderColor: checked ? (sectionColor || 'var(--accent)') : 'rgba(255,255,255,0.2)'
+        }}
+      >
         {checked && (
-          <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         )}
@@ -354,10 +389,12 @@ function TaskListItem({ checked, children, ...props }: { checked: boolean; child
   )
 }
 
-function Link({ href, children, ...props }: { href?: string; children?: ReactNode } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+function Link({ href, children, sectionColor, ...props }: { href?: string; children?: ReactNode; sectionColor?: string } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   return (
     <a href={href} target="_blank" rel="noopener noreferrer"
-      className="text-accent-light hover:text-accent underline underline-offset-2 decoration-accent/30 hover:decoration-accent/60 transition-colors" {...props}>
+      className="font-bold underline underline-offset-4 transition-all hover:opacity-80" 
+      style={{ color: sectionColor || 'var(--accent-light)', textDecorationColor: sectionColor ? `${sectionColor}60` : 'rgba(255,255,255,0.3)' }}
+      {...props}>
       {children}
     </a>
   )
@@ -365,9 +402,10 @@ function Link({ href, children, ...props }: { href?: string; children?: ReactNod
 
 function Image({ src, alt, ...props }: { src?: string; alt?: string } & React.ImgHTMLAttributes<HTMLImageElement>) {
   return (
-    <div className="my-4 rounded-lg overflow-hidden border border-border">
+    <div className="my-8 rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative group">
+      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
       <img src={src} alt={alt || ''} className="w-full max-w-full" loading="lazy" {...props} />
-      {alt && <p className="px-3 py-1.5 text-xs text-text-tertiary text-center bg-surface-100">{alt}</p>}
+      {alt && <p className="px-4 py-2.5 text-xs text-white/50 text-center bg-surface-100/50 backdrop-blur-md uppercase tracking-widest font-bold">{alt}</p>}
     </div>
   )
 }
@@ -390,9 +428,10 @@ function Strikethrough({ children, ...props }: { children?: ReactNode } & React.
 
 interface MarkdownRendererProps {
   content?: string
+  sectionColor?: string
 }
 
-export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: MarkdownRendererProps) {
+export const MarkdownRenderer = memo(function MarkdownRenderer({ content, sectionColor }: MarkdownRendererProps) {
   if (!content || !content.trim()) return null
 
   return (
@@ -401,35 +440,35 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({ content }: Mark
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex]}
         components={{
-          h1: ({ children }: any) => <Heading level={1}>{children}</Heading>,
-          h2: ({ children }: any) => <Heading level={2}>{children}</Heading>,
-          h3: ({ children }: any) => <Heading level={3}>{children}</Heading>,
-          h4: ({ children }: any) => <Heading level={4}>{children}</Heading>,
-          h5: ({ children }: any) => <Heading level={5}>{children}</Heading>,
-          h6: ({ children }: any) => <Heading level={6}>{children}</Heading>,
+          h1: ({ children }: any) => <Heading level={1} sectionColor={sectionColor}>{children}</Heading>,
+          h2: ({ children }: any) => <Heading level={2} sectionColor={sectionColor}>{children}</Heading>,
+          h3: ({ children }: any) => <Heading level={3} sectionColor={sectionColor}>{children}</Heading>,
+          h4: ({ children }: any) => <Heading level={4} sectionColor={sectionColor}>{children}</Heading>,
+          h5: ({ children }: any) => <Heading level={5} sectionColor={sectionColor}>{children}</Heading>,
+          h6: ({ children }: any) => <Heading level={6} sectionColor={sectionColor}>{children}</Heading>,
           p: Paragraph,
           ul: ({ children }: any) => <List>{children}</List>,
           ol: ({ children }: any) => <List ordered>{children}</List>,
           li: ListItem,
           code: ({ className, children }: { className?: string; children?: ReactNode }) => {
-            if (className) return <CodeBlock className={className}>{children}</CodeBlock>
-            return <InlineCode>{children}</InlineCode>
+            if (className) return <CodeBlock className={className} sectionColor={sectionColor}>{children}</CodeBlock>
+            return <InlineCode sectionColor={sectionColor}>{children}</InlineCode>
           },
           pre: ({ children, ...props }: { children?: ReactNode } & any) => <div {...props}>{children}</div>,
-          blockquote: BlockQuote,
+          blockquote: ({ children, ...props }: any) => <BlockQuote sectionColor={sectionColor} {...props}>{children}</BlockQuote>,
           table: Table,
           thead: TableHeader,
           tbody: TableBody,
           tr: TableRow,
           th: ({ children, ...props }: { children?: ReactNode } & any) => <TableCell isHeader={true} {...props}>{children}</TableCell>,
           td: ({ children, ...props }: { children?: ReactNode } & any) => <TableCell isHeader={false} {...props}>{children}</TableCell>,
-          a: Link,
+          a: ({ children, href, ...props }: any) => <Link href={href} sectionColor={sectionColor} {...props}>{children}</Link>,
           img: Image,
           hr: HorizontalRule,
           strong: Strong,
           em: Emphasis,
           del: Strikethrough,
-          input: ({ checked, ...props }: { checked?: boolean } & any) => <TaskListItem checked={!!checked} {...props} />,
+          input: ({ checked, ...props }: { checked?: boolean } & any) => <TaskListItem checked={!!checked} sectionColor={sectionColor} {...props} />,
         }}
       >
         {content}

@@ -5,13 +5,13 @@ import {
   CheckCircle2, Loader2, Circle, XCircle, Clock,
   BookOpen, Lightbulb, FileText, List, Bookmark, GraduationCap,
   Puzzle, AlertTriangle, HelpCircle, ClipboardList, Map, Code2, Sigma,
-  Network, Edit3, Type, FileArchive,
+  Network, Edit3, Type, FileArchive, ArrowRight
 } from 'lucide-react'
 
 const getSectionLabel = (key: string, title?: string) => {
-  if (title) return title;
-  const capitalized = key.charAt(0).toUpperCase() + key.slice(1);
-  return capitalized.replace(/([A-Z])/g, ' $1').trim();
+  if (title) return title
+  const capitalized = key.charAt(0).toUpperCase() + key.slice(1)
+  return capitalized.replace(/([A-Z])/g, ' $1').trim()
 }
 
 const getSectionIcon = (key: string) => {
@@ -25,21 +25,21 @@ const getSectionIcon = (key: string) => {
   return iconMap[key] || FileText
 }
 
-function StatusIcon({ status }: { status: string }) {
-  switch (status) {
-    case 'completed': return <CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-success)] shrink-0" />
-    case 'generating':
-      return (
-        <span className="relative flex h-3.5 w-3.5 items-center justify-center shrink-0">
-          <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-[var(--color-lessons)] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--color-lessons)]"></span>
-        </span>
-      )
-    case 'retrying': return <Loader2 className="w-3.5 h-3.5 text-[var(--color-warning)] shrink-0 animate-spin" />
-    case 'queued': return <Clock className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
-    case 'error': return <XCircle className="w-3.5 h-3.5 text-[var(--color-error)] shrink-0" />
-    default: return <Circle className="w-3.5 h-3.5 text-border shrink-0" />
+// Map section to its unique color token
+const getSectionColor = (key: string) => {
+  const colorMap: Record<string, string> = {
+    overview: 'var(--color-lessons)',
+    explanation: 'var(--color-ai)',
+    keyConcepts: 'var(--color-ai)',
+    formulaExplanation: 'var(--color-history)',
+    derivation: 'var(--color-analytics)',
+    assignment: 'var(--color-bookmarks)',
+    visualization: 'var(--color-compiler)',
+    diagrams: 'var(--color-compiler)',
+    quiz: 'var(--color-notes)',
+    summary: '#ec4899', // Pink
   }
+  return colorMap[key] || 'var(--text-secondary)'
 }
 
 interface LeftSidebarProps {
@@ -90,89 +90,117 @@ export const LeftSidebar = memo(function LeftSidebar({
 
   return (
     <>
-      <aside className="w-full h-full flex flex-col overflow-hidden shrink-0 panel" style={{ pointerEvents: 'auto' }}>
-        <div className="px-4 py-4 border-b border-border shrink-0 max-md:px-2 max-md:flex max-md:justify-center bg-surface-50">
-          <h2 className="text-sm font-semibold text-text-primary max-md:hidden tracking-tight">Lesson Sections</h2>
-          {isGenerating ? (
-            <p className="text-xs text-[var(--color-lessons)] flex items-center gap-1.5 mt-1 font-medium max-md:hidden">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-lessons)] animate-ping" />
-              Generating lesson...
-            </p>
-          ) : doneCount > 0 ? (
-            <p className="text-xs text-text-secondary flex items-center gap-1 mt-1 max-md:hidden font-medium">
-              <CheckCircle2 className="w-3 h-3 text-[var(--color-success)]" /> {doneCount} / {statusCount} completed
-            </p>
-          ) : (
-            <p className="text-xs text-text-tertiary mt-1 max-md:hidden font-medium">{statusCount} sections</p>
-          )}
+      <aside className="w-full h-full flex flex-col overflow-hidden shrink-0 bg-surface/50 backdrop-blur-xl border-r border-white/5 relative">
+        <div className="absolute inset-0 bg-noise pointer-events-none opacity-50" />
+        
+        {/* Header */}
+        <div className="px-5 py-6 shrink-0 relative z-10 border-b border-white/5">
+          <div className="flex items-center gap-2 mb-4 max-md:justify-center">
+            <div className="w-8 h-8 rounded-full bg-[var(--color-lessons)]/20 flex items-center justify-center border border-[var(--color-lessons)]/30">
+              <Map className="w-4 h-4 text-[var(--color-lessons)]" />
+            </div>
+            <h2 className="text-sm font-bold text-white max-md:hidden tracking-wider uppercase">Journey</h2>
+          </div>
+
+          <div className="max-md:hidden flex flex-col gap-2">
+            <div className="flex items-center justify-between text-xs font-bold font-mono text-white/50">
+              <span>{doneCount} / {statusCount}</span>
+              <span className="text-white">{pct}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-[var(--color-lessons)] to-[var(--color-ai)] rounded-full shadow-[0_0_10px_rgba(139,92,246,0.5)]"
+                initial={{ width: 0 }}
+                animate={{ width: `${pct}%` }}
+                transition={{ duration: 1, ease: 'easeOut' }}
+              />
+            </div>
+          </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-0.5" role="navigation" aria-label="Section navigation" style={{ pointerEvents: 'auto' }}>
+        {/* Journey Timeline */}
+        <nav className="flex-1 overflow-y-auto select-scrollbar px-3 py-4 space-y-1 relative z-10">
+          <div className="absolute left-7 top-0 bottom-0 w-[1px] bg-white/5 max-md:hidden" />
+          
           {sections.map((sectionId, idx) => {
             const sStatus = sectionStatuses[sectionId] || 'waiting'
             const Icon = getSectionIcon(sectionId)
             const label = getSectionLabel(sectionId)
             const isActive = activeSectionId === sectionId
+            const color = getSectionColor(sectionId)
 
             return (
               <motion.button
                 key={sectionId}
                 layout
-                initial={{ opacity: 0, x: -8 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.25, delay: idx * 0.02, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.3, delay: idx * 0.05 }}
                 onClick={() => {
                   if (window.innerWidth < 768) handleMobileClick()
                   else handleSectionSelect(sectionId)
                 }}
                 className={cn(
-                  'w-full flex items-center max-md:justify-center gap-2.5 px-3 max-md:px-0 py-2 min-h-[40px] rounded-lg text-xs transition-colors text-left group relative overflow-hidden',
-                  isActive
-                    ? 'text-[var(--color-lessons)] font-medium bg-[var(--color-lessons)]/10'
-                    : 'text-text-secondary hover:text-text-primary hover:bg-surface-100',
-                  (sStatus === 'waiting') && !isActive && 'opacity-60',
+                  'w-full flex items-center gap-4 px-2 py-2 min-h-[44px] rounded-xl text-left group relative transition-all duration-300',
+                  isActive ? 'bg-white/5 shadow-lg' : 'hover:bg-white/[0.02]',
+                  (sStatus === 'waiting') && !isActive && 'opacity-50'
                 )}
-                aria-current={isActive ? 'true' : undefined}
               >
-                <span className="relative z-10 text-xs font-mono text-text-tertiary w-4 shrink-0 max-md:hidden">{idx + 1}.</span>
-                <span className="relative z-10 w-4 h-4 flex items-center justify-center shrink-0">
-                  <Icon className={cn('w-3.5 h-3.5 transition-transform duration-150', isActive ? 'text-text-primary' : 'text-text-secondary group-hover:text-text-primary')} />
-                </span>
-                <span className={cn(
-                  'relative z-10 flex-1 truncate transition-colors duration-150 max-md:hidden font-medium text-[13px]',
-                  (sStatus === 'generating' || sStatus === 'retrying') && 'text-[var(--color-lessons)]',
-                )}>
-                  {label}
-                </span>
-                <span className="relative z-10 max-md:absolute max-md:bottom-1 max-md:right-1"><StatusIcon status={sStatus} /></span>
+                {/* Active Indicator Strip */}
+                {isActive && (
+                  <motion.div
+                    layoutId="activeSectionIndicator"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-r-full"
+                    style={{ backgroundColor: color }}
+                  />
+                )}
+
+                {/* Timeline Node */}
+                <div className="relative shrink-0 flex items-center justify-center max-md:mx-auto">
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300",
+                    isActive ? "bg-white/10" : "bg-surface-50 group-hover:bg-surface-100"
+                  )} style={{ borderColor: isActive ? color : 'rgba(255,255,255,0.1)' }}>
+                    {sStatus === 'completed' ? (
+                      <CheckCircle2 className="w-4 h-4" style={{ color }} />
+                    ) : sStatus === 'generating' || sStatus === 'retrying' ? (
+                      <Loader2 className="w-4 h-4 animate-spin" style={{ color }} />
+                    ) : (
+                      <Icon className="w-4 h-4 transition-colors" style={{ color: isActive ? color : 'rgba(255,255,255,0.4)' }} />
+                    )}
+                  </div>
+                  
+                  {/* Small progress ring for active items */}
+                  {isActive && sStatus !== 'completed' && (
+                    <svg className="absolute inset-0 w-8 h-8 -rotate-90 pointer-events-none">
+                      <circle cx="16" cy="16" r="15" fill="none" stroke={color} strokeWidth="1" strokeDasharray="94" strokeDashoffset={sStatus === 'generating' ? "47" : "94"} className="transition-all duration-1000 opacity-50" />
+                    </svg>
+                  )}
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 min-w-0 max-md:hidden">
+                  <h4 className={cn(
+                    "text-[13px] font-bold truncate transition-colors duration-300",
+                    isActive ? "text-white" : "text-white/60 group-hover:text-white/90"
+                  )}>
+                    {label}
+                  </h4>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] font-mono text-white/30 uppercase tracking-widest">{idx + 1}</span>
+                    {sStatus === 'completed' && <span className="text-[9px] font-bold uppercase tracking-widest bg-white/10 text-white/50 px-1.5 py-0.5 rounded">Done</span>}
+                    {sStatus === 'error' && <span className="text-[9px] font-bold uppercase tracking-widest bg-[var(--color-error)]/20 text-[var(--color-error)] px-1.5 py-0.5 rounded">Error</span>}
+                  </div>
+                </div>
+
+                {/* Arrow */}
+                {isActive && (
+                  <ArrowRight className="w-4 h-4 max-md:hidden opacity-50" style={{ color }} />
+                )}
               </motion.button>
             )
           })}
         </nav>
-
-        <AnimatePresence>
-          {doneCount > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              className="px-4 py-4 border-t border-border shrink-0 bg-surface-100/30"
-            >
-              <div className="flex items-center justify-between text-[11px] text-text-tertiary mb-2 font-mono max-md:hidden">
-                <span>PROGRESS</span>
-                <span className="text-text-primary font-medium">{pct}%</span>
-              </div>
-              <div className="h-1.5 max-md:h-8 rounded-full bg-surface-200 overflow-hidden relative border border-border">
-                <motion.div
-                  className="h-full rounded-full bg-[var(--color-lessons)]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </aside>
 
       {/* Mobile Floating Panel */}
@@ -183,7 +211,7 @@ export const LeftSidebar = memo(function LeftSidebar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-[2px]"
+              className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
             />
             <motion.div
               ref={panelRef}
@@ -191,34 +219,39 @@ export const LeftSidebar = memo(function LeftSidebar({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -20, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="md:hidden fixed left-[68px] top-[calc(3.5rem+env(safe-area-inset-top))] bottom-0 w-64 bg-surface/95 backdrop-blur-xl border-r border-border shadow-2xl z-50 flex flex-col"
+              className="md:hidden fixed left-[68px] top-[calc(3.5rem+env(safe-area-inset-top))] bottom-0 w-64 bg-[#0a0a0a]/95 backdrop-blur-2xl border-r border-white/10 shadow-2xl z-50 flex flex-col"
             >
-              <div className="px-4 py-4 border-b border-border flex items-center justify-between">
-                <h2 className="text-sm font-bold text-text-primary">Lesson Sections</h2>
+              <div className="px-5 py-5 border-b border-white/5 flex items-center justify-between">
+                <h2 className="text-sm font-bold text-white uppercase tracking-wider">Journey</h2>
               </div>
-              <nav className="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1">
+              <nav className="flex-1 overflow-y-auto select-scrollbar p-3 space-y-1 relative">
+                <div className="absolute left-7 top-0 bottom-0 w-[1px] bg-white/5" />
                 {sections.map((sectionId, idx) => {
                   const sStatus = sectionStatuses[sectionId] || 'waiting'
                   const Icon = getSectionIcon(sectionId)
                   const label = getSectionLabel(sectionId)
                   const isActive = activeSectionId === sectionId
+                  const color = getSectionColor(sectionId)
 
                   return (
                     <button
                       key={sectionId}
                       onClick={() => handleSectionSelect(sectionId)}
                       className={cn(
-                        'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left',
-                        isActive
-                          ? 'bg-[var(--color-lessons)]/10 text-[var(--color-lessons)] font-medium'
-                          : 'text-text-secondary hover:text-text-primary hover:bg-surface-100',
-                        (sStatus === 'waiting') && !isActive && 'opacity-60'
+                        'w-full flex items-center gap-4 px-2 py-2 min-h-[44px] rounded-xl text-left relative transition-colors',
+                        isActive ? 'bg-white/5' : 'hover:bg-white/[0.02]',
+                        (sStatus === 'waiting') && !isActive && 'opacity-50'
                       )}
                     >
-                      <span className="font-mono text-text-tertiary w-4 text-xs">{idx + 1}.</span>
-                      <Icon className={cn('w-4 h-4', isActive ? 'text-accent' : 'text-text-tertiary')} />
-                      <span className="flex-1 truncate">{label}</span>
-                      <StatusIcon status={sStatus} />
+                      <div className={cn(
+                        "w-8 h-8 rounded-full flex items-center justify-center border shrink-0 z-10",
+                        isActive ? "bg-white/10" : "bg-surface-50"
+                      )} style={{ borderColor: isActive ? color : 'rgba(255,255,255,0.1)' }}>
+                        <Icon className="w-4 h-4" style={{ color: isActive ? color : 'rgba(255,255,255,0.4)' }} />
+                      </div>
+                      <div className="flex-1 truncate">
+                        <h4 className={cn("text-sm font-bold truncate", isActive ? "text-white" : "text-white/60")}>{label}</h4>
+                      </div>
                     </button>
                   )
                 })}

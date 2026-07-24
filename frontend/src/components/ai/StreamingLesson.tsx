@@ -349,7 +349,24 @@ export const StreamingLesson = memo(function StreamingLesson({
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} isGenerating />
                             ) : (
                               <MarkdownErrorBoundary sectionId={activeSectionId}>
-                                <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
+                                <MarkdownRenderer 
+                                  content={currentSectionContent || safeAccumulatedContent} 
+                                  sectionColor={(() => {
+                                    const colorMap: Record<string, string> = {
+                                      overview: '#3B82F6',
+                                      explanation: '#8B5CF6',
+                                      keyConcepts: '#8B5CF6',
+                                      formulaExplanation: '#06B6D4',
+                                      derivation: '#FB923C',
+                                      assignment: '#F43F5E',
+                                      visualization: '#10B981',
+                                      diagrams: '#10B981',
+                                      quiz: '#F59E0B',
+                                      summary: '#ec4899',
+                                    };
+                                    return colorMap[activeSectionId || ''] || 'var(--text-secondary)'
+                                  })()}
+                                />
                               </MarkdownErrorBoundary>
                             )}
                             <span className="inline-block w-2.5 h-4 bg-gradient-to-t from-[#00f2fe] to-[#8b5cf6] animate-pulse ml-1 align-middle rounded-sm shadow-[0_0_8px_rgba(0,242,254,0.8)]" />
@@ -360,7 +377,24 @@ export const StreamingLesson = memo(function StreamingLesson({
                               <InteractiveQuiz content={currentSectionContent || safeAccumulatedContent} />
                             ) : (
                               <MarkdownErrorBoundary sectionId={activeSectionId}>
-                                <MarkdownRenderer content={currentSectionContent || safeAccumulatedContent} />
+                                <MarkdownRenderer 
+                                  content={currentSectionContent || safeAccumulatedContent} 
+                                  sectionColor={(() => {
+                                    const colorMap: Record<string, string> = {
+                                      overview: '#3B82F6',
+                                      explanation: '#8B5CF6',
+                                      keyConcepts: '#8B5CF6',
+                                      formulaExplanation: '#06B6D4',
+                                      derivation: '#FB923C',
+                                      assignment: '#F43F5E',
+                                      visualization: '#10B981',
+                                      diagrams: '#10B981',
+                                      quiz: '#F59E0B',
+                                      summary: '#ec4899',
+                                    };
+                                    return colorMap[activeSectionId || ''] || 'var(--text-secondary)'
+                                  })()}
+                                />
                               </MarkdownErrorBoundary>
                             )}
                           </div>
