@@ -6,7 +6,7 @@ export function HistoryModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full min-h-[60vh] flex flex-col items-center justify-center my-24 group cursor-pointer overflow-hidden" onClick={() => navigate('/history')}>
+    <div className="relative w-full col-span-12 md:col-span-6 h-[350px] flex flex-col items-center justify-center my-0 group cursor-pointer overflow-hidden border border-rose-900/30 shadow-xl" onClick={() => navigate('/history')}>
       
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-rose-950/10 pointer-events-none z-0" />
@@ -17,14 +17,14 @@ export function HistoryModule() {
           <Activity className="w-3 h-3" />
           Activity Tracker
         </div>
-        <h2 className="text-4xl md:text-5xl font-black text-[#F8FAFC] mb-4">Timeline</h2>
-        <p className="text-[#94A3B8] text-base leading-relaxed">
+        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Timeline</h2>
+        <p className="text-[#94A3B8] text-xs leading-relaxed">
           Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically across your learning orbit.
         </p>
       </div>
 
       {/* Massive Horizontal Timeline / Orbit Visualization */}
-      <div className="relative w-full h-[300px] z-10 flex items-center justify-center">
+      <div className="relative w-full flex-1 z-10 flex items-center justify-center scale-75">
          
          {/* The Main Axis (Horizontal glowing line) */}
          <div className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-rose-500 to-transparent shadow-[0_0_20px_#f43f5e] opacity-50" />

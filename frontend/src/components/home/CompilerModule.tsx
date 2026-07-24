@@ -6,7 +6,7 @@ export function CompilerModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full min-h-[70vh] flex flex-col md:flex-row items-center justify-center my-24 gap-12 group cursor-pointer" onClick={() => navigate('/compiler-lab')}>
+    <div className="relative w-full col-span-12 md:col-span-7 h-[400px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#060814]/40 border border-emerald-500/10 p-6 shadow-xl" onClick={() => navigate('/compiler-lab')}>
       
       {/* Left Text Content */}
       <div className="flex-1 max-w-md pl-6 md:pl-12 z-20">
@@ -14,8 +14,8 @@ export function CompilerModule() {
           <Terminal className="w-3 h-3" />
           Execution Environment
         </div>
-        <h2 className="text-4xl md:text-5xl font-black text-[#F8FAFC] mb-4">Compiler Lab</h2>
-        <p className="text-[#94A3B8] text-base leading-relaxed mb-8">
+        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Compiler Lab</h2>
+        <p className="text-[#94A3B8] text-xs leading-relaxed mb-4">
           Write, debug, and test code instantly with an embedded AI orchestrator monitoring your logic paths.
         </p>
         <button className="flex items-center gap-2 text-emerald-400 font-bold hover:text-emerald-300 transition-colors uppercase tracking-widest text-sm">
@@ -24,7 +24,7 @@ export function CompilerModule() {
       </div>
 
       {/* Right Visual: Floating VS Code IDE */}
-      <div className="relative flex-1 w-full max-w-3xl pr-6 md:pr-12 perspective-[1000px] z-10">
+      <div className="relative flex-1 w-full max-w-sm pr-2 perspective-[1000px] z-10 scale-[0.85] origin-right">
          <motion.div 
            animate={{ rotateY: [-5, 5, -5], rotateX: [2, -2, 2] }}
            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}

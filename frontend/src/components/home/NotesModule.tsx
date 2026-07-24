@@ -6,7 +6,7 @@ export function NotesModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full min-h-[70vh] flex flex-col md:flex-row items-center justify-center my-24 gap-12 group cursor-pointer overflow-hidden" onClick={() => navigate('/notes')}>
+    <div className="relative w-full col-span-12 md:col-span-6 h-[350px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer overflow-hidden border border-amber-900/30 shadow-xl" onClick={() => navigate('/notes')}>
       
       {/* Background Corkboard/Grid effect constrained to this module area */}
       <div className="absolute inset-0 bg-[#1c1917] pointer-events-none z-0 overflow-hidden border-y border-amber-900/20">
@@ -19,8 +19,8 @@ export function NotesModule() {
           <PenTool className="w-3 h-3" />
           Engineering Notebook
         </div>
-        <h2 className="text-4xl md:text-5xl font-black text-[#F8FAFC] mb-4">Digital Pad</h2>
-        <p className="text-[#94A3B8] text-base leading-relaxed mb-8">
+        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Digital Pad</h2>
+        <p className="text-[#94A3B8] text-xs leading-relaxed mb-4">
           Jot down logic, sketch architectural diagrams, and connect your freeform thoughts in an unstructured creative environment.
         </p>
         <button className="flex items-center gap-2 text-amber-400 font-bold hover:text-amber-300 transition-colors uppercase tracking-widest text-sm">
@@ -29,7 +29,7 @@ export function NotesModule() {
       </div>
 
       {/* Right Visual: Messy Desk & Sticky Notes */}
-      <div className="relative flex-1 w-full h-[500px] z-10 flex items-center justify-center">
+      <div className="relative flex-1 w-full h-[350px] z-10 flex items-center justify-center scale-[0.65] origin-right">
          
          {/* Main Grid Paper Pad */}
          <div className="absolute w-[350px] h-[450px] bg-[#fffbeb] shadow-[20px_20px_60px_rgba(0,0,0,0.8)] rotate-2 group-hover:rotate-1 transition-transform duration-700">

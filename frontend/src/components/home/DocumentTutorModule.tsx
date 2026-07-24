@@ -6,7 +6,7 @@ export function DocumentTutorModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full min-h-[70vh] flex flex-col md:flex-row-reverse items-center justify-center my-24 gap-12 group cursor-pointer" onClick={() => navigate('/document-tutor')}>
+    <div className="relative w-full col-span-12 md:col-span-5 h-[400px] flex flex-col md:flex-row items-center justify-center my-0 gap-6 group cursor-pointer bg-[#060814]/40 border border-cyan-500/10 p-6 shadow-xl overflow-hidden" onClick={() => navigate('/document-tutor')}>
       
       {/* Right Text Content (Rendered on Left visually due to flex-row-reverse) */}
       <div className="flex-1 max-w-md pr-6 md:pr-12 z-20 text-right flex flex-col items-end">
@@ -14,8 +14,8 @@ export function DocumentTutorModule() {
           <BookOpen className="w-3 h-3" />
           Document Analysis
         </div>
-        <h2 className="text-4xl md:text-5xl font-black text-[#F8FAFC] mb-4">Doc Tutor</h2>
-        <p className="text-[#94A3B8] text-base leading-relaxed mb-8 text-right">
+        <h2 className="text-3xl font-black text-[#F8FAFC] mb-2">Doc Tutor</h2>
+        <p className="text-[#94A3B8] text-xs leading-relaxed mb-4 text-left">
           Extract deep insights from dense PDFs and automatically map them into interactive knowledge graphs for accelerated learning.
         </p>
         <button className="flex items-center gap-2 text-cyan-400 font-bold hover:text-cyan-300 transition-colors uppercase tracking-widest text-sm flex-row-reverse">
@@ -24,7 +24,7 @@ export function DocumentTutorModule() {
       </div>
 
       {/* Left Visual: Stacked PDF Sheets & Knowledge Graph */}
-      <div className="relative flex-1 w-full max-w-2xl h-[500px] perspective-[1200px] z-10 flex items-center justify-center">
+      <div className="relative flex-1 w-full max-w-[250px] h-[300px] perspective-[1200px] z-10 flex items-center justify-center scale-75 origin-left">
         
         {/* Knowledge Graph SVG Background */}
         <div className="absolute inset-0 opacity-40 group-hover:opacity-60 transition-opacity duration-700 pointer-events-none z-0">
