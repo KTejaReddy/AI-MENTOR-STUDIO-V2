@@ -59,87 +59,130 @@ function repairFlowchartNotes(code: string): string {
   if (!/^(?:flowchart|graph)\b/i.test(trimmed)) return code
   
   const lines = trimmed.split('\n')
-  let modified = false
+  let noteCounter = 0
+  let inNote = false
+  
   const result = lines.filter((line) => {
-    // Mermaid flowcharts do NOT support 'note right of' or 'note left of'
-    // We will just strip them to prevent the whole diagram from breaking.
-    if (/^\s*note\s+(right|left)\s+of\b/i.test(line)) {
-      modified = true
-      return false
-    }
-    // Also remove 'end note' if it's there
-    if (/^\s*end\s+note\b/i.test(line)) {
-      modified = true
-      return false
+    // Single line note: note right of A: text
+    const singleMatch = line.match(/^\s*note\s+(right|left)\s+of\s+([A-Za-z0-9_]+)\s*:\s*(.*)/i)
+    if (singleMatch) {
+      noteCounter++
+      return false // Handled in flatMap below if we used it, but filter drops it. Let's use map/filter combo.
     }
     return true
   })
-  return modified ? result.join('\n') : code
+  // Actually, let's use map to replace inline
+  const replaced = lines.flatMap(line => {
+    const singleMatch = line.match(/^\s*note\s+(right|left)\s+of\s+([A-Za-z0-9_]+)\s*:\s*(.*)/i)
+    if (singleMatch) {
+      noteCounter++
+      return [
+        `    Note_${noteCounter}["${singleMatch[3].replace(/"/g, "'")}"]`,
+        `    ${singleMatch[2]} -.-> Note_${noteCounter}`
+      ]
+    }
+    
+    // Multi-line note start
+    const multiMatch = line.match(/^\s*note\s+(right|left)\s+of\s+([A-Za-z0-9_]+)\s*$/i)
+    if (multiMatch) {
+      inNote = true
+      return [] // Strip
+    }
+    
+    if (inNote) {
+      if (/^\s*end\s+note\b/i.test(line)) {
+        inNote = false
+      }
+      return [] // Strip content for now to avoid parsing complex multi-lines
+    }
+    
+    return [line]
+  })
+  
+  return replaced.join('\n')
 }
 
-function repairMermaid(code: string): string {
-  const lines = code.split('\n')
+function runMermaidSanitizer(code: string): string {
+  let s = code;
+  s = s.replace(/<\/?(?:think|integer|string|object|array|json)\b[^>]*>/gi, '')
+  s = s.replace(/^```(?:mermaid)?\s*/i, '').replace(/\s*```$/, '')
+  
+  const lines = s.split('\n')
   const repaired = lines.map((line) => {
-    let s = line.trim() // Aggressive trim for Mermaid blocks
-    s = s.replace(/<\/?(?:think|integer|string|object|array|json)\b[^>]*>/gi, '')
-    s = s.replace(/^```(?:mermaid)?\s*/i, '').replace(/\s*```$/, '')
-    s = s.replace(/--(?![>-])/g, '-->')
-    s = s.replace(/\|>/g, '|')
-    s = s.replace(/(-[-=]|>|={2,}|-\.->)\s+\|/g, (m) => m.replace(/\s+\|/, '|'))
+    let l = line.trim()
     
-    // Unescape markdown and KaTeX artifacts often injected inside mermaid
-    s = s.replace(/\\([`*_{}[\]()#+\-.!])/g, '$1')
-    s = s.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    s = s.replace(/\\\( /g, '(').replace(/ \\\)/g, ')')
-    s = s.replace(/\\\[ /g, '[').replace(/ \\\]/g, ']')
+    // 1. Fix trailing > on labeled edges (A -->|text|> B becomes A -->|text| B)
+    l = l.replace(/\|([^|]+)\|>/g, '|$1|')
+    
+    // 2. Fix duplicated arrows (e.g. -----> becomes -->)
+    l = l.replace(/-{3,}>/g, '-->')
+    l = l.replace(/={3,}>/g, '==>')
+    l = l.replace(/\.-{2,}>/g, '-.->')
+    l = l.replace(/--(?![>-])/g, '-->')
+    
+    // 3. Fix backwards labeled edges or weird |>
+    l = l.replace(/\|>/g, '|')
+    
+    // 4. Remove empty nodes (e.g., A[])
+    if (l.match(/^[A-Za-z0-9_]+\s*\[\s*\]$/)) return ''
+    
+    // 5. Unescape markdown and KaTeX artifacts
+    l = l.replace(/\\([`*_{}[\]()#+\-.!])/g, '$1')
+    l = l.replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    l = l.replace(/\\\( /g, '(').replace(/ \\\)/g, ')')
+    l = l.replace(/\\\[ /g, '[').replace(/ \\\]/g, ']')
 
-    // Quote labels containing parentheses, brackets or special characters
-    s = s.replace(/(\w+)\[([^\]"]*[(){}:|][^\]"]*)\]\s*/g, (_m, id, label) => `${id}["${label.replace(/"/g, "'")}"] `)
-    return s
-  }).join('\n').trim()
+    // 6. Quote labels containing parentheses, brackets or special characters
+    l = l.replace(/(\w+)\[([^\]"]*[(){}:|][^\]"]*)\]\s*/g, (_m, id, label) => `${id}["${label.replace(/"/g, "'")}"] `)
+    
+    return l
+  }).filter(l => l.length > 0).join('\n')
+  
   return repairFlowchartNotes(repairStateDiagramNotes(repaired))
 }
 
 const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [failed, setFailed] = useState(false)
+  const [repairedSource, setRepairedSource] = useState(chart)
 
   useEffect(() => {
     if (!ref.current || !chart || !chart.trim()) return
     setFailed(false)
+    setRepairedSource(chart)
     const container = ref.current
     container.innerHTML = ''
+    
     const tryRender = async (code: string, isRetry: boolean) => {
       const id = `md-mermaid-${Math.random().toString(36).slice(2, 9)}`
       
       try {
-        // ALWAYS pre-parse. If invalid, this throws immediately before ever touching the DOM.
         await mermaid.parse(code)
-        
         const { svg } = await mermaid.render(id, code)
         if (container) {
           container.innerHTML = svg
           const svgEl = container.querySelector('svg')
           if (svgEl) { svgEl.style.maxWidth = '100%'; svgEl.style.height = 'auto' }
           
-          // Secondary fallback check just in case mermaid.render injects an error without throwing
           if (svgEl && (
               svgEl.innerHTML.includes('Syntax error') || 
               svgEl.classList.contains('error-icon') || 
-              svgEl.id === 'error' ||
-              svgEl.querySelector('.error-icon') ||
-              svgEl.innerHTML.includes('error-text')
+              svgEl.id === 'error'
           )) {
              setFailed(true)
+             setRepairedSource(code)
              return
           }
         }
       } catch (e) {
-        if (!isRetry) await tryRender(repairMermaid(code), true)
-        else {
+        if (!isRetry) {
+          const sanitized = runMermaidSanitizer(code)
+          await tryRender(sanitized, true)
+        } else {
           console.error('[Mermaid Rendering Failed]')
           console.error('Diagram Source:\n' + code)
           console.error('Exception:\n', e)
+          setRepairedSource(code)
           setFailed(true)
         }
       }
@@ -151,9 +194,9 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   if (failed) {
     return (
       <div className="my-6">
-        <p className="text-sm italic text-slate-400 mb-2">Diagram unavailable. Showing source:</p>
+        <p className="text-sm italic text-slate-400 mb-2">Diagram unavailable. Showing repaired source:</p>
         <pre className="p-4 bg-gray-900 rounded-lg overflow-x-auto text-sm text-gray-300">
-          <code>{chart}</code>
+          <code>{repairedSource}</code>
         </pre>
       </div>
     )

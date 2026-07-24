@@ -689,11 +689,15 @@ Use Mermaid.js syntax for ALL diagrams. Every diagram must be syntactically vali
 Explain what each diagram shows. No emojis.
 
 CRITICAL — Mermaid syntax rules:
-- `|label|` must be followed immediately by the destination node ID, never by `>`.
+- Use Mermaid v11 flowchart syntax only.
+- Do NOT use `note right of` or `note left of` inside `graph` or `flowchart`.
+- Edge syntax must always be `A --> B` or `A -->|label| B`.
+- Never generate `-->|label|>` — this is always invalid.
+- Never generate unsupported flowchart syntax.
+- `|label|` must be followed immediately by the destination node ID.
 - CORRECT: `A -->|Addition| B`
 - WRONG:   `A -->|Addition|> B`
 - Valid arrow forms: `-->`, `==>`, `-.->`, `--text-->`, `==text==>`, `-.text.->`
-- Never use `|>` — this is always invalid Mermaid syntax.
 
 stateDiagram-v2 specific rules (MUST follow):
 - Use `note right of <state>` / `note left of <state>` with `end note` on its own line.
@@ -727,6 +731,7 @@ Requirements:
 - Test your Mermaid syntax mentally — no syntax errors.
 - CRITICAL: `|label|` must be followed immediately by the destination node ID, never by `>`.
   CORRECT: `A -->|Addition| B`   WRONG: `A -->|Addition|> B`
+- Use Mermaid v11 flowchart syntax only. Do NOT use `note right of` or `note left of` inside `graph` or `flowchart`.
 - stateDiagram-v2: Use `note right of <state> ... end note` blocks. NEVER use `note "text"`.
 - Never invent Mermaid syntax — use only official, documented syntax.
 - Validate every diagram against Mermaid documentation before returning it.
