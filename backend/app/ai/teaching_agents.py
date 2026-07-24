@@ -579,10 +579,11 @@ class ExplanationAgent(TeachingAgent):
                     "5. FORMULA EXPLANATION — Break down the core formulas component by component."
                 )),
                 ("examples", [6, 7], (
-                    "6. STEP-BY-STEP DERIVATION — Step-by-step mathematical or physical derivation. Show exact working.\n"
-                    "7. SOLVED NUMERICAL EXAMPLE — A complete, real-world numerical example."
+                    "6. CONCEPT MAP / FLOWCHART — A clean, valid Mermaid.js diagram enclosed in a ```mermaid block.\n"
+                    "7. STEP-BY-STEP DERIVATION — Step-by-step mathematical or physical derivation. Show exact working.\n"
+                    "8. SOLVED NUMERICAL EXAMPLE — A complete, real-world numerical example."
                 )),
-                ("advanced", [8, 9, 10], (
+                ("advanced", [9, 10, 11], (
                     "8. ENGINEERING APPLICATIONS — Real-world engineering use cases.\n"
                     "9. COMMON MISTAKES — Format: > **\u274c Common Mistake:** ... and how to fix it.\n"
                     "10. INTERVIEW & EXAM PERSPECTIVE — University exam questions, grading criteria, and traps."
@@ -601,7 +602,7 @@ class ExplanationAgent(TeachingAgent):
                 )),
                 ("theory", [4, 5, 6], (
                     "4. FORMAL DEFINITION — Rigorous technical definition.\n"
-                    "5. ER DIAGRAM / ARCHITECTURE — A clean, valid Mermaid.js diagram.\n"
+                    "5. ER DIAGRAM / ARCHITECTURE — A clean, valid Mermaid.js diagram enclosed in a ```mermaid block.\n"
                     "6. SQL SYNTAX — Detailed syntax breakdown with variations."
                 )),
                 ("examples", [7, 8, 9], (
@@ -628,7 +629,7 @@ class ExplanationAgent(TeachingAgent):
                 )),
                 ("theory", [4, 5, 6], (
                     "4. FORMAL DEFINITION — Rigorous technical definition.\n"
-                    "5. PROTOCOL DIAGRAM — A clean, valid Mermaid.js sequence diagram (e.g. TCP handshake).\n"
+                    "5. PROTOCOL DIAGRAM — A clean, valid Mermaid.js sequence diagram enclosed in a ```mermaid block.\n"
                     "6. PACKET FLOW — Step-by-step trace of how the packet traverses the network."
                 )),
                 ("examples", [7, 8], (
@@ -654,8 +655,9 @@ class ExplanationAgent(TeachingAgent):
                 )),
                 ("theory", [4, 5, 6], (
                     "4. FORMAL DEFINITION — Rigorous engineering definition.\n"
-                    "5. SYNTAX & VARIATIONS — Detailed syntax breakdown with a comparison table.\n"
-                    "6. HOW IT WORKS INTERNALLY — CPU cycles, compiler behavior, or thread safety."
+                    "5. ARCHITECTURE / FLOWCHART — A clean, valid Mermaid.js diagram enclosed in a ```mermaid block.\n"
+                    "6. SYNTAX & VARIATIONS — Detailed syntax breakdown with a comparison table.\n"
+                    "7. HOW IT WORKS INTERNALLY — CPU cycles, compiler behavior, or thread safety."
                 )),
                 ("examples", [7, 8, 9], (
                     "7. STEP-BY-STEP EXAMPLE — A complete, real-world, copy-paste-runnable example.\n"
@@ -683,7 +685,7 @@ class ExplanationAgent(TeachingAgent):
                 ("theory", [4, 5, 6], (
                     "4. FORMAL DEFINITION — Rigorous engineering definition.\n"
                     "5. MENTAL MODEL — \"Here is how you should picture {topic} in your mind...\"\n"
-                    "6. VISUAL DIAGRAM — A detailed, clean, valid Mermaid.js diagram."
+                    "6. VISUAL DIAGRAM — A detailed, clean, valid Mermaid.js diagram enclosed in a ```mermaid block."
                 )),
                 ("examples", [7, 8], (
                     "7. STEP-BY-STEP EXAMPLE — A complete, real-world, descriptive example.\n"

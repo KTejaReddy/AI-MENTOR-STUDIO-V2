@@ -127,8 +127,11 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
   if (!chart || !chart.trim()) return null
   if (failed) {
     return (
-      <div className="my-6 border-l-4 border-blue-500/30 bg-[#0B0F19] px-4 py-3 rounded-r-xl">
-        <p className="text-sm italic text-slate-400">Visual diagram omitted for clarity.</p>
+      <div className="my-6">
+        <p className="text-sm italic text-slate-400 mb-2">Diagram unavailable. Showing source:</p>
+        <pre className="p-4 bg-gray-900 rounded-lg overflow-x-auto text-sm text-gray-300">
+          <code>{chart}</code>
+        </pre>
       </div>
     )
   }
