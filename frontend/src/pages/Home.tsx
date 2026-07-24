@@ -1,229 +1,296 @@
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { InteractiveKnowledgeGraph } from '@/components/ui/InteractiveKnowledgeGraph'
-import { Brain, Code2, FileText, Bookmark, Edit3, Clock, Sparkles, ArrowRight, Play, Cpu } from 'lucide-react'
+import { Brain, Code2, FileText, Bookmark, Edit3, Clock, Sparkles, Play, Cpu, Network } from 'lucide-react'
+import { useRef } from 'react'
 
 export function Home() {
   const navigate = useNavigate()
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Parallax effects
+  const { scrollYProgress } = useScroll({ target: containerRef })
+  const yHero = useTransform(scrollYProgress, [0, 1], [0, 300])
+  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   return (
-    <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-none relative bg-[#030303] text-white">
+    <div ref={containerRef} className="h-full overflow-y-auto overflow-x-hidden scrollbar-none relative bg-[#01030B] text-white perspective-[2000px]">
       
-      {/* ─── GLOBAL NOISE ──────────────────────────────────────────────────────── */}
-      <div className="fixed inset-0 pointer-events-none z-50 opacity-[0.03] mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
-
-      {/* ─── PREMIUM HERO ──────────────────────────────────────────────────────── */}
-      <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-20 pb-32 px-6 overflow-hidden">
+      {/* ─── GLOBAL DEEP SPACE CANVAS & PARTICLES ─────────────────────────────── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#0a1930_0%,#01030B_100%)] opacity-80" />
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.04%22/%3E%3C/svg%3E')] mix-blend-overlay" />
         
-        {/* Background Visual Centerpiece */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-60">
+        {/* Animated Grid Floor */}
+        <div 
+          className="absolute bottom-0 left-0 right-0 h-[40vh] border-t border-cyan-900/30 bg-[linear-gradient(to_right,#083344_1px,transparent_1px),linear-gradient(to_bottom,#083344_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_100%_at_50%_0%,#000_70%,transparent_100%)] opacity-20"
+          style={{ transform: 'perspective(500px) rotateX(60deg) scale(2)', transformOrigin: 'top' }}
+        />
+      </div>
+
+      {/* ─── HUD HERO (ENGINEERING CONSTELLATION) ─────────────────────────────── */}
+      <motion.section 
+        style={{ y: yHero, opacity: opacityHero }}
+        className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-32 px-6 z-10"
+      >
+        {/* Massive 3D Glass Circle Centerpiece */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-cyan-500/10 bg-cyan-900/5 backdrop-blur-[2px] pointer-events-none flex items-center justify-center shadow-[0_0_100px_rgba(6,182,212,0.05)]" style={{ transform: 'translateZ(-100px)' }}>
+          <div className="w-[600px] h-[600px] rounded-full border border-blue-500/20 bg-blue-900/5 animate-[spin_60s_linear_infinite]" />
+          <div className="absolute w-[400px] h-[400px] rounded-full border border-purple-500/20 bg-purple-900/5 animate-[spin_40s_linear_infinite_reverse]" />
+        </div>
+
+        <div className="absolute inset-0 flex items-center justify-center opacity-70 scale-125 pointer-events-none">
           <InteractiveKnowledgeGraph />
         </div>
         
-        {/* Ambient Hero Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-b from-[#8B5CF6]/10 to-transparent blur-[120px] rounded-full pointer-events-none" />
-
-        {/* Foreground Content */}
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-20 text-center max-w-5xl mx-auto flex flex-col items-center justify-center"
-        >
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/10 text-xs font-bold tracking-widest uppercase text-white/70 mb-10 shadow-2xl"
-          >
-            <Sparkles className="w-4 h-4 text-[#8B5CF6]" />
-            The Next Generation Learning Engine
-          </motion.div>
+        <div className="relative z-20 text-center max-w-5xl mx-auto flex flex-col items-center justify-center" style={{ transform: 'translateZ(50px)' }}>
+          <div className="inline-flex items-center gap-3 px-6 py-2 bg-[#05131e]/80 backdrop-blur-md border border-cyan-500/30 text-xs font-bold tracking-widest uppercase text-cyan-400 mb-12 shadow-[0_0_20px_rgba(6,182,212,0.2)]" style={{ clipPath: 'polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)' }}>
+            <Sparkles className="w-4 h-4" />
+            Mentor OS v2.0
+          </div>
           
-          <h1 className="text-5xl md:text-7xl lg:text-[6rem] font-black tracking-tighter leading-[1.05] mb-8 drop-shadow-2xl">
-            Learn Anything.<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-white/90 to-white/50">
-              Visually.
+          <h1 className="text-6xl md:text-[7rem] font-black tracking-tighter leading-[0.9] mb-8 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+            ENGINEER<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
+              TOMORROW
             </span>
           </h1>
           
-          <p className="text-lg md:text-2xl text-white/50 max-w-2xl font-medium leading-relaxed mb-16">
-            An intelligent workspace that transforms complex topics into interactive, personalized learning experiences.
+          <p className="text-xl md:text-2xl text-cyan-100/50 max-w-2xl font-medium leading-relaxed mb-16 tracking-wide">
+            Initialize learning sequence. Construct robust mental models through advanced holographic tutoring.
           </p>
 
+          {/* HUD Styled CTA */}
           <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => navigate('/learn', { state: { openGenerate: true } })}
-            className="group relative inline-flex items-center gap-4 px-10 py-5 rounded-full bg-white text-black font-bold text-lg overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.2)]"
+            className="group relative inline-flex items-center gap-6 px-12 py-6 bg-[#04111d] text-cyan-300 font-black text-xl uppercase tracking-widest overflow-hidden border border-cyan-400/50 shadow-[0_0_40px_rgba(6,182,212,0.3)] transition-all hover:shadow-[0_0_60px_rgba(6,182,212,0.5)] hover:bg-[#082236]"
+            style={{ clipPath: 'polygon(20px 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%, 0 20px)' }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/5 to-transparent -translate-x-full group-hover:animate-shimmer" />
-            <Play className="w-5 h-5 fill-current" />
-            Generate New Lesson
-            <ArrowRight className="w-5 h-5 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+            {/* Glowing Corner Accents */}
+            <span className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-cyan-300" />
+            <span className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-cyan-300" />
+            
+            {/* Scanning Line */}
+            <div className="absolute inset-0 w-full h-[2px] bg-cyan-400/50 group-hover:animate-scanline blur-[1px]" />
+            
+            <Play className="w-6 h-6 fill-cyan-400 group-hover:scale-125 transition-transform" />
+            Generate Core Lesson
           </motion.button>
-        </motion.div>
-      </section>
-
-      {/* ─── FEATURE MAGAZINE GRID ────────────────────────────────────────────── */}
-      <section className="relative z-20 px-6 md:px-12 max-w-[1600px] mx-auto pb-40">
-        
-        {/* Row 1: Split Layout (AI Tutor & Compiler) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 mb-6 md:mb-8">
-          
-          {/* AI Tutor (Purple) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            onClick={() => navigate('/learn', { state: { openGenerate: true } })}
-            className="lg:col-span-8 group relative overflow-hidden rounded-[2.5rem] bg-[#0c0514] border border-[#8B5CF6]/10 cursor-pointer min-h-[400px] flex flex-col justify-end p-10 md:p-14"
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-[#8B5CF6]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            
-            {/* Neural Graphics */}
-            <div className="absolute top-0 right-0 w-full h-full opacity-30 group-hover:opacity-50 transition-opacity duration-700 pointer-events-none overflow-hidden">
-              <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full border border-[#8B5CF6]/20 group-hover:scale-110 transition-transform duration-[2s] ease-out" />
-              <div className="absolute -top-10 -right-10 w-[300px] h-[300px] rounded-full border border-[#8B5CF6]/30 group-hover:scale-110 transition-transform duration-[1.5s] ease-out delay-75" />
-              <div className="absolute top-10 right-10 w-[150px] h-[150px] rounded-full border border-[#8B5CF6]/40 bg-[#8B5CF6]/5 group-hover:scale-110 transition-transform duration-1000 ease-out delay-150 backdrop-blur-3xl" />
-              <Cpu className="absolute top-[85px] right-[85px] w-12 h-12 text-[#8B5CF6]/40 group-hover:text-[#8B5CF6]/80 transition-colors duration-700" />
-            </div>
-
-            <div className="relative z-10 w-full max-w-xl">
-              <div className="w-14 h-14 rounded-2xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(139,92,246,0.15)] group-hover:shadow-[0_0_40px_rgba(139,92,246,0.3)] transition-shadow">
-                <Brain className="w-7 h-7 text-[#8B5CF6]" />
-              </div>
-              <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-4 group-hover:text-[#8B5CF6] transition-colors duration-500">The AI Tutor</h2>
-              <p className="text-lg text-white/50 font-medium">Dynamically generates lessons, visualizations, and interactive quizzes tailored to your exact learning requirements.</p>
-            </div>
-          </motion.div>
-
-          {/* Compiler Lab (Emerald) */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            onClick={() => navigate('/compiler-lab')}
-            className="lg:col-span-4 group relative overflow-hidden rounded-[2.5rem] bg-[#021008] border border-[#10B981]/10 cursor-pointer min-h-[400px] flex flex-col justify-end p-10"
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-[#10B981]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            
-            {/* Code Graphic */}
-            <div className="absolute top-10 right-10 flex flex-col gap-2 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
-              <div className="w-32 h-2 bg-[#10B981] rounded-full" />
-              <div className="w-24 h-2 bg-[#10B981] rounded-full ml-4" />
-              <div className="w-40 h-2 bg-[#10B981] rounded-full ml-8" />
-              <div className="w-20 h-2 bg-[#10B981] rounded-full ml-4" />
-            </div>
-
-            <div className="relative z-10 w-full">
-              <div className="w-12 h-12 rounded-2xl bg-[#10B981]/10 border border-[#10B981]/20 flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] transition-shadow">
-                <Code2 className="w-6 h-6 text-[#10B981]" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-3 group-hover:text-[#10B981] transition-colors duration-500">Compiler Lab</h2>
-              <p className="text-sm text-white/50 font-medium">Write, test, and debug code instantly in a robust environment.</p>
-            </div>
-          </motion.div>
         </div>
+      </motion.section>
 
-        {/* Row 2: Three Column Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+      {/* ─── HUD ENVIRONMENTS (BREAKING THE GRID) ─────────────────────────────── */}
+      <section className="relative z-20 px-6 md:px-12 max-w-[1800px] mx-auto pb-60 pt-20" style={{ transformStyle: 'preserve-3d' }}>
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24">
           
-          {/* Document Tutor (Blue) */}
+          {/* AI TUTOR: PURPLE UNIVERSE (Curved Panel) */}
           <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            onClick={() => navigate('/document-tutor')}
-            className="group relative overflow-hidden rounded-[2.5rem] bg-[#020b17] border border-[#3B82F6]/10 cursor-pointer min-h-[320px] flex flex-col justify-between p-10"
+            initial={{ opacity: 0, rotateX: 20, y: 100 }}
+            whileInView={{ opacity: 1, rotateX: 0, y: 0 }}
+            viewport={{ once: true, margin: "-20%" }}
+            transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+            onClick={() => navigate('/learn', { state: { openGenerate: true } })}
+            className="md:col-span-12 relative h-[500px] cursor-pointer group flex items-center p-12 overflow-hidden"
+            style={{ 
+              borderRadius: '100px 0 100px 0',
+              background: 'linear-gradient(135deg, rgba(20,5,40,0.9) 0%, rgba(5,2,10,0.9) 100%)',
+              border: '1px solid rgba(139,92,246,0.2)',
+              boxShadow: 'inset 0 0 100px rgba(139,92,246,0.1), 0 20px 50px rgba(0,0,0,0.5)'
+            }}
           >
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-[#3B82F6]/10 to-transparent rounded-bl-full" />
+            {/* Floating Purple Nebula */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(139,92,246,0.15),transparent_50%)] group-hover:scale-110 transition-transform duration-[3s]" />
             
-            <div className="w-12 h-12 rounded-2xl bg-[#3B82F6]/10 border border-[#3B82F6]/20 flex items-center justify-center relative z-10">
-              <FileText className="w-6 h-6 text-[#3B82F6]" />
+            {/* Animated Nodes (SVG) */}
+            <div className="absolute right-0 w-1/2 h-full opacity-40 group-hover:opacity-80 transition-opacity duration-1000">
+              <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <circle cx="20" cy="30" r="2" fill="#C084FC" className="animate-pulse" />
+                <circle cx="80" cy="20" r="1.5" fill="#C084FC" className="animate-pulse" style={{ animationDelay: '1s' }} />
+                <circle cx="60" cy="80" r="2.5" fill="#C084FC" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+                <circle cx="30" cy="70" r="1" fill="#C084FC" className="animate-pulse" style={{ animationDelay: '1.5s' }} />
+                <path d="M20 30 Q 50 10 80 20 T 60 80 T 30 70 Z" fill="none" stroke="rgba(192,132,252,0.2)" strokeWidth="0.5" />
+                <path d="M20 30 L 60 80 M 80 20 L 30 70" fill="none" stroke="rgba(192,132,252,0.2)" strokeWidth="0.5" strokeDasharray="2 2" className="animate-[dash_20s_linear_infinite]" />
+              </svg>
             </div>
-            <div className="relative z-10 mt-12">
-              <h2 className="text-2xl font-black text-white tracking-tight mb-2 group-hover:text-[#3B82F6] transition-colors">Doc Tutor</h2>
-              <p className="text-sm text-white/50 font-medium">Extract knowledge directly from PDFs and research papers.</p>
+
+            <div className="relative z-10 w-full max-w-2xl">
+              <div className="w-16 h-16 bg-[#1a0b2e] border border-purple-500/30 flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(139,92,246,0.4)]" style={{ transform: 'rotate(45deg)' }}>
+                <Brain className="w-8 h-8 text-purple-400" style={{ transform: 'rotate(-45deg)' }} />
+              </div>
+              <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter mb-6 drop-shadow-[0_0_15px_rgba(139,92,246,0.5)]">AI ORACLE</h2>
+              <p className="text-xl text-purple-200/60 font-medium tracking-wide max-w-xl">
+                Advanced neural generation protocol. Synthesizing personalized learning architectures in real-time.
+              </p>
             </div>
           </motion.div>
 
-          {/* Bookmarks (Rose) & Notes (Amber) Split vertically */}
-          <div className="grid grid-rows-2 gap-6 md:gap-8">
-            <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              onClick={() => navigate('/bookmarks')}
-              className="group relative overflow-hidden rounded-3xl bg-[#140306] border border-[#F43F5E]/10 cursor-pointer h-full flex flex-col justify-center p-8"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#F43F5E]/5 to-transparent" />
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-[#F43F5E]/10 flex items-center justify-center shrink-0">
-                  <Bookmark className="w-5 h-5 text-[#F43F5E]" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-[#F43F5E] transition-colors">Bookmarks</h3>
-                  <p className="text-xs text-white/50 mt-1">Saved formulas & derivations.</p>
-                </div>
+          {/* COMPILER: GREEN DIGITAL LAB (Trapezoid HUD) */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-20%" }}
+            transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+            onClick={() => navigate('/compiler-lab')}
+            className="md:col-span-7 relative h-[450px] cursor-pointer group p-10 overflow-hidden flex flex-col justify-end"
+            style={{ 
+              clipPath: 'polygon(0 0, 100% 40px, 100% 100%, 0 calc(100% - 40px))',
+              background: 'linear-gradient(180deg, rgba(2,20,10,0.9) 0%, rgba(1,10,5,0.9) 100%)',
+              boxShadow: 'inset 0 0 50px rgba(16,185,129,0.1)'
+            }}
+          >
+            {/* Outer Border simulation since clip-path cuts borders */}
+            <div className="absolute inset-[1px] pointer-events-none" style={{ clipPath: 'polygon(0 0, 100% 40px, 100% 100%, 0 calc(100% - 40px))', background: 'rgba(16,185,129,0.2)', zIndex: -1 }} />
+            <div className="absolute inset-[2px] pointer-events-none" style={{ clipPath: 'polygon(0 0, 100% 40px, 100% 100%, 0 calc(100% - 40px))', background: 'linear-gradient(180deg, rgba(2,20,10,1) 0%, rgba(1,10,5,1) 100%)', zIndex: -1 }} />
+
+            {/* Matrix Lines */}
+            <div className="absolute top-0 right-10 bottom-0 w-32 flex justify-between opacity-20 group-hover:opacity-40 transition-opacity">
+              <div className="w-px h-full bg-gradient-to-b from-transparent via-emerald-500 to-transparent animate-[scanline_3s_linear_infinite]" />
+              <div className="w-px h-full bg-gradient-to-b from-transparent via-emerald-500 to-transparent animate-[scanline_4s_linear_infinite_reverse]" />
+              <div className="w-px h-full bg-gradient-to-b from-transparent via-emerald-500 to-transparent animate-[scanline_2.5s_linear_infinite]" />
+            </div>
+
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-emerald-950/50 border border-emerald-500/30 text-emerald-400 mb-6">
+                <Code2 className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-widest">Compiler Matrix</span>
               </div>
+              <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4 text-shadow-[0_0_20px_rgba(16,185,129,0.5)]">EXECUTION CORE</h2>
+              <p className="text-emerald-200/50 font-medium max-w-sm tracking-wide">Secure isolated runtime environment. Compile and deploy code nodes instantly.</p>
+            </div>
+          </motion.div>
+
+          {/* DOC TUTOR: BLUE HOLOGRAPHIC (Layered sheets) */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-20%" }}
+            transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+            onClick={() => navigate('/document-tutor')}
+            className="md:col-span-5 relative h-[450px] cursor-pointer group p-10 overflow-hidden flex flex-col justify-start"
+            style={{ 
+              clipPath: 'polygon(0 40px, 100% 0, 100% calc(100% - 40px), 0 100%)',
+              background: 'linear-gradient(180deg, rgba(5,15,35,0.9) 0%, rgba(2,5,15,0.9) 100%)',
+            }}
+          >
+            {/* Outer Border simulation */}
+            <div className="absolute inset-[1px] pointer-events-none" style={{ clipPath: 'polygon(0 40px, 100% 0, 100% calc(100% - 40px), 0 100%)', background: 'rgba(59,130,246,0.2)', zIndex: -1 }} />
+            <div className="absolute inset-[2px] pointer-events-none" style={{ clipPath: 'polygon(0 40px, 100% 0, 100% calc(100% - 40px), 0 100%)', background: 'linear-gradient(180deg, rgba(5,15,35,1) 0%, rgba(2,5,15,1) 100%)', zIndex: -1 }} />
+
+            {/* Holographic Sheets */}
+            <div className="absolute bottom-10 right-10 w-40 h-40">
+              <div className="absolute inset-0 border border-blue-500/30 bg-blue-500/5 rotate-6 group-hover:rotate-12 transition-transform duration-500 shadow-[0_0_20px_rgba(59,130,246,0.2)]" />
+              <div className="absolute inset-0 border border-blue-500/30 bg-blue-500/10 -rotate-3 group-hover:-rotate-6 transition-transform duration-500 backdrop-blur-sm flex items-center justify-center">
+                <FileText className="w-12 h-12 text-blue-400 opacity-50" />
+              </div>
+            </div>
+
+            <div className="relative z-10 mt-16">
+              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter mb-4 text-shadow-[0_0_20px_rgba(59,130,246,0.5)]">DATA INGEST</h2>
+              <p className="text-blue-200/50 font-medium max-w-[200px] tracking-wide">Extract telemetry and logic directly from raw documentation.</p>
+            </div>
+          </motion.div>
+
+          {/* HEXAGONAL ROW (Bookmarks & Notes) */}
+          <div className="md:col-span-12 flex flex-col md:flex-row gap-8 justify-center items-center py-10">
+            
+            {/* Bookmarks (Rose Ribbons) */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-20%" }}
+              transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+              onClick={() => navigate('/bookmarks')}
+              className="relative w-[300px] h-[350px] cursor-pointer group flex flex-col items-center justify-center text-center p-8"
+              style={{
+                clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                background: 'rgba(20,5,10,0.8)',
+                boxShadow: 'inset 0 0 50px rgba(244,63,94,0.1)'
+              }}
+            >
+              <div className="absolute inset-[1px] pointer-events-none" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'rgba(244,63,94,0.3)', zIndex: -1 }} />
+              <div className="absolute inset-[2px] pointer-events-none" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'rgba(20,5,10,1)', zIndex: -1 }} />
+              
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.2),transparent_60%)] group-hover:scale-125 transition-transform duration-700" />
+              
+              <Bookmark className="w-10 h-10 text-rose-500 mb-6 drop-shadow-[0_0_15px_rgba(244,63,94,0.8)]" />
+              <h3 className="text-2xl font-black text-white tracking-widest uppercase mb-2">Memory</h3>
+              <p className="text-xs text-rose-200/50 uppercase tracking-widest font-bold">Saved Vectors</p>
             </motion.div>
 
+            {/* Intersecting graphic */}
+            <div className="hidden md:flex flex-col items-center gap-2 opacity-30">
+              <div className="w-16 h-px bg-white" />
+              <Network className="w-6 h-6 text-white" />
+              <div className="w-16 h-px bg-white" />
+            </div>
+
+            {/* Notes (Amber Core) */}
             <motion.div 
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-20%" }}
+              transition={{ type: 'spring', stiffness: 50, damping: 20, delay: 0.1 }}
               onClick={() => navigate('/notes')}
-              className="group relative overflow-hidden rounded-3xl bg-[#140a00] border border-[#F59E0B]/10 cursor-pointer h-full flex flex-col justify-center p-8"
+              className="relative w-[300px] h-[350px] cursor-pointer group flex flex-col items-center justify-center text-center p-8"
+              style={{
+                clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+                background: 'rgba(20,15,5,0.8)',
+                boxShadow: 'inset 0 0 50px rgba(245,158,11,0.1)'
+              }}
             >
-              <div className="absolute right-0 top-0 bottom-0 w-8 flex flex-col justify-evenly py-4 opacity-10">
-                {[...Array(6)].map((_, i) => <div key={i} className="w-3 h-3 rounded-full bg-[#F59E0B]" />)}
-              </div>
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-10 h-10 rounded-xl bg-[#F59E0B]/10 flex items-center justify-center shrink-0">
-                  <Edit3 className="w-5 h-5 text-[#F59E0B]" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white group-hover:text-[#F59E0B] transition-colors">Notebook</h3>
-                  <p className="text-xs text-white/50 mt-1">Your personal workspace.</p>
-                </div>
-              </div>
+              <div className="absolute inset-[1px] pointer-events-none" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'rgba(245,158,11,0.3)', zIndex: -1 }} />
+              <div className="absolute inset-[2px] pointer-events-none" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)', background: 'rgba(20,15,5,1)', zIndex: -1 }} />
+              
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(245,158,11,0.15),transparent_60%)] group-hover:opacity-100 transition-opacity duration-700 animate-pulse" />
+              
+              <Edit3 className="w-10 h-10 text-amber-500 mb-6 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]" />
+              <h3 className="text-2xl font-black text-white tracking-widest uppercase mb-2">Logs</h3>
+              <p className="text-xs text-amber-200/50 uppercase tracking-widest font-bold">Local Storage</p>
             </motion.div>
           </div>
 
-          {/* History (Cyan) */}
+          {/* HISTORY: CYAN TIMELINE (Glass Tunnel) */}
           <motion.div 
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 100 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            viewport={{ once: true, margin: "-20%" }}
+            transition={{ type: 'spring', stiffness: 50, damping: 20 }}
             onClick={() => navigate('/history')}
-            className="group relative overflow-hidden rounded-[2.5rem] bg-[#011014] border border-[#06B6D4]/10 cursor-pointer min-h-[320px] flex flex-col p-10"
+            className="md:col-span-12 relative h-[300px] cursor-pointer group flex items-center justify-center overflow-hidden"
+            style={{ 
+              borderRadius: '200px',
+              background: 'linear-gradient(90deg, rgba(1,10,15,0.9) 0%, rgba(5,20,30,0.9) 50%, rgba(1,10,15,0.9) 100%)',
+              borderTop: '1px solid rgba(6,182,212,0.3)',
+              borderBottom: '1px solid rgba(6,182,212,0.3)',
+            }}
           >
-            <div className="absolute right-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-20">
-              <div className="w-3 h-3 rounded-full border-2 border-[#06B6D4]" />
-              <div className="w-0.5 h-16 bg-[#06B6D4]/30" />
-              <div className="w-3 h-3 rounded-full border-2 border-[#06B6D4]" />
-              <div className="w-0.5 h-16 bg-[#06B6D4]/30" />
-              <div className="w-3 h-3 rounded-full bg-[#06B6D4]" />
+            {/* Orbital Rings */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-30 group-hover:opacity-60 transition-opacity duration-1000">
+              <div className="w-[1000px] h-[300px] border border-cyan-500/50 rounded-[100%] animate-[spin_20s_linear_infinite]" style={{ transform: 'rotateX(75deg)' }} />
+              <div className="absolute w-[800px] h-[200px] border border-cyan-500/30 rounded-[100%] animate-[spin_15s_linear_infinite_reverse]" style={{ transform: 'rotateX(75deg)' }} />
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center relative z-10 mb-auto">
-              <Clock className="w-6 h-6 text-[#06B6D4]" />
-            </div>
-            <div className="relative z-10 mt-12">
-              <h2 className="text-2xl font-black text-white tracking-tight mb-2 group-hover:text-[#06B6D4] transition-colors">History</h2>
-              <p className="text-sm text-white/50 font-medium max-w-[200px]">Review your complete learning journey over time.</p>
+            <div className="relative z-10 flex flex-col items-center text-center">
+              <Clock className="w-12 h-12 text-cyan-400 mb-4 drop-shadow-[0_0_20px_rgba(6,182,212,0.8)] group-hover:scale-125 transition-transform duration-500" />
+              <h2 className="text-4xl font-black text-white tracking-widest uppercase drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]">Archive</h2>
             </div>
           </motion.div>
-        </div>
 
+        </div>
       </section>
+
+      <style>{`
+        @keyframes scanline {
+          0% { transform: translateY(-100%); }
+          100% { transform: translateY(100%); }
+        }
+        @keyframes dash {
+          to { stroke-dashoffset: -100; }
+        }
+      `}</style>
     </div>
   )
 }
