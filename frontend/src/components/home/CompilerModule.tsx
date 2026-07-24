@@ -1,0 +1,119 @@
+import { motion } from 'framer-motion'
+import { Terminal, Code2, Folder, FileJson, Play } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+
+export function CompilerModule() {
+  const navigate = useNavigate()
+
+  return (
+    <div className="relative w-full min-h-[70vh] flex flex-col md:flex-row items-center justify-center my-24 gap-12 group cursor-pointer" onClick={() => navigate('/compiler-lab')}>
+      
+      {/* Left Text Content */}
+      <div className="flex-1 max-w-md pl-6 md:pl-12 z-20">
+        <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-900/30 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] uppercase mb-6 rounded-sm">
+          <Terminal className="w-3 h-3" />
+          Execution Environment
+        </div>
+        <h2 className="text-4xl md:text-5xl font-black text-[#F8FAFC] mb-4">Compiler Lab</h2>
+        <p className="text-[#94A3B8] text-base leading-relaxed mb-8">
+          Write, debug, and test code instantly with an embedded AI orchestrator monitoring your logic paths.
+        </p>
+        <button className="flex items-center gap-2 text-emerald-400 font-bold hover:text-emerald-300 transition-colors uppercase tracking-widest text-sm">
+          Open Lab <Play className="w-4 h-4 fill-emerald-400" />
+        </button>
+      </div>
+
+      {/* Right Visual: Floating VS Code IDE */}
+      <div className="relative flex-1 w-full max-w-3xl pr-6 md:pr-12 perspective-[1000px] z-10">
+         <motion.div 
+           animate={{ rotateY: [-5, 5, -5], rotateX: [2, -2, 2] }}
+           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+           className="w-full bg-[#1e1e1e] rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.8),_0_0_0_1px_rgba(255,255,255,0.1)] flex flex-col overflow-hidden"
+         >
+           {/* Window Header */}
+           <div className="h-10 bg-[#323233] border-b border-[#1e1e1e] flex items-center px-4 justify-between">
+              <div className="flex items-center gap-2">
+                 <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                 <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                 <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+              </div>
+              <div className="text-[11px] text-[#cccccc] font-sans">workspace - CompilerLab</div>
+              <div className="w-10" />
+           </div>
+
+           <div className="flex h-[350px]">
+              {/* Activity Bar */}
+              <div className="w-12 bg-[#333333] border-r border-[#1e1e1e] flex flex-col items-center py-4 gap-6 text-[#858585]">
+                 <Folder className="w-5 h-5 text-white" />
+                 <Code2 className="w-5 h-5 hover:text-white transition-colors" />
+                 <Terminal className="w-5 h-5 hover:text-white transition-colors" />
+              </div>
+
+              {/* Sidebar */}
+              <div className="w-48 bg-[#252526] border-r border-[#1e1e1e] py-2 px-4 hidden md:block">
+                 <div className="text-[10px] font-bold text-[#cccccc] uppercase tracking-widest mb-3">Explorer</div>
+                 <div className="flex flex-col gap-1 text-[13px] text-[#cccccc]">
+                    <div className="flex items-center gap-2 py-1"><Folder className="w-4 h-4 text-[#dcb67a]" /> src</div>
+                    <div className="flex items-center gap-2 py-1 pl-4 bg-[#37373d] text-white"><Code2 className="w-4 h-4 text-[#519aba]" /> main.rs</div>
+                    <div className="flex items-center gap-2 py-1 pl-4"><FileJson className="w-4 h-4 text-[#cbcb41]" /> cargo.toml</div>
+                 </div>
+              </div>
+
+              {/* Editor Area */}
+              <div className="flex-1 bg-[#1e1e1e] flex flex-col relative">
+                 {/* Tabs */}
+                 <div className="h-9 bg-[#2d2d2d] flex items-center">
+                    <div className="px-4 h-full bg-[#1e1e1e] text-[#cccccc] text-[13px] flex items-center border-t-2 border-[#519aba]">
+                       main.rs
+                    </div>
+                 </div>
+                 
+                 {/* Code */}
+                 <div className="flex-1 p-4 font-mono text-[13px] leading-loose text-[#d4d4d4] overflow-hidden relative">
+                    <div className="absolute left-0 top-0 bottom-0 w-10 bg-[#1e1e1e] text-[#858585] text-right pr-4 pt-4 select-none">
+                       1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7
+                    </div>
+                    <div className="pl-12">
+                       <p><span className="text-[#569cd6]">fn</span> <span className="text-[#dcdcaa]">main</span>() {'{'}</p>
+                       <p className="pl-6"><span className="text-[#569cd6]">let</span> <span className="text-[#4fc1ff]">system_active</span> = <span className="text-[#569cd6]">true</span>;</p>
+                       <p className="pl-6 text-[#6a9955]">// AI monitoring initialized</p>
+                       <p className="pl-6"><span className="text-[#c586c0]">if</span> system_active {'{'}</p>
+                       <p className="pl-12"><span className="text-[#4ec9b0]">println!</span>(<span className="text-[#ce9178]">"Compilation ready."</span>);</p>
+                       <p className="pl-6">{'}'}</p>
+                       <p>{'}'}</p>
+                    </div>
+                    
+                    {/* Blinking cursor */}
+                    <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }} className="absolute left-[80px] top-[182px] w-[2px] h-[16px] bg-[#cccccc]" />
+                 </div>
+
+                 {/* Split Terminal Pane */}
+                 <div className="h-[120px] bg-[#1e1e1e] border-t border-[#444444] p-2 flex flex-col">
+                    <div className="text-[11px] text-[#cccccc] uppercase tracking-widest px-2 pb-2">Terminal</div>
+                    <div className="flex-1 bg-[#1e1e1e] font-mono text-[12px] px-2 text-[#cccccc]">
+                       <p className="text-emerald-400">➜  workspace git:(main) ✗ cargo run</p>
+                       <p className="text-[#858585]">   Compiling workspace v0.1.0</p>
+                       <p className="text-[#858585]">    Finished dev [unoptimized + debuginfo] target(s)</p>
+                       <p className="text-white mt-1">Compilation ready.</p>
+                    </div>
+                 </div>
+              </div>
+           </div>
+           
+           {/* Status Bar */}
+           <div className="h-6 bg-[#007acc] text-white text-[10px] flex items-center px-3 justify-between">
+              <div className="flex items-center gap-3">
+                 <span>main*</span>
+                 <span>0 Errors, 0 Warnings</span>
+              </div>
+              <div className="flex items-center gap-3">
+                 <span>UTF-8</span>
+                 <span>Rust</span>
+              </div>
+           </div>
+         </motion.div>
+      </div>
+
+    </div>
+  )
+}
