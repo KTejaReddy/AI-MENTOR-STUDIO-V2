@@ -1,8 +1,25 @@
 import { useNavigate } from 'react-router-dom'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Brain, Code2, BookOpen, Edit3, Clock, Play, Terminal, Layers, ChevronRight, Activity, Globe, Database, Cpu, Network, Book } from 'lucide-react'
 
-// --- SVGs for Features ---
+// --- Unique Custom Shapes via CSS Clip Path and Tricks ---
+
+// 1. AI Tutor: Cut Corners Hero Card
+const HeroCardStyle = {
+  clipPath: 'polygon(40px 0, 100% 0, 100% calc(100% - 60px), calc(100% - 60px) 100%, 0 100%, 0 40px)',
+}
+
+// 2. Compiler: Diagonal Top Edge Card
+const CompilerCardStyle = {
+  clipPath: 'polygon(0 40px, 100% 0, 100% 100%, 0 100%)',
+}
+
+// 3. History: Leaf Curved Card (CSS Border Radius trick instead of clip-path for curves)
+const HistoryCardStyle = {
+  borderRadius: '0 60px 0 60px',
+}
+
+// --- Inner Artwork SVGs ---
 const NeuralNetwork = () => (
   <svg viewBox="0 0 800 800" className="w-full h-full text-indigo-500/20 pointer-events-none" fill="none" stroke="currentColor">
     <motion.path 
@@ -25,8 +42,8 @@ const FloatingTerminal = () => (
   <motion.div 
     animate={{ y: [-5, 5, -5] }}
     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-    className="w-[500px] h-[300px] rounded-2xl bg-[#022C22]/80 backdrop-blur-md border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] overflow-hidden relative"
-    style={{ transform: "perspective(1000px) rotateY(-15deg) rotateX(10deg)" }}
+    className="w-[90%] md:w-[500px] h-[300px] bg-[#022C22]/80 backdrop-blur-md border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] relative"
+    style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }} // Micro cut corners
   >
     <div className="h-8 bg-black/40 border-b border-emerald-500/20 flex items-center px-4 gap-1.5">
       <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
@@ -39,68 +56,14 @@ const FloatingTerminal = () => (
       <p className="pl-4">let mut sys = OS::new();</p>
       <p className="pl-4 mt-2">sys.boot();</p>
       <p>{'}'}</p>
-      <div className="mt-4 flex items-center gap-2">
-         <span className="text-emerald-500">root@compiler:~$</span>
-         <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-4 bg-emerald-400" />
-      </div>
     </div>
   </motion.div>
 )
 
-const StaggeredDocuments = () => (
-  <div className="relative w-[400px] h-[400px] flex items-center justify-center">
-    <motion.div 
-      animate={{ y: [-10, 10, -10], rotateZ: [-10, -5, -10] }}
-      transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute w-full h-full bg-[#083344]/60 backdrop-blur-md border border-cyan-500/20 rounded-xl p-8 opacity-50 shadow-2xl"
-    />
-    <motion.div 
-      animate={{ y: [-5, 5, -5], rotateZ: [-2, 2, -2] }}
-      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      className="absolute w-[90%] h-[110%] bg-[#020617]/90 backdrop-blur-xl border-2 border-cyan-400/40 rounded-xl p-8 shadow-[0_0_50px_rgba(34,211,238,0.2)] ml-8 mt-12"
-    >
-      <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-6">
-        <BookOpen className="w-6 h-6 text-cyan-400" />
-      </div>
-      <div className="w-3/4 h-5 bg-cyan-400/40 rounded mb-6" />
-      <div className="space-y-4">
-        <div className="w-full h-3 bg-cyan-400/20 rounded" />
-        <div className="w-4/5 h-3 bg-cyan-400/20 rounded" />
-        <div className="w-full h-3 bg-cyan-400/20 rounded" />
-        <div className="w-2/3 h-3 bg-cyan-400/20 rounded mt-6" />
-      </div>
-      {/* Knowledge graph overlay */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-50 z-20">
-         <line x1="50" y1="250" x2="200" y2="350" stroke="#22D3EE" strokeWidth="2" />
-         <circle cx="50" cy="250" r="5" fill="#22D3EE" />
-         <circle cx="200" cy="350" r="6" fill="#22D3EE" />
-      </svg>
-    </motion.div>
-  </div>
-)
-
-const OrganicNotesSVG = () => (
-  <svg viewBox="0 0 800 800" className="w-full h-full pointer-events-none absolute z-0 opacity-40">
-    <motion.path 
-      animate={{ 
-         d: [
-           "M200,200 C300,100 500,100 600,200 C700,300 700,500 600,600 C500,700 300,700 200,600 C100,500 100,300 200,200 Z",
-           "M250,150 C400,150 550,200 650,300 C750,400 650,600 550,650 C400,700 250,650 150,550 C50,450 100,250 250,150 Z",
-           "M200,200 C300,100 500,100 600,200 C700,300 700,500 600,600 C500,700 300,700 200,600 C100,500 100,300 200,200 Z"
-         ]
-      }}
-      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-      fill="rgba(245, 158, 11, 0.05)"
-      stroke="rgba(245, 158, 11, 0.2)"
-      strokeWidth="2"
-    />
-  </svg>
-)
-
 const WindingTimeline = () => (
-  <svg viewBox="0 0 1200 200" className="w-full h-full pointer-events-none absolute z-0">
+  <svg viewBox="0 0 800 200" className="w-full h-full pointer-events-none">
     <motion.path
-      d="M0,100 C300,200 500,0 800,100 C1000,150 1100,50 1200,100"
+      d="M0,100 C200,200 400,0 600,100 C700,150 750,50 800,100"
       fill="none"
       stroke="rgba(244, 63, 94, 0.3)"
       strokeWidth="4"
@@ -109,17 +72,16 @@ const WindingTimeline = () => (
       transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
     />
     <circle cx="300" cy="150" r="12" fill="#4C0519" stroke="#F43F5E" strokeWidth="3" />
-    <circle cx="800" cy="100" r="16" fill="#4C0519" stroke="#F43F5E" strokeWidth="4" />
+    <circle cx="600" cy="100" r="16" fill="#4C0519" stroke="#F43F5E" strokeWidth="4" />
   </svg>
 )
 
 // --- Shared Magazine Thumbnail ---
 function MagazineThumbnail({ title, category, colorClass, gradientClass, heightClass = 'h-[250px]' }: { title: string, category: string, colorClass: string, gradientClass: string, heightClass?: string }) {
   return (
-    <div className={`relative w-full ${heightClass} rounded-2xl overflow-hidden group cursor-pointer`}>
+    <div className={`relative w-full ${heightClass} rounded-2xl overflow-hidden group cursor-pointer border border-white/10`}>
       <div className={`absolute inset-0 opacity-20 group-hover:opacity-40 transition-opacity duration-500 ${gradientClass}`} />
       <div className="absolute inset-0 bg-[#02040A]/60 group-hover:bg-[#02040A]/40 transition-colors duration-500" />
-      <div className="absolute inset-0 border border-white/5 group-hover:border-white/20 transition-colors duration-500 rounded-2xl z-10" />
       
       <div className="absolute bottom-0 left-0 p-6 z-20 w-full">
         <div className={`text-[10px] font-bold uppercase tracking-widest mb-2 ${colorClass}`}>{category}</div>
@@ -133,7 +95,7 @@ export function Home() {
   const navigate = useNavigate()
 
   return (
-    <div className="bg-[#02040A] text-white overflow-x-hidden relative font-sans selection:bg-indigo-500/30">
+    <div className="bg-[#02040A] text-white overflow-x-hidden relative font-sans selection:bg-indigo-500/30 min-h-screen">
       
       {/* GLOBAL AMBIENT NOISE */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -141,137 +103,163 @@ export function Home() {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(to_bottom,black_30%,transparent_100%)]" />
       </div>
 
-      {/* ─── SECTION 1: AI TUTOR HERO (45-55vh) ─── */}
-      <section className="relative w-full min-h-[50vh] flex items-center pt-24 pb-16 px-6 md:px-12 max-w-[1400px] mx-auto z-10">
-        <div className="absolute top-0 right-[-10%] w-[60%] h-[120%] pointer-events-none z-0">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] blur-[80px]" />
-          <NeuralNetwork />
+      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-32 pt-16 flex flex-col gap-16">
+
+        {/* ─── SECTION 1: AI TUTOR HERO CARD (Cut Corners) ─── */}
+        <div className="relative w-full group cursor-pointer shadow-2xl" onClick={() => navigate('/learn', { state: { openGenerate: true } })}>
+           {/* Glow behind the card */}
+           <div className="absolute inset-0 bg-indigo-500/20 blur-[100px] z-0" />
+           
+           <div 
+             className="relative z-10 w-full bg-[#060814]/90 backdrop-blur-xl border border-indigo-500/30 overflow-hidden flex flex-col md:flex-row items-center justify-between p-10 md:p-16 min-h-[50vh]"
+             style={HeroCardStyle}
+           >
+             {/* Abstract Neural background inside card */}
+             <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none opacity-40">
+                <NeuralNetwork />
+             </div>
+             
+             <div className="relative z-20 max-w-2xl">
+               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 font-bold tracking-widest text-[10px] uppercase mb-8 shadow-lg">
+                 <Brain className="w-3 h-3" />
+                 AI Tutor Environment
+               </div>
+               
+               <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.95] mb-6 text-[#F8FAFC]">
+                 Learn <br />
+                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400">
+                   Smarter.
+                 </span>
+               </h1>
+               
+               <p className="text-lg md:text-xl text-[#94A3B8] font-medium leading-relaxed max-w-lg mb-8">
+                 Generate incredibly detailed, personalized learning journeys instantly.
+               </p>
+
+               <button className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-extrabold text-sm md:text-base rounded-lg overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] transition-all">
+                 <Play className="w-4 h-4 fill-black" />
+                 Initialize Lesson
+               </button>
+             </div>
+           </div>
+           
+           {/* Card Border highlight overlay (since clip-path hides standard borders, we use a trick or keep it simple) */}
+           <div className="absolute inset-0 border-2 border-indigo-500/50 pointer-events-none z-20" style={HeroCardStyle} />
         </div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 max-w-2xl"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/40 border border-indigo-500/20 text-indigo-300 font-bold tracking-widest text-[10px] uppercase mb-8 backdrop-blur-md">
-            <Brain className="w-3 h-3" />
-            AI Tutor Environment
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.95] mb-6 text-[#F8FAFC]">
-            Learn <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400">
-              Smarter.
-            </span>
-          </h1>
-          
-          <p className="text-lg md:text-xl text-[#94A3B8] font-medium leading-relaxed max-w-lg mb-8">
-            Generate incredibly detailed, personalized learning journeys instantly.
-          </p>
-
-          <button 
-            onClick={() => navigate('/learn', { state: { openGenerate: true } })}
-            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-extrabold text-sm md:text-base rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] transition-all hover:scale-105 duration-300"
-          >
-            <Play className="w-4 h-4 fill-black" />
-            Initialize Lesson
-            <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
-        </motion.div>
-      </section>
-
-      {/* ─── SECTION 2: FEATURE SCENES (NO BOXES) ─── */}
-      <div className="relative z-10 w-full overflow-hidden">
-        
-        {/* COMPILER SCENE (Diagonal Slice) */}
-        <section className="relative w-full py-32 mb-16 group cursor-pointer" onClick={() => navigate('/compiler-lab')}>
-           <div className="absolute inset-0 bg-[#064E3B]/10 [clip-path:polygon(0_15%,100_0%,100_85%,0_100%)] group-hover:bg-[#064E3B]/20 transition-colors duration-700 z-0" />
-           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,rgba(16,185,129,0.05)_0%,transparent_60%)] pointer-events-none z-0 blur-3xl" />
+        {/* ─── SECTION 2: FEATURE EXPERIENCES (The Card Family) ─── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-20">
            
-           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row-reverse items-center justify-between gap-12 relative z-10">
-              <div className="flex-1 w-full text-right flex flex-col items-end">
-                <div className="w-16 h-16 rounded-[2rem] bg-[#022C22] border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]">
-                  <Terminal className="w-8 h-8" />
-                </div>
-                <h2 className="text-5xl font-black text-[#F8FAFC] mb-4 tracking-tight">Compiler Lab</h2>
-                <p className="text-xl text-[#94A3B8] font-medium leading-relaxed mb-6 max-w-md">
-                  Write, debug, and test code instantly with embedded AI tracking.
-                </p>
+           {/* COMPILER CARD (Diagonal Split) */}
+           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/compiler-lab')}>
+              <div 
+                className="absolute inset-0 bg-[#022C22]/80 backdrop-blur-md overflow-hidden flex flex-col justify-end p-10"
+                style={CompilerCardStyle}
+              >
+                 <div className="absolute top-0 right-0 w-[80%] h-full pointer-events-none opacity-30 flex items-start justify-end p-8">
+                    <FloatingTerminal />
+                 </div>
+                 
+                 <div className="relative z-10 max-w-sm mt-auto">
+                    <div className="w-12 h-12 rounded-lg bg-[#064E3B] border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400">
+                      <Terminal className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Compiler Lab</h2>
+                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Write, debug, and test code instantly with embedded AI tracking.</p>
+                 </div>
               </div>
-              <div className="flex-1 w-full flex justify-start pointer-events-none">
-                 <FloatingTerminal />
-              </div>
+              <div className="absolute inset-0 border border-emerald-500/40 pointer-events-none z-20" style={CompilerCardStyle} />
            </div>
-        </section>
 
-        {/* DOC TUTOR SCENE (Offset Radial Float) */}
-        <section className="relative w-full py-24 mb-16 group cursor-pointer" onClick={() => navigate('/document-tutor')}>
-           <div className="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[radial-gradient(circle,rgba(6,182,212,0.05)_0%,transparent_50%)] pointer-events-none z-0 blur-[100px] group-hover:opacity-100 opacity-60 transition-opacity duration-700" />
-           
-           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
-              <div className="flex-1 w-full">
-                <div className="w-16 h-16 rounded-[2rem] bg-[#083344] border border-cyan-500/30 flex items-center justify-center mb-6 text-cyan-400 shadow-[0_0_40px_rgba(6,182,212,0.3)]">
-                  <BookOpen className="w-8 h-8" />
-                </div>
-                <h2 className="text-5xl font-black text-[#F8FAFC] mb-4 tracking-tight">Doc Tutor</h2>
-                <p className="text-xl text-[#94A3B8] font-medium leading-relaxed mb-6 max-w-md">
-                  Extract deep insights from PDFs and instantly map them into dynamic knowledge graphs.
-                </p>
-              </div>
-              <div className="flex-1 w-full flex justify-end pointer-events-none">
-                 <StaggeredDocuments />
-              </div>
-           </div>
-        </section>
+           {/* DOC TUTOR CARD (Folded Paper Style) */}
+           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/document-tutor')}>
+              {/* Main Paper Layer */}
+              <div className="absolute inset-0 bg-[#083344]/80 backdrop-blur-md border border-cyan-500/40 overflow-hidden flex flex-col p-10 z-10"
+                   style={{ clipPath: 'polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 0 100%)' }}>
+                 
+                 <div className="absolute right-[-10%] bottom-[-10%] w-[300px] h-[300px] pointer-events-none opacity-40">
+                    {/* Abstract overlapping papers */}
+                    <div className="absolute inset-10 bg-cyan-900/50 border border-cyan-400/30 rotate-12" />
+                    <div className="absolute inset-10 bg-cyan-950/80 border border-cyan-400/50 -rotate-6" />
+                    <div className="absolute inset-14 bg-transparent border-2 border-dashed border-cyan-300/30 rotate-3 flex items-center justify-center">
+                       <BookOpen className="w-12 h-12 text-cyan-500/30" />
+                    </div>
+                 </div>
 
-        {/* NOTES SCENE (Organic SVG Blob) */}
-        <section className="relative w-full py-32 mb-16 group cursor-pointer" onClick={() => navigate('/notes')}>
-           <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
-              <OrganicNotesSVG />
-           </div>
-           
-           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center relative z-10">
-              <div className="w-20 h-20 rounded-full bg-[#451A03] border border-amber-500/30 flex items-center justify-center text-amber-400 mb-8 shadow-[0_0_60px_rgba(245,158,11,0.3)] relative">
-                <Edit3 className="w-10 h-10 relative z-10" />
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-10px] border border-amber-500/30 rounded-full border-dashed" />
+                 <div className="relative z-10 max-w-sm">
+                    <div className="w-12 h-12 rounded-lg bg-[#083344] border border-cyan-500/30 flex items-center justify-center mb-6 text-cyan-400">
+                      <BookOpen className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Doc Tutor</h2>
+                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Extract deep insights from PDFs and instantly map them into dynamic knowledge graphs.</p>
+                 </div>
               </div>
-              <h2 className="text-5xl font-black text-[#F8FAFC] mb-4 tracking-tight">Digital Pad</h2>
-              <p className="text-xl text-[#94A3B8] font-medium leading-relaxed max-w-lg">
-                Jot down logic, architectural diagrams, and freeform text seamlessly in a distraction-free organic workspace.
-              </p>
+              
+              {/* Folded Corner Element */}
+              <div className="absolute top-0 right-0 w-[40px] h-[40px] bg-cyan-800/80 border-b border-l border-cyan-400/50 z-20 shadow-[-5px_5px_10px_rgba(0,0,0,0.5)]"
+                   style={{ clipPath: 'polygon(100% 0, 0 100%, 100% 100%)' }} />
            </div>
-        </section>
 
-        {/* HISTORY SCENE (Winding Curve) */}
-        <section className="relative w-full pt-32 pb-16 group cursor-pointer" onClick={() => navigate('/history')}>
-           <div className="absolute top-0 left-0 w-[150vw] h-full pointer-events-none z-0 ml-[-25vw]">
-              <WindingTimeline />
-           </div>
-           <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-rose-950/10 to-transparent pointer-events-none z-0" />
-           
-           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center relative z-10">
-              <div className="w-16 h-16 rounded-[2rem] bg-[#4C0519] border border-rose-500/30 flex items-center justify-center mb-6 text-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.3)]">
-                <Clock className="w-8 h-8" />
+           {/* NOTES CARD (Notebook Stacked Layers) */}
+           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/notes')}>
+              {/* Bottom Layer */}
+              <div className="absolute top-4 left-4 right-[-4px] bottom-[-4px] bg-[#291002] border border-amber-900/50 rounded-xl z-0" />
+              {/* Middle Layer */}
+              <div className="absolute top-2 left-2 right-[-2px] bottom-[-2px] bg-[#3B1703] border border-amber-700/50 rounded-xl z-0" />
+              
+              {/* Top Layer */}
+              <div className="absolute inset-0 bg-[#451A03]/90 backdrop-blur-md border-2 border-amber-500/40 rounded-xl overflow-hidden flex flex-col p-10 z-10">
+                 
+                 {/* Binding lines */}
+                 <div className="absolute left-6 top-0 bottom-0 w-1 bg-amber-900/50 border-r border-amber-500/20" />
+                 
+                 <div className="absolute right-10 bottom-10 w-[200px] h-[150px] bg-yellow-600/20 border border-yellow-500/30 rotate-6 shadow-lg pointer-events-none flex items-center justify-center">
+                    <Edit3 className="w-10 h-10 text-yellow-500/20" />
+                 </div>
+
+                 <div className="relative z-10 max-w-sm pl-8">
+                    <div className="w-12 h-12 rounded-lg bg-[#78350F] border border-amber-500/30 flex items-center justify-center mb-6 text-amber-400">
+                      <Edit3 className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Digital Pad</h2>
+                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Jot down logic, architectural diagrams, and freeform text seamlessly.</p>
+                 </div>
               </div>
-              <h2 className="text-4xl font-black text-[#F8FAFC] mb-4 tracking-tight">Engineering Timeline</h2>
-              <p className="text-lg text-[#94A3B8] font-medium leading-relaxed max-w-lg">
-                Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically.
-              </p>
            </div>
-        </section>
 
-      </div>
+           {/* HISTORY CARD (Timeline Leaf Curve) */}
+           <div className="relative group cursor-pointer shadow-xl h-[450px]" onClick={() => navigate('/history')}>
+              <div 
+                className="absolute inset-0 bg-[#4C0519]/80 backdrop-blur-md border border-rose-500/40 overflow-hidden flex flex-col justify-end p-10 z-10"
+                style={HistoryCardStyle}
+              >
+                 <div className="absolute right-0 top-[20%] w-[60%] h-[100px] pointer-events-none opacity-50">
+                    <WindingTimeline />
+                 </div>
 
-      <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-32">
-        {/* ─── SECTION 3: CONTINUE LEARNING ─── */}
-        <section className="py-16 relative z-20">
+                 <div className="relative z-10 max-w-sm mt-auto">
+                    <div className="w-12 h-12 rounded-lg bg-[#881337] border border-rose-500/30 flex items-center justify-center mb-6 text-rose-400">
+                      <Clock className="w-6 h-6" />
+                    </div>
+                    <h2 className="text-3xl font-black text-[#F8FAFC] mb-3">Timeline</h2>
+                    <p className="text-[#94A3B8] text-sm leading-relaxed mb-4">Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically.</p>
+                 </div>
+              </div>
+           </div>
+
+        </div>
+
+        {/* ─── SECTION 3: CONTINUE LEARNING (Tech Panel Style) ─── */}
+        <section className="relative z-20 mt-8">
           <div className="flex items-center gap-4 mb-8">
             <h2 className="text-2xl font-black text-white">Continue Learning</h2>
             <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
           </div>
           
-          <div className="w-full relative rounded-[2rem] bg-[#060814]/80 backdrop-blur-md border border-white/10 p-8 md:p-10 flex flex-col md:flex-row gap-10 items-center overflow-hidden">
+          <div 
+            className="w-full relative bg-[#060814]/80 backdrop-blur-md border border-white/20 p-10 flex flex-col md:flex-row gap-10 items-center overflow-hidden"
+            style={{ clipPath: 'polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px))' }} // Hexagonal panel cut
+          >
             <div className="absolute left-0 top-0 bottom-0 w-1/3 bg-gradient-to-r from-indigo-500/10 to-transparent pointer-events-none" />
             
             <div className="flex-1 relative z-10">
@@ -281,7 +269,6 @@ export function Home() {
                 You were studying the CAP Theorem and Paxos consensus algorithms. Ready to dive back into the derivation?
               </p>
               
-              {/* Progress Timeline */}
               <div className="flex items-center gap-3 w-full max-w-md mb-8">
                 <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
                    <div className="h-full bg-indigo-500 rounded-full w-[60%] shadow-[0_0_10px_rgba(99,102,241,0.8)]" />
@@ -296,15 +283,13 @@ export function Home() {
             
             <div className="shrink-0 w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-indigo-500/20 flex items-center justify-center relative shadow-[0_0_50px_rgba(99,102,241,0.15)] z-10 bg-[#02040A]">
                <Activity className="w-12 h-12 md:w-16 md:h-16 text-indigo-400" />
-               {/* Orbit rings */}
                <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-10px] border border-indigo-500/30 rounded-full border-dashed" />
-               <motion.div animate={{ rotate: -360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-[-20px] border border-indigo-500/10 rounded-full" />
             </div>
           </div>
         </section>
 
         {/* ─── SECTION 4: RECENT LESSONS (Magazine) ─── */}
-        <section className="py-16 relative z-20">
+        <section className="relative z-20">
           <div className="flex items-center gap-4 mb-10">
             <h2 className="text-2xl font-black text-white">Recent Lessons</h2>
             <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
@@ -313,62 +298,26 @@ export function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             <div className="col-span-1 md:col-span-7">
-               <MagazineThumbnail 
-                 title="Understanding Quantum Entanglement in Computing" 
-                 category="Quantum Physics" 
-                 colorClass="text-fuchsia-400" 
-                 gradientClass="bg-gradient-to-br from-fuchsia-900 to-transparent"
-                 heightClass="h-[350px]"
-               />
+               <MagazineThumbnail title="Understanding Quantum Entanglement" category="Quantum Physics" colorClass="text-fuchsia-400" gradientClass="bg-gradient-to-br from-fuchsia-900 to-transparent" heightClass="h-[350px]" />
             </div>
             <div className="col-span-1 md:col-span-5 flex flex-col gap-6">
-               <MagazineThumbnail 
-                 title="Implementing Paxos in Rust" 
-                 category="Computer Science" 
-                 colorClass="text-emerald-400" 
-                 gradientClass="bg-gradient-to-br from-emerald-900 to-transparent"
-                 heightClass="h-[163px]"
-               />
-               <MagazineThumbnail 
-                 title="Navier-Stokes Equations Simplified" 
-                 category="Fluid Dynamics" 
-                 colorClass="text-cyan-400" 
-                 gradientClass="bg-gradient-to-br from-cyan-900 to-transparent"
-                 heightClass="h-[163px]"
-               />
+               <MagazineThumbnail title="Implementing Paxos in Rust" category="Computer Science" colorClass="text-emerald-400" gradientClass="bg-gradient-to-br from-emerald-900 to-transparent" heightClass="h-[163px]" />
+               <MagazineThumbnail title="Navier-Stokes Equations" category="Fluid Dynamics" colorClass="text-cyan-400" gradientClass="bg-gradient-to-br from-cyan-900 to-transparent" heightClass="h-[163px]" />
             </div>
             <div className="col-span-1 md:col-span-4">
-               <MagazineThumbnail 
-                 title="Thermodynamics Laws" 
-                 category="Physics" 
-                 colorClass="text-orange-400" 
-                 gradientClass="bg-gradient-to-br from-orange-900 to-transparent"
-                 heightClass="h-[250px]"
-               />
+               <MagazineThumbnail title="Thermodynamics Laws" category="Physics" colorClass="text-orange-400" gradientClass="bg-gradient-to-br from-orange-900 to-transparent" heightClass="h-[250px]" />
             </div>
             <div className="col-span-1 md:col-span-4">
-               <MagazineThumbnail 
-                 title="Graph Theory Algorithms" 
-                 category="Mathematics" 
-                 colorClass="text-blue-400" 
-                 gradientClass="bg-gradient-to-br from-blue-900 to-transparent"
-                 heightClass="h-[250px]"
-               />
+               <MagazineThumbnail title="Graph Theory Algorithms" category="Mathematics" colorClass="text-blue-400" gradientClass="bg-gradient-to-br from-blue-900 to-transparent" heightClass="h-[250px]" />
             </div>
             <div className="col-span-1 md:col-span-4">
-               <MagazineThumbnail 
-                 title="Transformers Architecture" 
-                 category="AI / ML" 
-                 colorClass="text-purple-400" 
-                 gradientClass="bg-gradient-to-br from-purple-900 to-transparent"
-                 heightClass="h-[250px]"
-               />
+               <MagazineThumbnail title="Transformers Architecture" category="AI / ML" colorClass="text-purple-400" gradientClass="bg-gradient-to-br from-purple-900 to-transparent" heightClass="h-[250px]" />
             </div>
           </div>
         </section>
 
         {/* ─── SECTION 5: EXPLORE SUBJECTS ─── */}
-        <section className="py-16 relative z-20">
+        <section className="relative z-20">
           <div className="flex items-center gap-4 mb-10">
             <h2 className="text-2xl font-black text-white">Explore Subjects</h2>
             <div className="h-[1px] flex-1 bg-gradient-to-r from-white/10 to-transparent" />
@@ -396,7 +345,7 @@ export function Home() {
         </section>
 
         {/* ─── SECTION 6: ABOUT FOOTER ─── */}
-        <footer className="mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-[#94A3B8] text-sm">
+        <footer className="mt-8 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-[#94A3B8] text-sm">
           <div className="flex items-center gap-2">
              <Layers className="w-5 h-5 text-indigo-400" />
              <span className="font-bold text-white tracking-wide">Mentor AI Studio</span>
