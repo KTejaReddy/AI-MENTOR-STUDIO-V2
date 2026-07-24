@@ -7,8 +7,6 @@ import mermaid from 'mermaid'
 import 'katex/dist/katex.min.css'
 import { AlertTriangle, Lightbulb, Info, CheckCircle2, ChevronRight, Hash, Quote } from 'lucide-react'
 
-mermaid.initialize({ startOnLoad: false })
-
 const darkThemeVariables = {
   primaryColor: '#0F172A',
   primaryTextColor: '#F8FAFC',
@@ -24,17 +22,15 @@ const darkThemeVariables = {
   fontSize: '14px',
 }
 
-function initMermaidTheme() {
-  mermaid.initialize({
-    startOnLoad: false,
-    securityLevel: 'loose',
-    theme: 'base',
-    themeVariables: darkThemeVariables,
-    flowchart: { useMaxWidth: true, htmlLabels: true },
-    sequence: { useMaxWidth: true },
-    gantt: { useMaxWidth: true },
-  })
-}
+mermaid.initialize({
+  startOnLoad: false,
+  securityLevel: 'loose',
+  theme: 'base',
+  themeVariables: darkThemeVariables,
+  flowchart: { useMaxWidth: true, htmlLabels: true },
+  sequence: { useMaxWidth: true },
+  gantt: { useMaxWidth: true },
+})
 
 function repairStateDiagramNotes(code: string): string {
   const trimmed = code.trim()
@@ -54,6 +50,29 @@ function repairStateDiagramNotes(code: string): string {
       return [`note right of ${firstState}`, `    ${noteMatch[1]}`, 'end note']
     }
     return [line]
+  })
+  return modified ? result.join('\n') : code
+}
+
+function repairFlowchartNotes(code: string): string {
+  const trimmed = code.trim()
+  if (!/^(?:flowchart|graph)\b/i.test(trimmed)) return code
+  
+  const lines = trimmed.split('\n')
+  let modified = false
+  const result = lines.filter((line) => {
+    // Mermaid flowcharts do NOT support 'note right of' or 'note left of'
+    // We will just strip them to prevent the whole diagram from breaking.
+    if (/^\s*note\s+(right|left)\s+of\b/i.test(line)) {
+      modified = true
+      return false
+    }
+    // Also remove 'end note' if it's there
+    if (/^\s*end\s+note\b/i.test(line)) {
+      modified = true
+      return false
+    }
+    return true
   })
   return modified ? result.join('\n') : code
 }
@@ -78,7 +97,7 @@ function repairMermaid(code: string): string {
     s = s.replace(/(\w+)\[([^\]"]*[(){}:|][^\]"]*)\]\s*/g, (_m, id, label) => `${id}["${label.replace(/"/g, "'")}"] `)
     return s
   }).join('\n').trim()
-  return repairStateDiagramNotes(repaired)
+  return repairFlowchartNotes(repairStateDiagramNotes(repaired))
 }
 
 const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
@@ -91,7 +110,6 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
     const container = ref.current
     container.innerHTML = ''
     const tryRender = async (code: string, isRetry: boolean) => {
-      initMermaidTheme()
       const id = `md-mermaid-${Math.random().toString(36).slice(2, 9)}`
       
       try {
@@ -118,7 +136,12 @@ const MermaidBlock = memo(function MermaidBlock({ chart }: { chart: string }) {
         }
       } catch (e) {
         if (!isRetry) await tryRender(repairMermaid(code), true)
-        else setFailed(true)
+        else {
+          console.error('[Mermaid Rendering Failed]')
+          console.error('Diagram Source:\n' + code)
+          console.error('Exception:\n', e)
+          setFailed(true)
+        }
       }
     }
     tryRender(chart, false)
