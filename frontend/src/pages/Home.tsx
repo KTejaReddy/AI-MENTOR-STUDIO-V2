@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Brain, Code2, BookOpen, Edit3, Clock, Play, Terminal, Layers, ArrowRight, ChevronRight, Activity, Globe, Database, Cpu, Network, Book } from 'lucide-react'
+import { Brain, Code2, BookOpen, Edit3, Clock, Play, Terminal, Layers, ChevronRight, Activity, Globe, Database, Cpu, Network, Book } from 'lucide-react'
 
 // --- SVGs for Features ---
 const NeuralNetwork = () => (
@@ -25,71 +25,92 @@ const FloatingTerminal = () => (
   <motion.div 
     animate={{ y: [-5, 5, -5] }}
     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-    className="w-full h-full rounded-2xl bg-[#022C22]/80 backdrop-blur-md border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] overflow-hidden relative"
-    style={{ transform: "perspective(1000px) rotateY(10deg) rotateX(5deg)" }}
+    className="w-[500px] h-[300px] rounded-2xl bg-[#022C22]/80 backdrop-blur-md border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.15)] overflow-hidden relative"
+    style={{ transform: "perspective(1000px) rotateY(-15deg) rotateX(10deg)" }}
   >
     <div className="h-8 bg-black/40 border-b border-emerald-500/20 flex items-center px-4 gap-1.5">
       <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
       <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
       <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
     </div>
-    <div className="p-4 md:p-6 font-mono text-emerald-400/80 text-xs md:text-sm leading-loose">
+    <div className="p-6 font-mono text-emerald-400/80 text-sm leading-loose">
       <p><span className="text-emerald-300">fn</span> <span className="text-blue-300">compile</span>() {'{'}</p>
-      <p className="pl-4 text-emerald-500/60">// Compiling OS kernel</p>
+      <p className="pl-4 text-emerald-500/60">// Distributed compilation engine initialized</p>
       <p className="pl-4">let mut sys = OS::new();</p>
       <p className="pl-4 mt-2">sys.boot();</p>
       <p>{'}'}</p>
+      <div className="mt-4 flex items-center gap-2">
+         <span className="text-emerald-500">root@compiler:~$</span>
+         <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-4 bg-emerald-400" />
+      </div>
     </div>
   </motion.div>
 )
 
 const StaggeredDocuments = () => (
-  <div className="relative w-full h-full flex items-center justify-center">
+  <div className="relative w-[400px] h-[400px] flex items-center justify-center">
     <motion.div 
-      animate={{ y: [-10, 10, -10], rotateZ: [-5, -2, -5] }}
+      animate={{ y: [-10, 10, -10], rotateZ: [-10, -5, -10] }}
       transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute w-[80%] h-[120%] bg-[#083344]/60 backdrop-blur-md border border-cyan-500/20 rounded-xl p-6 opacity-50"
+      className="absolute w-full h-full bg-[#083344]/60 backdrop-blur-md border border-cyan-500/20 rounded-xl p-8 opacity-50 shadow-2xl"
     />
     <motion.div 
-      animate={{ y: [-5, 5, -5], rotateZ: [-1, 1, -1] }}
+      animate={{ y: [-5, 5, -5], rotateZ: [-2, 2, -2] }}
       transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      className="absolute w-[80%] h-[120%] bg-[#020617]/90 backdrop-blur-xl border-2 border-cyan-400/40 rounded-xl p-6 shadow-[0_0_30px_rgba(34,211,238,0.2)] ml-8 mt-8"
+      className="absolute w-[90%] h-[110%] bg-[#020617]/90 backdrop-blur-xl border-2 border-cyan-400/40 rounded-xl p-8 shadow-[0_0_50px_rgba(34,211,238,0.2)] ml-8 mt-12"
     >
-      <div className="w-10 h-10 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-4">
-        <BookOpen className="w-5 h-5 text-cyan-400" />
+      <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-6">
+        <BookOpen className="w-6 h-6 text-cyan-400" />
       </div>
-      <div className="w-3/4 h-4 bg-cyan-400/40 rounded mb-4" />
-      <div className="space-y-2">
-        <div className="w-full h-2 bg-cyan-400/20 rounded" />
-        <div className="w-4/5 h-2 bg-cyan-400/20 rounded" />
-        <div className="w-full h-2 bg-cyan-400/20 rounded" />
+      <div className="w-3/4 h-5 bg-cyan-400/40 rounded mb-6" />
+      <div className="space-y-4">
+        <div className="w-full h-3 bg-cyan-400/20 rounded" />
+        <div className="w-4/5 h-3 bg-cyan-400/20 rounded" />
+        <div className="w-full h-3 bg-cyan-400/20 rounded" />
+        <div className="w-2/3 h-3 bg-cyan-400/20 rounded mt-6" />
       </div>
+      {/* Knowledge graph overlay */}
+      <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-50 z-20">
+         <line x1="50" y1="250" x2="200" y2="350" stroke="#22D3EE" strokeWidth="2" />
+         <circle cx="50" cy="250" r="5" fill="#22D3EE" />
+         <circle cx="200" cy="350" r="6" fill="#22D3EE" />
+      </svg>
     </motion.div>
   </div>
 )
 
-const OrganicNotes = () => (
-  <div className="relative w-full h-full flex items-center justify-center">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.2),transparent_70%)] blur-xl" />
-    <motion.div 
-      animate={{ y: [-5, 5, -5], rotateZ: [-10, -5, -10] }}
-      transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute w-24 h-24 bg-[#451A03] border border-amber-500/40 rounded-lg shadow-xl p-3 flex flex-col gap-1.5 -ml-16 -mt-10"
-    >
-      <div className="w-full h-1.5 bg-amber-500/30 rounded" />
-      <div className="w-5/6 h-1.5 bg-amber-500/30 rounded" />
-      <div className="w-full h-1.5 bg-amber-500/30 rounded" />
-    </motion.div>
-    <motion.div 
-      animate={{ y: [5, -5, 5], rotateZ: [5, 10, 5] }}
-      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-      className="absolute w-28 h-28 bg-[#78350F] border border-amber-400/50 rounded-lg shadow-xl p-4 flex flex-col gap-2 ml-10 mt-10"
-    >
-      <div className="w-full h-2 bg-amber-400/40 rounded" />
-      <div className="w-3/4 h-2 bg-amber-400/40 rounded" />
-      <div className="w-1/2 h-2 bg-amber-400/40 rounded" />
-    </motion.div>
-  </div>
+const OrganicNotesSVG = () => (
+  <svg viewBox="0 0 800 800" className="w-full h-full pointer-events-none absolute z-0 opacity-40">
+    <motion.path 
+      animate={{ 
+         d: [
+           "M200,200 C300,100 500,100 600,200 C700,300 700,500 600,600 C500,700 300,700 200,600 C100,500 100,300 200,200 Z",
+           "M250,150 C400,150 550,200 650,300 C750,400 650,600 550,650 C400,700 250,650 150,550 C50,450 100,250 250,150 Z",
+           "M200,200 C300,100 500,100 600,200 C700,300 700,500 600,600 C500,700 300,700 200,600 C100,500 100,300 200,200 Z"
+         ]
+      }}
+      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+      fill="rgba(245, 158, 11, 0.05)"
+      stroke="rgba(245, 158, 11, 0.2)"
+      strokeWidth="2"
+    />
+  </svg>
+)
+
+const WindingTimeline = () => (
+  <svg viewBox="0 0 1200 200" className="w-full h-full pointer-events-none absolute z-0">
+    <motion.path
+      d="M0,100 C300,200 500,0 800,100 C1000,150 1100,50 1200,100"
+      fill="none"
+      stroke="rgba(244, 63, 94, 0.3)"
+      strokeWidth="4"
+      strokeDasharray="10 10"
+      animate={{ strokeDashoffset: [0, -200] }}
+      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+    />
+    <circle cx="300" cy="150" r="12" fill="#4C0519" stroke="#F43F5E" strokeWidth="3" />
+    <circle cx="800" cy="100" r="16" fill="#4C0519" stroke="#F43F5E" strokeWidth="4" />
+  </svg>
 )
 
 // --- Shared Magazine Thumbnail ---
@@ -117,131 +138,132 @@ export function Home() {
       {/* GLOBAL AMBIENT NOISE */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 bg-noise opacity-[0.25] mix-blend-overlay" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(to_bottom,black_20%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:48px_48px] [mask-image:linear-gradient(to_bottom,black_30%,transparent_100%)]" />
+      </div>
+
+      {/* ─── SECTION 1: AI TUTOR HERO (45-55vh) ─── */}
+      <section className="relative w-full min-h-[50vh] flex items-center pt-24 pb-16 px-6 md:px-12 max-w-[1400px] mx-auto z-10">
+        <div className="absolute top-0 right-[-10%] w-[60%] h-[120%] pointer-events-none z-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] blur-[80px]" />
+          <NeuralNetwork />
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 max-w-2xl"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/40 border border-indigo-500/20 text-indigo-300 font-bold tracking-widest text-[10px] uppercase mb-8 backdrop-blur-md">
+            <Brain className="w-3 h-3" />
+            AI Tutor Environment
+          </div>
+          
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.95] mb-6 text-[#F8FAFC]">
+            Learn <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400">
+              Smarter.
+            </span>
+          </h1>
+          
+          <p className="text-lg md:text-xl text-[#94A3B8] font-medium leading-relaxed max-w-lg mb-8">
+            Generate incredibly detailed, personalized learning journeys instantly.
+          </p>
+
+          <button 
+            onClick={() => navigate('/learn', { state: { openGenerate: true } })}
+            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-extrabold text-sm md:text-base rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] transition-all hover:scale-105 duration-300"
+          >
+            <Play className="w-4 h-4 fill-black" />
+            Initialize Lesson
+            <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+        </motion.div>
+      </section>
+
+      {/* ─── SECTION 2: FEATURE SCENES (NO BOXES) ─── */}
+      <div className="relative z-10 w-full overflow-hidden">
+        
+        {/* COMPILER SCENE (Diagonal Slice) */}
+        <section className="relative w-full py-32 mb-16 group cursor-pointer" onClick={() => navigate('/compiler-lab')}>
+           <div className="absolute inset-0 bg-[#064E3B]/10 [clip-path:polygon(0_15%,100_0%,100_85%,0_100%)] group-hover:bg-[#064E3B]/20 transition-colors duration-700 z-0" />
+           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle,rgba(16,185,129,0.05)_0%,transparent_60%)] pointer-events-none z-0 blur-3xl" />
+           
+           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row-reverse items-center justify-between gap-12 relative z-10">
+              <div className="flex-1 w-full text-right flex flex-col items-end">
+                <div className="w-16 h-16 rounded-[2rem] bg-[#022C22] border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400 shadow-[0_0_40px_rgba(16,185,129,0.3)]">
+                  <Terminal className="w-8 h-8" />
+                </div>
+                <h2 className="text-5xl font-black text-[#F8FAFC] mb-4 tracking-tight">Compiler Lab</h2>
+                <p className="text-xl text-[#94A3B8] font-medium leading-relaxed mb-6 max-w-md">
+                  Write, debug, and test code instantly with embedded AI tracking.
+                </p>
+              </div>
+              <div className="flex-1 w-full flex justify-start pointer-events-none">
+                 <FloatingTerminal />
+              </div>
+           </div>
+        </section>
+
+        {/* DOC TUTOR SCENE (Offset Radial Float) */}
+        <section className="relative w-full py-24 mb-16 group cursor-pointer" onClick={() => navigate('/document-tutor')}>
+           <div className="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-[radial-gradient(circle,rgba(6,182,212,0.05)_0%,transparent_50%)] pointer-events-none z-0 blur-[100px] group-hover:opacity-100 opacity-60 transition-opacity duration-700" />
+           
+           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
+              <div className="flex-1 w-full">
+                <div className="w-16 h-16 rounded-[2rem] bg-[#083344] border border-cyan-500/30 flex items-center justify-center mb-6 text-cyan-400 shadow-[0_0_40px_rgba(6,182,212,0.3)]">
+                  <BookOpen className="w-8 h-8" />
+                </div>
+                <h2 className="text-5xl font-black text-[#F8FAFC] mb-4 tracking-tight">Doc Tutor</h2>
+                <p className="text-xl text-[#94A3B8] font-medium leading-relaxed mb-6 max-w-md">
+                  Extract deep insights from PDFs and instantly map them into dynamic knowledge graphs.
+                </p>
+              </div>
+              <div className="flex-1 w-full flex justify-end pointer-events-none">
+                 <StaggeredDocuments />
+              </div>
+           </div>
+        </section>
+
+        {/* NOTES SCENE (Organic SVG Blob) */}
+        <section className="relative w-full py-32 mb-16 group cursor-pointer" onClick={() => navigate('/notes')}>
+           <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+              <OrganicNotesSVG />
+           </div>
+           
+           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center relative z-10">
+              <div className="w-20 h-20 rounded-full bg-[#451A03] border border-amber-500/30 flex items-center justify-center text-amber-400 mb-8 shadow-[0_0_60px_rgba(245,158,11,0.3)] relative">
+                <Edit3 className="w-10 h-10 relative z-10" />
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 10, repeat: Infinity, ease: "linear" }} className="absolute inset-[-10px] border border-amber-500/30 rounded-full border-dashed" />
+              </div>
+              <h2 className="text-5xl font-black text-[#F8FAFC] mb-4 tracking-tight">Digital Pad</h2>
+              <p className="text-xl text-[#94A3B8] font-medium leading-relaxed max-w-lg">
+                Jot down logic, architectural diagrams, and freeform text seamlessly in a distraction-free organic workspace.
+              </p>
+           </div>
+        </section>
+
+        {/* HISTORY SCENE (Winding Curve) */}
+        <section className="relative w-full pt-32 pb-16 group cursor-pointer" onClick={() => navigate('/history')}>
+           <div className="absolute top-0 left-0 w-[150vw] h-full pointer-events-none z-0 ml-[-25vw]">
+              <WindingTimeline />
+           </div>
+           <div className="absolute bottom-0 left-0 w-full h-[50vh] bg-gradient-to-t from-rose-950/10 to-transparent pointer-events-none z-0" />
+           
+           <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col items-center text-center relative z-10">
+              <div className="w-16 h-16 rounded-[2rem] bg-[#4C0519] border border-rose-500/30 flex items-center justify-center mb-6 text-rose-400 shadow-[0_0_40px_rgba(244,63,94,0.3)]">
+                <Clock className="w-8 h-8" />
+              </div>
+              <h2 className="text-4xl font-black text-[#F8FAFC] mb-4 tracking-tight">Engineering Timeline</h2>
+              <p className="text-lg text-[#94A3B8] font-medium leading-relaxed max-w-lg">
+                Revisit your entire history. Every compilation, document analyzed, and note taken, mapped chronologically.
+              </p>
+           </div>
+        </section>
+
       </div>
 
       <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 pb-32">
-        
-        {/* ─── SECTION 1: AI TUTOR HERO (45-55vh) ─── */}
-        <section className="relative w-full min-h-[50vh] flex items-center pt-24 pb-16">
-          <div className="absolute top-0 right-[-10%] w-[60%] h-[120%] pointer-events-none z-0">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.15)_0%,transparent_70%)] blur-[80px]" />
-            <NeuralNetwork />
-          </div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative z-10 max-w-2xl"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-950/40 border border-indigo-500/20 text-indigo-300 font-bold tracking-widest text-[10px] uppercase mb-8 backdrop-blur-md">
-              <Brain className="w-3 h-3" />
-              AI Tutor Environment
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.95] mb-6 text-[#F8FAFC]">
-              Learn <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-400 to-fuchsia-400">
-                Smarter.
-              </span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-[#94A3B8] font-medium leading-relaxed max-w-lg mb-8">
-              Generate incredibly detailed, personalized learning journeys instantly.
-            </p>
-
-            <button 
-              onClick={() => navigate('/learn', { state: { openGenerate: true } })}
-              className="group relative inline-flex items-center gap-3 px-8 py-4 bg-white text-black font-extrabold text-sm md:text-base rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.3)] transition-all hover:scale-105 duration-300"
-            >
-              <Play className="w-4 h-4 fill-black" />
-              Initialize Lesson
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
-          </motion.div>
-        </section>
-
-        {/* ─── SECTION 2: FEATURE EXPERIENCES (Modules) ─── */}
-        <section className="py-16 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 relative z-20">
-          
-          {/* Compiler Module */}
-          <div className="col-span-1 md:col-span-8 flex flex-col md:flex-row items-center gap-8 relative p-8 md:p-12 rounded-[2rem] bg-gradient-to-br from-emerald-950/20 to-transparent border border-emerald-900/30 overflow-hidden group">
-            <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-[radial-gradient(ellipse_at_right,rgba(16,185,129,0.1)_0%,transparent_70%)] pointer-events-none transition-opacity duration-700 group-hover:opacity-100 opacity-50" />
-            <div className="flex-1 w-full relative z-10">
-              <div className="w-12 h-12 rounded-2xl bg-[#064E3B] border border-emerald-500/30 flex items-center justify-center mb-6 text-emerald-400 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
-                <Terminal className="w-6 h-6" />
-              </div>
-              <h2 className="text-3xl font-black text-[#F8FAFC] mb-4 tracking-tight">Compiler Lab</h2>
-              <p className="text-[#94A3B8] font-medium leading-relaxed mb-6">Write, debug, and test code instantly with embedded AI assistance.</p>
-              <button onClick={() => navigate('/compiler-lab')} className="text-emerald-400 font-bold flex items-center gap-2 hover:text-emerald-300 transition-colors">
-                Open Terminal <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="flex-1 w-full h-[200px] relative z-10 max-md:hidden">
-              <FloatingTerminal />
-            </div>
-          </div>
-
-          {/* Doc Tutor Module */}
-          <div className="col-span-1 md:col-span-4 flex flex-col gap-6 relative p-8 md:p-10 rounded-[2rem] bg-gradient-to-br from-cyan-950/20 to-transparent border border-cyan-900/30 overflow-hidden group">
-             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(6,182,212,0.1)_0%,transparent_70%)] pointer-events-none transition-opacity duration-700 group-hover:opacity-100 opacity-50" />
-             <div className="w-12 h-12 rounded-2xl bg-[#083344] border border-cyan-500/30 flex items-center justify-center text-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.3)] relative z-10">
-                <BookOpen className="w-6 h-6" />
-             </div>
-             <div className="relative z-10">
-               <h2 className="text-2xl font-black text-[#F8FAFC] mb-3 tracking-tight">Doc Tutor</h2>
-               <p className="text-sm text-[#94A3B8] font-medium leading-relaxed mb-6">Extract deep insights from PDFs instantly.</p>
-               <button onClick={() => navigate('/document-tutor')} className="text-cyan-400 font-bold text-sm flex items-center gap-2 hover:text-cyan-300 transition-colors">
-                 Analyze Docs <ArrowRight className="w-4 h-4" />
-               </button>
-             </div>
-             <div className="absolute right-[-20%] bottom-[-10%] w-[200px] h-[200px] pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity duration-700">
-               <StaggeredDocuments />
-             </div>
-          </div>
-
-          {/* Notes Module */}
-          <div className="col-span-1 md:col-span-4 flex flex-col items-center text-center relative p-8 md:p-10 rounded-[2rem] border border-amber-900/30 overflow-hidden group">
-            <div className="absolute inset-0 pointer-events-none z-0">
-               <OrganicNotes />
-            </div>
-            <div className="relative z-10 flex flex-col items-center mt-auto pt-24">
-              <div className="w-12 h-12 rounded-2xl bg-[#451A03] border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 shadow-[0_0_30px_rgba(245,158,11,0.3)]">
-                <Edit3 className="w-6 h-6" />
-              </div>
-              <h2 className="text-2xl font-black text-[#F8FAFC] mb-2 tracking-tight">Notes</h2>
-              <button onClick={() => navigate('/notes')} className="text-amber-400 font-bold text-sm flex items-center gap-2 hover:text-amber-300 transition-colors mt-2">
-                Open Pad <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* History Module */}
-          <div className="col-span-1 md:col-span-8 flex flex-col justify-center relative p-8 md:p-12 rounded-[2rem] bg-gradient-to-tl from-rose-950/20 to-transparent border border-rose-900/30 overflow-hidden group">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_left,rgba(244,63,94,0.1)_0%,transparent_70%)] pointer-events-none transition-opacity duration-700 group-hover:opacity-100 opacity-50" />
-            <div className="relative z-10 max-w-sm">
-              <div className="w-12 h-12 rounded-2xl bg-[#4C0519] border border-rose-500/30 flex items-center justify-center mb-6 text-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.3)]">
-                <Clock className="w-6 h-6" />
-              </div>
-              <h2 className="text-3xl font-black text-[#F8FAFC] mb-4 tracking-tight">Timeline</h2>
-              <p className="text-[#94A3B8] font-medium leading-relaxed mb-6">Revisit your entire engineering journey and review past lessons.</p>
-              <button onClick={() => navigate('/history')} className="text-rose-400 font-bold flex items-center gap-2 hover:text-rose-300 transition-colors">
-                View History <ArrowRight className="w-4 h-4" />
-              </button>
-            </div>
-            {/* Winding path abstract */}
-            <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none opacity-40 group-hover:opacity-70 transition-opacity duration-700">
-               <svg viewBox="0 0 200 400" className="w-full h-full text-rose-500/50" fill="none" stroke="currentColor">
-                 <path d="M200,50 C100,100 50,200 150,300 C200,350 100,400 50,350" strokeWidth="2" strokeDasharray="6 6" />
-                 <circle cx="150" cy="300" r="8" fill="#4C0519" stroke="#F43F5E" strokeWidth="2" />
-                 <circle cx="100" cy="115" r="5" fill="#4C0519" stroke="#F43F5E" strokeWidth="2" />
-               </svg>
-            </div>
-          </div>
-
-        </section>
-
         {/* ─── SECTION 3: CONTINUE LEARNING ─── */}
         <section className="py-16 relative z-20">
           <div className="flex items-center gap-4 mb-8">
