@@ -1,8 +1,9 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import { Terminal, Code2, Folder, FileJson, Play } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export function CompilerModule() {
+export const CompilerModule = React.memo(function CompilerModule() {
   const navigate = useNavigate()
 
   return (
@@ -24,12 +25,8 @@ export function CompilerModule() {
       </div>
 
       {/* Right Visual: Floating VS Code IDE */}
-      <div className="relative flex-1 w-full max-w-sm pr-2 perspective-[1000px] z-10 scale-[0.85] origin-right">
-         <motion.div 
-           animate={{ rotateY: [-5, 5, -5], rotateX: [2, -2, 2] }}
-           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-           className="w-full bg-[#1e1e1e] rounded-lg shadow-[0_20px_50px_rgba(0,0,0,0.8),_0_0_0_1px_rgba(255,255,255,0.1)] flex flex-col overflow-hidden"
-         >
+      <div className="relative flex-1 w-full max-w-sm pr-2 z-10 scale-[0.85] origin-right">
+         <div className="w-full bg-[#1E1E1E] rounded-xl overflow-hidden border border-white/10 shadow-2xl flex flex-col h-[350px]">
            {/* Window Header */}
            <div className="h-10 bg-[#323233] border-b border-[#1e1e1e] flex items-center px-4 justify-between">
               <div className="flex items-center gap-2">
@@ -41,7 +38,7 @@ export function CompilerModule() {
               <div className="w-10" />
            </div>
 
-           <div className="flex h-[350px]">
+           <div className="flex h-[310px]">
               {/* Activity Bar */}
               <div className="w-12 bg-[#333333] border-r border-[#1e1e1e] flex flex-col items-center py-4 gap-6 text-[#858585]">
                  <Folder className="w-5 h-5 text-white" />
@@ -82,9 +79,6 @@ export function CompilerModule() {
                        <p className="pl-6">{'}'}</p>
                        <p>{'}'}</p>
                     </div>
-                    
-                    {/* Blinking cursor */}
-                    <motion.div animate={{ opacity: [1, 0, 1] }} transition={{ duration: 1, repeat: Infinity }} className="absolute left-[80px] top-[182px] w-[2px] h-[16px] bg-[#cccccc]" />
                  </div>
 
                  {/* Split Terminal Pane */}
@@ -93,7 +87,6 @@ export function CompilerModule() {
                     <div className="flex-1 bg-[#1e1e1e] font-mono text-[12px] px-2 text-[#cccccc]">
                        <p className="text-emerald-400">➜  workspace git:(main) ✗ cargo run</p>
                        <p className="text-[#858585]">   Compiling workspace v0.1.0</p>
-                       <p className="text-[#858585]">    Finished dev [unoptimized + debuginfo] target(s)</p>
                        <p className="text-white mt-1">Compilation ready.</p>
                     </div>
                  </div>
@@ -107,13 +100,11 @@ export function CompilerModule() {
                  <span>0 Errors, 0 Warnings</span>
               </div>
               <div className="flex items-center gap-3">
-                 <span>UTF-8</span>
-                 <span>Rust</span>
+                 <div className="text-[#6A9955]">// AI analysis: Memory allocation optimal</div>
               </div>
            </div>
-         </motion.div>
+         </div>
       </div>
-
     </div>
   )
-}
+})

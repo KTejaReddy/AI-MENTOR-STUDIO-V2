@@ -1,15 +1,16 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import { Brain, Play, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export function AITutorModule() {
+export const AITutorModule = React.memo(function AITutorModule() {
   const navigate = useNavigate()
 
   return (
-    <div className="relative w-full col-span-12 min-h-[35vh] flex items-center justify-center my-0 group cursor-pointer" onClick={() => navigate('/learn', { state: { openGenerate: true } })}>
+    <div className="relative w-full col-span-12 min-h-[35vh] flex items-center justify-center my-0 group cursor-pointer overflow-hidden" onClick={() => navigate('/learn', { state: { openGenerate: true } })}>
       {/* Abstract Glowing Core Background */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none group-hover:bg-indigo-500/20 transition-all duration-1000" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-fuchsia-600/10 rounded-full blur-[60px] pointer-events-none group-hover:bg-fuchsia-500/20 transition-all duration-1000 delay-100" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none transition-all duration-1000 bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.15)_0%,transparent_70%)] group-hover:bg-[radial-gradient(circle_at_center,rgba(79,70,229,0.25)_0%,transparent_70%)]" style={{ willChange: 'transform' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] pointer-events-none transition-all duration-1000 delay-100 bg-[radial-gradient(circle_at_center,rgba(192,38,211,0.15)_0%,transparent_70%)] group-hover:bg-[radial-gradient(circle_at_center,rgba(192,38,211,0.25)_0%,transparent_70%)]" style={{ willChange: 'transform' }} />
 
       {/* Floating Elements (Orbital) */}
       <motion.div 
@@ -78,4 +79,4 @@ export function AITutorModule() {
       </div>
     </div>
   )
-}
+})

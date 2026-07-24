@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
 import { Edit3, ArrowRight, PenTool } from 'lucide-react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-export function NotesModule() {
+export const NotesModule = React.memo(function NotesModule() {
   const navigate = useNavigate()
 
   return (
@@ -83,4 +84,4 @@ export function NotesModule() {
 
     </div>
   )
-}
+})

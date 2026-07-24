@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion'
+import React from 'react'
 import { BookOpen, FileText, ArrowRight, Network } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export function DocumentTutorModule() {
+export const DocumentTutorModule = React.memo(function DocumentTutorModule() {
   const navigate = useNavigate()
 
   return (
@@ -87,4 +88,4 @@ export function DocumentTutorModule() {
 
     </div>
   )
-}
+})

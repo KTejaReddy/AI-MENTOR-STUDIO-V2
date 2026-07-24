@@ -1,13 +1,15 @@
+import React, { Suspense } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { Layers } from 'lucide-react'
 
-// Import our 5 bespoke UI modules
+// Eager load Hero
 import { AITutorModule } from '../components/home/AITutorModule'
-import { CompilerModule } from '../components/home/CompilerModule'
-import { DocumentTutorModule } from '../components/home/DocumentTutorModule'
-import { NotesModule } from '../components/home/NotesModule'
-import { HistoryModule } from '../components/home/HistoryModule'
+
+// Lazy load below the fold
+const CompilerModule = React.lazy(() => import('../components/home/CompilerModule').then(m => ({ default: m.CompilerModule })))
+const DocumentTutorModule = React.lazy(() => import('../components/home/DocumentTutorModule').then(m => ({ default: m.DocumentTutorModule })))
+const NotesModule = React.lazy(() => import('../components/home/NotesModule').then(m => ({ default: m.NotesModule })))
+const HistoryModule = React.lazy(() => import('../components/home/HistoryModule').then(m => ({ default: m.HistoryModule })))
 
 export function Home() {
   const navigate = useNavigate()
@@ -26,10 +28,22 @@ export function Home() {
         {/* The 5 completely distinct, non-rectangular UI paradigms inside a 12-column grid */}
         <div className="grid grid-cols-12 gap-4 md:gap-6 w-full">
            <AITutorModule />
-           <CompilerModule />
-           <DocumentTutorModule />
-           <NotesModule />
-           <HistoryModule />
+           
+           <Suspense fallback={<div className="col-span-12 md:col-span-7 h-[400px] bg-slate-900/10 animate-pulse rounded-lg border border-slate-800/20" />}>
+              <CompilerModule />
+           </Suspense>
+           
+           <Suspense fallback={<div className="col-span-12 md:col-span-5 h-[400px] bg-slate-900/10 animate-pulse rounded-lg border border-slate-800/20" />}>
+              <DocumentTutorModule />
+           </Suspense>
+           
+           <Suspense fallback={<div className="col-span-12 md:col-span-6 h-[350px] bg-slate-900/10 animate-pulse rounded-lg border border-slate-800/20" />}>
+              <NotesModule />
+           </Suspense>
+           
+           <Suspense fallback={<div className="col-span-12 md:col-span-6 h-[350px] bg-slate-900/10 animate-pulse rounded-lg border border-slate-800/20" />}>
+              <HistoryModule />
+           </Suspense>
         </div>
 
         {/* ─── SECTION 6: ABOUT FOOTER ─── */}

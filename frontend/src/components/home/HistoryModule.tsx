@@ -1,8 +1,9 @@
+import React from 'react'
 import { motion } from 'framer-motion'
 import { Clock, Activity, Target } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export function HistoryModule() {
+export const HistoryModule = React.memo(function HistoryModule() {
   const navigate = useNavigate()
 
   return (
@@ -92,4 +93,4 @@ export function HistoryModule() {
 
     </div>
   )
-}
+})
