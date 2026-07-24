@@ -502,3 +502,32 @@ def validate_and_repair_section(section_type: str, content: str) -> Tuple[str, b
         is_valid = False
 
     return content, is_valid
+
+def validate_subject_code_rules(content: str, subject: str, topic: str) -> bool:
+    """
+    Validates that non-programming subjects do not contain inappropriate programming code blocks.
+    Returns True if valid, False if it violates the rules.
+    """
+    subject_lower = subject.lower()
+    topic_lower = topic.lower()
+
+    # Subjects that should NOT contain code
+    no_code_subjects = ["mathematics", "math", "physics", "chemistry"]
+
+    # Check if current subject falls into the no_code category
+    is_no_code_subject = any(s in subject_lower for s in no_code_subjects)
+    
+    # If the topic explicitly mentions programming, we might allow it (edge case override)
+    explicit_code_override = any(word in topic_lower for word in ["programming", "code", "python", "c++", "java", "javascript"])
+
+    if is_no_code_subject and not explicit_code_override:
+        # Check for programming markdown fences
+        programming_fences = [
+            "```python", "```cpp", "```java", "```javascript", "```js", "```c", "```ts", "```typescript"
+        ]
+        for fence in programming_fences:
+            if fence in content.lower():
+                logger.warning(f"Validation failed: Subject '{subject}' is a non-programming subject but contained code block '{fence}'.")
+                return False
+
+    return True

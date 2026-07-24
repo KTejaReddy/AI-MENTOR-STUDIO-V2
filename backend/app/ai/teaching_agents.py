@@ -189,6 +189,12 @@ class TeachingAgent(ABC):
                 return
 
             except Exception as e:
+                is_timeout = isinstance(e, asyncio.TimeoutError) or "timeout" in str(e).lower()
+                
+                # If timeout and we are at max_retries, allow exactly 1 more retry
+                if is_timeout and retries == self.config.max_retries:
+                    self.config.max_retries += 1
+                    
                 retries += 1
                 self._release_key(model_id, False, 0.0, str(e))
                 logger.warning(f"Agent {self.section_type} attempt {retries} failed: {e}")
@@ -218,6 +224,9 @@ class TeachingAgent(ABC):
                     break
 
         self.status = AgentStatus.FAILED
+        if 'e' in locals():
+            logger.error(f"Agent {self.section_type} failed after {retries} retries. Final error: {e}")
+            
         yield GenerationResult(
             section_type=self.section_type,
             content="",
@@ -226,7 +235,7 @@ class TeachingAgent(ABC):
             model_used=model_id,
             latency=time.time() - start_time,
             retries=retries,
-            error=str(e) if 'e' in locals() else "Unknown error",
+            error="We couldn't generate this section. Please regenerate.",
         )
 
 
@@ -274,6 +283,12 @@ class TeachingAgent(ABC):
         # Section-specific checks
         score *= await self._section_specific_checks(content, subject, topic)
 
+        # Validation layer: Subject-aware code rules
+        from app.ai.content_validator import validate_subject_code_rules
+        if not validate_subject_code_rules(content, subject, topic):
+            logger.warning(f"{self.section_type}: Subject code rules violation")
+            score *= 0.1  # Severely penalize to trigger retry
+
         return max(0.0, min(1.0, score))
 
     async def _section_specific_checks(self, content: str, subject: str, topic: str) -> float:
@@ -283,12 +298,30 @@ class TeachingAgent(ABC):
     def _parse_response(self, raw: str) -> str:
         """Parse model response to extract content."""
         raw = raw.strip()
-        if raw.startswith("{"):
+        if raw.startswith("{") or "```json" in raw.lower():
+            clean_raw = raw
+            if "```" in clean_raw:
+                match = re.search(r'```(?:json)?\s*([\s\S]*?)\s*```', clean_raw, re.IGNORECASE)
+                if match:
+                    clean_raw = match.group(1).strip()
+            
+            start_idx = clean_raw.find('{')
+            end_idx = clean_raw.rfind('}')
+            if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
+                clean_raw = clean_raw[start_idx:end_idx+1]
+                
             try:
-                data = json.loads(raw)
+                data = json.loads(clean_raw)
                 return data.get("content", raw)
-            except json.JSONDecodeError:
-                pass
+            except json.JSONDecodeError as e:
+                logger.warning(f"JSON Parse Error: {e}. Attempting auto-repair.")
+                # Attempt regex extraction if JSON fails
+                match = re.search(r'"content"\s*:\s*"(.*?)"\s*(?:,|})', raw, re.DOTALL)
+                if match:
+                    content = match.group(1).replace('\\"', '"').replace('\\n', '\n')
+                    return content
+                
+                raise ValueError("Malformed JSON from AI model. Auto-repair failed.")
         return raw
 
 

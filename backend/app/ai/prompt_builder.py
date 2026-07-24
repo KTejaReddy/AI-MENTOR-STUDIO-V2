@@ -12,7 +12,6 @@ RULES:
 - Minimum 2500 words total (800+ for quick mode).
 - University textbook tone. No AI phrases like "Certainly!".
 - LaTeX: $$ for display, $ for inline. Mermaid.js for diagrams.
-- Code: COMPLETE RUNNABLE with imports, setup, output, complexity.
 - Companies: Cite real ones (Google, Amazon, Tesla, etc.).
 - Estimated reading time: 20-40min intermediate, 40-90+ advanced/expert.
 - Bloom's taxonomy: beginner→Understand/Apply, advanced→Analyze/Evaluate/Create.
@@ -83,6 +82,26 @@ class PromptBuilder:
         parts.append(f"Topic: {topic}")
         parts.append(f"Difficulty level: {difficulty}")
         parts.append(f"Output language: {output_language}")
+
+        subject_lower = subject.lower()
+        if any(s in subject_lower for s in ["mathematics", "math"]):
+            parts.append("SUBJECT RULES: Generate solved numerical examples, proofs, derivations, graphs, formulas. NO programming code.")
+        elif "physics" in subject_lower:
+            parts.append("SUBJECT RULES: Generate derivations, numerical problems, diagrams. NO programming code.")
+        elif "chemistry" in subject_lower:
+            parts.append("SUBJECT RULES: Generate equations, reactions, structures. NO programming code.")
+        elif any(s in subject_lower for s in ["database", "sql"]):
+            parts.append("SUBJECT RULES: Generate SQL code only. Focus on queries and schema.")
+        elif any(s in subject_lower for s in ["operating systems", "os"]):
+            parts.append("SUBJECT RULES: Focus on algorithms and scheduling.")
+        elif any(s in subject_lower for s in ["computer networks", "networking", "network"]):
+            parts.append("SUBJECT RULES: Focus on packet flow.")
+        elif "compiler design" in subject_lower:
+            parts.append("SUBJECT RULES: Focus on grammar and parsing.")
+        elif any(s in subject_lower for s in ["machine learning", "ml", "artificial intelligence", "ai"]):
+            parts.append("SUBJECT RULES: Include Python code only if implementation is explicitly required.")
+        else:
+            parts.append("SUBJECT RULES: Include complete, runnable code examples (with imports, setup, output, complexity) where applicable.")
 
         if section_plan:
             parts.append(
