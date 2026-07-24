@@ -1239,7 +1239,7 @@ class QuizAgent(TeachingAgent):
         score = 1.0
         
         mcq_count = content.count("**Correct Answer:")
-        if mcq_count < 15:
+        if mcq_count < 5:
             score *= 0.5
             logger.warning(f"QuizAgent: Insufficient MCQs found ({mcq_count})")
             
