@@ -6,15 +6,9 @@ import { useRef } from 'react'
 
 export function Home() {
   const navigate = useNavigate()
-  const containerRef = useRef<HTMLDivElement>(null)
-  
-  // Parallax effects
-  const { scrollYProgress } = useScroll({ target: containerRef })
-  const yHero = useTransform(scrollYProgress, [0, 1], [0, 300])
-  const opacityHero = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   return (
-    <div ref={containerRef} className="h-full overflow-y-auto overflow-x-hidden scrollbar-none relative bg-[#01030B] text-white perspective-[2000px]">
+    <div className="h-full overflow-y-auto overflow-x-hidden scrollbar-none relative bg-[#01030B] text-white">
       
       {/* ─── GLOBAL DEEP SPACE CANVAS & PARTICLES ─────────────────────────────── */}
       <div className="fixed inset-0 pointer-events-none z-0">
@@ -30,11 +24,13 @@ export function Home() {
 
       {/* ─── HUD HERO (ENGINEERING CONSTELLATION) ─────────────────────────────── */}
       <motion.section 
-        style={{ y: yHero, opacity: opacityHero }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
         className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-32 px-6 z-10"
       >
         {/* Massive 3D Glass Circle Centerpiece */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-cyan-500/10 bg-cyan-900/5 backdrop-blur-[2px] pointer-events-none flex items-center justify-center shadow-[0_0_100px_rgba(6,182,212,0.05)]" style={{ transform: 'translateZ(-100px)' }}>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-cyan-500/10 bg-cyan-900/5 backdrop-blur-[2px] pointer-events-none flex items-center justify-center shadow-[0_0_100px_rgba(6,182,212,0.05)]">
           <div className="w-[600px] h-[600px] rounded-full border border-blue-500/20 bg-blue-900/5 animate-[spin_60s_linear_infinite]" />
           <div className="absolute w-[400px] h-[400px] rounded-full border border-purple-500/20 bg-purple-900/5 animate-[spin_40s_linear_infinite_reverse]" />
         </div>
@@ -43,7 +39,7 @@ export function Home() {
           <InteractiveKnowledgeGraph />
         </div>
         
-        <div className="relative z-20 text-center max-w-5xl mx-auto flex flex-col items-center justify-center" style={{ transform: 'translateZ(50px)' }}>
+        <div className="relative z-20 text-center max-w-5xl mx-auto flex flex-col items-center justify-center">
           <div className="inline-flex items-center gap-3 px-6 py-2 bg-[#05131e]/80 backdrop-blur-md border border-cyan-500/30 text-xs font-bold tracking-widest uppercase text-cyan-400 mb-12 shadow-[0_0_20px_rgba(6,182,212,0.2)]" style={{ clipPath: 'polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)' }}>
             <Sparkles className="w-4 h-4" />
             Mentor OS v2.0
@@ -82,15 +78,15 @@ export function Home() {
       </motion.section>
 
       {/* ─── HUD ENVIRONMENTS (BREAKING THE GRID) ─────────────────────────────── */}
-      <section className="relative z-20 px-6 md:px-12 max-w-[1800px] mx-auto pb-60 pt-20" style={{ transformStyle: 'preserve-3d' }}>
+      <section className="relative z-20 px-6 md:px-12 max-w-[1800px] mx-auto pb-60 pt-20">
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24">
           
           {/* AI TUTOR: PURPLE UNIVERSE (Curved Panel) */}
           <motion.div 
-            initial={{ opacity: 0, rotateX: 20, y: 100 }}
-            whileInView={{ opacity: 1, rotateX: 0, y: 0 }}
-            viewport={{ once: true, margin: "-20%" }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ type: 'spring', stiffness: 50, damping: 20 }}
             onClick={() => navigate('/learn', { state: { openGenerate: true } })}
             className="md:col-span-12 relative h-[500px] cursor-pointer group flex items-center p-12 overflow-hidden"
@@ -129,9 +125,9 @@ export function Home() {
 
           {/* COMPILER: GREEN DIGITAL LAB (Trapezoid HUD) */}
           <motion.div 
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-20%" }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ type: 'spring', stiffness: 50, damping: 20 }}
             onClick={() => navigate('/compiler-lab')}
             className="md:col-span-7 relative h-[450px] cursor-pointer group p-10 overflow-hidden flex flex-col justify-end"
@@ -164,9 +160,9 @@ export function Home() {
 
           {/* DOC TUTOR: BLUE HOLOGRAPHIC (Layered sheets) */}
           <motion.div 
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: "-20%" }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ type: 'spring', stiffness: 50, damping: 20 }}
             onClick={() => navigate('/document-tutor')}
             className="md:col-span-5 relative h-[450px] cursor-pointer group p-10 overflow-hidden flex flex-col justify-start"
@@ -198,9 +194,9 @@ export function Home() {
             
             {/* Bookmarks (Rose Ribbons) */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-20%" }}
+              viewport={{ once: true, margin: "0px" }}
               transition={{ type: 'spring', stiffness: 50, damping: 20 }}
               onClick={() => navigate('/bookmarks')}
               className="relative w-[300px] h-[350px] cursor-pointer group flex flex-col items-center justify-center text-center p-8"
@@ -229,9 +225,9 @@ export function Home() {
 
             {/* Notes (Amber Core) */}
             <motion.div 
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: "-20%" }}
+              viewport={{ once: true, margin: "0px" }}
               transition={{ type: 'spring', stiffness: 50, damping: 20, delay: 0.1 }}
               onClick={() => navigate('/notes')}
               className="relative w-[300px] h-[350px] cursor-pointer group flex flex-col items-center justify-center text-center p-8"
@@ -254,9 +250,9 @@ export function Home() {
 
           {/* HISTORY: CYAN TIMELINE (Glass Tunnel) */}
           <motion.div 
-            initial={{ opacity: 0, y: 100 }}
+            initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-20%" }}
+            viewport={{ once: true, margin: "0px" }}
             transition={{ type: 'spring', stiffness: 50, damping: 20 }}
             onClick={() => navigate('/history')}
             className="md:col-span-12 relative h-[300px] cursor-pointer group flex items-center justify-center overflow-hidden"
