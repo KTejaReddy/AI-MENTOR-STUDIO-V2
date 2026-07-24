@@ -1,11 +1,10 @@
 import { memo, useState, useCallback, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Send, RefreshCw, Loader2, Sparkles, CheckCircle2, AlertTriangle, GraduationCap, ChevronDown } from 'lucide-react'
+import { Send, RefreshCw, Loader2, CheckCircle2, AlertTriangle, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { fetchWithAuth } from '@/lib/api/client'
-import { fetchTopicSuggestions } from '@/lib/api/ai'
 import { fetchBranches, fetchSubjects } from '@/lib/api/curriculum'
-import type { GenerateRequest, GenerationStatus, TopicSuggestion } from '@/types/ai'
+import type { GenerateRequest, GenerationStatus } from '@/types/ai'
 import type { BranchSummary, SubjectSummary } from '@/lib/api/curriculum'
 import { CustomSelect } from '@/components/ui/select'
 
@@ -72,14 +71,8 @@ export const GenerationPanel = memo(function GenerationPanel({
 
   const [branches, setBranches] = useState<BranchSummary[]>([])
   const [subjects, setSubjects] = useState<SubjectSummary[]>([])
-  const [suggestions, setSuggestions] = useState<TopicSuggestion[]>([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
-    try { return JSON.parse(localStorage.getItem('recent-topics') || '[]') } catch { return [] }
-  })
   const [topicValidation, setTopicValidation] = useState<TopicValidation | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   const validateRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const selectedBranch = branches.find(b => b.branch_id === branchId)
@@ -87,15 +80,6 @@ export const GenerationPanel = memo(function GenerationPanel({
 
   useEffect(() => {
     fetchBranches().then(setBranches).catch(() => {})
-  }, [])
-
-  useEffect(() => {
-    function handleFlush() {
-      try { setRecentSearches(JSON.parse(localStorage.getItem('recent-topics') || '[]')) }
-      catch { setRecentSearches([]) }
-    }
-    window.addEventListener('auth:cache-flush', handleFlush)
-    return () => window.removeEventListener('auth:cache-flush', handleFlush)
   }, [])
 
   useEffect(() => {
@@ -107,20 +91,6 @@ export const GenerationPanel = memo(function GenerationPanel({
     setSubjectId('')
     fetchSubjects(branchId).then(setSubjects).catch(() => setSubjects([]))
   }, [branchId])
-
-  useEffect(() => {
-    if (topic.length < 2) {
-      setSuggestions([])
-      return
-    }
-    clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(async () => {
-      const results = await fetchTopicSuggestions(topic)
-      setSuggestions(results)
-      setShowSuggestions(results.length > 0)
-    }, 300)
-    return () => clearTimeout(debounceRef.current)
-  }, [topic])
 
   useEffect(() => {
     if (topic.length < 3 || !subjectId) {
@@ -140,40 +110,19 @@ export const GenerationPanel = memo(function GenerationPanel({
     return () => clearTimeout(validateRef.current)
   }, [topic, subjectId])
 
-  const saveRecentSearch = useCallback((search: string) => {
-    setRecentSearches((prev) => {
-      const next = [search, ...prev.filter((s) => s !== search)].slice(0, 5)
-      localStorage.setItem('recent-topics', JSON.stringify(next))
-      return next
-    })
-  }, [])
-
   const handleSubmit = useCallback(
     (e?: React.FormEvent) => {
       e?.preventDefault()
       if (!topic.trim() || !subjectId) return
-      saveRecentSearch(topic.trim())
       onGenerate({
         subject: selectedSubject?.name || '',
         topic: topic.trim(),
         difficulty,
         learning_mode: learningMode,
       })
-      setShowSuggestions(false)
     },
-    [topic, difficulty, learningMode, onGenerate, saveRecentSearch, selectedSubject, subjectId],
+    [topic, difficulty, learningMode, onGenerate, selectedSubject, subjectId],
   )
-
-  const selectSuggestion = useCallback((suggestion: TopicSuggestion) => {
-    setTopic(suggestion.topic)
-    setShowSuggestions(false)
-    inputRef.current?.focus()
-  }, [])
-
-  const selectRecentSearch = useCallback((search: string) => {
-    setTopic(search)
-    setShowSuggestions(false)
-  }, [])
 
   const isGenerating = status === 'generating'
   const canGenerate = branchId && subjectId && topic.trim()
@@ -231,23 +180,17 @@ export const GenerationPanel = memo(function GenerationPanel({
               ref={inputRef}
               type="text"
               value={topic}
-              onChange={(e) => {
-                setTopic(e.target.value);
-              }}
-              onFocus={() => {
-                setShowSuggestions(suggestions.length > 0);
-              }}
-              onBlur={() => {
-                setTimeout(() => setShowSuggestions(false), 200);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleSubmit();
-              }}
+              onChange={(e) => setTopic(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit() }}
               placeholder="e.g. Binary Search Trees, Merge Sort, Deadlock"
               className={cn(
-                'w-full px-3 py-2 min-h-[48px] rounded-xl border text-[15px] text-text-primary placeholder:text-text-tertiary outline-none transition-all',
-                topicValidation && !topicValidation.valid ? 'border-amber-500/50 focus:border-amber-500 focus:ring-1 focus:ring-amber-500/20' : 'border-border focus:border-accent/50 focus:ring-1 focus:ring-accent/20',
-                !subjectId ? 'bg-surface-150/50 border-border/50 cursor-not-allowed' : 'bg-surface-200/80',
+                'w-full px-3 py-2 min-h-[48px] rounded-xl border text-[15px] outline-none transition-all',
+                'bg-[#18181B] text-white placeholder:text-[#9CA3AF] caret-blue-400',
+                'selection:bg-blue-500/30 selection:text-white',
+                topicValidation && !topicValidation.valid
+                  ? 'border-amber-500/50 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20'
+                  : 'border-[#3F3F46] focus:border-blue-500/60 focus:ring-2 focus:ring-blue-500/20',
+                !subjectId ? 'opacity-50 cursor-not-allowed' : ''
               )}
               disabled={isGenerating || !subjectId}
             />
@@ -270,47 +213,6 @@ export const GenerationPanel = memo(function GenerationPanel({
                 </motion.div>
               )}
             </AnimatePresence>
-
-            <AnimatePresence>
-              {showSuggestions && suggestions.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -4, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -4, scale: 0.98 }}
-                  transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute top-full left-0 right-0 mt-1 bg-surface-100 border border-border rounded-lg shadow-elevated z-20 max-h-48 overflow-y-auto"
-                >
-                  {suggestions.map((s, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onMouseDown={() => selectSuggestion(s)}
-                      className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-surface-150 hover:text-text-primary transition-colors flex items-center gap-2"
-                    >
-                      <Sparkles className="w-3 h-3 text-accent-light shrink-0" />
-                      <span className="font-medium text-accent-light">{s.topic}</span>
-                      <span className="text-text-tertiary ml-auto">in {s.subject}</span>
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {!topic && recentSearches.length > 0 && !showSuggestions && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-surface-100 border border-border rounded-lg shadow-elevated z-20">
-                <p className="px-3 py-1.5 text-xs text-text-tertiary uppercase tracking-wider">Recent</p>
-                {recentSearches.map((s, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onMouseDown={() => selectRecentSearch(s)}
-                    className="w-full text-left px-3 py-2 text-xs text-text-secondary hover:bg-surface-150 hover:text-text-primary transition-colors"
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
           <AnimatePresence>
