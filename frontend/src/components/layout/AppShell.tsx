@@ -39,6 +39,8 @@ export function AppShell() {
   const navigate = useNavigate()
   const outlet = useOutlet()
   const isLearnPage = location.pathname === '/learn'
+  const isHomePage = location.pathname === '/'
+  const showSidebar = !isLearnPage && !isHomePage && sidebarOpen
 
   const handleNewLesson = useCallback(() => {
     navigate('/learn', { state: { openGenerate: true } })
@@ -101,7 +103,7 @@ export function AppShell() {
       />
 
       <div className="flex-1 flex overflow-hidden min-h-0 relative z-10 p-0 md:p-3 md:pt-2 gap-0 md:gap-3">
-        {!isLearnPage && sidebarOpen && (
+        {showSidebar && (
           <GlobalSidebar />
         )}
 

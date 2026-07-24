@@ -27,7 +27,7 @@ export function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="relative min-h-screen flex flex-col items-center justify-center pt-20 pb-32 px-6 z-10"
+        className="relative min-h-[55vh] flex flex-col items-center justify-center pt-20 pb-20 px-6 z-10"
       >
         {/* Massive 3D Glass Circle Centerpiece */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-cyan-500/10 bg-cyan-900/5 backdrop-blur-[2px] pointer-events-none flex items-center justify-center shadow-[0_0_100px_rgba(6,182,212,0.05)]">
@@ -45,14 +45,14 @@ export function Home() {
             Mentor OS v2.0
           </div>
           
-          <h1 className="text-6xl md:text-[7rem] font-black tracking-tighter leading-[0.9] mb-8 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+          <h1 className="text-5xl md:text-[5.5rem] font-black tracking-tighter leading-[0.9] mb-8 drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
             ENGINEER<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
               TOMORROW
             </span>
           </h1>
           
-          <p className="text-xl md:text-2xl text-cyan-100/50 max-w-2xl font-medium leading-relaxed mb-16 tracking-wide">
+          <p className="text-lg md:text-xl text-cyan-100/50 max-w-2xl font-medium leading-relaxed mb-12 tracking-wide">
             Initialize learning sequence. Construct robust mental models through advanced holographic tutoring.
           </p>
 
@@ -78,7 +78,7 @@ export function Home() {
       </motion.section>
 
       {/* ─── HUD ENVIRONMENTS (BREAKING THE GRID) ─────────────────────────────── */}
-      <section className="relative z-20 px-6 md:px-12 max-w-[1800px] mx-auto pb-60 pt-20">
+      <section className="relative z-20 px-6 md:px-12 max-w-[1400px] mx-auto pb-60 pt-10">
         
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24">
           

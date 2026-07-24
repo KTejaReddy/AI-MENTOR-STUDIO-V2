@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { IconButton } from '@/components/ui/icon-button'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -40,6 +40,8 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications()
   const { user, isAuthenticated, logout, logoutAll } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const isHomePage = location.pathname === '/'
 
   const handleNewLesson = () => {
     if (onNewLesson) {
@@ -114,18 +116,19 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             </NavLink>
           ))}
         </nav>
-        
         {/* Premium Search Placeholder */}
-        <div className="hidden lg:flex items-center ml-2 relative group">
-           <div className="w-48 h-8 rounded-full bg-white/5 border border-white/10 flex items-center px-3 gap-2 cursor-pointer transition-all hover:bg-white/10 hover:w-56 group-hover:border-white/20">
-             <Code2 className="w-3.5 h-3.5 text-text-tertiary group-hover:text-text-secondary" />
-             <span className="text-xs text-text-tertiary group-hover:text-text-secondary">Search everywhere...</span>
-             <div className="ml-auto flex items-center gap-0.5">
-               <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">⌘</span>
-               <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">K</span>
+        {!isHomePage && (
+          <div className="hidden lg:flex items-center ml-2 relative group">
+             <div className="w-48 h-8 rounded-full bg-white/5 border border-white/10 flex items-center px-3 gap-2 cursor-pointer transition-all hover:bg-white/10 hover:w-56 group-hover:border-white/20">
+               <Code2 className="w-3.5 h-3.5 text-text-tertiary group-hover:text-text-secondary" />
+               <span className="text-xs text-text-tertiary group-hover:text-text-secondary">Search everywhere...</span>
+               <div className="ml-auto flex items-center gap-0.5">
+                 <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">⌘</span>
+                 <span className="text-[10px] font-mono text-text-tertiary bg-white/10 px-1 rounded">K</span>
+               </div>
              </div>
-           </div>
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-1 md:gap-2 shrink-0">
