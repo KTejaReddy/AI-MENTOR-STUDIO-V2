@@ -214,8 +214,8 @@ export function CompilerLab() {
             className="shrink-0 h-6 md:w-6 md:h-full flex items-center justify-center border-t md:border-t-0 md:border-l border-border bg-surface-100 hover:bg-surface-150 transition-colors text-text-tertiary hover:text-text-primary z-20"
             aria-label="Open output panel"
           >
-            <span className="md:hidden text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-[#00f2fe]">Open Panel <PanelRightOpen className="w-3 h-3 rotate-90" /></span>
-            <PanelRightOpen className="hidden md:block w-3 h-3 text-[#00f2fe]" />
+            <span className="md:hidden text-xs font-bold uppercase tracking-widest flex items-center gap-2 text-[var(--color-compiler)]">Open Panel <PanelRightOpen className="w-3 h-3 rotate-90" /></span>
+            <PanelRightOpen className="hidden md:block w-3 h-3 text-[var(--color-compiler)]" />
           </button>
         )}
 
@@ -231,15 +231,15 @@ export function CompilerLab() {
             <div className="flex-1 flex flex-col w-full h-full min-w-0 overflow-hidden">
               <div className="flex border-b border-border h-9 shrink-0 w-full bg-surface-200/50">
                 {language.id === 'html' ? (
-                  <button onClick={() => setActiveTab('preview')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'preview' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
+                  <button onClick={() => setActiveTab('preview')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'preview' ? 'text-[var(--color-compiler)] bg-surface-200 border-b-2 border-[var(--color-compiler)]' : 'text-text-tertiary hover:text-text-secondary')}>
                     <Cpu className="w-3.5 h-3.5" /> Live Preview
                   </button>
                 ) : (
-                  <button onClick={() => setActiveTab('console')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'console' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
+                  <button onClick={() => setActiveTab('console')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'console' ? 'text-[var(--color-compiler)] bg-surface-200 border-b-2 border-[var(--color-compiler)]' : 'text-text-tertiary hover:text-text-secondary')}>
                     <TerminalSquare className="w-3.5 h-3.5" /> Console
                   </button>
                 )}
-                <button onClick={() => setActiveTab('ai')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'ai' ? 'text-[#00f2fe] bg-surface-200 border-b-2 border-[#00f2fe]' : 'text-text-tertiary hover:text-text-secondary')}>
+                <button onClick={() => setActiveTab('ai')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'ai' ? 'text-[var(--color-compiler)] bg-surface-200 border-b-2 border-[var(--color-compiler)]' : 'text-text-tertiary hover:text-text-secondary')}>
                   <Sparkles className="w-3.5 h-3.5" /> AI Assistant
                 </button>
                 <button onClick={() => setOutputPanelOpen(false)} className="px-3 text-text-tertiary hover:text-text-primary transition-colors border-l border-border" aria-label="Close output panel">
@@ -255,10 +255,10 @@ export function CompilerLab() {
                       <span className="text-[#10b981]">➜</span>
                       <span>compiler-lab</span>
                       <span className="text-[#8b5cf6]">~</span>
-                      <span className="text-[#00f2fe] font-bold">active</span>
+                      <span className="text-[var(--color-compiler)] font-bold">active</span>
                     </div>
 
-                    <pre className="text-xs text-[#00f2fe] drop-shadow-[0_0_8px_rgba(0,242,254,0.15)] whitespace-pre-wrap leading-relaxed">
+                    <pre className="text-xs text-[var(--color-compiler)] drop-shadow-[0_0_8px_rgba(var(--color-compiler-rgb),0.15)] whitespace-pre-wrap leading-relaxed">
                       {output || (errorMsg ? '' : '// Output will appear here...')}
                     </pre>
                     {errorMsg && (
@@ -284,8 +284,8 @@ export function CompilerLab() {
                   <div className="flex-1 overflow-y-auto scrollbar-thin p-5 leading-relaxed bg-[#05050b]/40">
                     {isAiProcessing ? (
                       <div className="flex flex-col items-center gap-2.5 text-text-tertiary text-xs justify-center py-12">
-                        <Loader2 className="w-4 h-4 animate-spin text-[#00f2fe]" />
-                        <span className="font-bold uppercase tracking-wider text-xs text-[#00f2fe]/80 animate-pulse">Processing with AI...</span>
+                        <Loader2 className="w-4 h-4 animate-spin text-[var(--color-compiler)]" />
+                        <span className="font-bold uppercase tracking-wider text-xs text-[var(--color-compiler)]/80 animate-pulse">Processing with AI...</span>
                       </div>
                     ) : (
                       <MarkdownRenderer content={aiOutput || '*Run an AI action from the header toolbar to see output explanations here.*'} />
@@ -295,8 +295,8 @@ export function CompilerLab() {
                 {((isRunning && activeTab === 'console') || (isAiProcessing && activeTab === 'ai')) ? (
                   <div className="absolute top-4 right-4 z-20">
                     <span className="relative flex h-2 w-2">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00f2fe] opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00f2fe]"></span>
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-compiler)] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-compiler)]"></span>
                     </span>
                   </div>
                 ) : null}

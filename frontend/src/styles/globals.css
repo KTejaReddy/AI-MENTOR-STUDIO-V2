@@ -35,17 +35,21 @@
   --accent-muted: rgba(255, 255, 255, 0.08);
 
   /* Multi-Accent Semantic Colors */
-  --color-nav: #60a5fa;      /* Blue */
-  --color-ai: #c084fc;       /* Purple */
-  --color-learn: #2dd4bf;    /* Teal */
-  --color-practice: #fb923c; /* Orange */
-  --color-success: #34d399;  /* Green */
-  --color-notes: #f472b6;    /* Pink */
-  --color-warning: #fbbf24;  /* Amber */
-  --color-error: #f87171;    /* Red */
+  --color-ai: #818cf8;       /* Indigo */
+  --color-lessons: #3b82f6;  /* Royal Blue */
+  --color-compiler: #10b981; /* Emerald */
+  --color-notes: #f59e0b;    /* Amber */
+  --color-bookmarks: #f43f5e;/* Rose */
+  --color-analytics: #06b6d4;/* Cyan */
+  --color-practice: #f97316; /* Orange */
+  --color-settings: #64748b; /* Slate */
+  --color-about-gold: #fbbf24;
+  --color-about-navy: #1e3a8a;
   
-  /* Legacy mapping for --success */
-  --success: var(--color-success);
+  /* Standard status mappings */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
 
   /* Radius System */
   --radius-sm: 4px;

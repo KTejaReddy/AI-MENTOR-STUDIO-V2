@@ -63,7 +63,7 @@ export function Bookmarks() {
           {allTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 mb-4">
               {allTags.map(tag => (
-                <button key={tag} onClick={() => setTagFilter(tagFilter === tag ? null : tag)} className={cn('px-3 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all', tagFilter === tag ? 'bg-accent/15 text-accent-light border border-accent/20' : 'bg-surface-150 text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary')}>
+                <button key={tag} onClick={() => setTagFilter(tagFilter === tag ? null : tag)} className={cn('px-3 py-1.5 min-h-[48px] rounded-xl text-xs font-medium transition-all', tagFilter === tag ? 'bg-[var(--color-bookmarks)]/15 text-[var(--color-bookmarks)] border border-[var(--color-bookmarks)]/20' : 'bg-surface-150 text-text-tertiary border border-border hover:border-border-light hover:text-text-secondary')}>
                   {tag}
                 </button>
               ))}
@@ -97,13 +97,13 @@ export function Bookmarks() {
                     {filtered.map((bookmark, i) => (
                       <motion.div key={bookmark.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
                         <div className="card card-hover p-5 group h-full relative overflow-hidden flex flex-col justify-between">
-                          <div className="absolute inset-0 bg-gradient-to-tr from-[#00f2fe]/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                          <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-bookmarks)]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                           <div className="flex items-start gap-3.5 relative z-10">
-                            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
-                              <Folder className="w-4 h-4 text-amber-400" />
+                            <div className="w-10 h-10 rounded-xl bg-[var(--color-bookmarks)]/10 border border-[var(--color-bookmarks)]/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+                              <Folder className="w-4 h-4 text-[var(--color-bookmarks)]" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-xs font-bold text-text-primary truncate mb-1 group-hover:text-[#00f2fe] transition-colors">{bookmark.title}</p>
+                              <p className="text-xs font-bold text-text-primary truncate mb-1 group-hover:text-[var(--color-bookmarks)] transition-colors">{bookmark.title}</p>
                               <p className="text-xs font-mono text-text-tertiary mb-2 uppercase tracking-wide">{bookmark.subject} · {bookmark.added}</p>
                               <div className="flex flex-wrap gap-1 mt-1.5">
                                 {bookmark.tags.map((tag) => <Badge key={tag} variant="surface" size="sm" className="text-[8px] bg-surface-200 border-border">{tag}</Badge>)}
@@ -111,7 +111,7 @@ export function Bookmarks() {
                             </div>
                           </div>
                           <div className="flex gap-1.5 justify-end mt-4 pt-3 border-t border-border opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 transform translate-y-0 md:translate-y-1 md:group-hover:translate-y-0 relative z-10">
-                            <IconButton label="Open" size="sm" className="hover:bg-surface-200"><ExternalLink className="w-3.5 h-3.5 text-[#00f2fe]" /></IconButton>
+                            <IconButton label="Open" size="sm" className="hover:bg-surface-200"><ExternalLink className="w-3.5 h-3.5 text-[var(--color-bookmarks)]" /></IconButton>
                             <IconButton label="Delete" size="sm" onClick={() => handleDelete(bookmark.title)} className="hover:bg-surface-200"><Trash2 className="w-3.5 h-3.5 hover:text-red-400" /></IconButton>
                           </div>
                         </div>
@@ -122,8 +122,8 @@ export function Bookmarks() {
                   <div className="space-y-1">
                     {filtered.map((bookmark, i) => (
                       <motion.div key={bookmark.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-150 transition-colors cursor-pointer">
-                        <div className="w-9 h-9 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
-                          <Folder className="w-4 h-4 text-amber-400" />
+                        <div className="w-9 h-9 rounded-xl bg-[var(--color-bookmarks)]/10 flex items-center justify-center shrink-0">
+                          <Folder className="w-4 h-4 text-[var(--color-bookmarks)]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-text-primary truncate">{bookmark.title}</p>

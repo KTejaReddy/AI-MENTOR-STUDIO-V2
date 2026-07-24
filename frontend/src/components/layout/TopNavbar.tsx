@@ -22,18 +22,18 @@ interface TopNavbarProps {
 }
 
 const navItems = [
-  { to: '/', icon: Home, label: 'Home' },
-  { to: '/learn', icon: GraduationCap, label: 'Learn' },
-  { to: '/document-tutor', icon: FileText, label: 'Doc Tutor' },
-  { to: '/compiler-lab', icon: Code2, label: 'Compiler' },
-  { to: '/history', icon: History, label: 'History' },
-  { to: '/bookmarks', icon: Bookmark, label: 'Bookmarks' },
-  { to: '/notes', icon: StickyNote, label: 'Notes' },
+  { to: '/', icon: Home, label: 'Home', colorVar: '--text-primary' },
+  { to: '/learn', icon: GraduationCap, label: 'Learn', colorVar: '--color-lessons' },
+  { to: '/document-tutor', icon: FileText, label: 'Doc Tutor', colorVar: '--color-ai' },
+  { to: '/compiler-lab', icon: Code2, label: 'Compiler', colorVar: '--color-compiler' },
+  { to: '/history', icon: History, label: 'History', colorVar: '--color-practice' },
+  { to: '/bookmarks', icon: Bookmark, label: 'Bookmarks', colorVar: '--color-bookmarks' },
+  { to: '/notes', icon: StickyNote, label: 'Notes', colorVar: '--color-notes' },
 ]
 
 const utilityItems = [
-  { to: '/settings', icon: Settings2, label: 'Settings' },
-  { to: '/about', icon: Info, label: 'About' },
+  { to: '/settings', icon: Settings2, label: 'Settings', colorVar: '--color-settings' },
+  { to: '/about', icon: Info, label: 'About', colorVar: '--color-about-gold' },
 ]
 
 export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson }: TopNavbarProps) {
@@ -84,23 +84,28 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               key={item.to}
               to={item.to}
               end={item.to === '/'}
+              style={({ isActive }) => ({
+                color: isActive ? `var(${item.colorVar})` : undefined
+              })}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-10 shrink-0',
-                  isActive
-                    ? 'text-[#00f2fe]'
-                    : 'text-text-tertiary hover:text-text-secondary'
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 relative z-10 shrink-0 group',
+                  !isActive && 'text-text-tertiary hover:text-text-primary'
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  <item.icon className="w-3.5 h-3.5 shrink-0" />
+                  <item.icon 
+                    className="w-3.5 h-3.5 shrink-0 transition-colors" 
+                    style={!isActive ? { color: 'var(--text-tertiary)' } : {}}
+                  />
                   <span className="whitespace-nowrap">{item.label}</span>
                   {isActive && (
                     <motion.div
                       layoutId="nav-pill"
-                      className="absolute inset-0 rounded-full bg-accent-muted/15 border border-accent/20 -z-10"
+                      className="absolute inset-0 rounded-full border opacity-20 -z-10"
+                      style={{ backgroundColor: `var(${item.colorVar})`, borderColor: `var(${item.colorVar})` }}
                       transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                     />
                   )}
@@ -195,11 +200,11 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             <IconButton
               label="AI Chat"
               onClick={onToggleChat}
-              className={cn(chatOpen && 'text-accent-light bg-accent/10')}
+              className={cn(chatOpen && 'bg-[var(--color-ai)]/10 text-[var(--color-ai)]')}
             >
               <div className="relative">
                 <MessageSquare className="w-[18px] h-[18px]" />
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-accent" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[var(--color-ai)]" />
               </div>
             </IconButton>
           </Tooltip>
@@ -247,12 +252,14 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
             <Tooltip key={item.to} content={item.label}>
               <NavLink
                 to={item.to}
+                style={({ isActive }) => ({
+                  color: isActive ? `var(${item.colorVar})` : undefined,
+                  backgroundColor: isActive ? `color-mix(in srgb, var(${item.colorVar}) 10%, transparent)` : undefined
+                })}
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200',
-                    isActive
-                      ? 'text-accent-light bg-accent/10'
-                      : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-150/60'
+                    !isActive && 'text-text-tertiary hover:text-text-secondary hover:bg-surface-150/60'
                   )
                 }
               >

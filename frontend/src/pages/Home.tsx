@@ -175,7 +175,7 @@ export function Home() {
       title: "New Lesson",
       description: "Generate a custom AI learning path",
       onClick: () => navigate('/learn', { state: { openGenerate: true } }),
-      colorClass: "text-[var(--color-nav)]"
+      colorClass: "text-[var(--color-lessons)]"
     },
     {
       icon: <FileText className="w-4 h-4" />,
@@ -189,28 +189,28 @@ export function Home() {
       title: "Open Compiler",
       description: "Practice coding in real-time",
       onClick: () => navigate('/compiler-lab'),
-      colorClass: "text-[var(--color-success)]"
+      colorClass: "text-[var(--color-compiler)]"
     },
     {
       icon: <Clock className="w-4 h-4" />,
       title: "Resume Lesson",
       description: "Continue where you left off",
       onClick: handleContinueLast,
-      colorClass: "text-[var(--color-warning)]"
+      colorClass: "text-[var(--color-practice)]"
     },
     {
       icon: <Bookmark className="w-4 h-4" />,
       title: "Bookmarks",
       description: "Saved formulas, code & sections",
       onClick: () => navigate('/bookmarks'),
-      colorClass: "text-[var(--color-notes)]"
+      colorClass: "text-[var(--color-bookmarks)]"
     },
     {
       icon: <Edit3 className="w-4 h-4" />,
       title: "Notes",
       description: "Review your study notebook",
       onClick: () => navigate('/notes'),
-      colorClass: "text-[var(--color-ai)]"
+      colorClass: "text-[var(--color-notes)]"
     }
   ]
 
@@ -256,11 +256,11 @@ export function Home() {
             transition={{ delay: 0.1 }}
             className="w-full mb-8"
           >
-            <div className="card p-8 md:p-10 relative overflow-hidden group flex flex-col md:flex-row items-center justify-between gap-6 border-[var(--color-ai)]/20">
-              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-nav)]/5 to-[var(--color-ai)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="card p-8 md:p-10 relative overflow-hidden group flex flex-col md:flex-row items-center justify-between gap-6 border-[var(--color-lessons)]/20">
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-lessons)]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10 text-center md:text-left flex-1">
                 <div className="w-16 h-16 rounded-2xl bg-surface-100 border border-border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300">
-                  <Sparkles className="w-8 h-8 text-[var(--color-nav)]" />
+                  <Sparkles className="w-8 h-8 text-[var(--color-lessons)]" />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-2 group-hover:text-[#00C2FF] transition-colors">Continue Learning</h2>
@@ -321,7 +321,7 @@ export function Home() {
                         </div>
                         <div className="w-full h-1 bg-surface-200 rounded-full overflow-hidden mb-2">
                           <div 
-                            className="h-full bg-[var(--color-nav)] rounded-full transition-all duration-500"
+                            className="h-full bg-[var(--color-lessons)] rounded-full transition-all duration-500"
                             style={{ width: `${progressPercent}%` }}
                           />
                         </div>

@@ -509,14 +509,14 @@ export function Dashboard() {
               >
                 {/* Metric Summary Cards */}
                 {[
-                  { label: 'Lessons Today', val: overview.lessons_today, detail: 'Generations requested today', colorClass: 'text-text-primary', span: 'col-span-1 md:col-span-1' },
-                  { label: 'Sections Generated', val: overview.sections_generated, detail: 'Total sections written', colorClass: 'text-text-primary', span: 'col-span-1 md:col-span-1' },
-                  { label: 'Today\'s Requests', val: `${overview.today_requests} / ${overview.total_requests}`, detail: 'Requests (Today / Lifetime)', colorClass: 'text-[var(--color-nav)]', span: 'col-span-1 md:col-span-2' },
-                  { label: 'Today\'s Tokens', val: overview.today_tokens.toLocaleString(), detail: `Lifetime: ${overview.total_tokens.toLocaleString()}`, colorClass: 'text-[var(--color-learn)]', span: 'col-span-1 md:col-span-2' },
-                  { label: 'Avg Lesson Latency', val: `${overview.average_lesson_time_sec}s`, detail: 'Average markdown generation time', colorClass: 'text-[var(--color-warning)]', span: 'col-span-1 md:col-span-1' },
-                  { label: 'Est Remaining Lessons', val: overview.remaining_estimated_lessons, detail: 'Based on limits', colorClass: 'text-[var(--color-success)]', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Lessons Today', val: overview.lessons_today, detail: 'Generations requested today', colorClass: 'text-[var(--color-lessons)]', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Sections Generated', val: overview.sections_generated, detail: 'Total sections written', colorClass: 'text-[var(--color-ai)]', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Today\'s Requests', val: `${overview.today_requests} / ${overview.total_requests}`, detail: 'Requests (Today / Lifetime)', colorClass: 'text-[var(--color-analytics)]', span: 'col-span-1 md:col-span-2' },
+                  { label: 'Today\'s Tokens', val: overview.today_tokens.toLocaleString(), detail: `Lifetime: ${overview.total_tokens.toLocaleString()}`, colorClass: 'text-[var(--color-compiler)]', span: 'col-span-1 md:col-span-2' },
+                  { label: 'Avg Lesson Latency', val: `${overview.average_lesson_time_sec}s`, detail: 'Average markdown generation time', colorClass: 'text-[var(--color-practice)]', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Est Remaining Lessons', val: overview.remaining_estimated_lessons, detail: 'Based on limits', colorClass: 'text-[var(--color-lessons)]', span: 'col-span-1 md:col-span-1' },
                   { label: 'Bottleneck Model', val: overview.bottleneck_model.split('/').pop(), detail: 'Highest error count today', colorClass: 'text-[var(--color-error)]', span: 'col-span-1 md:col-span-2' },
-                  { label: 'Bottleneck API Key', val: overview.bottleneck_api_key, detail: 'Most failed attempts today', colorClass: 'text-[var(--color-notes)]', span: 'col-span-1 md:col-span-2' }
+                  { label: 'Bottleneck API Key', val: overview.bottleneck_api_key, detail: 'Most failed attempts today', colorClass: 'text-[var(--color-error)]', span: 'col-span-1 md:col-span-2' }
                 ].map((card, i) => (
                   <div key={i} className={`card p-5 flex flex-col justify-between h-32 ${card.span}`}>
                     <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">{card.label}</span>
@@ -532,7 +532,7 @@ export function Dashboard() {
                     <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Weekly Activity</span>
                   </div>
                   <div className="flex-1 h-32 min-h-0">
-                    {charts && renderLineChart(charts.time_series, 'requests', 'var(--color-nav)', 'requestsGrad')}
+                    {charts && renderLineChart(charts.time_series, 'requests', 'var(--color-analytics)', 'requestsGrad')}
                   </div>
                 </div>
 
@@ -542,7 +542,7 @@ export function Dashboard() {
                     <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Daily summaries</span>
                   </div>
                   <div className="flex-1 h-32 min-h-0">
-                    {charts && renderLineChart(charts.time_series, 'tokens', 'var(--color-ai)', 'tokensGrad')}
+                    {charts && renderLineChart(charts.time_series, 'tokens', 'var(--color-compiler)', 'tokensGrad')}
                   </div>
                 </div>
 
@@ -554,8 +554,8 @@ export function Dashboard() {
                       {[
                         { label: 'Timeouts', val: errors.timeouts, color: 'text-[var(--color-warning)]' },
                         { label: '429 Rate Limits', val: errors.rate_limits_429, color: 'text-[var(--color-error)]' },
-                        { label: 'Provider Errors', val: errors.provider_errors, color: 'text-[var(--color-ai)]' },
-                        { label: 'Retries Triggered', val: errors.retries, color: 'text-[var(--color-nav)]' },
+                        { label: 'Provider Errors', val: errors.provider_errors, color: 'text-[var(--color-error)]' },
+                        { label: 'Retries Triggered', val: errors.retries, color: 'text-[var(--color-practice)]' },
                         { label: 'Fallbacks Applied', val: errors.fallbacks, color: 'text-[var(--color-success)]' },
                         { label: 'Cancelled Requests', val: errors.cancelled, color: 'text-text-tertiary' }
                       ].map((item, idx) => (

@@ -216,7 +216,7 @@ export function Learn() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => setGenerateDialogOpen(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-accent to-accent-dark text-white text-xs font-semibold shadow-glow-accent hover:shadow-glow-accent-lg transition-shadow"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-lessons)] text-white text-xs font-semibold shadow-[0_0_15px_rgba(var(--color-lessons-rgb),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-lessons-rgb),0.5)] transition-shadow"
                   >
                     <Sparkles className="w-4 h-4" />
                     New Lesson
@@ -232,8 +232,8 @@ export function Learn() {
               transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col items-center text-center max-w-md"
             >
-              <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center mb-6 border border-accent/20">
-                <Sparkles className="w-8 h-8 text-accent-light" />
+              <div className="w-16 h-16 rounded-2xl bg-[var(--color-lessons)]/10 flex items-center justify-center mb-6 border border-[var(--color-lessons)]/20">
+                <Sparkles className="w-8 h-8 text-[var(--color-lessons)]" />
               </div>
               <h2 className="text-xl font-bold text-text-primary mb-2">
                 Generate Your First AI Lesson
@@ -245,7 +245,7 @@ export function Learn() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => setGenerateDialogOpen(true)}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent to-accent-dark text-white text-sm font-semibold shadow-glow-accent hover:shadow-glow-accent-lg transition-shadow"
+                className="flex items-center gap-2 px-6 py-3 rounded-full bg-[var(--color-lessons)] text-white text-sm font-semibold shadow-[0_0_15px_rgba(var(--color-lessons-rgb),0.3)] hover:shadow-[0_0_25px_rgba(var(--color-lessons-rgb),0.5)] transition-shadow"
               >
                 <Sparkles className="w-5 h-5" />
                 Generate Lesson

@@ -31,8 +31,8 @@ function StatusIcon({ status }: { status: string }) {
     case 'generating':
       return (
         <span className="relative flex h-3.5 w-3.5 items-center justify-center shrink-0">
-          <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-[var(--color-nav)] opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--color-nav)]"></span>
+          <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-[var(--color-lessons)] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--color-lessons)]"></span>
         </span>
       )
     case 'retrying': return <Loader2 className="w-3.5 h-3.5 text-[var(--color-warning)] shrink-0 animate-spin" />
@@ -94,8 +94,8 @@ export const LeftSidebar = memo(function LeftSidebar({
         <div className="px-4 py-4 border-b border-border shrink-0 max-md:px-2 max-md:flex max-md:justify-center bg-surface-50">
           <h2 className="text-sm font-semibold text-text-primary max-md:hidden tracking-tight">Lesson Sections</h2>
           {isGenerating ? (
-            <p className="text-xs text-[var(--color-nav)] flex items-center gap-1.5 mt-1 font-medium max-md:hidden">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-nav)] animate-ping" />
+            <p className="text-xs text-[var(--color-lessons)] flex items-center gap-1.5 mt-1 font-medium max-md:hidden">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-lessons)] animate-ping" />
               Generating lesson...
             </p>
           ) : doneCount > 0 ? (
@@ -128,7 +128,7 @@ export const LeftSidebar = memo(function LeftSidebar({
                 className={cn(
                   'w-full flex items-center max-md:justify-center gap-2.5 px-3 max-md:px-0 py-2 min-h-[40px] rounded-lg text-xs transition-colors text-left group relative overflow-hidden',
                   isActive
-                    ? 'text-text-primary font-medium bg-surface-150'
+                    ? 'text-[var(--color-lessons)] font-medium bg-[var(--color-lessons)]/10'
                     : 'text-text-secondary hover:text-text-primary hover:bg-surface-100',
                   (sStatus === 'waiting') && !isActive && 'opacity-60',
                 )}
@@ -140,7 +140,7 @@ export const LeftSidebar = memo(function LeftSidebar({
                 </span>
                 <span className={cn(
                   'relative z-10 flex-1 truncate transition-colors duration-150 max-md:hidden font-medium text-[13px]',
-                  (sStatus === 'generating' || sStatus === 'retrying') && 'text-[var(--color-nav)]',
+                  (sStatus === 'generating' || sStatus === 'retrying') && 'text-[var(--color-lessons)]',
                 )}>
                   {label}
                 </span>
@@ -164,7 +164,7 @@ export const LeftSidebar = memo(function LeftSidebar({
               </div>
               <div className="h-1.5 max-md:h-8 rounded-full bg-surface-200 overflow-hidden relative border border-border">
                 <motion.div
-                  className="h-full rounded-full bg-[var(--color-success)]"
+                  className="h-full rounded-full bg-[var(--color-lessons)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -210,7 +210,7 @@ export const LeftSidebar = memo(function LeftSidebar({
                       className={cn(
                         'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left',
                         isActive
-                          ? 'bg-surface-150 text-text-primary font-medium'
+                          ? 'bg-[var(--color-lessons)]/10 text-[var(--color-lessons)] font-medium'
                           : 'text-text-secondary hover:text-text-primary hover:bg-surface-100',
                         (sStatus === 'waiting') && !isActive && 'opacity-60'
                       )}

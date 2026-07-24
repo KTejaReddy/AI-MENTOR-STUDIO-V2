@@ -230,12 +230,12 @@ export function DocumentTutor() {
                   className={cn(
                     'w-full p-3 rounded-lg border text-left transition-all',
                     activeDoc?.document_id === doc.document_id
-                      ? 'border-accent/30 bg-accent/10'
+                      ? 'border-[var(--color-ai)]/30 bg-[var(--color-ai)]/10'
                       : 'border-border hover:border-border-light hover:bg-surface-200'
                   )}
                 >
                   <div className="flex items-center gap-3">
-                    <FileText className={cn('w-4 h-4 shrink-0', activeDoc?.document_id === doc.document_id ? 'text-accent-light' : 'text-text-tertiary')} />
+                    <FileText className={cn('w-4 h-4 shrink-0', activeDoc?.document_id === doc.document_id ? 'text-[var(--color-ai)]' : 'text-text-tertiary')} />
                     <span className="text-xs font-medium text-text-primary truncate">{doc.title || doc.filename}</span>
                   </div>
                 </button>
@@ -260,7 +260,7 @@ export function DocumentTutor() {
                       className={cn(
                         'w-full text-left px-3 py-2 rounded-lg text-xs transition-colors',
                         activeChapter?.title === ch.title
-                          ? 'bg-accent/10 text-accent-light font-medium'
+                          ? 'bg-[var(--color-ai)]/10 text-[var(--color-ai)] font-medium'
                           : 'text-text-secondary hover:text-text-primary hover:bg-surface-200'
                       )}
                     >
@@ -305,7 +305,7 @@ export function DocumentTutor() {
                 onClick={() => setActiveTab('lesson')}
                 className={cn(
                   'px-4 py-2 text-xs font-medium border-b-2 transition-colors',
-                  activeTab === 'lesson' ? 'border-accent text-accent-light' : 'border-transparent text-text-tertiary hover:text-text-secondary'
+                  activeTab === 'lesson' ? 'border-[var(--color-ai)] text-[var(--color-ai)]' : 'border-transparent text-text-tertiary hover:text-text-secondary'
                 )}
               >
                 AI Lesson
@@ -314,7 +314,7 @@ export function DocumentTutor() {
                 onClick={() => setActiveTab('original')}
                 className={cn(
                   'px-4 py-2 text-xs font-medium border-b-2 transition-colors',
-                  activeTab === 'original' ? 'border-accent text-accent-light' : 'border-transparent text-text-tertiary hover:text-text-secondary'
+                  activeTab === 'original' ? 'border-[var(--color-ai)] text-[var(--color-ai)]' : 'border-transparent text-text-tertiary hover:text-text-secondary'
                 )}
               >
                 Original Document
@@ -345,7 +345,7 @@ export function DocumentTutor() {
                   {activeDoc.metadata && (
                     <div className="mb-8 p-5 bg-surface-100 rounded-xl border border-border">
                       <h2 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-                        <BookMarked className="w-4 h-4 text-accent" /> Document Overview
+                        <BookMarked className="w-4 h-4 text-[var(--color-ai)]" /> Document Overview
                       </h2>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                         <div className="p-3 bg-surface-200/50 rounded-lg">
@@ -428,20 +428,20 @@ export function DocumentTutor() {
               {/* Scanline Animation */}
               {loading && (
                 <motion.div
-                  className="absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#00f2fe] to-transparent z-10"
+                  className="absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--color-ai)] to-transparent z-10"
                   animate={{ top: ['0%', '100%'] }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
                 />
               )}
               
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00f2fe]/20 to-[#8b5cf6]/10 border border-[#00f2fe]/20 flex items-center justify-center shrink-0 mb-6 group-hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-ai)]/20 to-[#8b5cf6]/10 border border-[var(--color-ai)]/20 flex items-center justify-center shrink-0 mb-6 group-hover:scale-105 transition-transform duration-300">
                 {loading ? (
-                  <Loader2 className="w-8 h-8 text-[#00f2fe] animate-spin" />
+                  <Loader2 className="w-8 h-8 text-[var(--color-ai)] animate-spin" />
                 ) : (
-                  <FileUp className="w-8 h-8 text-[#00f2fe]" />
+                  <FileUp className="w-8 h-8 text-[var(--color-ai)]" />
                 )}
               </div>
-              <h3 className="text-sm font-bold text-text-primary mb-2 group-hover:text-[#00f2fe] transition-colors">
+              <h3 className="text-sm font-bold text-text-primary mb-2 group-hover:text-[var(--color-ai)] transition-colors">
                 {loading ? 'Processing Document...' : 'Upload PDF / Text Document'}
               </h3>
               <p className="text-xs text-text-tertiary max-w-xs leading-relaxed mb-6">
@@ -469,7 +469,7 @@ export function DocumentTutor() {
                 key={action}
                 onClick={() => handleDocumentAction(action)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleDocumentAction(action) } }}
-                className="text-left px-3 py-1.5 text-xs text-text-secondary hover:bg-accent hover:text-white transition-colors focus-visible:outline-none focus-visible:bg-accent/20"
+                className="text-left px-3 py-1.5 text-xs text-text-secondary hover:bg-[var(--color-ai)] hover:text-white transition-colors focus-visible:outline-none focus-visible:bg-[var(--color-ai)]/20"
                 role="menuitem"
               >
                 {action}
@@ -485,7 +485,7 @@ export function DocumentTutor() {
         tutorPanelOpen ? 'w-72' : 'w-0 overflow-hidden'
       )}>
         <div className="panel-header">
-          <Zap className="w-4 h-4 text-[#00f2fe]" />
+          <Zap className="w-4 h-4 text-[var(--color-ai)]" />
           <span className="panel-title">AI Tutor</span>
           <button onClick={() => setTutorPanelOpen(false)} className="ml-auto text-text-tertiary hover:text-text-primary transition-colors">
             <PanelLeftClose className="w-3.5 h-3.5" />
@@ -493,8 +493,8 @@ export function DocumentTutor() {
         </div>
         <div className="p-3 border-b border-border grid grid-cols-2 gap-1.5">
           {AI_ACTIONS.map((act) => (
-            <Button key={act.id} variant="secondary" size="sm" className="text-xs justify-start h-7 px-2 border-white/5 hover:border-[#00f2fe]/20" onClick={() => handleDocumentAction(act.label)} disabled={!activeDoc?.document_id || tutorLoading}>
-              <act.icon className="w-3 h-3 shrink-0 text-[#00f2fe]" />
+            <Button key={act.id} variant="secondary" size="sm" className="text-xs justify-start h-7 px-2 border-white/5 hover:border-[var(--color-ai)]/20" onClick={() => handleDocumentAction(act.label)} disabled={!activeDoc?.document_id || tutorLoading}>
+              <act.icon className="w-3 h-3 shrink-0 text-[var(--color-ai)]" />
               <span className="truncate">{act.label}</span>
             </Button>
           ))}
@@ -502,7 +502,7 @@ export function DocumentTutor() {
         <div className="flex-1 overflow-y-auto scrollbar-thin p-3 bg-surface-200/30">
           {tutorLoading && !tutorContent && (
             <div className="flex items-center gap-2 text-text-tertiary text-xs p-4 justify-center">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#00f2fe]" /> Thinking...
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-[var(--color-ai)]" /> Thinking...
             </div>
           )}
           {tutorContent && (
