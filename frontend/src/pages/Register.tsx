@@ -61,7 +61,7 @@ export function Register() {
         transition={{ duration: 0.6 }}
         className="relative z-10 w-full max-w-md px-4"
       >
-        <div className="glass-card rounded-2xl p-8">
+        <div className="card rounded-2xl p-8">
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-accent-muted/20">
               <Sparkles className="h-6 w-6 text-accent-light" />

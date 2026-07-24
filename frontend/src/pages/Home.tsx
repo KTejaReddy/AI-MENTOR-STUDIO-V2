@@ -93,11 +93,11 @@ function QuickActionCard({ icon, title, description, onClick, colorClass }: Quic
       whileHover={{ y: -6, scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className="glass interactive-item p-4 rounded-xl text-left border border-white/5 hover:border-accent/20 hover:shadow-[0_0_25px_rgba(0,194,255,0.08)] bg-white/3 transition-all duration-300 relative overflow-hidden group w-full cursor-pointer flex flex-col justify-between h-32"
+      className="card card-hover p-4 text-left w-full flex flex-col justify-between h-32"
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-accent-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      <div className="absolute inset-0 bg-surface-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       <div className="flex items-center justify-between">
-        <div className={`p-2 rounded-lg bg-surface-200 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shrink-0 ${colorClass}`}>
+        <div className={`p-2 rounded-lg bg-surface-100 transition-transform duration-300 shrink-0 ${colorClass}`}>
           {icon}
         </div>
       </div>
@@ -175,42 +175,42 @@ export function Home() {
       title: "New Lesson",
       description: "Generate a custom AI learning path",
       onClick: () => navigate('/learn', { state: { openGenerate: true } }),
-      colorClass: "text-[#00C2FF] bg-[#00C2FF]/10"
+      colorClass: "text-[var(--color-nav)]"
     },
     {
       icon: <FileText className="w-4 h-4" />,
       title: "Explain Document",
       description: "Upload PDFs & ask AI questions",
       onClick: () => navigate('/document-tutor'),
-      colorClass: "text-[#7C3AED] bg-[#7C3AED]/10"
+      colorClass: "text-[var(--color-ai)]"
     },
     {
       icon: <Code2 className="w-4 h-4" />,
       title: "Open Compiler",
       description: "Practice coding in real-time",
       onClick: () => navigate('/compiler-lab'),
-      colorClass: "text-[#10B981] bg-[#10B981]/10"
+      colorClass: "text-[var(--color-success)]"
     },
     {
       icon: <Clock className="w-4 h-4" />,
       title: "Resume Lesson",
       description: "Continue where you left off",
       onClick: handleContinueLast,
-      colorClass: "text-amber-400 bg-amber-400/10"
+      colorClass: "text-[var(--color-warning)]"
     },
     {
       icon: <Bookmark className="w-4 h-4" />,
       title: "Bookmarks",
       description: "Saved formulas, code & sections",
       onClick: () => navigate('/bookmarks'),
-      colorClass: "text-pink-500 bg-pink-500/10"
+      colorClass: "text-[var(--color-notes)]"
     },
     {
       icon: <Edit3 className="w-4 h-4" />,
       title: "Notes",
       description: "Review your study notebook",
       onClick: () => navigate('/notes'),
-      colorClass: "text-indigo-400 bg-indigo-400/10"
+      colorClass: "text-[var(--color-ai)]"
     }
   ]
 
@@ -256,11 +256,11 @@ export function Home() {
             transition={{ delay: 0.1 }}
             className="w-full mb-8"
           >
-            <div className="glass p-8 md:p-10 bg-gradient-to-br from-[#00C2FF]/5 via-[#7C3AED]/2 to-transparent border border-white/5 shadow-xl rounded-2xl relative overflow-hidden group flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#00C2FF]/5 via-transparent to-[#7C3AED]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="card p-8 md:p-10 relative overflow-hidden group flex flex-col md:flex-row items-center justify-between gap-6 border-[var(--color-ai)]/20">
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-nav)]/5 to-[var(--color-ai)]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6 relative z-10 text-center md:text-left flex-1">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00C2FF]/20 to-[#7C3AED]/10 border border-[#00C2FF]/20 flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300">
-                  <Sparkles className="w-8 h-8 text-[#00C2FF]" />
+                <div className="w-16 h-16 rounded-2xl bg-surface-100 border border-border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 group-hover:rotate-3 transition-transform duration-300">
+                  <Sparkles className="w-8 h-8 text-[var(--color-nav)]" />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-2 group-hover:text-[#00C2FF] transition-colors">Continue Learning</h2>
@@ -300,7 +300,7 @@ export function Home() {
                       transition={{ delay: 0.15 + i * 0.05 }}
                       whileHover={{ y: -6, scale: 1.02 }}
                       onClick={() => handleLessonOpen(topic)}
-                      className="glass interactive-item p-5 rounded-xl border border-white/5 hover:border-accent/20 hover:shadow-[0_0_20px_rgba(0,194,255,0.06)] bg-white/3 transition-all duration-300 cursor-pointer flex flex-col justify-between h-40 group"
+                      className="card card-hover p-5 flex flex-col justify-between h-40 group"
                     >
                       <div>
                         <span className="text-xs uppercase tracking-wider font-mono text-accent font-bold mb-1 block">
@@ -321,7 +321,7 @@ export function Home() {
                         </div>
                         <div className="w-full h-1 bg-surface-200 rounded-full overflow-hidden mb-2">
                           <div 
-                            className="h-full bg-gradient-to-r from-accent to-accent-secondary rounded-full transition-all duration-500" 
+                            className="h-full bg-[var(--color-nav)] rounded-full transition-all duration-500"
                             style={{ width: `${progressPercent}%` }}
                           />
                         </div>

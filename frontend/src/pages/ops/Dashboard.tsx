@@ -405,7 +405,7 @@ export function Dashboard() {
   if (error) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-[#07070d] p-6 text-text-primary">
-        <div className="card-glass border-red-500/20 max-w-md p-6 text-center shadow-2xl flex flex-col items-center">
+        <div className="card border-[var(--color-error)]/20 max-w-md p-6 text-center shadow-2xl flex flex-col items-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500/10 text-red-400 mb-4 border border-red-500/20">
             <AlertCircle className="h-6 w-6" />
           </div>
@@ -427,14 +427,14 @@ export function Dashboard() {
         {/* ─── Premium Ops Header ───────────────────────────────────────────────── */}
         <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-white/5 bg-[#090911]/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shadow-glow-sm">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-surface-100 text-text-primary border border-border">
             <Shield className="h-5 w-5" />
           </div>
           <div>
-            <h1 className="text-md font-bold tracking-tight bg-gradient-to-r from-white via-text-secondary to-text-tertiary bg-clip-text text-transparent">
+            <h1 className="text-lg font-semibold tracking-tight text-text-primary">
               AI Operations Dashboard
             </h1>
-            <p className="text-[10px] text-text-tertiary font-medium uppercase tracking-wider mt-0.5">Internal Monitoring Console</p>
+            <p className="text-[11px] text-text-tertiary font-medium uppercase tracking-wider mt-0.5">Internal Monitoring Console</p>
           </div>
         </div>
         
@@ -474,10 +474,10 @@ export function Dashboard() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all relative shrink-0 ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium transition-all relative shrink-0 ${
               activeTab === tab.id
-                ? 'text-white bg-white/10 shadow-md border border-white/10'
-                : 'text-text-tertiary hover:text-text-secondary hover:bg-white/5'
+                ? 'text-text-primary bg-surface-150'
+                : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-50'
             }`}
           >
             <tab.icon className="w-3.5 h-3.5" />
@@ -509,59 +509,59 @@ export function Dashboard() {
               >
                 {/* Metric Summary Cards */}
                 {[
-                  { label: 'Lessons Today', val: overview.lessons_today, detail: 'Generations requested today', glow: 'shadow-glow-sm border-blue-500/10' },
-                  { label: 'Sections Generated', val: overview.sections_generated, detail: 'Total sections written', glow: 'border-purple-500/10' },
-                  { label: 'Today\'s Requests', val: `${overview.today_requests} / ${overview.total_requests}`, detail: 'Requests (Today / Lifetime)', glow: 'border-[#00f2fe]/10' },
-                  { label: 'Today\'s Tokens', val: overview.today_tokens.toLocaleString(), detail: `Lifetime: ${overview.total_tokens.toLocaleString()}`, glow: 'border-emerald-500/10' },
-                  { label: 'Avg Lesson Latency', val: `${overview.average_lesson_time_sec}s`, detail: 'Average markdown generation time', glow: 'border-amber-500/10' },
-                  { label: 'Estimated Remaining Lessons', val: overview.remaining_estimated_lessons, detail: 'Est based on pooled limits', glow: 'border-teal-500/10' },
-                  { label: 'Bottleneck Model', val: overview.bottleneck_model.split('/').pop(), detail: 'Highest error count today', glow: 'border-red-500/10 text-red-400' },
-                  { label: 'Bottleneck API Key', val: overview.bottleneck_api_key, detail: 'Most failed attempts today', glow: 'border-pink-500/10 text-pink-400' }
+                  { label: 'Lessons Today', val: overview.lessons_today, detail: 'Generations requested today', colorClass: 'text-text-primary', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Sections Generated', val: overview.sections_generated, detail: 'Total sections written', colorClass: 'text-text-primary', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Today\'s Requests', val: `${overview.today_requests} / ${overview.total_requests}`, detail: 'Requests (Today / Lifetime)', colorClass: 'text-[var(--color-nav)]', span: 'col-span-1 md:col-span-2' },
+                  { label: 'Today\'s Tokens', val: overview.today_tokens.toLocaleString(), detail: `Lifetime: ${overview.total_tokens.toLocaleString()}`, colorClass: 'text-[var(--color-learn)]', span: 'col-span-1 md:col-span-2' },
+                  { label: 'Avg Lesson Latency', val: `${overview.average_lesson_time_sec}s`, detail: 'Average markdown generation time', colorClass: 'text-[var(--color-warning)]', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Est Remaining Lessons', val: overview.remaining_estimated_lessons, detail: 'Based on limits', colorClass: 'text-[var(--color-success)]', span: 'col-span-1 md:col-span-1' },
+                  { label: 'Bottleneck Model', val: overview.bottleneck_model.split('/').pop(), detail: 'Highest error count today', colorClass: 'text-[var(--color-error)]', span: 'col-span-1 md:col-span-2' },
+                  { label: 'Bottleneck API Key', val: overview.bottleneck_api_key, detail: 'Most failed attempts today', colorClass: 'text-[var(--color-notes)]', span: 'col-span-1 md:col-span-2' }
                 ].map((card, i) => (
-                  <div key={i} className={`card-glass p-5 rounded-2xl flex flex-col justify-between ${card.glow} h-32 hover:translate-y-[-2px] transition-transform`}>
-                    <span className="text-[10px] font-bold text-text-tertiary uppercase tracking-wider">{card.label}</span>
-                    <div className="text-xl font-extrabold tracking-tight mt-1">{card.val}</div>
-                    <span className="text-[9px] text-text-tertiary truncate leading-relaxed mt-2">{card.detail}</span>
+                  <div key={i} className={`card p-5 flex flex-col justify-between h-32 ${card.span}`}>
+                    <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">{card.label}</span>
+                    <div className={`text-2xl font-semibold tracking-tight mt-1 ${card.colorClass}`}>{card.val}</div>
+                    <span className="text-[11px] text-text-tertiary truncate leading-relaxed mt-2">{card.detail}</span>
                   </div>
                 ))}
 
                 {/* Graphs Column */}
-                <div className="md:col-span-2 card-glass p-5 rounded-2xl border-white/5 flex flex-col justify-between min-h-[220px]">
+                <div className="md:col-span-2 card p-5 flex flex-col justify-between min-h-[220px]">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-text-secondary">Requests Over Time</span>
-                    <span className="text-[10px] text-text-tertiary">Weekly activity</span>
+                    <span className="text-sm font-semibold text-text-secondary">Requests Over Time</span>
+                    <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Weekly Activity</span>
                   </div>
                   <div className="flex-1 h-32 min-h-0">
-                    {charts && renderLineChart(charts.time_series, 'requests', '#00f2fe', 'requestsGrad')}
+                    {charts && renderLineChart(charts.time_series, 'requests', 'var(--color-nav)', 'requestsGrad')}
                   </div>
                 </div>
 
-                <div className="md:col-span-2 card-glass p-5 rounded-2xl border-white/5 flex flex-col justify-between min-h-[220px]">
+                <div className="md:col-span-2 card p-5 flex flex-col justify-between min-h-[220px]">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-bold text-[#8b5cf6]">Tokens Consumed</span>
-                    <span className="text-[10px] text-text-tertiary">Daily token summaries</span>
+                    <span className="text-sm font-semibold text-[var(--color-ai)]">Tokens Consumed</span>
+                    <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-wider">Daily summaries</span>
                   </div>
                   <div className="flex-1 h-32 min-h-0">
-                    {charts && renderLineChart(charts.time_series, 'tokens', '#8b5cf6', 'tokensGrad')}
+                    {charts && renderLineChart(charts.time_series, 'tokens', 'var(--color-ai)', 'tokensGrad')}
                   </div>
                 </div>
 
                 {/* Error dashboard */}
                 {errors && (
-                  <div className="md:col-span-4 card-glass p-5 rounded-2xl border-white/5">
-                    <span className="text-xs font-bold text-text-secondary block mb-4">Operational Error Center</span>
+                  <div className="md:col-span-4 card p-5">
+                    <span className="text-sm font-semibold text-text-secondary block mb-4">Operational Error Center</span>
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
                       {[
-                        { label: 'Timeouts', val: errors.timeouts, color: 'text-amber-400' },
-                        { label: '429 Rate Limits', val: errors.rate_limits_429, color: 'text-red-400' },
-                        { label: 'Provider Errors', val: errors.provider_errors, color: 'text-purple-400' },
-                        { label: 'Retries Triggered', val: errors.retries, color: 'text-blue-400' },
-                        { label: 'Fallbacks Applied', val: errors.fallbacks, color: 'text-emerald-400' },
+                        { label: 'Timeouts', val: errors.timeouts, color: 'text-[var(--color-warning)]' },
+                        { label: '429 Rate Limits', val: errors.rate_limits_429, color: 'text-[var(--color-error)]' },
+                        { label: 'Provider Errors', val: errors.provider_errors, color: 'text-[var(--color-ai)]' },
+                        { label: 'Retries Triggered', val: errors.retries, color: 'text-[var(--color-nav)]' },
+                        { label: 'Fallbacks Applied', val: errors.fallbacks, color: 'text-[var(--color-success)]' },
                         { label: 'Cancelled Requests', val: errors.cancelled, color: 'text-text-tertiary' }
                       ].map((item, idx) => (
-                        <div key={idx} className="bg-white/[0.01] border border-white/5 p-4 rounded-xl text-center">
-                          <span className="text-[10px] text-text-tertiary font-bold block mb-1 uppercase tracking-wider">{item.label}</span>
-                          <span className={`text-lg font-black ${item.color}`}>{item.val}</span>
+                        <div key={idx} className="bg-surface-100 border border-border p-4 rounded-lg text-center">
+                          <span className="text-[11px] text-text-tertiary font-medium block mb-1 uppercase tracking-wider">{item.label}</span>
+                          <span className={`text-xl font-semibold ${item.color}`}>{item.val}</span>
                         </div>
                       ))}
                     </div>
@@ -578,39 +578,39 @@ export function Dashboard() {
                 exit={{ opacity: 0 }}
                 className="flex flex-col gap-5 h-full"
               >
-                <div className="flex items-center justify-between card-glass px-5 py-3 rounded-xl border-white/5 shrink-0">
+                <div className="flex items-center justify-between card px-5 py-3 shrink-0">
                   <div className="flex items-center gap-2">
-                    <span className={`flex h-2.5 w-2.5 rounded-full ${liveStreamActive ? 'bg-emerald-500 animate-pulse shadow-glow-sm' : 'bg-red-500'}`} />
-                    <span className="text-xs font-semibold">Live Monitor Status: {liveStreamActive ? 'Connected' : 'Paused'}</span>
+                    <span className={`flex h-2.5 w-2.5 rounded-full ${liveStreamActive ? 'bg-[var(--color-success)]' : 'bg-[var(--color-error)]'}`} />
+                    <span className="text-xs font-medium">Live Monitor Status: {liveStreamActive ? 'Connected' : 'Paused'}</span>
                   </div>
                   <button
                     onClick={() => setLiveStreamActive(!liveStreamActive)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/5 bg-white/[0.02] text-xs font-semibold hover:bg-white/5 text-text-secondary hover:text-white"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border bg-surface-100 text-xs font-medium hover:bg-surface-150 text-text-secondary hover:text-text-primary"
                   >
                     {liveStreamActive ? (
                       <>
-                        <Pause className="w-3.5 h-3.5 text-amber-400" /> Pause Stream
+                        <Pause className="w-3.5 h-3.5 text-[var(--color-warning)]" /> Pause Stream
                       </>
                     ) : (
                       <>
-                        <Play className="w-3.5 h-3.5 text-emerald-400" /> Resume Stream
+                        <Play className="w-3.5 h-3.5 text-[var(--color-success)]" /> Resume Stream
                       </>
                     )}
                   </button>
                 </div>
 
-                <div className="flex-1 min-h-[300px] overflow-y-auto border border-white/5 card-glass p-5 rounded-2xl flex flex-col">
-                  <span className="text-xs font-bold text-text-secondary block mb-4">SSE Generation Event Feed</span>
+                <div className="flex-1 min-h-[300px] overflow-y-auto card p-5 flex flex-col">
+                  <span className="text-sm font-semibold text-text-secondary block mb-4">SSE Generation Event Feed</span>
                   
                   {liveEvents.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-text-tertiary">
-                      <Terminal className="w-8 h-8 opacity-25 mb-2" />
-                      <span className="text-xs">Awaiting AI execution events...</span>
+                      <Terminal className="w-8 h-8 opacity-50 mb-2 text-text-tertiary" />
+                      <span className="text-sm font-medium">Awaiting AI execution events...</span>
                     </div>
                   ) : (
                     <div className="flex-1 flex flex-col gap-2">
                       {liveEvents.map((evt, idx) => (
-                        <div key={idx} className="p-3 bg-white/[0.01] border border-white/5 rounded-xl text-left flex items-start justify-between gap-4">
+                        <div key={idx} className="p-3 bg-surface-50 border border-border rounded-lg text-left flex items-start justify-between gap-4">
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
                               <span className="text-[10px] text-text-tertiary font-semibold uppercase px-2 py-0.5 rounded bg-white/5">
@@ -674,15 +674,15 @@ export function Dashboard() {
               >
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                   {models.map((m, idx) => (
-                    <div key={idx} className="card-glass border-white/5 p-5 rounded-2xl flex flex-col justify-between hover:translate-y-[-2px] transition-transform">
+                    <div key={idx} className="card p-5 flex flex-col justify-between">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <span className="text-xs font-black text-text-primary block">{m.model_name}</span>
-                          <span className="text-[9px] text-text-tertiary block mt-0.5">LIFETIME STATISTICS</span>
+                          <span className="text-sm font-semibold text-text-primary block">{m.model_name}</span>
+                          <span className="text-[11px] font-medium uppercase tracking-wider text-text-tertiary block mt-0.5">LIFETIME STATISTICS</span>
                         </div>
-                        <span className={`text-[10px] px-2.5 py-0.5 rounded font-black ${
-                          m.success_rate >= 0.95 ? 'text-emerald-400 bg-emerald-500/10' :
-                          m.success_rate >= 0.85 ? 'text-amber-400 bg-amber-500/10' : 'text-red-400 bg-red-500/10'
+                        <span className={`text-[11px] px-2.5 py-0.5 rounded font-medium ${
+                          m.success_rate >= 0.95 ? 'text-[var(--color-success)] bg-[var(--color-success)]/10' :
+                          m.success_rate >= 0.85 ? 'text-[var(--color-warning)] bg-[var(--color-warning)]/10' : 'text-[var(--color-error)] bg-[var(--color-error)]/10'
                         }`}>
                           {m.success_rate ? `${(m.success_rate * 100).toFixed(1)}% Success` : '100% Success'}
                         </span>
@@ -690,35 +690,35 @@ export function Dashboard() {
 
                       <div className="grid grid-cols-3 gap-4 mb-4">
                         <div>
-                          <span className="text-[9px] text-text-tertiary block uppercase font-bold">Requests Today</span>
-                          <span className="text-sm font-extrabold">{m.requests_today}</span>
+                          <span className="text-[11px] text-text-tertiary block uppercase font-medium tracking-wider">Requests Today</span>
+                          <span className="text-base font-semibold">{m.requests_today}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] text-text-tertiary block uppercase font-bold">Tokens Today</span>
-                          <span className="text-sm font-extrabold">{m.tokens_today.toLocaleString()}</span>
+                          <span className="text-[11px] text-text-tertiary block uppercase font-medium tracking-wider">Tokens Today</span>
+                          <span className="text-base font-semibold">{m.tokens_today.toLocaleString()}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] text-text-tertiary block uppercase font-bold">Avg Latency</span>
-                          <span className="text-sm font-extrabold text-[#00f2fe]">{m.avg_latency_ms ? `${(m.avg_latency_ms / 1000.0).toFixed(2)}s` : '0s'}</span>
+                          <span className="text-[11px] text-text-tertiary block uppercase font-medium tracking-wider">Avg Latency</span>
+                          <span className="text-base font-semibold text-[var(--color-nav)]">{m.avg_latency_ms ? `${(m.avg_latency_ms / 1000.0).toFixed(2)}s` : '0s'}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] text-text-tertiary block uppercase font-bold">Avg Tokens/Req</span>
-                          <span className="text-sm font-extrabold">{m.avg_tokens.toLocaleString()}</span>
+                          <span className="text-[11px] text-text-tertiary block uppercase font-medium tracking-wider">Avg Tokens/Req</span>
+                          <span className="text-base font-semibold">{m.avg_tokens.toLocaleString()}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] text-text-tertiary block uppercase font-bold">Failures/Retries</span>
-                          <span className="text-sm font-extrabold text-red-400">{m.failures} / {m.retries}</span>
+                          <span className="text-[11px] text-text-tertiary block uppercase font-medium tracking-wider">Failures/Retries</span>
+                          <span className="text-base font-semibold text-[var(--color-error)]">{m.failures} / {m.retries}</span>
                         </div>
                         <div>
-                          <span className="text-[9px] text-text-tertiary block uppercase font-bold">Fallbacks Run</span>
-                          <span className="text-sm font-extrabold text-purple-400">{m.fallbacks}</span>
+                          <span className="text-[11px] text-text-tertiary block uppercase font-medium tracking-wider">Fallbacks Run</span>
+                          <span className="text-base font-semibold text-[var(--color-ai)]">{m.fallbacks}</span>
                         </div>
                       </div>
 
                       {m.model_name !== 'All Models' && (
-                        <div className="border-t border-white/5 pt-3 flex items-center justify-between text-[10px] text-text-tertiary">
-                          <span>Quota Remaining: <strong className="text-text-secondary">{m.remaining_daily_quota.toLocaleString()}</strong></span>
-                          <span>Est. Lessons Left: <strong className="text-text-secondary">{m.remaining_estimated_lessons}</strong></span>
+                        <div className="border-t border-border pt-4 flex items-center justify-between text-xs text-text-tertiary">
+                          <span>Quota Remaining: <strong className="text-text-primary font-semibold">{m.remaining_daily_quota.toLocaleString()}</strong></span>
+                          <span>Est. Lessons Left: <strong className="text-text-primary font-semibold">{m.remaining_estimated_lessons}</strong></span>
                         </div>
                       )}
                     </div>
@@ -733,11 +733,11 @@ export function Dashboard() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="overflow-x-auto border border-white/5 card-glass rounded-2xl"
+                className="overflow-x-auto card"
               >
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-white/5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary">
+                    <tr className="border-b border-border text-[11px] font-medium uppercase tracking-wider text-text-tertiary">
                       <th className="px-6 py-4">Masked Key Identifier</th>
                       <th className="px-6 py-4">Status</th>
                       <th className="px-6 py-4 text-right">Total Requests</th>
@@ -749,23 +749,23 @@ export function Dashboard() {
                   </thead>
                   <tbody>
                     {keys.map((k, idx) => (
-                      <tr key={idx} className="border-b border-white/[0.02] hover:bg-white/[0.01] transition-colors text-xs text-text-secondary">
+                      <tr key={idx} className="border-b border-border hover:bg-surface-100 transition-colors text-sm text-text-secondary">
                         <td className="px-6 py-4 font-mono">{k.key_identifier}</td>
                         <td className="px-6 py-4">
-                          <span className={`px-2 py-0.5 rounded font-black text-[9px] uppercase ${
-                            k.current_status === 'healthy' ? 'text-emerald-400 bg-emerald-500/10' :
-                            k.current_status === 'cooldown' ? 'text-amber-400 bg-amber-500/10 animate-pulse' : 'text-red-400 bg-red-500/10'
+                          <span className={`px-2 py-0.5 rounded font-medium text-[11px] uppercase ${
+                            k.current_status === 'healthy' ? 'text-[var(--color-success)] bg-[var(--color-success)]/10' :
+                            k.current_status === 'cooldown' ? 'text-[var(--color-warning)] bg-[var(--color-warning)]/10' : 'text-[var(--color-error)] bg-[var(--color-error)]/10'
                           }`}>
                             {k.current_status}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">{k.requests.toLocaleString()}</td>
                         <td className="px-6 py-4 text-right">{k.tokens.toLocaleString()}</td>
-                        <td className="px-6 py-4 text-right font-mono text-[#00f2fe]">
+                        <td className="px-6 py-4 text-right font-mono text-[var(--color-nav)]">
                           {k.latency_ms ? `${(k.latency_ms / 1000.0).toFixed(2)}s` : '0s'}
                         </td>
-                        <td className="px-6 py-4 text-right text-red-400">{k.failures}</td>
-                        <td className="px-6 py-4 font-semibold text-text-tertiary capitalize">{k.remaining_quota}</td>
+                        <td className="px-6 py-4 text-right text-[var(--color-error)]">{k.failures}</td>
+                        <td className="px-6 py-4 font-medium text-text-primary capitalize">{k.remaining_quota}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -829,7 +829,7 @@ export function Dashboard() {
                 </div>
 
                 {/* Table */}
-                <div className="overflow-x-auto border border-white/5 card-glass rounded-2xl">
+                <div className="overflow-x-auto card">
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-white/5 text-[10px] font-bold uppercase tracking-wider text-text-tertiary">
@@ -925,7 +925,7 @@ export function Dashboard() {
                 exit={{ opacity: 0 }}
                 className="grid grid-cols-1 lg:grid-cols-2 gap-4"
               >
-                <div className="card-glass border-white/5 p-5 rounded-2xl">
+                <div className="card p-5">
                   <span className="text-xs font-bold text-text-secondary block mb-4">Static & Fallback Route Table</span>
                   <div className="flex flex-col gap-2.5">
                     {Object.entries(routing.routing).map(([sec, cfg]: [string, any], idx) => (
@@ -949,7 +949,7 @@ export function Dashboard() {
                   </div>
                 </div>
 
-                <div className="card-glass border-white/5 p-5 rounded-2xl flex flex-col justify-between">
+                <div className="card p-5 flex flex-col justify-between">
                   <div>
                     <span className="text-xs font-bold text-text-secondary block mb-4">Learning Mode Overrides</span>
                     <div className="flex flex-col gap-4">

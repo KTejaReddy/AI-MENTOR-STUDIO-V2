@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { useTheme } from '@/contexts/ThemeContext'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -60,7 +59,6 @@ export function Settings() {
   const [reducedMotion, setReducedMotion] = useLocalStorage('settings-reduced-motion', false)
   const [highContrast, setHighContrast] = useLocalStorage('settings-high-contrast', false)
   const [confirmClearOpen, setConfirmClearOpen] = useState(false)
-  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     document.documentElement.classList.toggle('reduced-motion', reducedMotion)
@@ -128,18 +126,6 @@ export function Settings() {
                     <h1 className="text-xl font-bold text-text-primary mb-1">Appearance</h1>
                     <p className="text-sm text-text-tertiary">Customize how Mentor AI looks</p>
                   </div>
-                  <SettingsSection title="Theme" description="Choose your preferred color scheme">
-                    <SettingsRow label="Interface theme" description="Select dark, light, or system theme">
-                      <div className="flex gap-2">
-                        <Button variant={theme === 'dark' ? 'primary' : 'secondary'} size="sm" onClick={() => setTheme('dark')}>
-                          <Moon className="w-4 h-4" /> Dark
-                        </Button>
-                        <Button variant={theme === 'light' ? 'primary' : 'secondary'} size="sm" onClick={() => setTheme('light')}>
-                          <Sun className="w-4 h-4" /> Light
-                        </Button>
-                      </div>
-                    </SettingsRow>
-                  </SettingsSection>
                   <SettingsSection title="Typography" description="Font size and reading preferences">
                     <SettingsRow label="Font size" description="Adjust the base font size">
                       <div className="flex gap-1">

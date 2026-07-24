@@ -230,7 +230,7 @@ export function FloatingReadingToolbar({
             transition={{ type: 'spring', stiffness: 260, damping: 25 }}
             className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40"
           >
-            <div className="flex items-center gap-1 px-3 py-2 rounded-full glass bg-surface-150/80 backdrop-blur-xl border border-border shadow-2xl">
+            <div className="flex items-center gap-1 px-3 py-2 rounded-full card bg-surface-150/95 backdrop-blur-xl border border-border shadow-2xl">
               <button
                 ref={bookmarkRef}
                 onClick={handleBookmark}

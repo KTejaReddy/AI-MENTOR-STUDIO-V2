@@ -10,7 +10,7 @@ Card.displayName = 'Card'
 
 const CardGlass = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('card-glass', className)} {...props} />
+    <div ref={ref} className={cn('card', className)} {...props} />
   )
 )
 CardGlass.displayName = 'CardGlass'

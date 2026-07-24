@@ -27,17 +27,17 @@ const getSectionIcon = (key: string) => {
 
 function StatusIcon({ status }: { status: string }) {
   switch (status) {
-    case 'completed': return <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+    case 'completed': return <CheckCircle2 className="w-3.5 h-3.5 text-[var(--color-success)] shrink-0" />
     case 'generating':
       return (
         <span className="relative flex h-3.5 w-3.5 items-center justify-center shrink-0">
-          <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-accent opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent"></span>
+          <span className="animate-ping absolute inline-flex h-2.5 w-2.5 rounded-full bg-[var(--color-nav)] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[var(--color-nav)]"></span>
         </span>
       )
-    case 'retrying': return <Loader2 className="w-3.5 h-3.5 text-yellow-500 shrink-0 animate-spin" />
+    case 'retrying': return <Loader2 className="w-3.5 h-3.5 text-[var(--color-warning)] shrink-0 animate-spin" />
     case 'queued': return <Clock className="w-3.5 h-3.5 text-text-tertiary shrink-0" />
-    case 'error': return <XCircle className="w-3.5 h-3.5 text-red-500 shrink-0" />
+    case 'error': return <XCircle className="w-3.5 h-3.5 text-[var(--color-error)] shrink-0" />
     default: return <Circle className="w-3.5 h-3.5 text-border shrink-0" />
   }
 }
@@ -91,19 +91,19 @@ export const LeftSidebar = memo(function LeftSidebar({
   return (
     <>
       <aside className="w-full h-full flex flex-col overflow-hidden shrink-0 panel" style={{ pointerEvents: 'auto' }}>
-        <div className="px-4 py-3 border-b border-border shrink-0 max-md:px-2 max-md:flex max-md:justify-center">
-          <h2 className="text-xs font-semibold text-text-primary max-md:hidden">Lesson Sections</h2>
+        <div className="px-4 py-4 border-b border-border shrink-0 max-md:px-2 max-md:flex max-md:justify-center bg-surface-50">
+          <h2 className="text-sm font-semibold text-text-primary max-md:hidden tracking-tight">Lesson Sections</h2>
           {isGenerating ? (
-            <p className="text-xs text-accent flex items-center gap-1.5 mt-0.5 font-medium max-md:hidden">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
+            <p className="text-xs text-[var(--color-nav)] flex items-center gap-1.5 mt-1 font-medium max-md:hidden">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-nav)] animate-ping" />
               Generating lesson...
             </p>
           ) : doneCount > 0 ? (
-            <p className="text-xs text-text-secondary flex items-center gap-1 mt-0.5 max-md:hidden">
-              <CheckCircle2 className="w-3 h-3 text-success" /> {doneCount} / {statusCount} completed
+            <p className="text-xs text-text-secondary flex items-center gap-1 mt-1 max-md:hidden font-medium">
+              <CheckCircle2 className="w-3 h-3 text-[var(--color-success)]" /> {doneCount} / {statusCount} completed
             </p>
           ) : (
-            <p className="text-xs text-text-tertiary mt-0.5 max-md:hidden">{statusCount} sections</p>
+            <p className="text-xs text-text-tertiary mt-1 max-md:hidden font-medium">{statusCount} sections</p>
           )}
         </div>
 
@@ -134,13 +134,13 @@ export const LeftSidebar = memo(function LeftSidebar({
                 )}
                 aria-current={isActive ? 'true' : undefined}
               >
-                <span className="relative z-10 text-xs font-mono text-text-tertiary w-3 shrink-0 max-md:hidden">{idx + 1}.</span>
+                <span className="relative z-10 text-xs font-mono text-text-tertiary w-4 shrink-0 max-md:hidden">{idx + 1}.</span>
                 <span className="relative z-10 w-4 h-4 flex items-center justify-center shrink-0">
-                  <Icon className={cn('w-3.5 h-3.5 transition-transform duration-150', isActive ? 'text-accent' : 'text-text-secondary group-hover:text-text-primary')} />
+                  <Icon className={cn('w-3.5 h-3.5 transition-transform duration-150', isActive ? 'text-text-primary' : 'text-text-secondary group-hover:text-text-primary')} />
                 </span>
                 <span className={cn(
-                  'relative z-10 flex-1 truncate transition-colors duration-150 max-md:hidden',
-                  (sStatus === 'generating' || sStatus === 'retrying') && 'text-accent font-medium',
+                  'relative z-10 flex-1 truncate transition-colors duration-150 max-md:hidden font-medium text-[13px]',
+                  (sStatus === 'generating' || sStatus === 'retrying') && 'text-[var(--color-nav)]',
                 )}>
                   {label}
                 </span>
@@ -158,13 +158,13 @@ export const LeftSidebar = memo(function LeftSidebar({
               exit={{ opacity: 0, y: 10 }}
               className="px-4 py-4 border-t border-border shrink-0 bg-surface-100/30"
             >
-              <div className="flex items-center justify-between text-xs text-text-tertiary mb-2 font-mono max-md:hidden">
+              <div className="flex items-center justify-between text-[11px] text-text-tertiary mb-2 font-mono max-md:hidden">
                 <span>PROGRESS</span>
                 <span className="text-text-primary font-medium">{pct}%</span>
               </div>
               <div className="h-1.5 max-md:h-8 rounded-full bg-surface-200 overflow-hidden relative border border-border">
                 <motion.div
-                  className="h-full rounded-full bg-accent"
+                  className="h-full rounded-full bg-[var(--color-success)]"
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}

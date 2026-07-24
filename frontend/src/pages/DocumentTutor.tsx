@@ -423,7 +423,7 @@ export function DocumentTutor() {
               onClick={() => fileInputRef.current?.click()}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full max-w-md p-10 rounded-2xl glass border border-white/5 shadow-2xl bg-surface-150/40 cursor-pointer flex flex-col items-center group relative overflow-hidden"
+              className="w-full max-w-md p-10 rounded-[var(--radius-xl)] card border border-border shadow-2xl bg-surface-150/40 cursor-pointer flex flex-col items-center group relative overflow-hidden"
             >
               {/* Scanline Animation */}
               {loading && (
@@ -509,7 +509,7 @@ export function DocumentTutor() {
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="glass p-4 rounded-xl border border-white/5 shadow-sm bg-surface-100/50"
+              className="card p-4 rounded-[var(--radius-md)] border border-border shadow-sm bg-surface-100/50"
             >
               <MarkdownRenderer content={tutorContent} />
             </motion.div>

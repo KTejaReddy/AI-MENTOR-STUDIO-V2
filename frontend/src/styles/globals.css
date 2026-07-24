@@ -2,63 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-[data-theme="dark"] {
-  --surface: #0a0a0a;
-  --surface-50: #0f0f0f;
-  --surface-100: #141414;
-  --surface-150: #1a1a1a;
-  --surface-200: #212121;
-  --surface-250: #262626;
-  --surface-300: #2e2e2e;
-  --surface-400: #3b3b3b;
+:root {
+  /* Layered Dark Surfaces */
+  --surface: #0e0e11;
+  --surface-50: #121216;
+  --surface-100: #16161a;
+  --surface-150: #19191d;
+  --surface-200: #1c1c21;
+  --surface-250: #202025;
+  --surface-300: #24242b;
+  --surface-400: #2d2d35;
   
-  --border: rgba(255, 255, 255, 0.08);
-  --border-light: rgba(255, 255, 255, 0.12);
-  --border-lighter: rgba(255, 255, 255, 0.16);
+  /* Borders - Soft Elevation */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-lighter: rgba(255, 255, 255, 0.14);
   
-  --text-primary: #ededed;
-  --text-secondary: #a1a1a1;
-  --text-tertiary: #737373;
+  /* Typography Hierarchy */
+  --text-primary: #f2f2f2;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
   
-  --accent: #ededed;
+  /* Muted Text */
+  --muted: #71717a;
+  --muted-light: #a1a1aa;
+  --muted-dark: #3f3f46;
+  
+  /* General Accent (Fallback) */
+  --accent: #f2f2f2;
   --accent-light: #ffffff;
-  --accent-dark: #d4d4d4;
-  --accent-muted: rgba(255, 255, 255, 0.1);
-  
-  --muted: #737373;
-  --muted-light: #a1a1a1;
-  --muted-dark: #525252;
-  
-  --success: #10B981;
-}
+  --accent-dark: #d4d4d8;
+  --accent-muted: rgba(255, 255, 255, 0.08);
 
-[data-theme="light"] {
-  --surface: #ffffff;
-  --surface-50: #fafafa;
-  --surface-100: #f5f5f5;
-  --surface-150: #eeeeee;
-  --surface-200: #e5e5e5;
-  --surface-250: #d4d4d4;
-  --surface-300: #a3a3a3;
-  --surface-400: #737373;
+  /* Multi-Accent Semantic Colors */
+  --color-nav: #60a5fa;      /* Blue */
+  --color-ai: #c084fc;       /* Purple */
+  --color-learn: #2dd4bf;    /* Teal */
+  --color-practice: #fb923c; /* Orange */
+  --color-success: #34d399;  /* Green */
+  --color-notes: #f472b6;    /* Pink */
+  --color-warning: #fbbf24;  /* Amber */
+  --color-error: #f87171;    /* Red */
   
-  --border: rgba(0, 0, 0, 0.08);
-  --border-light: rgba(0, 0, 0, 0.12);
-  --border-lighter: rgba(0, 0, 0, 0.16);
+  /* Legacy mapping for --success */
+  --success: var(--color-success);
+
+  /* Radius System */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   
-  --text-primary: #171717;
-  --text-secondary: #525252;
-  --text-tertiary: #737373;
-  
-  --accent: #171717;
-  --accent-light: #404040;
-  --accent-dark: #000000;
-  --accent-muted: rgba(0, 0, 0, 0.05);
-  
-  --success: #059669;
-  --muted: #737373;
-  --muted-light: #a3a3a3;
-  --muted-dark: #525252;
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
 }
 
 @layer base {
@@ -127,16 +125,16 @@
   .card {
     background: var(--surface-50);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition: all 0.15s ease;
   }
 
   .card-hover {
     background: var(--surface-50);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition: all 0.15s ease;
     cursor: pointer;
   }
@@ -144,15 +142,15 @@
   .card-hover:hover {
     background: var(--surface-100);
     border-color: var(--border-light);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
   }
 
   /* Map old flashy classes to standard minimal card */
   .glass, .glass-strong, .glass-card, .card-glass, .panel {
     background: var(--surface-50);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     transition: all 0.15s ease;
   }
   
@@ -194,14 +192,14 @@
     padding: 0.4rem 0.875rem;
     background: var(--accent);
     color: var(--surface);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.8125rem;
     font-weight: 500;
     transition: all 0.15s ease;
     border: 1px solid transparent;
     cursor: pointer;
     outline: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
   }
 
   .btn-primary:hover {
@@ -230,14 +228,14 @@
     padding: 0.4rem 0.875rem;
     background: var(--surface-50);
     color: var(--text-primary);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.8125rem;
     font-weight: 500;
     border: 1px solid var(--border);
     transition: all 0.15s ease;
     outline: none;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--shadow-sm);
   }
 
   .btn-secondary:hover {
@@ -266,7 +264,7 @@
     gap: 0.5rem;
     padding: 0.4rem 0.75rem;
     color: var(--text-secondary);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.8125rem;
     font-weight: 500;
     transition: all 0.15s ease;
@@ -299,12 +297,12 @@
     padding: 0.45rem 0.75rem;
     background: var(--surface-50);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: var(--radius-md);
     font-size: 0.8125rem;
     color: var(--text-primary);
     outline: none;
     transition: all 0.15s ease;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--shadow-sm);
   }
 
   .input::placeholder {
@@ -401,7 +399,7 @@
   .empty-state-icon {
     width: 3rem;
     height: 3rem;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     background: var(--surface-100);
     color: var(--text-tertiary);
     display: flex;
@@ -458,7 +456,7 @@
   
   .interactive-item:hover {
     transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    box-shadow: var(--shadow-md) !important;
     border-color: var(--border-light) !important;
     z-index: 10;
   }

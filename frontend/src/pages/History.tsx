@@ -197,7 +197,7 @@ export function History() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.03, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     onClick={() => handleEntryClick(entry)}
-                    className="group flex items-center gap-4 px-4 py-3.5 rounded-2xl glass breathe-3d border border-border hover:border-[#00f2fe]/20 hover:shadow-[0_0_20px_rgba(0,242,254,0.06)] hover:bg-surface-200/50 transition-all duration-300 cursor-pointer relative"
+                    className="group flex items-center gap-4 px-4 py-3.5 rounded-2xl card card-hover transition-all duration-300 cursor-pointer relative"
                   >
                     {/* Timeline Node Connector */}
                     <div className="absolute -left-[31px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#00f2fe] border-2 border-surface shadow-[0_0_8px_rgba(0,242,254,0.8)] z-10 transition-transform duration-300 group-hover:scale-125" />

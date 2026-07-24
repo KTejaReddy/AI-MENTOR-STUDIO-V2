@@ -1,12 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/contexts/AuthContext'
-import { useTheme } from '@/contexts/ThemeContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { cn } from '@/lib/utils'
 import {
   Home, GraduationCap, FileText, Code2, History, Bookmark,
-  StickyNote, Settings2, Info, Moon, Sun, LogOut, Bell, X, User
+  StickyNote, Settings2, Info, LogOut, Bell, X, User
 } from 'lucide-react'
 
 interface MobileDrawerProps {
@@ -26,11 +25,8 @@ const navItems = [
 
 export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
   const { logout, user } = useAuth()
-  const { theme, toggleTheme } = useTheme()
   const { unreadCount } = useNotifications()
   const navigate = useNavigate()
-
-  const ThemeIcon = theme === 'dark' ? Moon : Sun
 
   const handleLogout = async () => {
     await logout()
@@ -97,10 +93,6 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
 
               {/* Secondary */}
               <div className="px-2 space-y-1">
-                <button onClick={() => { toggleTheme(); onClose(); }} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-100 transition-colors">
-                  <ThemeIcon className="w-5 h-5 text-text-tertiary" />
-                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                </button>
                 <button onClick={() => navigateTo('/settings')} className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-100 transition-colors">
                   <div className="flex items-center gap-3">
                     <Bell className="w-5 h-5 text-text-tertiary" />

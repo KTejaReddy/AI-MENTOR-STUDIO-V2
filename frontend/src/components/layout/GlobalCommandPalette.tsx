@@ -3,16 +3,15 @@ import { Command } from 'cmdk'
 import { useNavigate } from 'react-router-dom'
 import { 
   Home, GraduationCap, History, Bookmark, 
-  StickyNote, Settings2, Info, Moon, Sun,
-  Search, FileText, Code2, Sparkles 
+  StickyNote, Settings2, Info,
+  Search, FileText, Code2
 } from 'lucide-react'
-import { useTheme } from '@/contexts/ThemeContext'
+import '@/components/layout/cmdk.css'
 import '@/components/layout/cmdk.css'
 
 export function GlobalCommandPalette() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
-  const { theme, setTheme } = useTheme()
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -81,17 +80,6 @@ export function GlobalCommandPalette() {
             <Command.Item onSelect={() => runCommand(() => navigate('/notes'))} className="cmdk-item">
               <StickyNote className="w-4 h-4 mr-2" />
               Go to Notes
-            </Command.Item>
-          </Command.Group>
-
-          <Command.Group heading="Theme" className="px-2 py-1.5 text-xs font-semibold text-text-tertiary mt-2">
-            <Command.Item onSelect={() => runCommand(() => setTheme('light'))} className="cmdk-item">
-              <Sun className="w-4 h-4 mr-2" />
-              Switch to Light Theme
-            </Command.Item>
-            <Command.Item onSelect={() => runCommand(() => setTheme('dark'))} className="cmdk-item">
-              <Moon className="w-4 h-4 mr-2" />
-              Switch to Dark Theme
             </Command.Item>
           </Command.Group>
 

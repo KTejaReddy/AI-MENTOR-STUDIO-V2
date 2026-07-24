@@ -5,13 +5,12 @@ import { IconButton } from '@/components/ui/icon-button'
 import { Tooltip } from '@/components/ui/tooltip'
 import { DropdownMenu, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { BrandLogo } from '@/components/ui/BrandLogo'
-import { useTheme } from '@/contexts/ThemeContext'
 import { useNotifications } from '@/contexts/NotificationContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles, Menu, MessageSquare, Home, GraduationCap, History,
-  Bookmark, StickyNote, Settings2, Info, Sun, Moon, FileText,
+  Bookmark, StickyNote, Settings2, Info, FileText,
   Code2, Bell, Trash2, Plus, User, LogOut, LogIn, Shield,
 } from 'lucide-react'
 
@@ -38,12 +37,9 @@ const utilityItems = [
 ]
 
 export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson }: TopNavbarProps) {
-  const { theme, toggleTheme } = useTheme()
   const { notifications, unreadCount, markAsRead, clearAll } = useNotifications()
   const { user, isAuthenticated, logout, logoutAll } = useAuth()
   const navigate = useNavigate()
-
-  const ThemeIcon = theme === 'dark' ? Moon : Sun
 
   const handleNewLesson = () => {
     if (onNewLesson) {
@@ -137,14 +133,6 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
         </div>
 
         <div>
-          <Tooltip content={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}>
-            <IconButton label="Toggle theme" onClick={toggleTheme}>
-              <ThemeIcon className="w-[18px] h-[18px]" />
-            </IconButton>
-          </Tooltip>
-        </div>
-
-        <div>
           <DropdownMenu
             align="end"
             trigger={
@@ -162,7 +150,7 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               </Tooltip>
             }
           >
-            <div className="w-80 max-h-[400px] flex flex-col card-glass overflow-hidden">
+            <div className="w-80 max-h-[400px] flex flex-col card overflow-hidden">
               <div className="flex items-center justify-between px-3 py-2 border-b border-border">
                 <span className="text-xs font-semibold text-text-primary">Notifications</span>
                 {notifications.length > 0 && (

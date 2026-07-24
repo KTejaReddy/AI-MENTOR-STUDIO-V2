@@ -96,7 +96,7 @@ export function Bookmarks() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 interactive-group">
                     {filtered.map((bookmark, i) => (
                       <motion.div key={bookmark.title} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                        <div className="glass float-3d interactive-item p-5 group h-full rounded-2xl border border-border shadow-md relative overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:border-[#00f2fe]/20 hover:shadow-[0_0_20px_rgba(0,242,254,0.08)] flex flex-col justify-between">
+                        <div className="card card-hover p-5 group h-full relative overflow-hidden flex flex-col justify-between">
                           <div className="absolute inset-0 bg-gradient-to-tr from-[#00f2fe]/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                           <div className="flex items-start gap-3.5 relative z-10">
                             <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
