@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Sparkles, Menu, MessageSquare, Home, GraduationCap, History,
-  Bookmark, StickyNote, Settings2, Info, FileText,
+  Bookmark, StickyNote, Info, FileText,
   Code2, Bell, Trash2, Plus, User, LogOut, LogIn, Shield,
 } from 'lucide-react'
 
@@ -32,7 +32,6 @@ const navItems = [
 ]
 
 const utilityItems = [
-  { to: '/settings', icon: Settings2, label: 'Settings', colorVar: '--color-settings' },
   { to: '/about', icon: Info, label: 'About', colorVar: '--color-about-gold' },
 ]
 
@@ -246,10 +245,6 @@ export function TopNavbar({ onToggleSidebar, onToggleChat, chatOpen, onNewLesson
               <p className="text-sm font-semibold text-text-primary truncate">{user.full_name || 'User'}</p>
               <p className="text-xs text-text-tertiary truncate">{user.email}</p>
             </div>
-            <DropdownMenuItem onClick={() => navigate('/settings')}>
-              <User className="w-4 h-4" />
-              Profile Settings
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="w-4 h-4" />

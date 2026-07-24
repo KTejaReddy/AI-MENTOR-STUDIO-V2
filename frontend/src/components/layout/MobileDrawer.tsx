@@ -5,7 +5,7 @@ import { useNotifications } from '@/contexts/NotificationContext'
 import { cn } from '@/lib/utils'
 import {
   Home, GraduationCap, FileText, Code2, History, Bookmark,
-  StickyNote, Settings2, Info, LogOut, Bell, X, User
+  StickyNote, Info, LogOut, Bell, X, User
 } from 'lucide-react'
 
 interface MobileDrawerProps {
@@ -93,7 +93,7 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
 
               {/* Secondary */}
               <div className="px-2 space-y-1">
-                <button onClick={() => navigateTo('/settings')} className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-100 transition-colors">
+                <button className="w-full flex items-center justify-between px-3 py-3 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-100 transition-colors cursor-default">
                   <div className="flex items-center gap-3">
                     <Bell className="w-5 h-5 text-text-tertiary" />
                     Notifications
@@ -103,10 +103,6 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                       {unreadCount}
                     </span>
                   )}
-                </button>
-                <button onClick={() => navigateTo('/settings')} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-100 transition-colors">
-                  <User className="w-5 h-5 text-text-tertiary" />
-                  Profile & Settings
                 </button>
                 <button onClick={() => navigateTo('/about')} className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium text-text-secondary hover:bg-surface-100 transition-colors">
                   <Info className="w-5 h-5 text-text-tertiary" />

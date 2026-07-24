@@ -10,7 +10,6 @@ import { Learn } from '@/pages/Learn'
 import { History } from '@/pages/History'
 import { Bookmarks } from '@/pages/Bookmarks'
 import { Notes } from '@/pages/Notes'
-import { Settings } from '@/pages/Settings'
 import { About } from '@/pages/About'
 import { DocumentTutor } from '@/pages/DocumentTutor'
 import { CompilerLab } from '@/pages/CompilerLab'
@@ -45,7 +44,6 @@ export default function App() {
                 <Route path="/history" element={<History />} />
                 <Route path="/bookmarks" element={<Bookmarks />} />
                 <Route path="/notes" element={<Notes />} />
-                <Route path="/settings" element={<Settings />} />
                 <Route path="/document-tutor" element={<DocumentTutor />} />
                 <Route path="/compiler-lab" element={<CompilerLab />} />
               </Route>

@@ -3,7 +3,7 @@ import { Command } from 'cmdk'
 import { useNavigate } from 'react-router-dom'
 import { 
   Home, GraduationCap, History, Bookmark, 
-  StickyNote, Settings2, Info,
+  StickyNote, Info,
   Search, FileText, Code2
 } from 'lucide-react'
 import '@/components/layout/cmdk.css'
@@ -84,10 +84,6 @@ export function GlobalCommandPalette() {
           </Command.Group>
 
           <Command.Group heading="Actions" className="px-2 py-1.5 text-xs font-semibold text-text-tertiary mt-2">
-            <Command.Item onSelect={() => runCommand(() => navigate('/settings'))} className="cmdk-item">
-              <Settings2 className="w-4 h-4 mr-2" />
-              Open Settings
-            </Command.Item>
             <Command.Item onSelect={() => runCommand(() => navigate('/about'))} className="cmdk-item">
               <Info className="w-4 h-4 mr-2" />
               About Mentor AI
