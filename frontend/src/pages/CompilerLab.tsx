@@ -10,12 +10,12 @@ import { CustomSelect } from '@/components/ui/select'
 import { fetchWithAuth } from '@/lib/api/client'
 
 const LANGUAGES = [
-  { id: 'python', label: 'Python (3.10)', version: '3.10.0', defaultCode: 'print("Hello, World!")' },
+  { id: 'python', label: 'Python 3.10', version: '3.10.0', defaultCode: 'print("Hello, World!")' },
   { id: 'c', label: 'C (GCC)', version: '10.2.0', defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!");\n    return 0;\n}' },
-  { id: 'cpp', label: 'C++ (GCC)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!";\n    return 0;\n}' },
-  { id: 'java', label: 'Java', version: '15.0.2', defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}' },
-  { id: 'javascript', label: 'Node.js', version: '18.15.0', defaultCode: 'console.log("Hello, World!");' },
-  { id: 'csharp', label: 'C# (.NET)', version: '7.0', defaultCode: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}' },
+  { id: 'cpp', label: 'C++ (G++17)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!";\n    return 0;\n}' },
+  { id: 'java', label: 'Java (OpenJDK 21)', version: '21.0.0', defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}' },
+  { id: 'javascript', label: 'JavaScript (Node.js)', version: '18.15.0', defaultCode: 'console.log("Hello, World!");' },
+  { id: 'csharp', label: 'C#', version: '7.0', defaultCode: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}' },
   { id: 'go', label: 'Go', version: '1.20', defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}' },
   { id: 'rust', label: 'Rust', version: '1.70', defaultCode: 'fn main() {\n    println!("Hello, World!");\n}' },
   { id: 'php', label: 'PHP', version: '8.2', defaultCode: '<?php\necho "Hello, World!";\n?>' },
