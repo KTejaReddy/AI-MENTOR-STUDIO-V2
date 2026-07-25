@@ -215,6 +215,122 @@ class JavaLocalRunner(LocalFallbackRunner):
                 compiler_version=version
             )
 
+class CSharpLocalRunner(LocalFallbackRunner):
+    def execute(self, code: str, stdin: str = "") -> ExecutionResult:
+        start_time = time.time()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_file = os.path.join(temp_dir, "Main.cs")
+            with open(source_file, "w", encoding="utf-8") as f:
+                f.write(code)
+                
+            c_stdout, c_stderr, c_code = self._execute_subprocess(["mcs", "Main.cs"], "", temp_dir, self.compile_timeout)
+            v_stdout, _, _ = self._execute_subprocess(["mcs", "--version"], "", temp_dir, 2)
+            version = v_stdout.strip() if v_stdout else "Mono/mcs"
+
+            if c_code != 0:
+                return ExecutionResult(
+                    stdout="", stderr="", compile_output=c_stderr or c_stdout,
+                    exit_code=c_code, time_ms=int((time.time() - start_time) * 1000),
+                    memory_mb=0.0, compiler_version=version
+                )
+                
+            stdout, stderr, code_res = self._execute_subprocess(["mono", "Main.exe"], stdin, temp_dir, self.run_timeout)
+            return ExecutionResult(
+                stdout=stdout, stderr=stderr, compile_output=c_stdout + "\\n" + c_stderr,
+                exit_code=code_res, time_ms=int((time.time() - start_time) * 1000),
+                memory_mb=0.0, compiler_version=version
+            )
+
+class GoLocalRunner(LocalFallbackRunner):
+    def execute(self, code: str, stdin: str = "") -> ExecutionResult:
+        start_time = time.time()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_file = os.path.join(temp_dir, "main.go")
+            with open(source_file, "w", encoding="utf-8") as f:
+                f.write(code)
+                
+            stdout, stderr, code_res = self._execute_subprocess(["go", "run", "main.go"], stdin, temp_dir, self.run_timeout)
+            v_stdout, _, _ = self._execute_subprocess(["go", "version"], "", temp_dir, 2)
+            version = v_stdout.strip() if v_stdout else "Go"
+
+            return ExecutionResult(
+                stdout=stdout, stderr=stderr, compile_output="",
+                exit_code=code_res, time_ms=int((time.time() - start_time) * 1000),
+                memory_mb=0.0, compiler_version=version
+            )
+
+class RustLocalRunner(LocalFallbackRunner):
+    def execute(self, code: str, stdin: str = "") -> ExecutionResult:
+        start_time = time.time()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_file = os.path.join(temp_dir, "main.rs")
+            exe_file = os.path.join(temp_dir, "main.exe" if os.name == 'nt' else "main")
+            with open(source_file, "w", encoding="utf-8") as f:
+                f.write(code)
+                
+            c_stdout, c_stderr, c_code = self._execute_subprocess(["rustc", "main.rs", "-o", exe_file], "", temp_dir, self.compile_timeout)
+            v_stdout, _, _ = self._execute_subprocess(["rustc", "--version"], "", temp_dir, 2)
+            version = v_stdout.strip() if v_stdout else "Rustc"
+
+            if c_code != 0:
+                return ExecutionResult(
+                    stdout="", stderr="", compile_output=c_stderr or c_stdout,
+                    exit_code=c_code, time_ms=int((time.time() - start_time) * 1000),
+                    memory_mb=0.0, compiler_version=version
+                )
+                
+            stdout, stderr, code_res = self._execute_subprocess([exe_file], stdin, temp_dir, self.run_timeout)
+            return ExecutionResult(
+                stdout=stdout, stderr=stderr, compile_output=c_stdout + "\\n" + c_stderr,
+                exit_code=code_res, time_ms=int((time.time() - start_time) * 1000),
+                memory_mb=0.0, compiler_version=version
+            )
+
+class PHPLocalRunner(LocalFallbackRunner):
+    def execute(self, code: str, stdin: str = "") -> ExecutionResult:
+        start_time = time.time()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_file = os.path.join(temp_dir, "main.php")
+            with open(source_file, "w", encoding="utf-8") as f:
+                f.write(code)
+                
+            stdout, stderr, code_res = self._execute_subprocess(["php", "main.php"], stdin, temp_dir, self.run_timeout)
+            v_stdout, _, _ = self._execute_subprocess(["php", "--version"], "", temp_dir, 2)
+            version = v_stdout.split('\\n')[0].strip() if v_stdout else "PHP"
+
+            return ExecutionResult(
+                stdout=stdout, stderr=stderr, compile_output="",
+                exit_code=code_res, time_ms=int((time.time() - start_time) * 1000),
+                memory_mb=0.0, compiler_version=version
+            )
+
+class KotlinLocalRunner(LocalFallbackRunner):
+    def execute(self, code: str, stdin: str = "") -> ExecutionResult:
+        start_time = time.time()
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source_file = os.path.join(temp_dir, "main.kt")
+            jar_file = os.path.join(temp_dir, "main.jar")
+            with open(source_file, "w", encoding="utf-8") as f:
+                f.write(code)
+                
+            c_stdout, c_stderr, c_code = self._execute_subprocess(["kotlinc", "main.kt", "-include-runtime", "-d", jar_file], "", temp_dir, self.compile_timeout)
+            v_stdout, _, _ = self._execute_subprocess(["kotlinc", "-version"], "", temp_dir, 2)
+            version = v_stdout.strip() if v_stdout else "Kotlin"
+
+            if c_code != 0:
+                return ExecutionResult(
+                    stdout="", stderr="", compile_output=c_stderr or c_stdout,
+                    exit_code=c_code, time_ms=int((time.time() - start_time) * 1000),
+                    memory_mb=0.0, compiler_version=version
+                )
+                
+            stdout, stderr, code_res = self._execute_subprocess(["java", "-jar", jar_file], stdin, temp_dir, self.run_timeout)
+            return ExecutionResult(
+                stdout=stdout, stderr=stderr, compile_output=c_stdout + "\\n" + c_stderr,
+                exit_code=code_res, time_ms=int((time.time() - start_time) * 1000),
+                memory_mb=0.0, compiler_version=version
+            )
+
 class HTMLFallbackRunner(BaseRunner):
     def execute(self, code: str, stdin: str = "") -> ExecutionResult:
         return ExecutionResult(
@@ -334,6 +450,11 @@ def get_runner(language: str) -> BaseRunner:
             "c": GccLocalRunner(),
             "cpp": GppLocalRunner(),
             "java": JavaLocalRunner(),
+            "csharp": CSharpLocalRunner(),
+            "go": GoLocalRunner(),
+            "rust": RustLocalRunner(),
+            "php": PHPLocalRunner(),
+            "kotlin": KotlinLocalRunner(),
             "html": HTMLFallbackRunner(),
         }
         if language in mapping:

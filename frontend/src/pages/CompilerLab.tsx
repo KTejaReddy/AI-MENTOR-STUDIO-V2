@@ -3,8 +3,7 @@ import Editor from '@monaco-editor/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
-import { Play, Square, Sparkles, TerminalSquare, RotateCcw, Clock, Cpu, PanelLeftClose, PanelLeftOpen as PanelRightOpen, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
-import { MarkdownRenderer } from '@/components/ai/MarkdownRenderer'
+import { Play, Square, TerminalSquare, RotateCcw, Clock, Cpu, PanelLeftClose, PanelLeftOpen as PanelRightOpen, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { ResizablePanel } from '@/components/ui/resizable'
 import { CustomSelect } from '@/components/ui/select'
@@ -12,17 +11,15 @@ import { fetchWithAuth } from '@/lib/api/client'
 
 const LANGUAGES = [
   { id: 'python', label: 'Python (3.10)', version: '3.10.0', defaultCode: 'print("Hello, World!")' },
-  { id: 'javascript', label: 'Node.js', version: '18.15.0', defaultCode: 'console.log("Hello, World!");' },
-  { id: 'c', label: 'C (GCC)', version: '10.2.0', defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}' },
-  { id: 'cpp', label: 'C++ (GCC)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}' },
+  { id: 'c', label: 'C (GCC)', version: '10.2.0', defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!");\n    return 0;\n}' },
+  { id: 'cpp', label: 'C++ (GCC)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!";\n    return 0;\n}' },
   { id: 'java', label: 'Java', version: '15.0.2', defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}' },
+  { id: 'javascript', label: 'Node.js', version: '18.15.0', defaultCode: 'console.log("Hello, World!");' },
   { id: 'csharp', label: 'C# (.NET)', version: '7.0', defaultCode: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}' },
   { id: 'go', label: 'Go', version: '1.20', defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}' },
   { id: 'rust', label: 'Rust', version: '1.70', defaultCode: 'fn main() {\n    println!("Hello, World!");\n}' },
-  { id: 'php', label: 'PHP', version: '8.2', defaultCode: '<?php\necho "Hello, World!\\n";\n?>' },
+  { id: 'php', label: 'PHP', version: '8.2', defaultCode: '<?php\necho "Hello, World!";\n?>' },
   { id: 'kotlin', label: 'Kotlin', version: '1.8', defaultCode: 'fun main() {\n    println("Hello, World!")\n}' },
-  { id: 'sql', label: 'SQL (SQLite)', version: '3', defaultCode: 'CREATE TABLE test (id INTEGER, name TEXT);\nINSERT INTO test VALUES (1, "Hello, World!");\nSELECT * FROM test;' },
-  { id: 'html', label: 'HTML/CSS/JS Preview', version: '5', defaultCode: '<!DOCTYPE html>\n<html>\n<head>\n<style>\n  h1 { color: #14b8a6; font-family: sans-serif; }\n</style>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n</body>\n</html>' },
 ]
 
 const EXECUTION_TIMEOUT_MS = 10000
@@ -37,10 +34,7 @@ export function CompilerLab() {
   const [execTime, setExecTime] = useState(0)
   const [exitCode, setExitCode] = useState<number | null>(null)
   const [compilerVersion, setCompilerVersion] = useState('')
-  const [aiOutput, setAiOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
-  const [isAiProcessing, setIsAiProcessing] = useState(false)
-  const [activeTab, setActiveTab] = useState<'console' | 'ai' | 'preview'>('console')
   const [outputPanelOpen, setOutputPanelOpen] = useState(true)
   const [langSwitchConfirm, setLangSwitchConfirm] = useState<string | null>(null)
   const [timedOut, setTimedOut] = useState(false)
@@ -49,8 +43,6 @@ export function CompilerLab() {
 
   useEffect(() => {
     setCode(language.defaultCode)
-    if (language.id === 'html') setActiveTab('preview')
-    else if (activeTab === 'preview') setActiveTab('console')
   }, [language.id])
 
   useEffect(() => {
@@ -86,14 +78,8 @@ export function CompilerLab() {
     setExitCode(null)
     setCompilerVersion('')
     setTimedOut(false)
-    if (language.id === 'html') {
-      setActiveTab('preview')
-      if (iframeRef.current) iframeRef.current.srcdoc = code
-      setIsRunning(false)
-      return
-    }
+    if (runTimeoutRef.current) clearTimeout(runTimeoutRef.current)
     setOutput('Running...\n')
-    setActiveTab('console')
 
     runTimeoutRef.current = setTimeout(() => {
       setIsRunning(false)
@@ -125,28 +111,6 @@ export function CompilerLab() {
     }
   }
 
-  const handleAiAction = async (action: string) => {
-    setIsAiProcessing(true)
-    setActiveTab('ai')
-    setAiOutput('Processing request with AI...\n')
-    try {
-      const payload = { 
-        action, 
-        code, 
-        language: language.label,
-        stdout: output,
-        stderr: errorMsg,
-        compile_output: compileOutput,
-        exit_code: exitCode
-      }
-      const res = await fetchWithAuth(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/v1/compiler/ai-action`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      const data = await res.json()
-      setAiOutput(data.result || 'No response from AI.')
-    } catch (e) { setAiOutput(`AI Request failed: ${e}`) }
-    finally { setIsAiProcessing(false) }
   }
 
   return (
@@ -208,11 +172,6 @@ export function CompilerLab() {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" onClick={() => handleAiAction('explain')} disabled={isAiProcessing} className="text-xs h-7">Explain</Button>
-          <Button variant="ghost" size="sm" onClick={() => handleAiAction('debug')} disabled={isAiProcessing} className="text-xs h-7">Debug</Button>
-          <Button variant="ghost" size="sm" onClick={() => handleAiAction('optimize')} disabled={isAiProcessing} className="text-xs h-7">Optimize</Button>
-        </div>
       </div>
 
       {/* Main Split Area */}
@@ -266,31 +225,17 @@ export function CompilerLab() {
             className="flex flex-col bg-surface-150/90 backdrop-blur-md border-t md:border-t-0 md:border-l border-border relative h-1/2 md:h-full max-md:!w-full z-30 shadow-[0_-10px_40px_rgba(0,0,0,0.3)] md:shadow-none"
           >
             <div className="flex-1 flex flex-col w-full h-full min-w-0 overflow-hidden">
-              <div className="flex border-b border-border h-9 shrink-0 w-full bg-surface-200/50">
-                {language.id === 'html' ? (
-                  <button onClick={() => setActiveTab('preview')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'preview' ? 'text-[var(--color-compiler)] bg-surface-200 border-b-2 border-[var(--color-compiler)]' : 'text-text-tertiary hover:text-text-secondary')}>
-                    <Cpu className="w-3.5 h-3.5" /> Live Preview
-                  </button>
-                ) : (
-                  <button onClick={() => setActiveTab('console')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'console' ? 'text-[var(--color-compiler)] bg-surface-200 border-b-2 border-[var(--color-compiler)]' : 'text-text-tertiary hover:text-text-secondary')}>
-                    <TerminalSquare className="w-3.5 h-3.5" /> Console
-                  </button>
-                )}
-                <button onClick={() => setActiveTab('ai')} className={cn('flex-1 flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider transition-colors', activeTab === 'ai' ? 'text-[var(--color-compiler)] bg-surface-200 border-b-2 border-[var(--color-compiler)]' : 'text-text-tertiary hover:text-text-secondary')}>
-                  <Sparkles className="w-3.5 h-3.5" /> AI Assistant
-                </button>
-                <button onClick={() => setOutputPanelOpen(false)} className="px-3 text-text-tertiary hover:text-text-primary transition-colors border-l border-border" aria-label="Close output panel">
-                  <PanelLeftClose className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
               <div className="flex-1 overflow-hidden relative flex flex-col w-full">
-                {activeTab === 'console' && (
                   <div className="flex-1 flex flex-col font-mono bg-[#030307]/75">
                     
                     {/* Stdin Input */}
                     <div className="p-3 border-b border-border/50 shrink-0 bg-black/20">
-                      <div className="text-[10px] uppercase font-bold tracking-wider text-text-tertiary mb-1">Standard Input (stdin)</div>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="text-[10px] uppercase font-bold tracking-wider text-text-tertiary">Standard Input (stdin)</div>
+                        <button onClick={() => setOutputPanelOpen(false)} className="text-text-tertiary hover:text-text-primary transition-colors" aria-label="Close output panel">
+                          <PanelLeftClose className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                       <textarea
                         value={stdin}
                         onChange={e => setStdin(e.target.value)}
@@ -337,23 +282,7 @@ export function CompilerLab() {
                     )}
                   </div>
                   </div>
-                )}
-                {activeTab === 'preview' && (
-                  <iframe ref={iframeRef} className="w-full h-full bg-white border-0" sandbox="allow-scripts allow-same-origin" srcDoc={code} title="Live preview" />
-                )}
-                {activeTab === 'ai' && (
-                  <div className="flex-1 overflow-y-auto scrollbar-thin p-5 leading-relaxed bg-[#05050b]/40">
-                    {isAiProcessing ? (
-                      <div className="flex flex-col items-center gap-2.5 text-text-tertiary text-xs justify-center py-12">
-                        <Loader2 className="w-4 h-4 animate-spin text-[var(--color-compiler)]" />
-                        <span className="font-bold uppercase tracking-wider text-xs text-[var(--color-compiler)]/80 animate-pulse">Processing with AI...</span>
-                      </div>
-                    ) : (
-                      <MarkdownRenderer content={aiOutput || '*Run an AI action from the header toolbar to see output explanations here.*'} />
-                    )}
-                  </div>
-                )}
-                {((isRunning && activeTab === 'console') || (isAiProcessing && activeTab === 'ai')) ? (
+                {isRunning ? (
                   <div className="absolute top-4 right-4 z-20">
                     <span className="relative flex h-2 w-2">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-compiler)] opacity-75"></span>
