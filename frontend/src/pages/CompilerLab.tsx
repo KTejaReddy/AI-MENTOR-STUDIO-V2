@@ -115,8 +115,11 @@ export function CompilerLab() {
   }
 
 
+  console.log("LIVE COMPONENT:", import.meta.url)
+
   return (
     <div className="flex flex-col h-full w-full bg-surface overflow-hidden">
+      <h1 style={{display:"none"}}>LIVE COMPONENT CompilerLab</h1>
       <Dialog open={langSwitchConfirm !== null} onClose={() => setLangSwitchConfirm(null)}>
         <DialogContent>
           <DialogTitle>Switch Language?</DialogTitle>
