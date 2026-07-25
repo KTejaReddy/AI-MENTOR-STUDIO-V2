@@ -32,6 +32,7 @@ export function CompilerLab() {
   const [errorMsg, setErrorMsg] = useState('')
   const [compileOutput, setCompileOutput] = useState('')
   const [execTime, setExecTime] = useState(0)
+  const [memoryMb, setMemoryMb] = useState(0)
   const [exitCode, setExitCode] = useState<number | null>(null)
   const [compilerVersion, setCompilerVersion] = useState('')
   const [isRunning, setIsRunning] = useState(false)
@@ -75,6 +76,7 @@ export function CompilerLab() {
     setErrorMsg('')
     setCompileOutput('')
     setExecTime(0)
+    setMemoryMb(0)
     setExitCode(null)
     setCompilerVersion('')
     setTimedOut(false)
@@ -100,6 +102,7 @@ export function CompilerLab() {
         
         setOutput(data.run.stdout || (data.run.stderr || data.run.compile_output ? '' : 'Execution finished with no output.'))
         setExecTime(data.run.time_ms || 0)
+        setMemoryMb(data.run.memory_mb || 0)
         setExitCode(data.run.exit_code)
         setCompilerVersion(data.run.compiler_version || '')
       } else setOutput('Error executing code.')
@@ -111,7 +114,6 @@ export function CompilerLab() {
     }
   }
 
-  }
 
   return (
     <div className="flex flex-col h-full w-full bg-surface overflow-hidden">
@@ -141,7 +143,7 @@ export function CompilerLab() {
             {isRunning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Play className="w-3.5 h-3.5" />}
             Run
           </Button>
-          <Button variant="secondary" size="sm" onClick={() => { setOutput(''); setErrorMsg(''); setExecTime(0); setTimedOut(false) }} className="gap-1.5">
+          <Button variant="secondary" size="sm" onClick={() => { setOutput(''); setErrorMsg(''); setExecTime(0); setMemoryMb(0); setTimedOut(false) }} className="gap-1.5">
             <RotateCcw className="w-3.5 h-3.5" /> Reset
           </Button>
           {isRunning && (
@@ -159,6 +161,11 @@ export function CompilerLab() {
               <div className="flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
                 <Clock className="w-3 h-3" /> {execTime}ms
               </div>
+              {memoryMb > 0 && (
+                <div className="hidden lg:flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
+                  <Cpu className="w-3 h-3" /> {memoryMb.toFixed(2)} MB
+                </div>
+              )}
               {exitCode !== null && (
                 <div className="hidden lg:flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
                   <TerminalSquare className="w-3 h-3" /> Exit: {exitCode}
