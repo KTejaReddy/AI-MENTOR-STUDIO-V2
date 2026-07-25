@@ -833,6 +833,8 @@ Formatting & Structural Requirements:
 - Use LaTeX for mathematical notation: $$ for display blocks, $ for inline expressions.
 - Use syntax-highlighted code blocks (```language ... ```) for all code snippets, making sure all code is complete and syntactically correct.
 - Design fully valid, clean Mermaid diagrams (```mermaid ... ```) for flowcharts and architectures. Never write malformed Mermaid code.
+- Use Mermaid v11 flowchart syntax only. Do NOT use `note right of` or `note left of` inside `graph` or `flowchart`.
+- Edge syntax must always be `A --> B` or `A -->|label| B`. Never generate `-->|label|>`. Never generate unsupported flowchart syntax.
 - CRITICAL Mermaid arrow rule: `|label|` must be followed immediately by the destination node ID, never by `>`.
   CORRECT: `A -->|Addition| B`   WRONG: `A -->|Addition|> B`
 - stateDiagram-v2: NEVER use `note "text"` — always use `note right of <state> ... end note` blocks.
@@ -882,7 +884,7 @@ Rigor Rules:
 - Tone: Natural, expert, first-person, highly technical professor.
 - Content: No generic text. No "placeholders". No "add code here".
 - Length: Minimum 3000 words. Each section must be an exhaustive explanation.
-- Verify that your code is bug-free and that your Mermaid code uses valid syntax. Remember: `--|label|> B` is INVALID; write `--|label| B` instead where `|label|` immediately precedes the target node ID.
+- Verify that your code is bug-free and that your Mermaid code uses valid syntax. Use Mermaid v11 flowchart syntax only. Do NOT use `note right of` or `note left of` inside `graph` or `flowchart`. Write `--|label| B` instead of `--|label|> B`.
 - Do not wrap the final output in a markdown block. Start writing immediately.
 """
 

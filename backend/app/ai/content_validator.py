@@ -1,6 +1,8 @@
 import re
 import json
 import logging
+import os
+import time
 from typing import Dict, Any, List, Tuple, Optional
 
 logger = logging.getLogger(__name__)
@@ -168,93 +170,245 @@ def _fix_math_escapes(text: str) -> str:
 # 2. Mermaid Validation & Auto-Repair
 # =============================================================================
 
-def validate_and_repair_mermaid(text: str) -> Tuple[str, bool, bool]:
-    """
-    Validates Mermaid syntax (starts with graph/flowchart, quotes label parameters, fix arrows).
-    Returns (repaired_text, is_valid, did_repair).
-    """
-    original = text
-    parts = []
-    last_end = 0
-    is_valid = True
-    did_repair = False
-
-    # Scan for mermaid code blocks
-    for match in re.finditer(r"```mermaid\s*([\s\S]*?)\s*```", text, flags=re.DOTALL):
-        parts.append(text[last_end:match.start()])
-        block_content = match.group(1).strip()
-        
-        repaired_block, block_ok, block_repaired = _repair_mermaid_block(block_content)
-        if not block_ok:
-            is_valid = False
-        if block_repaired:
-            did_repair = True
-            
-        parts.append(f"```mermaid\n{repaired_block}\n```")
-        last_end = match.end()
-
-    parts.append(text[last_end:])
-    repaired_text = "".join(parts)
-    
-    if did_repair:
-        logger.info(f"Mermaid auto-repaired. Length delta: {len(repaired_text) - len(original)}")
-        
-    return repaired_text, is_valid, did_repair
-
-
-def _repair_mermaid_block(content: str) -> Tuple[str, bool, bool]:
-    """Repairs syntax inside a single Mermaid diagram block."""
-    lines = content.split('\n')
-    repaired_lines = []
+def _validate_mermaid_syntax(code: str) -> Tuple[bool, List[str]]:
+    errors = []
+    lines = code.split('\n')
     has_declaration = False
-    did_repair = False
     
     valid_declarations = (
         'graph ', 'flowchart ', 'sequenceDiagram', 'classDiagram', 
         'stateDiagram-v2', 'stateDiagram', 'erDiagram', 'gantt', 
-        'pie', 'gitGraph', 'requirementDiagram'
+        'pie', 'gitGraph', 'requirementDiagram', 'journey'
     )
-
-    for line in lines:
-        l_strip = line.strip()
-        if not l_strip:
+    
+    is_flowchart = False
+    
+    for i, line in enumerate(lines):
+        l = line.strip()
+        if not l:
             continue
-        if l_strip.startswith(valid_declarations):
+            
+        if any(l.startswith(dec) for dec in valid_declarations):
             has_declaration = True
+            if l.startswith(('graph', 'flowchart')):
+                is_flowchart = True
+                
+        # 1. Flowchart notes check
+        if is_flowchart:
+            if re.match(r'^note\s+(right|left)\s+of\b', l, re.IGNORECASE):
+                errors.append(f"Line {i+1}: Flowcharts do not support note directives.")
+                
+        # 2. Invalid arrow / trailing arrow check
+        if re.search(r'\|[^|]+\|>', l):
+            errors.append(f"Line {i+1}: Invalid labeled edge syntax (trailing arrow).")
+            
+        # 3. Unbalanced brackets check
+        if not l.startswith('%%'):
+            for ob, cb in [('[', ']'), ('(', ')'), ('{', '}')]:
+                if l.count(ob) != l.count(cb):
+                    errors.append(f"Line {i+1}: Unbalanced brackets '{ob}' and '{cb}'.")
+                    
+        # 4. Duplicate arrows
+        if re.search(r'-->\s*-->', l) or re.search(r'==>\s*==>', l):
+            errors.append(f"Line {i+1}: Duplicate edge arrow declarations.")
+            
+    if not has_declaration:
+        errors.append("Missing diagram declaration type (e.g. flowchart TD).")
         
-        orig_clean = l_strip
-        # Repair broken arrow notation (e.g., - ->, -- >, == >, <- -)
-        l_strip = re.sub(r'-\s*->', '-->', l_strip)
-        l_strip = re.sub(r'-\s*-\s*>', '-->', l_strip)
-        l_strip = re.sub(r'-\s*-\s*-\s*>', '--->', l_strip)
-        l_strip = re.sub(r'=\s*=>', '==>', l_strip)
-        l_strip = re.sub(r'=\s*=\s*>', '==>', l_strip)
-        l_strip = re.sub(r'<\s*-\s*-', '<--', l_strip)
+    return len(errors) == 0, errors
+
+
+def _balance_brackets(line: str) -> str:
+    brackets = [('[', ']'), ('(', ')'), ('{', '}')]
+    for ob, cb in brackets:
+        o_count = line.count(ob)
+        c_count = line.count(cb)
+        if o_count > c_count:
+            line += cb * (o_count - c_count)
+    return line
+
+
+def _log_mermaid_failure(original: str, repaired: str, errors: List[str], rules: List[str]):
+    log_dir = os.path.join(os.getcwd(), "logs")
+    os.makedirs(log_dir, exist_ok=True)
+    log_file = os.path.join(log_dir, "mermaid_errors.log")
+    try:
+        with open(log_file, "a", encoding="utf-8") as f:
+            f.write("="*80 + "\n")
+            f.write(f"TIMESTAMP: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write(f"PARSER ERRORS:\n" + "\n".join(f"- {e}" for e in errors) + "\n")
+            f.write(f"REPAIR RULES APPLIED:\n" + "\n".join(f"- {r}" for r in rules) + "\n")
+            f.write(f"ORIGINAL MERMAID:\n{original}\n\n")
+            f.write(f"SANITIZED MERMAID:\n{repaired}\n")
+            f.write("="*80 + "\n\n")
+    except Exception as ex:
+        logger.error(f"Failed to log Mermaid failure: {ex}")
+
+
+def _repair_mermaid_block(content: str) -> Tuple[str, bool, bool, List[str]]:
+    """
+    Repairs syntax inside a single Mermaid diagram block.
+    Returns (repaired_content, is_valid, did_repair, applied_rules).
+    """
+    lines = content.split('\n')
+    cleaned_lines = []
+    has_declaration = False
+    did_repair = False
+    applied_rules = []
+    
+    valid_declarations = (
+        'graph ', 'flowchart ', 'sequenceDiagram', 'classDiagram', 
+        'stateDiagram-v2', 'stateDiagram', 'erDiagram', 'gantt', 
+        'pie', 'gitGraph', 'requirementDiagram', 'journey'
+    )
+    
+    is_flowchart = False
+    
+    # First pass: find declaration and clean empty lines
+    for line in lines:
+        l = line.strip()
+        if not l:
+            continue
+        if any(l.startswith(dec) for dec in valid_declarations):
+            has_declaration = True
+            if l.startswith(('graph', 'flowchart')):
+                is_flowchart = True
+        cleaned_lines.append(l)
         
-        # Repair unquoted node labels with special characters
-        l_strip = _quote_mermaid_labels(l_strip)
+    if not has_declaration:
+        cleaned_lines.insert(0, "flowchart TD")
+        is_flowchart = True
+        did_repair = True
+        applied_rules.append("Prepend default flowchart TD declaration")
         
-        # Strip raw HTML tags (e.g. <div style="..."> but keep safe <br> and <br/>)
-        l_strip = re.sub(r'<(?!br\s*/?>)[^>]+>', '', l_strip)
+    repaired_lines = []
+    note_counter = 0
+    in_note = False
+    note_target = None
+    note_lines = []
+    
+    for l in cleaned_lines:
+        orig = l
         
-        if l_strip != orig_clean:
+        # Handle notes in flowcharts
+        if is_flowchart:
+            # Multi-line note start: note right/left of Node
+            multi_note_match = re.match(r'^note\s+(right|left)\s+of\s+([a-zA-Z0-9_-]+)\s*$', l, re.IGNORECASE)
+            if multi_note_match:
+                in_note = True
+                note_target = multi_note_match.group(2)
+                note_lines = []
+                did_repair = True
+                applied_rules.append("Parse multi-line flowchart note start")
+                continue
+                
+            if in_note:
+                if re.match(r'^end\s+note$', l, re.IGNORECASE):
+                    in_note = False
+                    note_counter += 1
+                    note_text = " ".join(note_lines).replace('"', "'")
+                    repaired_lines.append(f'    NoteNode{note_counter}["{note_text}"]')
+                    repaired_lines.append(f'    {note_target} -.-> NoteNode{note_counter}')
+                    applied_rules.append(f"Convert multi-line flowchart note for {note_target} to plain node")
+                else:
+                    note_lines.append(l)
+                continue
+                
+            # Single-line note: note right/left of Node: Text
+            single_note_match = re.match(r'^note\s+(right|left)\s+of\s+([a-zA-Z0-9_-]+)\s*:\s*(.*)$', l, re.IGNORECASE)
+            if single_note_match:
+                note_counter += 1
+                note_target = single_note_match.group(2)
+                note_text = single_note_match.group(3).replace('"', "'")
+                repaired_lines.append(f'    NoteNode{note_counter}["{note_text}"]')
+                repaired_lines.append(f'    {note_target} -.-> NoteNode{note_counter}')
+                did_repair = True
+                applied_rules.append(f"Convert single-line flowchart note for {note_target} to plain node")
+                continue
+                
+        # 1. Fix trailing > on labeled edges (A -->|text|> B to A -->|text| B)
+        if re.search(r'\|([^|]+)\|>', l):
+            l = re.sub(r'\|([^|]+)\|>', r'|\1|', l)
+            applied_rules.append("Fix trailing arrow bracket on edge label")
+            
+        # 2. Repair malformed arrows:
+        # Collapse multiple dashes: -----> or ---> to -->
+        if re.search(r'-{3,}>', l):
+            l = re.sub(r'-{3,}>', '-->', l)
+            applied_rules.append("Collapse long arrow line (dashes)")
+        if re.search(r'={3,}>', l):
+            l = re.sub(r'={3,}>', '==>', l)
+            applied_rules.append("Collapse long double arrow line (equals)")
+        if re.search(r'\.-{2,}>', l):
+            l = re.sub(r'\.-{2,}>', '-.->', l)
+            applied_rules.append("Fix dotted arrow line")
+            
+        # Spaced arrows
+        spaced_arrow = False
+        if re.search(r'-\s*->', l) or re.search(r'-\s*-\s*>', l):
+            l = re.sub(r'-\s*->', '-->', l)
+            l = re.sub(r'-\s*-\s*>', '-->', l)
+            spaced_arrow = True
+        if re.search(r'=\s*=>', l) or re.search(r'=\s*=\s*>', l):
+            l = re.sub(r'=\s*=>', '==>', l)
+            l = re.sub(r'=\s*=\s*>', '==>', l)
+            spaced_arrow = True
+        if re.search(r'<\s*-\s*-', l):
+            l = re.sub(r'<\s*-\s*-', '<--', l)
+            spaced_arrow = True
+        if spaced_arrow:
+            applied_rules.append("Remove spaces in arrow characters")
+            
+        # Fix raw -- connecting nodes without label to -->
+        if re.search(r'\s+--\s+(?![|])', l):
+            l = re.sub(r'\s+--\s+(?![|])', ' --> ', l)
+            applied_rules.append("Convert open line to standard arrow")
+            
+        # 3. Remove duplicate arrows (A --> --> B)
+        if re.search(r'-->\s*-->', l) or re.search(r'==>\s*==>', l):
+            l = re.sub(r'-->\s*-->', '-->', l)
+            l = re.sub(r'==>\s*==>', '==>', l)
+            applied_rules.append("De-duplicate consecutive arrows")
+            
+        # 4. Remove empty nodes
+        if re.search(r'[A-Za-z0-9_-]+\s*\[\s*\]', l) or re.search(r'[A-Za-z0-9_-]+\s*\(\s*\)', l):
+            l = re.sub(r'[A-Za-z0-9_-]+\s*\[\s*\]', '', l)
+            l = re.sub(r'[A-Za-z0-9_-]+\s*\(\s*\)', '', l)
+            l = re.sub(r'[A-Za-z0-9_-]+\s*\{\s*\}', '', l)
+            applied_rules.append("Remove empty node brackets")
+            
+        # 5. Quote unquoted node labels with special characters
+        l_quoted = _quote_mermaid_labels(l)
+        if l_quoted != l:
+            l = l_quoted
+            applied_rules.append("Quote special characters in node label")
+            
+        # 6. Repair brackets (balance brackets)
+        l_balanced = _balance_brackets(l)
+        if l_balanced != l:
+            l = l_balanced
+            applied_rules.append("Balance unmatched brackets")
+            
+        # Clean inline HTML tags except safe breaks
+        l_no_html = re.sub(r'<(?!br\s*/?>)[^>]+>', '', l)
+        if l_no_html != l:
+            l = l_no_html
+            applied_rules.append("Clean raw HTML tags")
+            
+        if l != orig:
             did_repair = True
             
-        repaired_lines.append(l_strip)
-
-    if not has_declaration:
-        # Prepend default flowchart declaration if missing
-        repaired_lines.insert(0, "graph TD")
-        did_repair = True
-        logger.info("Prepend missing graph TD declaration to Mermaid block")
-
-    return '\n'.join(repaired_lines), True, did_repair
+        if l.strip():
+            repaired_lines.append(l)
+            
+    repaired_code = '\n'.join(repaired_lines)
+    is_valid, _ = _validate_mermaid_syntax(repaired_code)
+    
+    return repaired_code, is_valid, did_repair, applied_rules
 
 
 def _quote_mermaid_labels(line: str) -> str:
     """Quotes node labels containing special characters to prevent Mermaid parser errors."""
-    # Matches patterns like: node_id[label text] or node_id(label text)
-    # Shapes: [ ] (rect), ( ) (round), (( )) (circle), { } (rhombus), > ] (flag)
     shapes = [
         (r'([a-zA-Z0-9_-]+)\[([^"\]]+)\]', r'\1["\2"]'),
         (r'([a-zA-Z0-9_-]+)\(([^"\)]+)\)', r'\1("\2")'),
@@ -268,13 +422,57 @@ def _quote_mermaid_labels(line: str) -> str:
         matches = re.finditer(pattern, line)
         for m in matches:
             label = m.group(2)
-            # If label has special chars and isn't already quoted, apply replacement
             if special_chars.search(label) and not (label.startswith('"') and label.endswith('"')):
-                # Safe replacements
                 quoted = replacement.replace(r'\1', m.group(1)).replace(r'\2', label.replace('"', '\\"'))
                 line = line.replace(m.group(0), quoted)
                 
     return line
+
+
+def validate_and_repair_mermaid(text: str) -> Tuple[str, bool, bool]:
+    """
+    Validates Mermaid syntax. If invalid, applies sanitization and logs details if it fails.
+    Returns (repaired_text, is_valid, did_repair).
+    """
+    original = text
+    parts = []
+    last_end = 0
+    all_valid = True
+    did_repair = False
+
+    for match in re.finditer(r"```mermaid\s*([\s\S]*?)\s*```", text, flags=re.DOTALL):
+        parts.append(text[last_end:match.start()])
+        block_content = match.group(1).strip()
+        
+        # 1. Initial Validation
+        is_ok, errors = _validate_mermaid_syntax(block_content)
+        
+        if not is_ok:
+            # 2. Repair common mistakes
+            repaired_block, block_ok, block_repaired, applied_rules = _repair_mermaid_block(block_content)
+            if block_repaired:
+                did_repair = True
+            
+            # 3. Post-repair Validation
+            final_ok, final_errors = _validate_mermaid_syntax(repaired_block)
+            if not final_ok:
+                all_valid = False
+                # Log failed validation to dedicated errors file
+                _log_mermaid_failure(block_content, repaired_block, final_errors, applied_rules)
+            
+            parts.append(f"```mermaid\n{repaired_block}\n```")
+        else:
+            parts.append(f"```mermaid\n{block_content}\n```")
+            
+        last_end = match.end()
+
+    parts.append(text[last_end:])
+    repaired_text = "".join(parts)
+    
+    if did_repair:
+        logger.info(f"Mermaid auto-repaired. Length delta: {len(repaired_text) - len(original)}")
+        
+    return repaired_text, all_valid, did_repair
 
 
 # =============================================================================

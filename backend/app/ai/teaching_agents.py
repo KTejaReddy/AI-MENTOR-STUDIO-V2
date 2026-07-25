@@ -19,6 +19,39 @@ from app.ai.key_manager import key_manager, KeyManager, ApiKey as MgrApiKey
 logger = logging.getLogger(__name__)
 
 
+def _format_blueprint_compact(blueprint: Optional[Dict[str, Any]], section_type: str = "") -> str:
+    """Formats blueprint into a partitioned, lightweight string tailored to the specific agent."""
+    if not blueprint or not isinstance(blueprint, dict):
+        return ""
+    terms = blueprint.get("terminology", {}).get("key_terms", [])
+    terms_str = ", ".join(terms[:5]) if isinstance(terms, list) else str(terms)
+    
+    if section_type == "quiz":
+        objs = blueprint.get("objectives", [])
+        obj_str = "; ".join(objs[:3]) if isinstance(objs, list) else str(objs)
+        return f"BLUEPRINT GUIDELINES: Terms: [{terms_str}] | Objectives: {obj_str}"
+    elif section_type in ("summary", "revisionNotes"):
+        objs = blueprint.get("objectives", [])
+        obj_str = "; ".join(objs[:3]) if isinstance(objs, list) else str(objs)
+        return f"BLUEPRINT GUIDELINES: Focus Terms: [{terms_str}] | Core Objectives: {obj_str}"
+    elif section_type in ("codeExamples", "pseudocode", "algorithm"):
+        vars_dict = blueprint.get("variables", {}).get("symbols", {})
+        var_str = ", ".join([f"{k}={v}" for k, v in list(vars_dict.items())[:5]]) if vars_dict else "None"
+        notation = blueprint.get("terminology", {}).get("notation", "Standard notation")
+        return f"BLUEPRINT GUIDELINES: Notation: {notation} | Variables: {var_str}"
+    elif section_type == "visualization":
+        notation = blueprint.get("terminology", {}).get("notation", "Standard notation")
+        return f"BLUEPRINT GUIDELINES: Terms: [{terms_str}] | Notation: {notation}"
+    else:
+        notation = blueprint.get("terminology", {}).get("notation", "Standard notation")
+        vars_dict = blueprint.get("variables", {}).get("symbols", {})
+        var_str = ", ".join([f"{k}={v}" for k, v in list(vars_dict.items())[:5]]) if vars_dict else "None"
+        tone = blueprint.get("style_guide", {}).get("tone", "academic and authoritative")
+        return f"BLUEPRINT GUIDELINES: Key Terms: [{terms_str}] | Notation: {notation} | Variables: {var_str} | Tone: {tone}"
+
+
+
+
 class AgentStatus:
     IDLE = "idle"
     GENERATING = "generating"
@@ -128,7 +161,7 @@ class TeachingAgent(ABC):
 
                 prompt = ""
                 if blueprint:
-                    prompt += f"LESSON BLUEPRINT (Use the exact terminology, notation, variables, style, and tone defined below):\n{json.dumps(blueprint, indent=2)}\n\n"
+                    prompt += f"{_format_blueprint_compact(blueprint, self.section_type)}\n\n"
                 if previous_summaries:
                     prompt += f"PREVIOUS SECTION SUMMARY (Context of what was generated in previous sections. Do NOT repeat or overlap with this content):\n{previous_summaries}\n\n"
 
@@ -550,12 +583,21 @@ class ExplanationAgent(TeachingAgent):
     def section_type(self) -> str:
         return "explanation"
 
-    # Ordered fallback chain for every chunk attempt.  High-capacity models first.
+    _CHUNK_DEFAULT_MODELS: Dict[str, str] = {
+        "foundation": "groq/compound",
+        "theory": "qwen/qwen3.6-27b",
+        "examples": "openai/gpt-oss-120b",
+        "advanced": "llama-3.3-70b-versatile",
+        "summary": "groq/compound-mini",
+    }
+
+    # Ordered fallback chain for every chunk attempt. High-capacity models first.
     _CHUNK_FALLBACK_MODELS: List[str] = [
         "groq/compound",
         "qwen/qwen3.6-27b",
         "openai/gpt-oss-120b",
         "llama-3.3-70b-versatile",
+        "groq/compound-mini",
         "openai/gpt-oss-20b",
         "llama-3.1-8b-instant",
     ]
@@ -721,7 +763,8 @@ class ExplanationAgent(TeachingAgent):
             sections_str = sections_str.replace("TIME COMPLEXITY", "THEORETICAL LIMITS")
             sections_str = sections_str.replace("SPACE COMPLEXITY", "PHYSICAL/COMPUTATIONAL LIMITS")
 
-        fallback_queue = list(self._CHUNK_FALLBACK_MODELS)
+        primary_model = self._CHUNK_DEFAULT_MODELS.get(chunk_name, "groq/compound")
+        fallback_queue = [primary_model] + [m for m in self._CHUNK_FALLBACK_MODELS if m != primary_model]
         chunk_attempt = 0
 
         while chunk_attempt < len(fallback_queue):
@@ -753,10 +796,7 @@ class ExplanationAgent(TeachingAgent):
                 # Build the chunk-specific prompt
                 parts: List[str] = []
                 if blueprint:
-                    parts.append(
-                        "LESSON BLUEPRINT (maintain exact terminology, notation, and tone):\n"
-                        + json.dumps(blueprint, indent=2)
-                    )
+                    parts.append(_format_blueprint_compact(blueprint, chunk_name))
                 if previous_content:
                     # Pass only the tail of prior content to keep context manageable
                     tail = previous_content[-2000:] if len(previous_content) > 2000 else previous_content
