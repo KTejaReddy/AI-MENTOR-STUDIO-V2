@@ -16,6 +16,11 @@ const LANGUAGES = [
   { id: 'c', label: 'C (GCC)', version: '10.2.0', defaultCode: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}' },
   { id: 'cpp', label: 'C++ (GCC)', version: '10.2.0', defaultCode: '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" << std::endl;\n    return 0;\n}' },
   { id: 'java', label: 'Java', version: '15.0.2', defaultCode: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}' },
+  { id: 'csharp', label: 'C# (.NET)', version: '7.0', defaultCode: 'using System;\n\nclass Program {\n    static void Main() {\n        Console.WriteLine("Hello, World!");\n    }\n}' },
+  { id: 'go', label: 'Go', version: '1.20', defaultCode: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, World!")\n}' },
+  { id: 'rust', label: 'Rust', version: '1.70', defaultCode: 'fn main() {\n    println!("Hello, World!");\n}' },
+  { id: 'php', label: 'PHP', version: '8.2', defaultCode: '<?php\necho "Hello, World!\\n";\n?>' },
+  { id: 'kotlin', label: 'Kotlin', version: '1.8', defaultCode: 'fun main() {\n    println("Hello, World!")\n}' },
   { id: 'sql', label: 'SQL (SQLite)', version: '3', defaultCode: 'CREATE TABLE test (id INTEGER, name TEXT);\nINSERT INTO test VALUES (1, "Hello, World!");\nSELECT * FROM test;' },
   { id: 'html', label: 'HTML/CSS/JS Preview', version: '5', defaultCode: '<!DOCTYPE html>\n<html>\n<head>\n<style>\n  h1 { color: #14b8a6; font-family: sans-serif; }\n</style>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n</body>\n</html>' },
 ]
@@ -25,9 +30,13 @@ const EXECUTION_TIMEOUT_MS = 10000
 export function CompilerLab() {
   const [language, setLanguage] = useState(LANGUAGES[0])
   const [code, setCode] = useState(language.defaultCode)
+  const [stdin, setStdin] = useState('')
   const [output, setOutput] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
+  const [compileOutput, setCompileOutput] = useState('')
   const [execTime, setExecTime] = useState(0)
+  const [exitCode, setExitCode] = useState<number | null>(null)
+  const [compilerVersion, setCompilerVersion] = useState('')
   const [aiOutput, setAiOutput] = useState('')
   const [isRunning, setIsRunning] = useState(false)
   const [isAiProcessing, setIsAiProcessing] = useState(false)
@@ -72,7 +81,10 @@ export function CompilerLab() {
   const handleRun = async () => {
     setIsRunning(true)
     setErrorMsg('')
+    setCompileOutput('')
     setExecTime(0)
+    setExitCode(null)
+    setCompilerVersion('')
     setTimedOut(false)
     if (language.id === 'html') {
       setActiveTab('preview')
@@ -92,14 +104,18 @@ export function CompilerLab() {
     try {
       const res = await fetchWithAuth(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/v1/compiler/execute`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: language.id, version: language.version, code, stdin: '' })
+        body: JSON.stringify({ language: language.id, version: language.version, code, stdin })
       })
       if (runTimeoutRef.current) clearTimeout(runTimeoutRef.current)
       const data = await res.json()
       if (data.run) {
         if (data.run.stderr) setErrorMsg(data.run.stderr)
-        setOutput(data.run.output || (data.run.stderr ? '' : 'Execution finished with no output.'))
-        setExecTime(data.run.execution_time_ms || 0)
+        if (data.run.compile_output) setCompileOutput(data.run.compile_output)
+        
+        setOutput(data.run.stdout || (data.run.stderr || data.run.compile_output ? '' : 'Execution finished with no output.'))
+        setExecTime(data.run.time_ms || 0)
+        setExitCode(data.run.exit_code)
+        setCompilerVersion(data.run.compiler_version || '')
       } else setOutput('Error executing code.')
     } catch (e) {
       if (runTimeoutRef.current) clearTimeout(runTimeoutRef.current)
@@ -114,9 +130,18 @@ export function CompilerLab() {
     setActiveTab('ai')
     setAiOutput('Processing request with AI...\n')
     try {
+      const payload = { 
+        action, 
+        code, 
+        language: language.label,
+        stdout: output,
+        stderr: errorMsg,
+        compile_output: compileOutput,
+        exit_code: exitCode
+      }
       const res = await fetchWithAuth(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'}/api/v1/compiler/ai-action`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action, code, language: language.label })
+        body: JSON.stringify(payload)
       })
       const data = await res.json()
       setAiOutput(data.result || 'No response from AI.')
@@ -166,8 +191,20 @@ export function CompilerLab() {
             </div>
           )}
           {execTime > 0 && (
-            <div className="flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
-              <Clock className="w-3 h-3" /> {execTime}ms
+            <div className="flex flex-wrap items-center gap-1.5 md:gap-3">
+              <div className="flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
+                <Clock className="w-3 h-3" /> {execTime}ms
+              </div>
+              {exitCode !== null && (
+                <div className="hidden lg:flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
+                  <TerminalSquare className="w-3 h-3" /> Exit: {exitCode}
+                </div>
+              )}
+              {compilerVersion && (
+                <div className="hidden lg:flex items-center gap-1.5 text-xs text-text-tertiary border border-border bg-surface-200 px-2 py-1 rounded">
+                  <Cpu className="w-3 h-3" /> {compilerVersion}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -249,18 +286,41 @@ export function CompilerLab() {
 
               <div className="flex-1 overflow-hidden relative flex flex-col w-full">
                 {activeTab === 'console' && (
-                  <div className="flex-1 overflow-y-auto scrollbar-thin p-4 font-mono bg-[#030307]/75">
-                    {/* Prompt Header */}
-                    <div className="text-xs text-text-tertiary mb-3 flex items-center gap-1.5 opacity-60">
-                      <span className="text-[#10b981]">➜</span>
-                      <span>compiler-lab</span>
-                      <span className="text-[#8b5cf6]">~</span>
-                      <span className="text-[var(--color-compiler)] font-bold">active</span>
+                  <div className="flex-1 flex flex-col font-mono bg-[#030307]/75">
+                    
+                    {/* Stdin Input */}
+                    <div className="p-3 border-b border-border/50 shrink-0 bg-black/20">
+                      <div className="text-[10px] uppercase font-bold tracking-wider text-text-tertiary mb-1">Standard Input (stdin)</div>
+                      <textarea
+                        value={stdin}
+                        onChange={e => setStdin(e.target.value)}
+                        placeholder="Provide inputs here before running..."
+                        className="w-full h-12 bg-transparent text-xs text-text-secondary placeholder:text-text-tertiary/30 outline-none resize-y min-h-[40px] font-mono scrollbar-thin"
+                        spellCheck={false}
+                      />
                     </div>
 
-                    <pre className="text-xs text-[var(--color-compiler)] drop-shadow-[0_0_8px_rgba(var(--color-compiler-rgb),0.15)] whitespace-pre-wrap leading-relaxed">
-                      {output || (errorMsg ? '' : '// Output will appear here...')}
-                    </pre>
+                    <div className="flex-1 overflow-y-auto scrollbar-thin p-4">
+                      {/* Prompt Header */}
+                      <div className="text-xs text-text-tertiary mb-3 flex items-center gap-1.5 opacity-60">
+                        <span className="text-[#10b981]">➜</span>
+                        <span>compiler-lab</span>
+                        <span className="text-[#8b5cf6]">~</span>
+                        <span className="text-[var(--color-compiler)] font-bold">active</span>
+                      </div>
+
+                      {compileOutput && (
+                        <div className="mb-4 p-3 rounded-lg bg-surface-200/50 border border-border">
+                          <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-text-tertiary mb-1.5">
+                            <Cpu className="w-3 h-3" /> Compilation Output:
+                          </div>
+                          <pre className="font-mono text-xs text-text-secondary whitespace-pre-wrap leading-relaxed">{compileOutput}</pre>
+                        </div>
+                      )}
+
+                      <pre className="text-xs text-[var(--color-compiler)] drop-shadow-[0_0_8px_rgba(var(--color-compiler-rgb),0.15)] whitespace-pre-wrap leading-relaxed">
+                        {output || (errorMsg || compileOutput ? '' : '// Output will appear here...')}
+                      </pre>
                     {errorMsg && (
                       <div className="mt-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
                         <div className="flex items-center gap-1.5 text-xs font-semibold text-red-400 mb-1.5">
@@ -275,6 +335,7 @@ export function CompilerLab() {
                         <span>Press <kbd className="kbd mx-1 bg-white/5 text-text-secondary border-white/10 font-bold px-1.5 rounded">Run</kbd> to execute code</span>
                       </div>
                     )}
+                  </div>
                   </div>
                 )}
                 {activeTab === 'preview' && (
