@@ -729,3 +729,88 @@ def validate_subject_code_rules(content: str, subject: str, topic: str) -> bool:
                 return False
 
     return True
+
+
+class MarkdownSanitizer:
+    """Sanitizes raw markdown from AI to ensure it is perfectly balanced and structurally sound."""
+    
+    @staticmethod
+    def sanitize(content: str) -> str:
+        if not content:
+            return content
+        content = MarkdownSanitizer._close_mermaid_blocks(content)
+        content = MarkdownSanitizer._close_latex_environments(content)
+        content = MarkdownSanitizer._balance_delimiters(content)
+        content = MarkdownSanitizer._normalize_headings(content)
+        content = MarkdownSanitizer._normalize_spacing(content)
+        return content.strip()
+
+    @staticmethod
+    def is_truncated(content: str) -> bool:
+        if not content:
+            return True
+        # If the content explicitly has cut off tokens
+        if content.strip().endswith('...'):
+            return True
+            
+        last_char = content.strip()[-1]
+        # Valid endings: punctuation or markdown formatting marks
+        if last_char.isalnum() or last_char in [',', '-', '_']:
+            # Check length to ensure it's not a valid 1-word answer (very rare for sections)
+            if len(content.split()) > 10:
+                return True
+                
+        # Unclosed backticks check (basic)
+        if content.count('```') % 2 != 0:
+            return True
+            
+        return False
+
+    @staticmethod
+    def _close_mermaid_blocks(text: str) -> str:
+        if text.count('```') % 2 != 0:
+            text += '\n```\n'
+        return text
+
+    @staticmethod
+    def _close_latex_environments(text: str) -> str:
+        environments = ['matrix', 'bmatrix', 'pmatrix', 'vmatrix', 'align', 'equation', 'gather', 'split', 'cases']
+        for env in environments:
+            begin_count = text.count(f'\\begin{{{env}}}')
+            end_count = text.count(f'\\end{{{env}}}')
+            if begin_count > end_count:
+                for _ in range(begin_count - end_count):
+                    text += f'\n\\end{{{env}}}\n'
+        return text
+
+    @staticmethod
+    def _balance_delimiters(text: str) -> str:
+        # Balance block math
+        if text.count('$$') % 2 != 0:
+            text += '\n$$\n'
+            
+        # Balance \[ and \]
+        open_sq = text.count(r'\[')
+        close_sq = text.count(r'\]')
+        if open_sq > close_sq:
+            for _ in range(open_sq - close_sq):
+                text += r'\]'
+                
+        return text
+
+    @staticmethod
+    def _normalize_headings(text: str) -> str:
+        lines = text.split('\n')
+        new_lines = []
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            # If it's a heading, and the previous line isn't empty, insert a blank line
+            if stripped.startswith('#') and i > 0 and lines[i-1].strip() != '':
+                new_lines.append('')
+            new_lines.append(line)
+        return '\n'.join(new_lines)
+
+    @staticmethod
+    def _normalize_spacing(text: str) -> str:
+        # Replace 3 or more newlines with 2 newlines
+        return re.sub(r'\n{3,}', '\n\n', text)

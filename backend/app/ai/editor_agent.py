@@ -169,13 +169,17 @@ class EditorAgent:
                 section_type="explanation",
                 request_builder=_build_req
             )
-            return restore_mermaids(response.content.strip())
+            final_text = restore_mermaids(response.content.strip())
+            from app.ai.content_validator import MarkdownSanitizer
+            return MarkdownSanitizer.sanitize(final_text)
         except Exception as e:
             logger.error(f"Editor Agent failed: {e}. Falling back to simple merge of sections.")
             # Fallback: simple merge using the parsed content with placeholders
-            return restore_mermaids("\n\n".join([
+            fallback_text = restore_mermaids("\n\n".join([
                 f"## {sec.get('title', sec.get('type'))}\n\n{re.sub(r'```mermaid[\s\S]*?```', repl, sec.get('content', ''), flags=re.IGNORECASE)}"
                 for sec in sections
             ]))
+            from app.ai.content_validator import MarkdownSanitizer
+            return MarkdownSanitizer.sanitize(fallback_text)
 
 editor_agent = EditorAgent()

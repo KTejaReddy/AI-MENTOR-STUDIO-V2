@@ -299,6 +299,12 @@ class TeachingAgent(ABC):
                     )
                     logger.error(f"[AGENT:{self.section_type}] STAGE-3 PARSE | {_last_failure_reason}")
                     raise RuntimeError(_last_failure_reason)
+                    
+                from app.ai.content_validator import MarkdownSanitizer
+                if MarkdownSanitizer.is_truncated(content):
+                    _last_failure_reason = "ContentTruncated: AI response was truncated or badly malformed."
+                    logger.error(f"[AGENT:{self.section_type}] STAGE-3 PARSE | {_last_failure_reason}")
+                    raise RuntimeError(_last_failure_reason)
 
                 # STAGE 4: Quality validation
                 quality_score = await self._run_quality_checks(content, subject, topic)
@@ -882,6 +888,14 @@ class ExplanationAgent(TeachingAgent):
                         f"[AGENT:explanation/{chunk_name}] model={model_id!r} too short ({len(text)} chars). Next."
                     )
                     continue
+                    
+                from app.ai.content_validator import MarkdownSanitizer
+                if MarkdownSanitizer.is_truncated(text):
+                    logger.warning(
+                        f"[AGENT:explanation/{chunk_name}] model={model_id!r} returned TRUNCATED or badly malformed text. Retrying with next model."
+                    )
+                    continue
+
                     
                 # Chunk-level subject code rules validation
                 from app.ai.content_validator import validate_subject_code_rules

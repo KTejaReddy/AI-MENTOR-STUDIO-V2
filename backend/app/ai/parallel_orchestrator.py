@@ -57,6 +57,8 @@ def _sanitize_content(text: str) -> str:
         return text
     text = re.sub(r'<think\b[^>]*>.*?</think>', '', text, flags=re.IGNORECASE | re.DOTALL)
     text = re.sub(r'</?(?:integer|string|think|object|array|json|answer)\b[^>]*/?>', '', text, flags=re.IGNORECASE)
+    from app.ai.content_validator import MarkdownSanitizer
+    text = MarkdownSanitizer.sanitize(text)
     return text.strip()
 
 async def generate_wave_summary(provider: AIProvider, sections_data: List[Dict[str, Any]], engine_id: str = "") -> str:
