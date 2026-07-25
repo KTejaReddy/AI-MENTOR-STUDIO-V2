@@ -1028,42 +1028,43 @@ class ExplanationAgent(TeachingAgent):
         score = 1.0
         checks_log: List[str] = []
 
-        section_markers = [
-            "BEAUTIFUL TITLE", "INTRODUCTION", "LEARNING OBJECTIVES",
-            "WHY THIS TOPIC EXISTS", "INTUITION", "REAL-LIFE ANALOGY",
-            "FORMAL DEFINITION", "MENTAL MODEL", "HOW IT WORKS INTERNALLY",
-            "VISUAL DIAGRAM", "FLOWCHART", "SYNTAX", "STEP-BY-STEP EXAMPLE",
-            "DRY RUN", "MEMORY VISUALIZATION", "EXECUTION TRACE",
-            "COMMON VARIATIONS", "ADVANCED CONCEPTS", "BEST PRACTICES",
-            "COMMON MISTAKES", "DEBUGGING TIPS", "TIME COMPLEXITY",
-            "SPACE COMPLEXITY", "REAL-WORLD APPLICATIONS", "INTERVIEW PERSPECTIVE",
-            "EXAM PERSPECTIVE", "SUMMARY", "KEY TAKEAWAYS", "REVISION NOTES", "TRANSITION",
-        ]
-        found = sum(1 for m in section_markers if m.upper() in content.upper())
-        if found < 22:
-            score *= 0.6
-            checks_log.append(f"MissingSections: {found}/30")
-
         words = len(content.split())
-        if words < 1500:
-            score *= 0.5
-            checks_log.append(f"TooShort: {words} words < 1500")
-
-        is_no_code = any(s in subject.lower() for s in ["mathematics", "math", "physics", "chemistry"])
-        if not is_no_code and "```" not in content:
-            score *= 0.5
-            checks_log.append("MissingCodeBlocks")
-        if not is_no_code and "mermaid" not in content.lower():
+        # A 5-chunk assembly should be substantial. If it's <300 words, it genuinely failed.
+        if words < 300:
+            score *= 0.3
+            checks_log.append(f"SeverelyTruncated: {words} words")
+        elif words < 800:
             score *= 0.8
+            checks_log.append(f"ShortContent: {words} words")
+
+        # Must have basic markdown structure (headings)
+        if "##" not in content and "# " not in content:
+            score *= 0.5
+            checks_log.append("NoHeadingsFound")
+
+        # Catch raw AI refusals
+        refusals = ["as an ai language model", "i cannot fulfill", "i'm unable to", "i can't provide"]
+        if any(r in content.lower() for r in refusals):
+            score *= 0.2
+            checks_log.append("RefusalDetected")
+
+        is_no_code = any(s in subject.lower() for s in ["mathematics", "math", "physics", "chemistry", "biology"])
+        if not is_no_code and "```" not in content:
+            score *= 0.6
+            checks_log.append("MissingCodeBlocks")
+            
+        if not is_no_code and "mermaid" not in content.lower():
+            score *= 0.85
             checks_log.append("MissingMermaid")
+            
         if is_no_code and "$" not in content:
             score *= 0.7
             checks_log.append("MissingLaTeX")
 
         if checks_log:
-            logger.warning(f"[AGENT:explanation] SectionChecks FAILED: {checks_log} | score={score:.3f}")
+            logger.warning(f"[AGENT:explanation] SectionChecks PENALIZED: {checks_log} | score={score:.3f}")
         else:
-            logger.info(f"[AGENT:explanation] SectionChecks PASSED | {found}/30 markers, {words} words")
+            logger.info(f"[AGENT:explanation] SectionChecks PASSED | {words} words, strong formatting")
 
         return score
 
