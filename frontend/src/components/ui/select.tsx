@@ -132,7 +132,7 @@ export function CustomSelect({
   return (
     <div
       ref={containerRef}
-      className={cn('relative w-full text-left font-sans', className)}
+      className={cn('relative w-full text-left font-sans', isOpen && 'z-50', className)}
       onKeyDown={handleKeyDown}
     >
       {/* Trigger Button */}

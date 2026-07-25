@@ -134,7 +134,7 @@ export function CompilerLab() {
       </Dialog>
 
       {/* Top Action Bar */}
-      <div className="h-12 border-b border-border bg-surface-100/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0">
+      <div className="h-12 border-b border-border bg-surface-100/80 backdrop-blur-sm flex items-center justify-between px-4 shrink-0 relative z-30">
         <div className="flex items-center gap-3">
           <CustomSelect
             className="w-44"
