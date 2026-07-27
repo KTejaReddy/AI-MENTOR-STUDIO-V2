@@ -122,6 +122,7 @@ Document Text (truncated if necessary):
             type("CompletionRequest", (object,), {
                 "model": "llama-3.3-70b-versatile",
                 "messages": [{"role": "user", "content": prompt}],
+                "extra": {},
                 "to_dict": lambda s: {"model": s.model, "messages": s.messages}
             })()
         )
