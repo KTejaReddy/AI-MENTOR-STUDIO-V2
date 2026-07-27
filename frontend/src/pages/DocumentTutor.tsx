@@ -188,7 +188,7 @@ export function DocumentTutor() {
                   {documentError && (
                     <div className="px-4 py-2 rounded-lg bg-red-500/10 border border-red-500/20 text-xs text-red-400 mb-4 flex items-center gap-2">
                        <X className="w-4 h-4" /> {documentError}
-                       <Button variant="outline" size="sm" className="ml-auto" onClick={() => loadDocument(activeDoc.id as string)}>Retry</Button>
+                       <Button variant="secondary" size="sm" className="ml-auto" onClick={() => loadDocument(activeDoc.id as string)}>Retry</Button>
                     </div>
                   )}
                 </div>
