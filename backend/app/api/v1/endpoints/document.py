@@ -42,7 +42,7 @@ CACHE_DIR = os.path.join(DOCS_DIR, "cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
 
 def extract_text(file_path: str, filename: str) -> str:
-    logger.info(f"Text extraction start for: {filename}")
+    logger.info(f"Text extraction started for: {filename}")
     start_time = time.time()
     ext = filename.split('.')[-1].lower()
     text = ""
@@ -68,11 +68,11 @@ def extract_text(file_path: str, filename: str) -> str:
         raise HTTPException(status_code=400, detail=f"Failed to parse document: {str(e)}")
     
     elapsed = time.time() - start_time
-    logger.info(f"Text extraction complete in {elapsed:.2f}s")
+    logger.info(f"Text extracted in {elapsed:.2f}s")
     return text
 
 async def _run_document_analysis(doc_id: str, filename: str, file_hash: str, user_id: str):
-    logger.info(f"Starting explanation generation for document_id: {doc_id}")
+    logger.info(f"AI generation started for document_id: {doc_id}")
     start_time = time.time()
     
     user_dir = os.path.join(DOCS_DIR, user_id)
@@ -85,8 +85,6 @@ async def _run_document_analysis(doc_id: str, filename: str, file_hash: str, use
         if not text.strip():
             raise ValueError("Document contains no readable text.")
             
-        logger.info(f"Explanation generation start for {doc_id}")
-        
         prompt = f"""You are an excellent university teacher. Read the uploaded document completely.
 Explain the content in simple language. Assume the reader is learning the topic for the first time.
 Never invent information. Explain only what exists inside the uploaded document. Preserve technical accuracy.
@@ -119,6 +117,7 @@ Provide a concise revision summary.
 Document Text (truncated if necessary):
 {text[:40000]}"""
         provider = GroqProvider(key_manager)
+        logger.info(f"AI request sent for {doc_id}")
         response = await provider.complete(
             type("CompletionRequest", (object,), {
                 "model": "llama-3.3-70b-versatile",
@@ -126,6 +125,7 @@ Document Text (truncated if necessary):
                 "to_dict": lambda s: {"model": s.model, "messages": s.messages}
             })()
         )
+        logger.info(f"AI response received for {doc_id}")
         
         explanation = response.content
         
@@ -139,6 +139,8 @@ Document Text (truncated if necessary):
         
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(doc_data, f)
+            
+        logger.info(f"Explanation saved for {doc_id}")
             
         # Cache globally
         cache_json_path = os.path.join(CACHE_DIR, f"{file_hash}.json")
@@ -210,7 +212,7 @@ async def delete_document(document_id: str, current_user: User = Depends(get_cur
 
 @router.post("/upload", response_model=DocumentUploadResponse)
 async def upload_document(background_tasks: BackgroundTasks, file: UploadFile = File(...), current_user: User = Depends(get_current_user)):
-    logger.info("Upload start")
+    logger.info("Upload started")
     
     ALLOWED_MIME_TYPES = {
         "application/pdf",
@@ -231,28 +233,34 @@ async def upload_document(background_tasks: BackgroundTasks, file: UploadFile = 
     file_bytes = await file.read()
     file_hash = hashlib.sha256(file_bytes).hexdigest()
     
+    logger.info(f"Cache lookup for hash: {file_hash}")
     cache_json_path = os.path.join(CACHE_DIR, f"{file_hash}.json")
     
     if os.path.exists(cache_json_path):
-        logger.info("Cache hit: reusing previously parsed document analysis")
         with open(cache_json_path, "r", encoding="utf-8") as f:
             cached_data = json.load(f)
             
-        cached_data["id"] = doc_id
-        with open(os.path.join(user_dir, f"{doc_id}.json"), "w", encoding="utf-8") as f:
-            json.dump(cached_data, f)
+        # Verify that the cache actually contains a generated explanation
+        if cached_data.get("explanation"):
+            logger.info("Cache hit: reusing previously parsed document analysis")
+            cached_data["id"] = doc_id
+            with open(os.path.join(user_dir, f"{doc_id}.json"), "w", encoding="utf-8") as f:
+                json.dump(cached_data, f)
+                
+            # Save dummy empty file for delete/list requirements
+            with open(temp_file_path, "wb") as f:
+                f.write(b"")
+                
+            logger.info("Response returned from cache")
+            return DocumentUploadResponse(
+                document_id=doc_id,
+                filename=file.filename,
+                pages=1,
+                status="uploaded"
+            )
+        else:
+            logger.info("Cache hit, but no 'explanation' found (legacy cache). Forcing regeneration.")
             
-        # Save dummy empty file for delete/list requirements
-        with open(temp_file_path, "wb") as f:
-            f.write(b"")
-            
-        return DocumentUploadResponse(
-            document_id=doc_id,
-            filename=file.filename,
-            pages=1,
-            status="uploaded"
-        )
-        
     # Write actual file contents
     with open(temp_file_path, "wb") as f:
         f.write(file_bytes)
@@ -271,6 +279,7 @@ async def upload_document(background_tasks: BackgroundTasks, file: UploadFile = 
     # Trigger background parsing task
     background_tasks.add_task(_run_document_analysis, doc_id, file.filename, file_hash, current_user.id)
     
+    logger.info("Response returned, AI processing in background")
     return DocumentUploadResponse(
         document_id=doc_id,
         filename=file.filename,
